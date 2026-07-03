@@ -71,6 +71,14 @@ main().catch(console.error);
 
 Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
 
+### Data formats
+
+Values are passed through exactly as the API sends them — no runtime conversion:
+
+- **Dates** (`createDate`, `startDate`, …) are ISO 8601 strings — wrap in `new Date(booking.startDate)` when you need a `Date`.
+- **Money** (`amount`, `price`, …) arrives as decimal floats. Fine for display; for accounting arithmetic convert to integer cents first to avoid floating-point drift.
+- **IDs** (`id`, `*Ref`) are UUID strings.
+
 ---
 
 ## Authentication
