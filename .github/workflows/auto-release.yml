@@ -1,0 +1,55 @@
+name: Auto release
+
+# When the nightly spec-regen PR is merged, bump the minor version and push the
+# tag. The tag push triggers publish.yml (on: push tags 'v*'), which runs CI and
+# publishes to npm. No other PRs trigger this — only the bot branch below.
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'auto/spec-update'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          # Default GITHUB_TOKEN pushes don't trigger workflows; RELEASE_TOKEN
+          # (PAT with contents write) makes the tag push start publish.yml.
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+
+      - name: Configure git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      # Removed/renamed public methods are breaking for consumers: bump major.
+      # Additions or internal/schema-only changes stay a minor. The snapshot
+      # records every public method, so its removed lines are exactly the
+      # methods that disappeared.
+      - name: Decide version bump from the API-surface diff
+        id: bump
+        run: |
+          removed=$(git diff HEAD^ HEAD -- tests/__snapshots__/surface.test.ts.snap | grep -c '^-.*()' || true)
+          if [ "$removed" -gt 0 ]; then
+            echo "level=major" >> "$GITHUB_OUTPUT"
+            echo "::warning::$removed public method(s) removed or renamed — bumping MAJOR."
+          else
+            echo "level=minor" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version and push tag
+        run: |
+          npm version ${{ steps.bump.outputs.level }} -m ':rocket: Publish OpenAPI spec update (%s)'
+          git push --follow-tags origin main

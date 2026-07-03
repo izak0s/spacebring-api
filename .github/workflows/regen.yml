@@ -1,0 +1,80 @@
+name: Spec sync
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+
+      - name: Download latest spec and regenerate
+        run: |
+          curl --fail --silent --show-error -o spec/openapi.json https://www.spacebring.com/docs/assets/openapi.json
+          npm run generate
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Spec unchanged — nothing to do."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat
+          fi
+
+      - name: Validate regenerated code
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm run typecheck
+          npm run test:update   # refreshes the API-surface snapshot; its diff lands in the PR
+          npm run build
+
+      - name: Build PR body
+        if: steps.diff.outputs.changed == 'true'
+        id: prbody
+        run: |
+          coverage=$(grep -o '<!-- coverage -->[^<]*' README.md | sed 's/<!-- coverage -->//')
+          {
+            echo 'body<<PR_BODY_EOF'
+            echo 'Nightly spec sync detected upstream changes and regenerated `src/generated/` (plus README counts and the API-surface snapshot).'
+            echo ''
+            echo "**Generated:** $coverage"
+            echo ''
+            if git diff --quiet -- tests/__snapshots__; then
+              echo '✅ API surface unchanged — internal/schema changes only.'
+            else
+              echo '⚠️ **The public API surface changed** — review `tests/__snapshots__/surface.test.ts.snap` in this diff for added/renamed/removed methods.'
+            fi
+            echo ''
+            echo 'Merging this PR triggers an automatic release via `auto-release.yml`: minor normally, **major** if any public method was removed or renamed.'
+            echo 'PR_BODY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: auto/spec-update
+          add-paths: |
+            spec/openapi.json
+            src/generated
+            README.md
+            tests/__snapshots__
+          commit-message: ":sparkles: Regenerate from upstream OpenAPI spec"
+          title: "Regenerate from upstream OpenAPI spec"
+          body: ${{ steps.prbody.outputs.body }}
+          delete-branch: true

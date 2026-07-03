@@ -1,0 +1,50 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # create the GitHub release
+  id-token: write # npm trusted publishing (OIDC) + provenance
+
+jobs:
+  # Full CI (generate-sync check, typecheck, tests across the Node matrix,
+  # build, pack check). Gates the release: publish does not run unless this passes.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1; don't rely on the bundled one.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - name: Verify tag matches package.json version
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "v$PKG_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version v$PKG_VERSION. Use 'npm version' to release."
+            exit 1
+          fi
+
+      # No token: authenticated via OIDC trusted publishing. Configure it on
+      # npmjs.com after the first (manual) publish: package settings ->
+      # Publishing access -> link this repo + publish.yml. Provenance is
+      # attached automatically once the repo is public.
+      - run: npm publish --access public
+
+      - name: Create GitHub release
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
