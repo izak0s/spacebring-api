@@ -24,6 +24,7 @@ export function pascalCase(literal: string): string {
 
 export function singular(literal: string): string {
   if (literal.endsWith("ies")) return literal.slice(0, -3) + "y";
+  if (literal.endsWith("sses")) return literal.slice(0, -2); // passes -> pass
   return literal.endsWith("s") && !literal.endsWith("ss") ? literal.slice(0, -1) : literal;
 }
 

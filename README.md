@@ -69,7 +69,7 @@ async function main() {
 main().catch(console.error);
 ```
 
-TypeScript helpers are exported too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations` (e.g. `components["schemas"]["invoice"]`).
+Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
 
 ---
 

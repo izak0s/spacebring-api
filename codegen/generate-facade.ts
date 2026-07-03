@@ -74,6 +74,8 @@ interface EnvelopeInfo {
   pagination?: PaginationInfo;
   /** Set when the success envelope has a single property: the facade returns it directly. */
   unwrapKey?: string;
+  /** True when the unwrapped property is an array (non-paginated list endpoints). */
+  unwrapIsArray?: boolean;
 }
 
 interface AnalyzedOp {
@@ -88,6 +90,7 @@ interface AnalyzedOp {
   body: { required: boolean } | undefined;
   pagination: PaginationInfo | undefined;
   unwrapKey: string | undefined;
+  unwrapIsArray: boolean;
 }
 
 const warnings: string[] = [];
@@ -134,6 +137,7 @@ function analyze(path: string, method: HttpMethod, op: SpecOperation): AnalyzedO
     body: requestBody ? { required: requestBody.required === true } : undefined,
     pagination: envelope.pagination,
     unwrapKey: envelope.unwrapKey,
+    unwrapIsArray: envelope.unwrapIsArray === true,
   };
 }
 
@@ -155,7 +159,9 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     // Single-property envelope ({ subscription: {...} }, { locations: [...] }):
     // the facade returns the property directly.
     const keys = Object.keys(properties);
-    return keys.length === 1 ? { unwrapKey: keys[0] } : {};
+    if (keys.length !== 1) return {};
+    const propSchema = resolveRef<{ type?: string }>(properties[keys[0]]);
+    return { unwrapKey: keys[0], unwrapIsArray: propSchema.type === "array" };
   }
 
   const arrayKeys = Object.keys(properties).filter((key) => properties[key].type === "array");
@@ -285,7 +291,134 @@ function opDoc(op: SpecOperation, suffix = ""): string {
   return docComment(lines);
 }
 
-function emitMethod(analyzed: AnalyzedOp, name: string): EmittedMethod[] {
+function successResponseStatus(op: SpecOperation): string | undefined {
+  return Object.keys(op.responses)
+    .filter((status) => /^\d+$/.test(status) && Number(status) >= 200 && Number(status) < 300)
+    .sort((a, b) => Number(a) - Number(b))[0];
+}
+
+function successJsonType(op: SpecOperation): string {
+  const status = successResponseStatus(op);
+  if (!status) return "undefined";
+  const response = op.responses[status] as { content?: Record<string, unknown> } | undefined;
+  if (!response?.content?.["application/json"]) return "undefined";
+  return `operations["${op.operationId}"]["responses"][${status}]["content"]["application/json"]`;
+}
+
+// ---------------------------------------------------------------------------
+// Named entity aliases
+//
+// Every unwrapped payload property and every paginated items array yields a
+// candidate entity type (e.g. "booking" / "bookings" -> Booking). Per node the
+// best-documented source wins (get > list > create > update); names that
+// collide across the package are disambiguated with namespace qualifiers
+// (CreditTransaction, ShopCategory). Unresolvable clashes fail the build.
+// ---------------------------------------------------------------------------
+
+interface EntityCandidate {
+  node: TreeNode;
+  root: string;
+  namespace: string[];
+  base: string;
+  /** Type expression the alias points at (already `[number]`-indexed for arrays). */
+  expr: string;
+  priority: number;
+  opId: string;
+}
+
+interface Entity {
+  name: string;
+  expr: string;
+  root: string;
+  namespace: string[];
+  candidateNames: string[];
+  nameIndex: number;
+}
+
+function methodPriority(name: string): number {
+  if (name === "get") return 0;
+  if (name.startsWith("list") || name.startsWith("iterate")) return 1;
+  if (name.startsWith("get")) return 2;
+  if (name.startsWith("create")) return 3;
+  if (name.startsWith("update")) return 4;
+  return 5;
+}
+
+// Keys and namespace segments are already camelCase; pascalCase() would
+// flatten their humps ("creditNotes" -> "Creditnotes"), so just upper-first.
+function upperFirst(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function entityBase(key: string): string {
+  return upperFirst(singular(key));
+}
+
+/** Progressively qualified names: Category -> BenefitCategory -> ... */
+function candidateNames(namespace: string[], base: string): string[] {
+  const names = [base];
+  for (let i = namespace.length - 1; i >= 0; i -= 1) {
+    const qualifier = upperFirst(singular(namespace[i]));
+    const previous = names[names.length - 1];
+    if (qualifier === base || previous.startsWith(qualifier)) continue;
+    names.push(qualifier + previous);
+  }
+  return names;
+}
+
+function resolveEntities(candidates: EntityCandidate[]): Map<TreeNode, Map<string, Entity>> {
+  // One entity per (node, base): the highest-priority candidate defines the alias.
+  const byNode = new Map<TreeNode, Map<string, Entity>>();
+  for (const candidate of [...candidates].sort((a, b) => a.priority - b.priority || a.opId.localeCompare(b.opId))) {
+    let entities = byNode.get(candidate.node);
+    if (!entities) {
+      entities = new Map();
+      byNode.set(candidate.node, entities);
+    }
+    if (!entities.has(candidate.base)) {
+      const names = candidateNames(candidate.namespace, candidate.base);
+      entities.set(candidate.base, {
+        name: names[0],
+        expr: candidate.expr,
+        root: candidate.root,
+        namespace: candidate.namespace,
+        candidateNames: names,
+        nameIndex: 0,
+      });
+    }
+  }
+
+  // Globally unique names: advance colliding entities through their qualifiers.
+  const all = [...byNode.values()].flatMap((entities) => [...entities.values()]);
+  for (let round = 0; round < 4; round += 1) {
+    const groups = new Map<string, Entity[]>();
+    for (const entity of all) {
+      const group = groups.get(entity.name) ?? [];
+      group.push(entity);
+      groups.set(entity.name, group);
+    }
+    const clashes = [...groups.values()].filter((group) => group.length > 1);
+    if (clashes.length === 0) return byNode;
+    for (const group of clashes) {
+      for (const entity of group) {
+        if (entity.nameIndex + 1 >= entity.candidateNames.length) {
+          console.error(`Cannot disambiguate entity type ${entity.name} (${entity.namespace.join(".")})`);
+          process.exit(1);
+        }
+        entity.nameIndex += 1;
+        entity.name = entity.candidateNames[entity.nameIndex];
+      }
+    }
+  }
+  console.error("Entity name resolution did not converge.");
+  process.exit(1);
+}
+
+function emitMethod(
+  analyzed: AnalyzedOp,
+  name: string,
+  entities: Map<string, Entity> | undefined,
+): EmittedMethod[] {
   const { op, method, path, pathParams, queryParams, requiredNetworkHeader, body, pagination, unwrapKey } = analyzed;
   // Runtime value comes from client-level config; openapi-fetch drops undefined header values.
   const headerPart = `header: { "spacebring-network-id": defaults.networkId as string }`;
@@ -308,6 +441,16 @@ function emitMethod(analyzed: AnalyzedOp, name: string): EmittedMethod[] {
   const request = requestParts.length > 0 ? `{ ${requestParts.join(", ")} }` : "{}";
 
   const doc = opDoc(op);
+  const responseType = successJsonType(op);
+  const unwrapAlias = unwrapKey ? entities?.get(entityBase(unwrapKey))?.name : undefined;
+  const rawUnwrapType = unwrapKey ? `NonNullable<${responseType}["${unwrapKey}"]>` : responseType;
+  const returnType = unwrapKey
+    ? unwrapAlias
+      ? analyzed.unwrapIsArray
+        ? `${unwrapAlias}[]`
+        : unwrapAlias
+      : rawUnwrapType
+    : responseType;
   const call = `await client.${method.toUpperCase()}("${path}", ${request})`;
   const methods: EmittedMethod[] = [
     {
@@ -316,7 +459,7 @@ function emitMethod(analyzed: AnalyzedOp, name: string): EmittedMethod[] {
       usesUnwrapProp: unwrapKey !== undefined,
       code:
         doc +
-        `async ${name}(${args.join(", ")}) {\n` +
+        `async ${name}(${args.join(", ")}): Promise<${returnType}> {\n` +
         `  return ${unwrapKey ? `unwrapProp(${call}, "${unwrapKey}")` : `unwrap(${call})`};\n` +
         `},`,
     },
@@ -334,13 +477,16 @@ function emitMethod(analyzed: AnalyzedOp, name: string): EmittedMethod[] {
     if (pathParams.length > 0) iterateParamsParts.push(`path: { ${pathParams.map((p) => p.name).join(", ")} }`);
     iterateParamsParts.push("query: { ...query, nextPageToken }");
     const iterateDoc = opDoc(op, " — iterates every item across all pages.");
+    const itemType =
+      entities?.get(entityBase(pagination.itemsKey))?.name ??
+      `NonNullable<${responseType}["${pagination.itemsKey}"]>[number]`;
     methods.push({
       name: iterateName,
       usesPaginate: true,
       usesUnwrapProp: false,
       code:
         iterateDoc +
-        `${iterateName}(${iterateArgs.join(", ")}) {\n` +
+        `${iterateName}(${iterateArgs.join(", ")}): AsyncGenerator<${itemType}, void, undefined> {\n` +
         `  return paginate(\n` +
         `    async (nextPageToken: string | undefined) =>\n` +
         `      unwrap(await client.${method.toUpperCase()}("${path}", { params: { ${iterateParamsParts.join(", ")} } })),\n` +
@@ -382,7 +528,17 @@ function nodeUses(node: TreeNode, flag: "usesPaginate" | "usesUnwrapProp"): bool
 // Main
 // ---------------------------------------------------------------------------
 
+// Pass 1: analyze every operation and collect entity candidates.
+interface OpRecord {
+  analyzed: AnalyzedOp;
+  name: string;
+  node: TreeNode;
+}
+
 let operationCount = 0;
+const records: OpRecord[] = [];
+const entityCandidates: EntityCandidate[] = [];
+
 for (const path of specPaths) {
   for (const method of HTTP_METHODS) {
     const op = spec.paths[path][method];
@@ -390,14 +546,47 @@ for (const path of specPaths) {
     operationCount += 1;
     const analyzed = analyze(path, method, op);
     const node = nodeFor(analyzed.namespace);
-    for (const emitted of emitMethod(analyzed, methodName(analyzed))) {
-      const clash = node.methods.find((m) => m.name === emitted.name);
-      if (clash) {
-        console.error(`Name clash in ${analyzed.namespace.join(".")}: ${emitted.name} (${op.operationId})`);
-        process.exit(1);
-      }
-      node.methods.push(emitted);
+    const name = methodName(analyzed);
+    records.push({ analyzed, name, node });
+
+    const responseType = successJsonType(op);
+    const root = analyzed.namespace[0];
+    if (analyzed.unwrapKey) {
+      entityCandidates.push({
+        node,
+        root,
+        namespace: analyzed.namespace,
+        base: entityBase(analyzed.unwrapKey),
+        expr: `NonNullable<${responseType}["${analyzed.unwrapKey}"]>${analyzed.unwrapIsArray ? "[number]" : ""}`,
+        priority: methodPriority(name),
+        opId: op.operationId,
+      });
     }
+    if (analyzed.pagination) {
+      entityCandidates.push({
+        node,
+        root,
+        namespace: analyzed.namespace,
+        base: entityBase(analyzed.pagination.itemsKey),
+        expr: `NonNullable<${responseType}["${analyzed.pagination.itemsKey}"]>[number]`,
+        priority: methodPriority(name),
+        opId: op.operationId,
+      });
+    }
+  }
+}
+
+const entitiesByNode = resolveEntities(entityCandidates);
+
+// Pass 2: emit methods with entity aliases resolved.
+for (const { analyzed, name, node } of records) {
+  for (const emitted of emitMethod(analyzed, name, entitiesByNode.get(node))) {
+    const clash = node.methods.find((m) => m.name === emitted.name);
+    if (clash) {
+      console.error(`Name clash in ${analyzed.namespace.join(".")}: ${emitted.name} (${analyzed.op.operationId})`);
+      process.exit(1);
+    }
+    node.methods.push(emitted);
   }
 }
 
@@ -405,6 +594,14 @@ rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
 const HEADER = `// AUTO-GENERATED by codegen/generate-facade.ts — DO NOT EDIT.\n// Regenerate with \`npm run generate:facade\`.\n`;
+
+const allEntities = [...entitiesByNode.values()].flatMap((entities) => [...entities.values()]);
+const entitiesByRoot = new Map<string, Entity[]>();
+for (const entity of allEntities) {
+  const group = entitiesByRoot.get(entity.root) ?? [];
+  group.push(entity);
+  entitiesByRoot.set(entity.root, group);
+}
 
 const rootNames = [...roots.keys()].sort();
 for (const rootName of rootNames) {
@@ -416,11 +613,20 @@ for (const rootName of rootNames) {
     ...(nodeUses(node, "usesUnwrapProp") ? ["unwrapProp"] : []),
     "type SpacebringDefaults",
   ].join(", ");
+  const entityDefs = (entitiesByRoot.get(rootName) ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(
+      (entity) =>
+        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` +
+        `export type ${entity.name} = ${entity.expr};\n`,
+    )
+    .join("\n");
   const source =
     HEADER +
     `import type { Client } from "openapi-fetch";\n` +
     `import { ${coreImports} } from "../../core.js";\n` +
     `import type { operations, paths } from "../schema.js";\n\n` +
+    (entityDefs ? entityDefs + "\n" : "") +
     `export function ${factory}(client: Client<paths>, defaults: SpacebringDefaults) {\n` +
     `  return {\n` +
     renderNode(node, "    ") +
@@ -440,6 +646,22 @@ const indexSource =
   `  };\n}\n\n` +
   `export type SpacebringResources = ReturnType<typeof createResources>;\n`;
 writeFileSync(join(OUT_DIR, "index.ts"), indexSource);
+
+// Named entity aliases re-exported for consumers (import type { Booking } ...).
+const entitiesSource =
+  HEADER +
+  rootNames
+    .filter((name) => (entitiesByRoot.get(name) ?? []).length > 0)
+    .map((name) => {
+      const names = entitiesByRoot
+        .get(name)!
+        .map((entity) => entity.name)
+        .sort()
+        .join(", ");
+      return `export type { ${names} } from "./resources/${name}.js";\n`;
+    })
+    .join("");
+writeFileSync(join(ROOT, "src", "generated", "entities.ts"), entitiesSource);
 
 // Keep the coverage numbers in the README in sync with the spec.
 const README_PATH = join(ROOT, "README.md");

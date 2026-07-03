@@ -31,6 +31,7 @@ describe("naming", () => {
     expect(singular("likes")).toBe("like");
     expect(singular("address")).toBe("address"); // -ss guard
     expect(singular("categories")).toBe("category"); // -ies plurals
+    expect(singular("passes")).toBe("pass"); // -sses plurals
     expect(singular("upcoming")).toBe("upcoming");
   });
 
