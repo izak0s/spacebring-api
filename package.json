@@ -4,6 +4,14 @@
   "description": "Community-maintained TypeScript client (SDK) for the Spacebring (formerly andcards) coworking space management API",
   "license": "MIT",
   "author": "izak0s",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/izak0s/spacebring-api.git"
+  },
+  "homepage": "https://github.com/izak0s/spacebring-api#readme",
+  "bugs": {
+    "url": "https://github.com/izak0s/spacebring-api/issues"
+  },
   "publishConfig": {
     "access": "public"
   },

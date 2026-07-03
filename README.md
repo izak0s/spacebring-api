@@ -1,5 +1,6 @@
 # spacebring-api
 
+[![CI](https://github.com/izak0s/spacebring-api/actions/workflows/ci.yml/badge.svg)](https://github.com/izak0s/spacebring-api/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/%40izak0s%2Fspacebring-api)](https://www.npmjs.com/package/@izak0s/spacebring-api)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
