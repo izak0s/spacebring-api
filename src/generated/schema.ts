@@ -12,14 +12,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Retrieve alt currencies
-         * @description Retrieve all alt currencies in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * Retrieve alternative currencies
+         * @description Retrieve all alternative currencies in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["getAltCurrencies"];
         put?: never;
         /**
-         * Create an alt currency
-         * @description Create an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         * Create an alternative currency
+         * @description Create an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         post: operations["createAltCurrency"];
         delete?: never;
@@ -39,15 +39,15 @@ export interface paths {
         put?: never;
         post?: never;
         /**
-         * Delete an alt currency
-         * @description Delete an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         * Delete an alternative currency
+         * @description Delete an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         delete: operations["deleteAltCurrency"];
         options?: never;
         head?: never;
         /**
-         * Update an alt currency
-         * @description Update an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         * Update an alternative currency
+         * @description Update an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         patch: operations["updateAltCurrency"];
         trace?: never;
@@ -2266,7 +2266,7 @@ export interface components {
              * @description Exchange rate provider when auto-update is enabled.
              * @enum {string}
              */
-            provider?: "fastForex" | "nbu";
+            provider?: "fastForex" | "nbu" | "bcra";
         };
         /** @description Pre-built query string for the next page of results. Contains all active filter parameters combined with the next page token, ready to append to the endpoint URL. */
         searchQueryNext: string;
@@ -10231,7 +10231,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu";
+                        provider: "fastForex" | "nbu" | "bcra";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -10248,7 +10248,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu";
+                        provider: "fastForex" | "nbu" | "bcra";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -13751,7 +13751,7 @@ export interface operations {
                 "spacebring-network-id"?: string;
             };
             path: {
-                /** @description The id of the alt currency */
+                /** @description The id of the alternative currency */
                 id: string;
             };
             cookie?: never;
@@ -13784,7 +13784,7 @@ export interface operations {
                 "spacebring-network-id"?: string;
             };
             path: {
-                /** @description The id of the alt currency */
+                /** @description The id of the alternative currency */
                 id: string;
             };
             cookie?: never;

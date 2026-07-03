@@ -7,17 +7,17 @@ import type { operations, paths } from "../schema.js";
 export function createAltcurrencies(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
-     * Retrieve alt currencies
+     * Retrieve alternative currencies
      *
-     * Retrieve all alt currencies in the location.
+     * Retrieve all alternative currencies in the location.
      */
     async list(query: operations["getAltCurrencies"]["parameters"]["query"]) {
       return unwrap(await client.GET("/alt_currencies/v1", { params: { query } }));
     },
     /**
-     * Retrieve alt currencies — iterates every item across all pages.
+     * Retrieve alternative currencies — iterates every item across all pages.
      *
-     * Retrieve all alt currencies in the location.
+     * Retrieve all alternative currencies in the location.
      */
     iterate(query: Omit<NonNullable<operations["getAltCurrencies"]["parameters"]["query"]>, "nextPageToken">) {
       return paginate(
@@ -26,15 +26,15 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
         "altCurrencies",
       );
     },
-    /** Create an alt currency */
+    /** Create an alternative currency */
     async create(body: NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"]) {
       return unwrapProp(await client.POST("/alt_currencies/v1", { body }), "altCurrency");
     },
-    /** Update an alt currency */
+    /** Update an alternative currency */
     async update(id: string, body: NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"]) {
       return unwrap(await client.PATCH("/alt_currencies/v1/{id}", { params: { path: { id } }, body }));
     },
-    /** Delete an alt currency */
+    /** Delete an alternative currency */
     async delete(id: string) {
       return unwrap(await client.DELETE("/alt_currencies/v1/{id}", { params: { path: { id } } }));
     },
