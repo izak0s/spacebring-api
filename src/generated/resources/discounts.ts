@@ -4,6 +4,15 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Coupon entity as returned by the Spacebring API. */
+export type Coupon = NonNullable<operations["getCoupon"]["responses"][200]["content"]["application/json"]["coupon"]>;
+
+/** A Promocode entity as returned by the Spacebring API. */
+export type Promocode = NonNullable<operations["getPromocode"]["responses"][200]["content"]["application/json"]["promocode"]>;
+
+/** A Redemption entity as returned by the Spacebring API. */
+export type Redemption = NonNullable<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]["redemptions"]>[number];
+
 export function createDiscounts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     coupons: {
@@ -12,7 +21,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all coupons in the location.
        */
-      async list(query: operations["getCoupons"]["parameters"]["query"]) {
+      async list(query: operations["getCoupons"]["parameters"]["query"]): Promise<operations["getCoupons"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/discounts/coupons/v1", { params: { query } }));
       },
       /**
@@ -20,7 +29,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all coupons in the location.
        */
-      iterate(query: Omit<NonNullable<operations["getCoupons"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getCoupons"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Coupon, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/discounts/coupons/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -28,19 +37,19 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
         );
       },
       /** Get a coupon */
-      async get(id: string) {
+      async get(id: string): Promise<Coupon> {
         return unwrapProp(await client.GET("/discounts/coupons/v1/{id}", { params: { path: { id } } }), "coupon");
       },
       /** Create a coupon */
-      async create(body: NonNullable<operations["createCoupon"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createCoupon"]["requestBody"]>["content"]["application/json"]): Promise<Coupon> {
         return unwrapProp(await client.POST("/discounts/coupons/v1", { body }), "coupon");
       },
       /** Update a coupon */
-      async update(id: string, body: NonNullable<operations["updateCoupon"]["requestBody"]>["content"]["application/json"]) {
+      async update(id: string, body: NonNullable<operations["updateCoupon"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
         return unwrap(await client.PATCH("/discounts/coupons/v1/{id}", { params: { path: { id } }, body }));
       },
       /** Delete a coupon */
-      async delete(id: string) {
+      async delete(id: string): Promise<undefined> {
         return unwrap(await client.DELETE("/discounts/coupons/v1/{id}", { params: { path: { id } } }));
       },
     },
@@ -50,19 +59,19 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all promocodes.
        */
-      async list(query?: operations["getPromocodes"]["parameters"]["query"]) {
+      async list(query?: operations["getPromocodes"]["parameters"]["query"]): Promise<Promocode[]> {
         return unwrapProp(await client.GET("/discounts/promocodes/v1", { params: { query } }), "promocodes");
       },
       /** Get a promocode */
-      async get(id: string) {
+      async get(id: string): Promise<Promocode> {
         return unwrapProp(await client.GET("/discounts/promocodes/v1/{id}", { params: { path: { id } } }), "promocode");
       },
       /** Create a promocode */
-      async create(body: NonNullable<operations["createPromocode"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createPromocode"]["requestBody"]>["content"]["application/json"]): Promise<Promocode> {
         return unwrapProp(await client.POST("/discounts/promocodes/v1", { body }), "promocode");
       },
       /** Archive a promocode */
-      async archive(id: string) {
+      async archive(id: string): Promise<Promocode> {
         return unwrapProp(await client.PUT("/discounts/promocodes/v1/{id}/archive", { params: { path: { id } } }), "promocode");
       },
     },
@@ -72,7 +81,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
        */
-      async list(query?: operations["getDiscountRedemptions"]["parameters"]["query"]) {
+      async list(query?: operations["getDiscountRedemptions"]["parameters"]["query"]): Promise<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/discounts/redemptions/v1", { params: { query } }));
       },
       /**
@@ -80,7 +89,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
        */
-      iterate(query?: Omit<NonNullable<operations["getDiscountRedemptions"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getDiscountRedemptions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Redemption, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/discounts/redemptions/v1", { params: { query: { ...query, nextPageToken } } })),

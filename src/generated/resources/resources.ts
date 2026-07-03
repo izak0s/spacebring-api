@@ -4,6 +4,12 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Booking entity as returned by the Spacebring API. */
+export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
+
+/** A Resource entity as returned by the Spacebring API. */
+export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
+
 export function createResources(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +17,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    async list(query: operations["getResources"]["parameters"]["query"]) {
+    async list(query: operations["getResources"]["parameters"]["query"]): Promise<operations["getResources"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/resources/v1", { params: { query } }));
     },
     /**
@@ -19,7 +25,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    iterate(query: Omit<NonNullable<operations["getResources"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query: Omit<NonNullable<operations["getResources"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Resource, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/resources/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -31,7 +37,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Get a certain resource.
      */
-    async get(id: string) {
+    async get(id: string): Promise<Resource> {
       return unwrapProp(await client.GET("/resources/v1/{id}", { params: { path: { id } } }), "resource");
     },
     /**
@@ -39,7 +45,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Create a new resource in a location. The request body must match the schema exactly—unknown properties are rejected.
      */
-    async create(body: NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]): Promise<Resource> {
       return unwrapProp(await client.POST("/resources/v1", { body }), "resource");
     },
     /**
@@ -47,7 +53,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Patch a certain resource.
      */
-    async update(id: string, body: NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]) {
+    async update(id: string, body: NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body }));
     },
     bookings: {
@@ -56,7 +62,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all bookings of resources.
        */
-      async list(query?: operations["getBookings"]["parameters"]["query"]) {
+      async list(query?: operations["getBookings"]["parameters"]["query"]): Promise<operations["getBookings"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/resources/bookings/v1", { params: { query } }));
       },
       /**
@@ -64,7 +70,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all bookings of resources.
        */
-      iterate(query?: Omit<NonNullable<operations["getBookings"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getBookings"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Booking, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/resources/bookings/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -72,15 +78,15 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
         );
       },
       /** Get a booking */
-      async get(id: string) {
+      async get(id: string): Promise<Booking> {
         return unwrapProp(await client.GET("/resources/bookings/v1/{id}", { params: { path: { id } } }), "booking");
       },
       /** Create a booking */
-      async create(body: NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]): Promise<Booking> {
         return unwrapProp(await client.POST("/resources/bookings/v1", { body }), "booking");
       },
       /** Delete a booking */
-      async delete(id: string) {
+      async delete(id: string): Promise<undefined> {
         return unwrap(await client.DELETE("/resources/bookings/v1/{id}", { params: { path: { id } } }));
       },
     },

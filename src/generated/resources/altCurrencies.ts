@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A AltCurrency entity as returned by the Spacebring API. */
+export type AltCurrency = NonNullable<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]["altCurrencies"]>[number];
+
 export function createAltcurrencies(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +14,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all alternative currencies in the location.
      */
-    async list(query: operations["getAltCurrencies"]["parameters"]["query"]) {
+    async list(query: operations["getAltCurrencies"]["parameters"]["query"]): Promise<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/alt_currencies/v1", { params: { query } }));
     },
     /**
@@ -19,7 +22,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all alternative currencies in the location.
      */
-    iterate(query: Omit<NonNullable<operations["getAltCurrencies"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query: Omit<NonNullable<operations["getAltCurrencies"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<AltCurrency, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/alt_currencies/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -27,15 +30,15 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
       );
     },
     /** Create an alternative currency */
-    async create(body: NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"]): Promise<AltCurrency> {
       return unwrapProp(await client.POST("/alt_currencies/v1", { body }), "altCurrency");
     },
     /** Update an alternative currency */
-    async update(id: string, body: NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"]) {
+    async update(id: string, body: NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
       return unwrap(await client.PATCH("/alt_currencies/v1/{id}", { params: { path: { id } }, body }));
     },
     /** Delete an alternative currency */
-    async delete(id: string) {
+    async delete(id: string): Promise<undefined> {
       return unwrap(await client.DELETE("/alt_currencies/v1/{id}", { params: { path: { id } } }));
     },
   };

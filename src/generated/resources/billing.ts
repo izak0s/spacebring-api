@@ -4,6 +4,15 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A CreditNote entity as returned by the Spacebring API. */
+export type CreditNote = NonNullable<operations["getCreditNote"]["responses"][200]["content"]["application/json"]["creditNote"]>;
+
+/** A Invoice entity as returned by the Spacebring API. */
+export type Invoice = NonNullable<operations["getInvoice"]["responses"][200]["content"]["application/json"]["invoice"]>;
+
+/** A InvoiceItem entity as returned by the Spacebring API. */
+export type InvoiceItem = NonNullable<operations["getInvoiceItem"]["responses"][200]["content"]["application/json"]["invoiceItem"]>;
+
 export function createBilling(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     creditNotes: {
@@ -12,7 +21,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required.
        */
-      async list(query?: operations["getCreditNotes"]["parameters"]["query"]) {
+      async list(query?: operations["getCreditNotes"]["parameters"]["query"]): Promise<operations["getCreditNotes"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/credit_notes/v1", { params: { query } }));
       },
       /**
@@ -20,7 +29,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required.
        */
-      iterate(query?: Omit<NonNullable<operations["getCreditNotes"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getCreditNotes"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<CreditNote, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/billing/credit_notes/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -32,7 +41,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve a specific credit note.
        */
-      async get(id: string) {
+      async get(id: string): Promise<CreditNote> {
         return unwrapProp(await client.GET("/billing/credit_notes/v1/{id}", { params: { path: { id } } }), "creditNote");
       },
       /**
@@ -40,11 +49,11 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create a credit note for an invoice.
        */
-      async create(body: NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"]): Promise<CreditNote> {
         return unwrapProp(await client.POST("/billing/credit_notes/v1", { body }), "creditNote");
       },
       /** Update a credit note */
-      async update(id: string, body: NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"]) {
+      async update(id: string, body: NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/credit_notes/v1/{id}", { params: { path: { id } }, body }));
       },
       /**
@@ -52,7 +61,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Preview a credit note for an invoice without creating it.
        */
-      async preview(body: NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"]) {
+      async preview(body: NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"]): Promise<CreditNote> {
         return unwrapProp(await client.POST("/billing/credit_notes/v1/preview", { body }), "creditNote");
       },
     },
@@ -62,7 +71,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all invoices based on certain parameters.
        */
-      async list(query?: operations["getInvoices"]["parameters"]["query"]) {
+      async list(query?: operations["getInvoices"]["parameters"]["query"]): Promise<operations["getInvoices"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/invoices/v1", { params: { query } }));
       },
       /**
@@ -70,7 +79,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all invoices based on certain parameters.
        */
-      iterate(query?: Omit<NonNullable<operations["getInvoices"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getInvoices"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Invoice, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/billing/invoices/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -82,7 +91,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve a certain invoice.
        */
-      async get(invoiceId: string) {
+      async get(invoiceId: string): Promise<Invoice> {
         return unwrapProp(await client.GET("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } } }), "invoice");
       },
       /**
@@ -90,7 +99,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create an invoice for a member or a company.
        */
-      async create(body: NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"]): Promise<Invoice> {
         return unwrapProp(await client.POST("/billing/invoices/v1", { body }), "invoice");
       },
       /**
@@ -98,7 +107,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Update a draft invoice.
        */
-      async update(invoiceId: string, body: NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"]) {
+      async update(invoiceId: string, body: NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, body }));
       },
       /**
@@ -106,7 +115,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Delete a draft invoice.
        */
-      async delete(invoiceId: string) {
+      async delete(invoiceId: string): Promise<undefined> {
         return unwrap(await client.DELETE("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } } }));
       },
       /**
@@ -114,7 +123,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Cancel a payment on an invoice.
        */
-      async cancelPayment(invoiceId: string) {
+      async cancelPayment(invoiceId: string): Promise<undefined> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/cancel_payment", { params: { path: { invoiceId } } }));
       },
       /**
@@ -122,7 +131,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Duplicate an invoice, creating a new draft invoice with the same items.
        */
-      async duplicate(invoiceId: string) {
+      async duplicate(invoiceId: string): Promise<Invoice> {
         return unwrapProp(await client.POST("/billing/invoices/v1/{invoiceId}/duplicate", { params: { path: { invoiceId } } }), "invoice");
       },
       /**
@@ -130,7 +139,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * List all items for a specific invoice.
        */
-      async getItems(invoiceId: string) {
+      async getItems(invoiceId: string): Promise<operations["getInvoiceItems"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/invoices/v1/{invoiceId}/items", { params: { path: { invoiceId } } }));
       },
       /**
@@ -138,7 +147,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve the upcoming invoice preview for a membership or subscription.
        */
-      async getUpcoming(query?: operations["getUpcomingInvoice"]["parameters"]["query"]) {
+      async getUpcoming(query?: operations["getUpcomingInvoice"]["parameters"]["query"]): Promise<operations["getUpcomingInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/invoices/v1/upcoming", { params: { query } }));
       },
       /**
@@ -146,7 +155,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Issue (finalize) a draft invoice, making it ready for payment.
        */
-      async issue(invoiceId: string, body?: NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"]) {
+      async issue(invoiceId: string, body?: NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"]): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/issue", { params: { path: { invoiceId } }, body }));
       },
       /**
@@ -154,7 +163,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Mark an invoice as paid by `External Payment`.
        */
-      async pay(invoiceId: string, body: NonNullable<operations["payInvoice"]["requestBody"]>["content"]["application/json"]) {
+      async pay(invoiceId: string, body: NonNullable<operations["payInvoice"]["requestBody"]>["content"]["application/json"]): Promise<operations["payInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/pay", { params: { path: { invoiceId } }, body }));
       },
       /**
@@ -162,7 +171,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Resend an issued invoice notification to the customer.
        */
-      async resend(invoiceId: string) {
+      async resend(invoiceId: string): Promise<undefined> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/resend", { params: { path: { invoiceId } } }));
       },
       /**
@@ -170,7 +179,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Void an issued invoice.
        */
-      async void(invoiceId: string) {
+      async void(invoiceId: string): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}/void", { params: { path: { invoiceId } } }));
       },
       items: {
@@ -179,7 +188,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Retrieve a specific invoice item.
          */
-        async get(id: string) {
+        async get(id: string): Promise<InvoiceItem> {
           return unwrapProp(await client.GET("/billing/invoices/v1/items/{id}", { params: { path: { id } } }), "invoiceItem");
         },
         /**
@@ -187,7 +196,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Create an item in an invoice.
          */
-        async create(body: NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"]) {
+        async create(body: NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"]): Promise<InvoiceItem> {
           return unwrapProp(await client.POST("/billing/invoices/v1/items", { body }), "invoiceItem");
         },
         /**
@@ -195,7 +204,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Update an invoice item on a draft invoice.
          */
-        async update(id: string, body: NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"]) {
+        async update(id: string, body: NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
           return unwrap(await client.PATCH("/billing/invoices/v1/items/{id}", { params: { path: { id } }, body }));
         },
         /**
@@ -203,11 +212,11 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Delete an invoice item from a draft invoice.
          */
-        async delete(id: string) {
+        async delete(id: string): Promise<undefined> {
           return unwrap(await client.DELETE("/billing/invoices/v1/items/{id}", { params: { path: { id } } }));
         },
         /** List upcoming invoice items */
-        async getUpcoming(query?: operations["getUpcomingInvoiceItems"]["parameters"]["query"]) {
+        async getUpcoming(query?: operations["getUpcomingInvoiceItems"]["parameters"]["query"]): Promise<InvoiceItem[]> {
           return unwrapProp(await client.GET("/billing/invoices/v1/items/upcoming", { params: { query } }), "invoiceItems");
         },
       },

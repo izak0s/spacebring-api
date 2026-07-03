@@ -4,6 +4,12 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Activity entity as returned by the Spacebring API. */
+export type Activity = NonNullable<operations["createSupportTicketComment"]["responses"][201]["content"]["application/json"]["activity"]>;
+
+/** A SupportTicket entity as returned by the Spacebring API. */
+export type SupportTicket = NonNullable<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]["tickets"]>[number];
+
 export function createSupport(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     tickets: {
@@ -12,7 +18,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all support tickets.
        */
-      async list(query: operations["getSupportTickets"]["parameters"]["query"]) {
+      async list(query: operations["getSupportTickets"]["parameters"]["query"]): Promise<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/support/tickets/v1", { params: { query } }));
       },
       /**
@@ -20,7 +26,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all support tickets.
        */
-      iterate(query: Omit<NonNullable<operations["getSupportTickets"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getSupportTickets"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<SupportTicket, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/support/tickets/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -32,7 +38,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve a support ticket.
        */
-      async get(id: string) {
+      async get(id: string): Promise<operations["getSupportTicket"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/support/tickets/v1/{id}", { params: { path: { id } } }));
       },
       /**
@@ -40,7 +46,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create a support ticket.
        */
-      async create(body: NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]): Promise<operations["createSupportTicket"]["responses"][201]["content"]["application/json"]> {
         return unwrap(await client.POST("/support/tickets/v1", { body }));
       },
       /**
@@ -48,7 +54,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Update support ticket assignee.
        */
-      async updateAssignee(id: string, body: NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]) {
+      async updateAssignee(id: string, body: NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]): Promise<operations["updateSupportTicketAssignee"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.PUT("/support/tickets/v1/{id}/assignee", { params: { path: { id } }, body }));
       },
       /**
@@ -56,7 +62,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Update support ticket status.
        */
-      async updateStatus(id: string, body: NonNullable<operations["updateSupportTicketStatus"]["requestBody"]>["content"]["application/json"]) {
+      async updateStatus(id: string, body: NonNullable<operations["updateSupportTicketStatus"]["requestBody"]>["content"]["application/json"]): Promise<operations["updateSupportTicketStatus"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.PUT("/support/tickets/v1/{id}/status", { params: { path: { id } }, body }));
       },
       /**
@@ -64,7 +70,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Update a support ticket type.
        */
-      async updateType(id: string, body: NonNullable<operations["updateSupportTicketType"]["requestBody"]>["content"]["application/json"]) {
+      async updateType(id: string, body: NonNullable<operations["updateSupportTicketType"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
         return unwrap(await client.PATCH("/support/tickets/v1/{id}/type", { params: { path: { id } }, body }));
       },
       comment: {
@@ -73,7 +79,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
          *
          * Create a support ticket comment.
          */
-        async create(body: NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]) {
+        async create(body: NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]): Promise<Activity> {
           return unwrapProp(await client.POST("/support/tickets/v1/comment", { body }), "activity");
         },
         /**
@@ -81,7 +87,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
          *
          * Delete a support ticket comment.
          */
-        async delete(id: string) {
+        async delete(id: string): Promise<undefined> {
           return unwrap(await client.DELETE("/support/tickets/v1/comment/{id}", { params: { path: { id } } }));
         },
       },

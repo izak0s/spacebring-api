@@ -4,6 +4,18 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Balance entity as returned by the Spacebring API. */
+export type Balance = NonNullable<operations["getCreditsBalance"]["responses"][200]["content"]["application/json"]["balances"]>[number];
+
+/** A CreditTransaction entity as returned by the Spacebring API. */
+export type CreditTransaction = NonNullable<operations["getCreditsTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+
+/** A DayPassTransaction entity as returned by the Spacebring API. */
+export type DayPassTransaction = NonNullable<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+
+/** A MoneyTransaction entity as returned by the Spacebring API. */
+export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
+
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     balances: {
@@ -12,11 +24,11 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits balance.
        */
-      async getCredits(id: string) {
+      async getCredits(id: string): Promise<Balance[]> {
         return unwrapProp(await client.GET("/transactions/v1/balances/{id}/credits", { params: { path: { id } } }), "balances");
       },
       /** Retrieve day passes balance */
-      async getDayPasses(id: string) {
+      async getDayPasses(id: string): Promise<Balance[]> {
         return unwrapProp(await client.GET("/transactions/v1/balances/{id}/day_passes", { params: { path: { id } } }), "balances");
       },
     },
@@ -26,7 +38,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits transactions.
        */
-      async list(query?: operations["getCreditsTransactions"]["parameters"]["query"]) {
+      async list(query?: operations["getCreditsTransactions"]["parameters"]["query"]): Promise<operations["getCreditsTransactions"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/transactions/credits/v1", { params: { query } }));
       },
       /**
@@ -34,7 +46,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits transactions.
        */
-      iterate(query?: Omit<NonNullable<operations["getCreditsTransactions"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getCreditsTransactions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<CreditTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/credits/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -46,7 +58,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a credits transaction.
        */
-      async create(body: NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"]): Promise<CreditTransaction> {
         return unwrapProp(await client.POST("/transactions/credits/v1", { body }), "transaction");
       },
     },
@@ -56,7 +68,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve day passes transactions.
        */
-      async list(query?: operations["getDayPassesTransactions"]["parameters"]["query"]) {
+      async list(query?: operations["getDayPassesTransactions"]["parameters"]["query"]): Promise<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/transactions/day_passes/v1", { params: { query } }));
       },
       /**
@@ -64,7 +76,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve day passes transactions.
        */
-      iterate(query?: Omit<NonNullable<operations["getDayPassesTransactions"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getDayPassesTransactions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<DayPassTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/day_passes/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -76,17 +88,17 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a day passes transaction.
        */
-      async create(body: NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"]): Promise<DayPassTransaction> {
         return unwrapProp(await client.POST("/transactions/day_passes/v1", { body }), "transaction");
       },
     },
     money: {
       /** Retrieve money transactions */
-      async list(query: operations["getMoneyTransactions"]["parameters"]["query"]) {
+      async list(query: operations["getMoneyTransactions"]["parameters"]["query"]): Promise<operations["getMoneyTransactions"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/transactions/money/v1", { params: { query } }));
       },
       /** Retrieve money transactions — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getMoneyTransactions"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getMoneyTransactions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<MoneyTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/money/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -94,7 +106,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
         );
       },
       /** Retrieve a money transaction */
-      async get(id: string) {
+      async get(id: string): Promise<MoneyTransaction> {
         return unwrapProp(await client.GET("/transactions/money/v1/{id}", { params: { path: { id } } }), "transaction");
       },
     },

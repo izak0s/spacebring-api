@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Network entity as returned by the Spacebring API. */
+export type Network = NonNullable<operations["getNetworks"]["responses"][200]["content"]["application/json"]["networks"]>[number];
+
 export function createNetworks(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +14,7 @@ export function createNetworks(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all networks you are in.
      */
-    async list() {
+    async list(): Promise<Network[]> {
       return unwrapProp(await client.GET("/networks/v1", {}), "networks");
     },
   };

@@ -4,6 +4,12 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Company entity as returned by the Spacebring API. */
+export type Company = NonNullable<operations["getCompany"]["responses"][200]["content"]["application/json"]["company"]>;
+
+/** A Membership entity as returned by the Spacebring API. */
+export type Membership = NonNullable<operations["getMembership"]["responses"][200]["content"]["application/json"]["membership"]>;
+
 export function createCommunity(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     companies: {
@@ -12,7 +18,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all companies.
        */
-      async list(query: operations["getCompanies"]["parameters"]["query"]) {
+      async list(query: operations["getCompanies"]["parameters"]["query"]): Promise<operations["getCompanies"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/community/companies/v1", { params: { query } }));
       },
       /**
@@ -20,7 +26,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all companies.
        */
-      iterate(query: Omit<NonNullable<operations["getCompanies"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getCompanies"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Company, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/companies/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -32,11 +38,11 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve a certain company.
        */
-      async get(id: string) {
+      async get(id: string): Promise<Company> {
         return unwrapProp(await client.GET("/community/companies/v1/{id}", { params: { path: { id } } }), "company");
       },
       /** Create a company */
-      async create(body: NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"]): Promise<Company> {
         return unwrapProp(await client.POST("/community/companies/v1", { body }), "company");
       },
       /**
@@ -44,7 +50,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Update a certain company.
        */
-      async update(id: string, body: NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"]) {
+      async update(id: string, body: NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"]): Promise<Company> {
         return unwrapProp(await client.PUT("/community/companies/v1/{id}", { params: { path: { id } }, body }), "company");
       },
     },
@@ -54,7 +60,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all memberships.
        */
-      async list(query: operations["getMemberships"]["parameters"]["query"]) {
+      async list(query: operations["getMemberships"]["parameters"]["query"]): Promise<operations["getMemberships"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/community/memberships/v1", { params: { query } }));
       },
       /**
@@ -62,7 +68,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all memberships.
        */
-      iterate(query: Omit<NonNullable<operations["getMemberships"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getMemberships"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Membership, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/memberships/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -74,7 +80,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve a certain membership.
        */
-      async get(id: string) {
+      async get(id: string): Promise<Membership> {
         return unwrapProp(await client.GET("/community/memberships/v1/{id}", { params: { path: { id } } }), "membership");
       },
       /**
@@ -82,7 +88,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Create a membership and send an email invitation to join if type is member.
        */
-      async create(body: NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"]): Promise<Membership> {
         return unwrapProp(await client.POST("/community/memberships/v1", { body }), "membership");
       },
       /**
@@ -90,7 +96,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Update a certain membership.
        */
-      async update(id: number, body: NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"]) {
+      async update(id: number, body: NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"]): Promise<Membership> {
         return unwrapProp(await client.PUT("/community/memberships/v1/{id}", { params: { path: { id } }, body }), "membership");
       },
       /**
@@ -98,7 +104,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Delete a certain membership.
        */
-      async delete(id: string) {
+      async delete(id: string): Promise<undefined> {
         return unwrap(await client.DELETE("/community/memberships/v1/{id}", { params: { path: { id } } }));
       },
       /**
@@ -106,7 +112,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all deleted memberships.
        */
-      iterateDeleted(query: Omit<NonNullable<operations["getMembershipsDeleted"]["parameters"]["query"]>, "nextPageToken">) {
+      iterateDeleted(query: Omit<NonNullable<operations["getMembershipsDeleted"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Membership, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/memberships/v1/deleted", { params: { query: { ...query, nextPageToken } } })),
@@ -118,7 +124,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all deleted memberships.
        */
-      async listDeleted(query: operations["getMembershipsDeleted"]["parameters"]["query"]) {
+      async listDeleted(query: operations["getMembershipsDeleted"]["parameters"]["query"]): Promise<operations["getMembershipsDeleted"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/community/memberships/v1/deleted", { params: { query } }));
       },
     },

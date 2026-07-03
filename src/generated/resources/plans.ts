@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Plan entity as returned by the Spacebring API. */
+export type Plan = NonNullable<operations["getPlan"]["responses"][200]["content"]["application/json"]["plan"]>;
+
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +14,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Retrieve all plans.
      */
-    async list(query?: operations["getPlans"]["parameters"]["query"]) {
+    async list(query?: operations["getPlans"]["parameters"]["query"]): Promise<operations["getPlans"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/plans/v1", { params: { query } }));
     },
     /**
@@ -19,7 +22,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Retrieve all plans.
      */
-    iterate(query?: Omit<NonNullable<operations["getPlans"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query?: Omit<NonNullable<operations["getPlans"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Plan, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/plans/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -31,11 +34,11 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Retrieve a certain plan.
      */
-    async get(planId: string) {
+    async get(planId: string): Promise<Plan> {
       return unwrapProp(await client.GET("/plans/v1/{planId}", { params: { path: { planId } } }), "plan");
     },
     /** Create a plan */
-    async create(body: NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]): Promise<Plan> {
       return unwrapProp(await client.POST("/plans/v1", { body }), "plan");
     },
     /**
@@ -43,7 +46,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Update a certain plan.
      */
-    async update(planId: string, body: NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]) {
+    async update(planId: string, body: NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
       return unwrap(await client.PATCH("/plans/v1/{planId}", { params: { path: { planId } }, body }));
     },
     /**
@@ -51,7 +54,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Delete a certain plan.
      */
-    async delete(planId: string) {
+    async delete(planId: string): Promise<undefined> {
       return unwrap(await client.DELETE("/plans/v1/{planId}", { params: { path: { planId } } }));
     },
   };

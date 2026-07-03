@@ -4,6 +4,15 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Order entity as returned by the Spacebring API. */
+export type Order = NonNullable<operations["getOrder"]["responses"][200]["content"]["application/json"]["order"]>;
+
+/** A Product entity as returned by the Spacebring API. */
+export type Product = NonNullable<operations["getProduct"]["responses"][200]["content"]["application/json"]["product"]>;
+
+/** A ShopCategory entity as returned by the Spacebring API. */
+export type ShopCategory = NonNullable<operations["getShopCategory"]["responses"][200]["content"]["application/json"]["category"]>;
+
 export function createShop(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     categories: {
@@ -12,7 +21,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all shop categories in the location.
        */
-      async list(query: operations["getShopCategories"]["parameters"]["query"]) {
+      async list(query: operations["getShopCategories"]["parameters"]["query"]): Promise<ShopCategory[]> {
         return unwrapProp(await client.GET("/shop/categories/v1", { params: { query } }), "categories");
       },
       /**
@@ -20,7 +29,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get a shop category.
        */
-      async get(categoryId: string) {
+      async get(categoryId: string): Promise<ShopCategory> {
         return unwrapProp(await client.GET("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } } }), "category");
       },
       /**
@@ -28,7 +37,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a shop category.
        */
-      async create(body: NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]): Promise<ShopCategory> {
         return unwrapProp(await client.POST("/shop/categories/v1", { body }), "category");
       },
       /**
@@ -36,7 +45,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Update a shop category.
        */
-      async update(categoryId: string, body: NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"]) {
+      async update(categoryId: string, body: NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"]): Promise<ShopCategory> {
         return unwrapProp(await client.PUT("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, body }), "category");
       },
       /**
@@ -44,7 +53,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Delete a shop category.
        */
-      async delete(categoryId: string) {
+      async delete(categoryId: string): Promise<undefined> {
         return unwrap(await client.DELETE("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } } }));
       },
     },
@@ -54,7 +63,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all orders of products from shop.
        */
-      async list(query?: operations["getOrders"]["parameters"]["query"]) {
+      async list(query?: operations["getOrders"]["parameters"]["query"]): Promise<operations["getOrders"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/shop/orders/v1", { params: { query } }));
       },
       /**
@@ -62,7 +71,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all orders of products from shop.
        */
-      iterate(query?: Omit<NonNullable<operations["getOrders"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getOrders"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Order, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/shop/orders/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -74,7 +83,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get a certain order.
        */
-      async get(orderId: string) {
+      async get(orderId: string): Promise<Order> {
         return unwrapProp(await client.GET("/shop/orders/v1/{orderId}", { params: { path: { orderId } } }), "order");
       },
     },
@@ -84,7 +93,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve products from shop.
        */
-      async list(query?: operations["getProducts"]["parameters"]["query"]) {
+      async list(query?: operations["getProducts"]["parameters"]["query"]): Promise<operations["getProducts"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/shop/products/v1", { params: { query } }));
       },
       /**
@@ -92,7 +101,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve products from shop.
        */
-      iterate(query?: Omit<NonNullable<operations["getProducts"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getProducts"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Product, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/shop/products/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -104,7 +113,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get a certain product.
        */
-      async get(productId: string) {
+      async get(productId: string): Promise<Product> {
         return unwrapProp(await client.GET("/shop/products/v1/{productId}", { params: { path: { productId } } }), "product");
       },
       /**
@@ -112,7 +121,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a product in shop.
        */
-      async create(body: NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"]): Promise<Product> {
         return unwrapProp(await client.POST("/shop/products/v1", { body }), "product");
       },
       /**
@@ -120,7 +129,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Update a certain product.
        */
-      async update(productId: string, body: NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"]) {
+      async update(productId: string, body: NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"]): Promise<Product> {
         return unwrapProp(await client.PUT("/shop/products/v1/{productId}", { params: { path: { productId } }, body }), "product");
       },
       /**
@@ -128,7 +137,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Delete a certain product.
        */
-      async delete(productId: string) {
+      async delete(productId: string): Promise<undefined> {
         return unwrap(await client.DELETE("/shop/products/v1/{productId}", { params: { path: { productId } } }));
       },
     },

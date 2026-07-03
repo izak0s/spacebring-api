@@ -7,11 +7,11 @@ import type { operations, paths } from "../schema.js";
 export function createFloors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Get floors */
-    async list(query: operations["getFloors"]["parameters"]["query"]) {
+    async list(query: operations["getFloors"]["parameters"]["query"]): Promise<operations["getFloors"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/floors/v1", { params: { query } }));
     },
     /** Delete a floor */
-    async delete(id: string) {
+    async delete(id: string): Promise<undefined> {
       return unwrap(await client.DELETE("/floors/v1/{id}", { params: { path: { id } } }));
     },
   };

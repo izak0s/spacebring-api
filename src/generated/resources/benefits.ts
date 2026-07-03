@@ -4,6 +4,15 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Application entity as returned by the Spacebring API. */
+export type Application = NonNullable<operations["getBenefitApplication"]["responses"][200]["content"]["application/json"]["application"]>;
+
+/** A Benefit entity as returned by the Spacebring API. */
+export type Benefit = NonNullable<operations["getBenefit"]["responses"][200]["content"]["application/json"]["benefit"]>;
+
+/** A BenefitCategory entity as returned by the Spacebring API. */
+export type BenefitCategory = NonNullable<operations["getBenefitCategory"]["responses"][200]["content"]["application/json"]["category"]>;
+
 export function createBenefits(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +20,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all benefits in the location.
      */
-    async list(query?: operations["getBenefits"]["parameters"]["query"]) {
+    async list(query?: operations["getBenefits"]["parameters"]["query"]): Promise<operations["getBenefits"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/benefits/v1", { params: { query } }));
     },
     /**
@@ -19,7 +28,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all benefits in the location.
      */
-    iterate(query?: Omit<NonNullable<operations["getBenefits"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query?: Omit<NonNullable<operations["getBenefits"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Benefit, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/benefits/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -27,19 +36,19 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
       );
     },
     /** Retrieve a benefit */
-    async get(benefitId: string) {
+    async get(benefitId: string): Promise<Benefit> {
       return unwrapProp(await client.GET("/benefits/v1/{benefitId}", { params: { path: { benefitId } } }), "benefit");
     },
     /** Create a benefit */
-    async create(body: NonNullable<operations["createBenefit"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createBenefit"]["requestBody"]>["content"]["application/json"]): Promise<operations["createBenefit"]["responses"][201]["content"]["application/json"]> {
       return unwrap(await client.POST("/benefits/v1", { body }));
     },
     /** Update a benefit */
-    async update(benefitId: string, body: NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"]) {
+    async update(benefitId: string, body: NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"]): Promise<Benefit> {
       return unwrapProp(await client.PUT("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, body }), "benefit");
     },
     /** Delete a benefit */
-    async delete(benefitId: string) {
+    async delete(benefitId: string): Promise<undefined> {
       return unwrap(await client.DELETE("/benefits/v1/{benefitId}", { params: { path: { benefitId } } }));
     },
     applications: {
@@ -48,7 +57,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit applications in the location or for certain benefit.
        */
-      async list(query?: operations["getBenefitApplications"]["parameters"]["query"]) {
+      async list(query?: operations["getBenefitApplications"]["parameters"]["query"]): Promise<operations["getBenefitApplications"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/benefits/applications/v1", { params: { query } }));
       },
       /**
@@ -56,7 +65,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit applications in the location or for certain benefit.
        */
-      iterate(query?: Omit<NonNullable<operations["getBenefitApplications"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query?: Omit<NonNullable<operations["getBenefitApplications"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Application, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/benefits/applications/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -68,11 +77,11 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve a benefit application by id.
        */
-      async get(benefitApplicationId: string) {
+      async get(benefitApplicationId: string): Promise<Application> {
         return unwrapProp(await client.GET("/benefits/applications/v1/{benefitApplicationId}", { params: { path: { benefitApplicationId } } }), "application");
       },
       /** Apply for a benefit */
-      async create(body: NonNullable<operations["applyBenefit"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["applyBenefit"]["requestBody"]>["content"]["application/json"]): Promise<Application> {
         return unwrapProp(await client.POST("/benefits/applications/v1", { body }), "application");
       },
     },
@@ -82,7 +91,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit categories in the location.
        */
-      async list(query: operations["getBenefitCategories"]["parameters"]["query"]) {
+      async list(query: operations["getBenefitCategories"]["parameters"]["query"]): Promise<BenefitCategory[]> {
         return unwrapProp(await client.GET("/benefits/categories/v1", { params: { query } }), "categories");
       },
       /**
@@ -90,7 +99,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Get a benefit category.
        */
-      async get(categoryId: string) {
+      async get(categoryId: string): Promise<BenefitCategory> {
         return unwrapProp(await client.GET("/benefits/categories/v1/{categoryId}", { params: { path: { categoryId } } }), "category");
       },
       /**
@@ -98,7 +107,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Create a benefit category.
        */
-      async create(body: NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"]): Promise<BenefitCategory> {
         return unwrapProp(await client.POST("/benefits/categories/v1", { body }), "category");
       },
       /**
@@ -106,7 +115,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Update a benefit category.
        */
-      async update(categoryId: string, body: NonNullable<operations["updateBenefitCategory"]["requestBody"]>["content"]["application/json"]) {
+      async update(categoryId: string, body: NonNullable<operations["updateBenefitCategory"]["requestBody"]>["content"]["application/json"]): Promise<BenefitCategory> {
         return unwrapProp(await client.PUT("/benefits/categories/v1/{categoryId}", { params: { path: { categoryId } }, body }), "category");
       },
       /**
@@ -114,7 +123,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Delete a benefit category.
        */
-      async delete(categoryId: string) {
+      async delete(categoryId: string): Promise<undefined> {
         return unwrap(await client.DELETE("/benefits/categories/v1/{categoryId}", { params: { path: { categoryId } } }));
       },
     },

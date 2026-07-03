@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Guide entity as returned by the Spacebring API. */
+export type Guide = NonNullable<operations["getGuide"]["responses"][200]["content"]["application/json"]["guide"]>;
+
 export function createGuides(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +14,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Retrieve all guides for an organization. Requires locationRef. When using bearer token (non-basic auth), results are filtered by the user's access.
      */
-    async list(query: operations["getGuides"]["parameters"]["query"]) {
+    async list(query: operations["getGuides"]["parameters"]["query"]): Promise<operations["getGuides"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/guides/v1", { params: { query } }));
     },
     /**
@@ -19,7 +22,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Retrieve all guides for an organization. Requires locationRef. When using bearer token (non-basic auth), results are filtered by the user's access.
      */
-    iterate(query: Omit<NonNullable<operations["getGuides"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query: Omit<NonNullable<operations["getGuides"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Guide, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/guides/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -31,7 +34,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Retrieve a guide by id.
      */
-    async get(guideId: string) {
+    async get(guideId: string): Promise<Guide> {
       return unwrapProp(await client.GET("/guides/v1/{guideId}", { params: { path: { guideId } } }), "guide");
     },
     /**
@@ -39,7 +42,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Create a guide in an organization.
      */
-    async create(body: NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]): Promise<Guide> {
       return unwrapProp(await client.POST("/guides/v1", { body }), "guide");
     },
     /**
@@ -47,11 +50,11 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Update a guide. At least one guide property must be provided.
      */
-    async update(guideId: string, body: NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]) {
+    async update(guideId: string, body: NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]): Promise<Guide> {
       return unwrapProp(await client.PATCH("/guides/v1/{guideId}", { params: { path: { guideId } }, body }), "guide");
     },
     /** Delete a guide */
-    async delete(guideId: string) {
+    async delete(guideId: string): Promise<undefined> {
       return unwrap(await client.DELETE("/guides/v1/{guideId}", { params: { path: { guideId } } }));
     },
   };

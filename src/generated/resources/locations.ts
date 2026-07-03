@@ -4,14 +4,17 @@ import type { Client } from "openapi-fetch";
 import { unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Location entity as returned by the Spacebring API. */
+export type Location = NonNullable<operations["getLocation"]["responses"][200]["content"]["application/json"]["location"]>;
+
 export function createLocations(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve all locations */
-    async list() {
+    async list(): Promise<Location[]> {
       return unwrapProp(await client.GET("/locations/v1", {}), "locations");
     },
     /** Get a location */
-    async get(locationId: string) {
+    async get(locationId: string): Promise<Location> {
       return unwrapProp(await client.GET("/locations/v1/{locationId}", { params: { path: { locationId } } }), "location");
     },
   };

@@ -4,30 +4,36 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Event entity as returned by the Spacebring API. */
+export type Event = NonNullable<operations["getEvent"]["responses"][200]["content"]["application/json"]["event"]>;
+
+/** A EventTicket entity as returned by the Spacebring API. */
+export type EventTicket = NonNullable<operations["getEventTicket"]["responses"][200]["content"]["application/json"]["ticket"]>;
+
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve events */
-    async list(query: operations["getEventsByOrganization"]["parameters"]["query"]) {
+    async list(query: operations["getEventsByOrganization"]["parameters"]["query"]): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/events/v1", { params: { query } }));
     },
     /** Retrieve an event */
-    async get(id: string) {
+    async get(id: string): Promise<Event> {
       return unwrapProp(await client.GET("/events/v1/{id}", { params: { header: { "spacebring-network-id": defaults.networkId as string }, path: { id } } }), "event");
     },
     /** Create an event */
-    async create(body: NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]): Promise<Event> {
       return unwrapProp(await client.POST("/events/v1", { body }), "event");
     },
     /** Delete an event */
-    async delete(id: string) {
+    async delete(id: string): Promise<undefined> {
       return unwrap(await client.DELETE("/events/v1/{id}", { params: { path: { id } } }));
     },
     /** Cancel an event */
-    async cancel(id: string) {
+    async cancel(id: string): Promise<Event> {
       return unwrapProp(await client.PUT("/events/v1/{id}/cancel", { params: { path: { id } } }), "event");
     },
     /** Copy an event */
-    async copy(id: string) {
+    async copy(id: string): Promise<Event> {
       return unwrapProp(await client.POST("/events/v1/{id}/copy", { params: { path: { id } } }), "event");
     },
     tickets: {
@@ -36,7 +42,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      async list(query: operations["getEventTickets"]["parameters"]["query"]) {
+      async list(query: operations["getEventTickets"]["parameters"]["query"]): Promise<operations["getEventTickets"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/events/tickets/v1", { params: { query } }));
       },
       /**
@@ -44,7 +50,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      iterate(query: Omit<NonNullable<operations["getEventTickets"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getEventTickets"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<EventTicket, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/events/tickets/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -56,7 +62,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve an event ticket.
        */
-      async get(id: string) {
+      async get(id: string): Promise<EventTicket> {
         return unwrapProp(await client.GET("/events/tickets/v1/{id}", { params: { path: { id } } }), "ticket");
       },
     },

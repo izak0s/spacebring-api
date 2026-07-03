@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Contract entity as returned by the Spacebring API. */
+export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
+
 export function createContracts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -11,7 +14,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve all contracts in the location.
      */
-    async list(query?: operations["getContracts"]["parameters"]["query"]) {
+    async list(query?: operations["getContracts"]["parameters"]["query"]): Promise<operations["getContracts"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/contracts/v1", { params: { query } }));
     },
     /**
@@ -19,7 +22,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve all contracts in the location.
      */
-    iterate(query?: Omit<NonNullable<operations["getContracts"]["parameters"]["query"]>, "nextPageToken">) {
+    iterate(query?: Omit<NonNullable<operations["getContracts"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Contract, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/contracts/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -27,23 +30,23 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       );
     },
     /** Get a contract */
-    async get(contractId: string) {
+    async get(contractId: string): Promise<Contract> {
       return unwrapProp(await client.GET("/contracts/v1/{contractId}", { params: { path: { contractId } } }), "contract");
     },
     /** Create a contract */
-    async create(body: NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]) {
+    async create(body: NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]): Promise<Contract> {
       return unwrapProp(await client.POST("/contracts/v1", { body }), "contract");
     },
     /** Delete a contract */
-    async delete(contractId: string) {
+    async delete(contractId: string): Promise<undefined> {
       return unwrap(await client.DELETE("/contracts/v1/{contractId}", { params: { path: { contractId } } }));
     },
     /** Issue a contract */
-    async issue(contractId: string, body: NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]) {
+    async issue(contractId: string, body: NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]): Promise<Contract> {
       return unwrapProp(await client.POST("/contracts/v1/{contractId}/issue", { params: { path: { contractId } }, body }), "contract");
     },
     /** Terminate a contract */
-    async terminate(contractId: string, body: NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"]) {
+    async terminate(contractId: string, body: NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
       return unwrap(await client.PATCH("/contracts/v1/{contractId}/terminate", { params: { path: { contractId } }, body }));
     },
   };

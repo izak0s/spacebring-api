@@ -4,15 +4,27 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** A Contact entity as returned by the Spacebring API. */
+export type Contact = NonNullable<operations["getContact"]["responses"][200]["content"]["application/json"]["contact"]>;
+
+/** A Request entity as returned by the Spacebring API. */
+export type Request = NonNullable<operations["getRequest"]["responses"][200]["content"]["application/json"]["request"]>;
+
+/** A RequestVisit entity as returned by the Spacebring API. */
+export type RequestVisit = NonNullable<operations["approveRequest"]["responses"][201]["content"]["application/json"]["visit"]>;
+
+/** A VisitorVisit entity as returned by the Spacebring API. */
+export type VisitorVisit = NonNullable<operations["getVisit"]["responses"][200]["content"]["application/json"]["visit"]>;
+
 export function createVisitors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     contacts: {
       /** Get contacts */
-      async list(query: operations["getContacts"]["parameters"]["query"]) {
+      async list(query: operations["getContacts"]["parameters"]["query"]): Promise<operations["getContacts"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/visitors/contacts/v1", { params: { query } }));
       },
       /** Get contacts — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getContacts"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getContacts"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Contact, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/contacts/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -20,21 +32,21 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         );
       },
       /** Get a contact */
-      async get(contactId: string) {
+      async get(contactId: string): Promise<Contact> {
         return unwrapProp(await client.GET("/visitors/contacts/v1/{contactId}", { params: { path: { contactId } } }), "contact");
       },
       /** Create a contact */
-      async create(body: NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"]): Promise<Contact> {
         return unwrapProp(await client.POST("/visitors/contacts/v1", { body }), "contact");
       },
     },
     requests: {
       /** Get requests */
-      async list(query: operations["getRequests"]["parameters"]["query"]) {
+      async list(query: operations["getRequests"]["parameters"]["query"]): Promise<operations["getRequests"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/visitors/requests/v1", { params: { query } }));
       },
       /** Get requests — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getRequests"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getRequests"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Request, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/requests/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -42,29 +54,29 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         );
       },
       /** Retrieve a request */
-      async get(id: string) {
+      async get(id: string): Promise<Request> {
         return unwrapProp(await client.GET("/visitors/requests/v1/{id}", { params: { path: { id } } }), "request");
       },
       /** Create a request */
-      async create(body: NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"]): Promise<Request> {
         return unwrapProp(await client.POST("/visitors/requests/v1", { body }), "request");
       },
       /** Approve a request */
-      async approve(id: string) {
+      async approve(id: string): Promise<RequestVisit> {
         return unwrapProp(await client.POST("/visitors/requests/v1/{id}/approve", { params: { path: { id } } }), "visit");
       },
       /** Reject a request */
-      async reject(id: string) {
+      async reject(id: string): Promise<undefined> {
         return unwrap(await client.POST("/visitors/requests/v1/{id}/reject", { params: { path: { id } } }));
       },
     },
     visits: {
       /** Retrieve visits */
-      async list(query: operations["getVisits"]["parameters"]["query"]) {
+      async list(query: operations["getVisits"]["parameters"]["query"]): Promise<operations["getVisits"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/visitors/visits/v1", { params: { query } }));
       },
       /** Retrieve visits — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getVisits"]["parameters"]["query"]>, "nextPageToken">) {
+      iterate(query: Omit<NonNullable<operations["getVisits"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<VisitorVisit, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/visits/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -76,11 +88,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve a visit by id.
        */
-      async get(id: string) {
+      async get(id: string): Promise<VisitorVisit> {
         return unwrapProp(await client.GET("/visitors/visits/v1/{id}", { params: { path: { id } } }), "visit");
       },
       /** Create a visit */
-      async create(body: NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"]) {
+      async create(body: NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"]): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1", { body }), "visit");
       },
       /**
@@ -88,7 +100,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Update a visit by id.
        */
-      async update(id: string, body: NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"]) {
+      async update(id: string, body: NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"]): Promise<VisitorVisit> {
         return unwrapProp(await client.PUT("/visitors/visits/v1/{id}", { params: { path: { id } }, body }), "visit");
       },
       /**
@@ -96,15 +108,15 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Delete a visit by id.
        */
-      async delete(id: string) {
+      async delete(id: string): Promise<undefined> {
         return unwrap(await client.DELETE("/visitors/visits/v1/{id}", { params: { path: { id } } }));
       },
       /** Check in a visit */
-      async checkIn(body: NonNullable<operations["checkInVisit"]["requestBody"]>["content"]["application/json"]) {
+      async checkIn(body: NonNullable<operations["checkInVisit"]["requestBody"]>["content"]["application/json"]): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkin", { body }), "visit");
       },
       /** Check out a visit */
-      async checkOut(body: NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"]) {
+      async checkOut(body: NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"]): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkout", { body }), "visit");
       },
     },
