@@ -68,6 +68,9 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
+          # Created with RELEASE_TOKEN (not the default token) so CI runs on
+          # the PR automatically and no maintainer approval banner appears.
+          token: ${{ secrets.RELEASE_TOKEN }}
           branch: auto/spec-update
           add-paths: |
             spec/openapi.json
