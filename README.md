@@ -46,23 +46,27 @@ const sb = new Spacebring({
   // fetch: customFetch,                     // inject your own fetch (tests, proxies)
 });
 
-// Single-property envelopes are unwrapped: entities and plain arrays come back directly
-const invoice = await sb.billing.invoices.get(invoiceId);
-const locations = await sb.locations.list();
-await sb.visitors.visits.checkIn({ locationRef, visitRef });
+async function main() {
+  // Single-property envelopes are unwrapped: entities and plain arrays come back directly
+  const invoice = await sb.billing.invoices.get(invoiceId);
+  const locations = await sb.locations.list();
+  await sb.visitors.visits.checkIn({ locationRef, visitRef });
 
-// Paginated lists return the page envelope, so nextPageToken stays available
-const { benefits, nextPageToken } = await sb.benefits.list({ locationRef });
+  // Paginated lists return the page envelope, so nextPageToken stays available
+  const { benefits, nextPageToken } = await sb.benefits.list({ locationRef });
 
-// ...or let iterate() walk nextPageToken for you; breaking early stops fetching
-for await (const booking of sb.resources.bookings.iterate({ locationRef })) {
-  console.log(booking.id);
+  // ...or let iterate() walk nextPageToken for you; breaking early stops fetching
+  for await (const booking of sb.resources.bookings.iterate({ locationRef })) {
+    console.log(booking.id);
+  }
+
+  // Endpoints returning multiple payloads keep the envelope
+  const { invoice: paid, payment } = await sb.billing.invoices.pay(invoiceId, {
+    paymentMethod: { type: "stripe" },
+  });
 }
 
-// Endpoints returning multiple payloads keep the envelope
-const { invoice: paid, payment } = await sb.billing.invoices.pay(invoiceId, {
-  paymentMethod: { type: "stripe" },
-});
+main().catch(console.error);
 ```
 
 TypeScript helpers are exported too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations` (e.g. `components["schemas"]["invoice"]`).
