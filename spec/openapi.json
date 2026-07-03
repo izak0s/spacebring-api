@@ -14,10 +14,10 @@
     "/alt_currencies/v1": {
       "get": {
         "tags": [
-          "AltCurrencies"
+          "Alternative Currencies"
         ],
-        "summary": "Retrieve alt currencies",
-        "description": "Retrieve all alt currencies in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "summary": "Retrieve alternative currencies",
+        "description": "Retrieve all alternative currencies in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "getAltCurrencies",
         "parameters": [
           {
@@ -113,10 +113,10 @@
       },
       "post": {
         "tags": [
-          "AltCurrencies"
+          "Alternative Currencies"
         ],
-        "summary": "Create an alt currency",
-        "description": "Create an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "summary": "Create an alternative currency",
+        "description": "Create an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
         "operationId": "createAltCurrency",
         "parameters": [
           {
@@ -175,16 +175,16 @@
     "/alt_currencies/v1/{id}": {
       "delete": {
         "tags": [
-          "AltCurrencies"
+          "Alternative Currencies"
         ],
-        "summary": "Delete an alt currency",
-        "description": "Delete an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "summary": "Delete an alternative currency",
+        "description": "Delete an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
         "operationId": "deleteAltCurrency",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "The id of the alt currency",
+            "description": "The id of the alternative currency",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -230,16 +230,16 @@
       },
       "patch": {
         "tags": [
-          "AltCurrencies"
+          "Alternative Currencies"
         ],
-        "summary": "Update an alt currency",
-        "description": "Update an alt currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "summary": "Update an alternative currency",
+        "description": "Update an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
         "operationId": "updateAltCurrency",
         "parameters": [
           {
             "in": "path",
             "name": "id",
-            "description": "The id of the alt currency",
+            "description": "The id of the alternative currency",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -12014,7 +12014,8 @@
             "type": "string",
             "enum": [
               "fastForex",
-              "nbu"
+              "nbu",
+              "bcra"
             ]
           }
         },
@@ -29338,7 +29339,8 @@
                               "type": "string",
                               "enum": [
                                 "fastForex",
-                                "nbu"
+                                "nbu",
+                                "bcra"
                               ]
                             }
                           },
@@ -29396,7 +29398,8 @@
                               "type": "string",
                               "enum": [
                                 "fastForex",
-                                "nbu"
+                                "nbu",
+                                "bcra"
                               ]
                             }
                           },
