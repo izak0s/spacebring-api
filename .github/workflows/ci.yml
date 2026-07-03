@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_call: # let publish.yml gate releases on a full CI run
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
