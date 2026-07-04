@@ -123,6 +123,42 @@ const { data, error, response } = await sb.raw.GET("/networks/v1", {});
 
 ---
 
+## Webhooks
+
+Verify and route [Spacebring webhooks](https://www.spacebring.com/docs/webhooks) on Node.js ≥ 20, Cloudflare Workers, Deno, Bun, or any edge runtime — verification uses the Web Crypto API only. The signing secret (`whsec_…`) comes from the webhook endpoint settings in Spacebring.
+
+```ts
+import { SpacebringWebhooks } from "@izak0s/spacebring-api";
+
+const webhooks = new SpacebringWebhooks(process.env.SPACEBRING_WEBHOOK_SECRET!);
+
+webhooks.on("booking.created", async ({ booking }) => {
+  console.log("New booking", booking?.id);
+});
+webhooks.onUnrouted(async (payload, type) => {
+  console.log("Unhandled event", type);
+});
+
+// Cloudflare Workers / fetch-style runtimes — verifies, dispatches, responds:
+export default {
+  fetch: (request: Request) => webhooks.handle(request),
+};
+
+// Node servers (Express etc.): verify with the RAW body string, then dispatch
+const event = await webhooks.verify(rawBody, req.headers);
+await webhooks.dispatch(event);
+```
+
+`handle()` answers `204` on success, `400` on failed verification, and `500` when a handler throws (so Svix retries the delivery). Handler payloads are fully typed per event (generated from the [event catalog](https://webhooks.spacebring.com/)).
+
+One API quirk: `subscription.*` and `visitors.*` payloads carry no `type` field, so they can't be routed by `on()` — TypeScript won't let you register them. Point a dedicated endpoint at those events in Spacebring and use `verifyAs` instead:
+
+```ts
+const subscription = await webhooks.verifyAs("subscription.purchased", request);
+```
+
+---
+
 ## Keeping up with API changes
 
 The whole client (types + methods) is generated from Spacebring's OpenAPI spec; a nightly GitHub Action picks up spec changes and publishes a new version automatically. Details in [CONTRIBUTING.md](CONTRIBUTING.md).

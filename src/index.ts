@@ -1,5 +1,12 @@
 export { Spacebring, type SpacebringConfig } from "./client.js";
 export { SpacebringError, type SpacebringErrorBody } from "./error.js";
+export {
+  SpacebringWebhooks,
+  SpacebringWebhookVerificationError,
+  type SpacebringWebhooksOptions,
+  type WebhookHeadersLike,
+} from "./webhooks.js";
+export * from "./generated/webhook-events.js";
 export type { SpacebringResources } from "./generated/resources/index.js";
-export type * from "./generated/entities.js";
+export * from "./generated/entities.js";
 export type { paths, components, operations } from "./generated/schema.js";

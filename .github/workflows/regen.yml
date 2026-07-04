@@ -20,9 +20,10 @@ jobs:
           cache: npm
       - run: npm ci
 
-      - name: Download latest spec and regenerate
+      - name: Download latest spec + webhook catalog and regenerate
         run: |
           curl --fail --silent --show-error -o spec/openapi.json https://www.spacebring.com/docs/assets/openapi.json
+          npm run fetch:webhook-catalog
           npm run generate
 
       - name: Detect changes

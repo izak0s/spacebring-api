@@ -41,9 +41,12 @@
   "scripts": {
     "generate:types": "openapi-typescript spec/openapi.json -o src/generated/schema.ts",
     "generate:facade": "tsx codegen/generate-facade.ts",
-    "generate": "npm run generate:types && npm run generate:facade",
+    "generate:webhooks": "tsx codegen/generate-webhooks.ts",
+    "fetch:webhook-catalog": "tsx codegen/fetch-webhook-catalog.ts",
+    "generate": "npm run generate:types && npm run generate:facade && npm run generate:webhooks",
     "build": "tsup",
     "example": "tsx examples/basic.ts",
+    "example:webhooks": "tsx examples/webhooks.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:update": "vitest run --update",
@@ -62,6 +65,9 @@
     "coworking",
     "coworking-space"
   ],
+  "overrides": {
+    "esbuild": "^0.28.1"
+  },
   "devDependencies": {
     "@types/node": "^26.1.0",
     "openapi-fetch": "^0.17.0",

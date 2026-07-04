@@ -1,0 +1,4984 @@
+[
+  {
+    "name": "benefit.application.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "application": {
+              "benefit": {
+                "id": "8fe3d6fd-0661-450a-af15-2f9ba78408db",
+                "title": "some string"
+              },
+              "comment": "some string",
+              "createDate": "2025-03-18T13:27:42.169Z",
+              "id": "296f4d5d-bb09-4605-ab0a-48559c120cc2",
+              "locationRef": "a864d2ee-f62f-4d0f-8080-fd67b7e468df",
+              "membershipRef": "b1de68f4-a8c2-4468-90c0-91eaad19a197",
+              "number": "some string",
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "aa909a72-2eac-4e25-8340-5493ad815555",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "url",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "application": {
+            "properties": {
+              "benefit": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "required": [],
+                "title": "Benefit",
+                "type": "object"
+              },
+              "comment": {
+                "title": "Comment",
+                "type": "string"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRef": {
+                "format": "uuid",
+                "title": "MembershipRef",
+                "type": "string"
+              },
+              "number": {
+                "title": "Number",
+                "type": "string"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "format": "email",
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "format": "uri",
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "required": [],
+            "title": "Application",
+            "type": "object"
+          },
+          "type": {
+            "default": "benefit.application.created",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "booking.created",
+    "description": "This event is triggered when a booking is created using any payment method.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "booking": {
+              "attendees": [
+                {
+                  "membershipRef": "ba323daf-18f5-44d4-8528-c79cf0ed772d",
+                  "user": {
+                    "about": "some string",
+                    "email": "some string",
+                    "id": "74d227fd-f34d-44a0-9316-dd4703cea238",
+                    "name": "some string",
+                    "phoneNumber": "some string",
+                    "photoUrl": "some string",
+                    "surname": "some string"
+                  }
+                }
+              ],
+              "createDate": "2025-03-18T13:29:06.090Z",
+              "endDate": "2025-03-18T13:29:06.090Z",
+              "id": "ab26fd83-f9b5-447b-9d8e-8cf7eaff58f6",
+              "membershipRefOwner": "aa2004b6-c93e-4dbc-a3a0-ba7c5b426a3e",
+              "memo": "some string",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "resourceRef": "cff29464-06d7-4aef-a2f3-bd27c3901d89",
+              "resourceType": "some string",
+              "seats": 42,
+              "startDate": "2025-03-18T13:29:06.090Z",
+              "title": "some string",
+              "userOwner": {
+                "about": "some string",
+                "email": "some string",
+                "id": "6a99eb7a-aa01-4968-9b74-d582ecd0d891",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "booking": {
+            "properties": {
+              "attendees": {
+                "items": {
+                  "properties": {
+                    "membershipRef": {
+                      "format": "uuid",
+                      "title": "MembershipRef",
+                      "type": "string"
+                    },
+                    "user": {
+                      "properties": {
+                        "about": {
+                          "title": "About",
+                          "type": "string"
+                        },
+                        "email": {
+                          "title": "Email",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "title": "Id",
+                          "type": "string"
+                        },
+                        "name": {
+                          "title": "Name",
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "title": "PhoneNumber",
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "title": "PhotoUrl",
+                          "type": "string"
+                        },
+                        "surname": {
+                          "title": "Surname",
+                          "type": "string"
+                        }
+                      },
+                      "title": "User",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Attendees",
+                "type": "array"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "deleteDate": {
+                "description": "",
+                "properties": {},
+                "title": "DeleteDate",
+                "type": "string"
+              },
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "membershipRefOwner": {
+                "format": "uuid",
+                "title": "MembershipRefOwner",
+                "type": "string"
+              },
+              "memo": {
+                "title": "Memo",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "resourceRef": {
+                "format": "uuid",
+                "title": "ResourceRef",
+                "type": "string"
+              },
+              "resourceType": {
+                "title": "ResourceType",
+                "type": "string"
+              },
+              "seats": {
+                "title": "Seats",
+                "type": "integer"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "userOwner": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "UserOwner",
+                "type": "object"
+              }
+            },
+            "required": [
+              "deleteDate"
+            ],
+            "title": "Booking",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "booking.deleted",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "booking": {
+              "attendees": [
+                {
+                  "membershipRef": "ba323daf-18f5-44d4-8528-c79cf0ed772d",
+                  "user": {
+                    "about": "some string",
+                    "email": "some string",
+                    "id": "74d227fd-f34d-44a0-9316-dd4703cea238",
+                    "name": "some string",
+                    "phoneNumber": "some string",
+                    "photoUrl": "some string",
+                    "surname": "some string"
+                  }
+                }
+              ],
+              "createDate": "2025-03-18T13:29:06.090Z",
+              "endDate": "2025-03-18T13:29:06.090Z",
+              "id": "ab26fd83-f9b5-447b-9d8e-8cf7eaff58f6",
+              "membershipRefOwner": "aa2004b6-c93e-4dbc-a3a0-ba7c5b426a3e",
+              "memo": "some string",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "resourceRef": "cff29464-06d7-4aef-a2f3-bd27c3901d89",
+              "resourceType": "some string",
+              "seats": 42,
+              "startDate": "2025-03-18T13:29:06.090Z",
+              "title": "some string",
+              "userOwner": {
+                "about": "some string",
+                "email": "some string",
+                "id": "6a99eb7a-aa01-4968-9b74-d582ecd0d891",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "booking": {
+            "properties": {
+              "attendees": {
+                "items": {
+                  "properties": {
+                    "membershipRef": {
+                      "format": "uuid",
+                      "title": "MembershipRef",
+                      "type": "string"
+                    },
+                    "user": {
+                      "properties": {
+                        "about": {
+                          "title": "About",
+                          "type": "string"
+                        },
+                        "email": {
+                          "title": "Email",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "title": "Id",
+                          "type": "string"
+                        },
+                        "name": {
+                          "title": "Name",
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "title": "PhoneNumber",
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "title": "PhotoUrl",
+                          "type": "string"
+                        },
+                        "surname": {
+                          "title": "Surname",
+                          "type": "string"
+                        }
+                      },
+                      "title": "User",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Attendees",
+                "type": "array"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "deleteDate": {
+                "description": "",
+                "properties": {},
+                "title": "DeleteDate",
+                "type": "string"
+              },
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "membershipRefOwner": {
+                "format": "uuid",
+                "title": "MembershipRefOwner",
+                "type": "string"
+              },
+              "memo": {
+                "title": "Memo",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "resourceRef": {
+                "format": "uuid",
+                "title": "ResourceRef",
+                "type": "string"
+              },
+              "resourceType": {
+                "title": "ResourceType",
+                "type": "string"
+              },
+              "seats": {
+                "title": "Seats",
+                "type": "integer"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "userOwner": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "UserOwner",
+                "type": "object"
+              }
+            },
+            "required": [
+              "deleteDate"
+            ],
+            "title": "Booking",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "booking.paid",
+    "description": "This event is triggered when a booking payment is successfully processed. For non-card payment methods, the event is triggered simultaneously with the `booking.created event`. You can use `booking.payment.type` to distinguish between different types of bookings based on the payment type.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "booking": {
+              "attendees": [
+                {
+                  "membershipRef": "379ed2be-0b5f-4952-b49c-1c4e1b74b789",
+                  "user": {
+                    "about": "some string",
+                    "email": "some string",
+                    "id": "1b0b8a9c-8845-48bf-a97a-de6bded33845",
+                    "name": "some string",
+                    "phoneNumber": "some string",
+                    "photoUrl": "some string",
+                    "surname": "some string"
+                  }
+                }
+              ],
+              "createDate": "2025-03-18T13:23:58.000Z",
+              "endDate": "2025-03-18T13:23:58.000Z",
+              "id": "be5578b7-c625-479f-be5f-e8853b24a8df",
+              "membershipRefOwner": "0e0b71ab-a139-4b1b-8803-8d7c2aa79815",
+              "memo": "some string",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "resourceRef": "007a762c-a3a4-428f-8629-556197a64c4b",
+              "resourceType": "some string",
+              "seats": 42,
+              "startDate": "2025-03-18T13:23:58.000Z",
+              "title": "some string",
+              "userOwner": {
+                "about": "some string",
+                "email": "some string",
+                "id": "f491d133-26cf-43fa-b755-d4c87c545590",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "booking": {
+            "properties": {
+              "attendees": {
+                "items": {
+                  "properties": {
+                    "membershipRef": {
+                      "format": "uuid",
+                      "title": "MembershipRef",
+                      "type": "string"
+                    },
+                    "user": {
+                      "properties": {
+                        "about": {
+                          "title": "About",
+                          "type": "string"
+                        },
+                        "email": {
+                          "title": "Email",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "title": "Id",
+                          "type": "string"
+                        },
+                        "name": {
+                          "title": "Name",
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "title": "PhoneNumber",
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "title": "PhotoUrl",
+                          "type": "string"
+                        },
+                        "surname": {
+                          "title": "Surname",
+                          "type": "string"
+                        }
+                      },
+                      "title": "User",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Attendees",
+                "type": "array"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "membershipRefOwner": {
+                "format": "uuid",
+                "title": "MembershipRefOwner",
+                "type": "string"
+              },
+              "memo": {
+                "title": "Memo",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "resourceRef": {
+                "format": "uuid",
+                "title": "ResourceRef",
+                "type": "string"
+              },
+              "resourceType": {
+                "title": "ResourceType",
+                "type": "string"
+              },
+              "seats": {
+                "title": "Seats",
+                "type": "integer"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "userOwner": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "UserOwner",
+                "type": "object"
+              }
+            },
+            "title": "Booking",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "booking.updated",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "booking": {
+              "attendees": [
+                {
+                  "membershipRef": "ba323daf-18f5-44d4-8528-c79cf0ed772d",
+                  "user": {
+                    "about": "some string",
+                    "email": "some string",
+                    "id": "74d227fd-f34d-44a0-9316-dd4703cea238",
+                    "name": "some string",
+                    "phoneNumber": "some string",
+                    "photoUrl": "some string",
+                    "surname": "some string"
+                  }
+                }
+              ],
+              "createDate": "2025-03-18T13:29:06.090Z",
+              "endDate": "2025-03-18T13:29:06.090Z",
+              "id": "ab26fd83-f9b5-447b-9d8e-8cf7eaff58f6",
+              "membershipRefOwner": "aa2004b6-c93e-4dbc-a3a0-ba7c5b426a3e",
+              "memo": "some string",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "resourceRef": "cff29464-06d7-4aef-a2f3-bd27c3901d89",
+              "resourceType": "some string",
+              "seats": 42,
+              "startDate": "2025-03-18T13:29:06.090Z",
+              "title": "some string",
+              "userOwner": {
+                "about": "some string",
+                "email": "some string",
+                "id": "6a99eb7a-aa01-4968-9b74-d582ecd0d891",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "booking": {
+            "properties": {
+              "attendees": {
+                "items": {
+                  "properties": {
+                    "membershipRef": {
+                      "format": "uuid",
+                      "title": "MembershipRef",
+                      "type": "string"
+                    },
+                    "user": {
+                      "properties": {
+                        "about": {
+                          "title": "About",
+                          "type": "string"
+                        },
+                        "email": {
+                          "title": "Email",
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "title": "Id",
+                          "type": "string"
+                        },
+                        "name": {
+                          "title": "Name",
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "title": "PhoneNumber",
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "title": "PhotoUrl",
+                          "type": "string"
+                        },
+                        "surname": {
+                          "title": "Surname",
+                          "type": "string"
+                        }
+                      },
+                      "title": "User",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Attendees",
+                "type": "array"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "deleteDate": {
+                "description": "",
+                "properties": {},
+                "title": "DeleteDate",
+                "type": "string"
+              },
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "membershipRefOwner": {
+                "format": "uuid",
+                "title": "MembershipRefOwner",
+                "type": "string"
+              },
+              "memo": {
+                "title": "Memo",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "resourceRef": {
+                "format": "uuid",
+                "title": "ResourceRef",
+                "type": "string"
+              },
+              "resourceType": {
+                "title": "ResourceType",
+                "type": "string"
+              },
+              "seats": {
+                "title": "Seats",
+                "type": "integer"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "userOwner": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "UserOwner",
+                "type": "object"
+              }
+            },
+            "required": [
+              "deleteDate"
+            ],
+            "title": "Booking",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "company.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "company": {
+              "createDate": "some string",
+              "id": "some string",
+              "locationRef": "4fe78c00-707c-4795-8864-267e80f6928f",
+              "metadata": {},
+              "notes": "some string",
+              "subscriptionRef": "285d9f60-4e1c-4efa-94c6-3d9dc90e6a52",
+              "title": "some string"
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "company": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+              "createDate": {
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "subscriptionRef": {
+                "format": "uuid",
+                "title": "SubscriptionRef",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "metadata",
+              "field_0",
+              "notes",
+              "locationRef",
+              "subscriptionRef",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "company",
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "company.deleted",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "company": {
+              "createDate": "some string",
+              "id": "some string",
+              "locationRef": "80e7e637-71b0-420f-8b33-0a2a00b4cd62",
+              "metadata": {},
+              "notes": "some string",
+              "subscriptionRef": "d0cee2ec-cd2d-46e0-9e53-339026232237",
+              "title": "some string"
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "company": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+              "createDate": {
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "subscriptionRef": {
+                "format": "uuid",
+                "title": "SubscriptionRef",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "metadata",
+              "field_0",
+              "notes",
+              "locationRef",
+              "subscriptionRef",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "company",
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "event.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "event": {
+              "applicationType": "some string",
+              "createDate": "2025-03-18T13:25:03.444Z",
+              "credits": {
+                "amount": 3.14,
+                "enabled": true
+              },
+              "description": "some string",
+              "endDate": "2025-03-18T13:25:03.444Z",
+              "id": "some string",
+              "imageUrl": [
+                "string",
+                "null"
+              ],
+              "locationRef": "some string",
+              "maxAttendees": 42,
+              "money": {
+                "amount": 3.14,
+                "enabled": true
+              },
+              "networkRef": "some string",
+              "startDate": "2025-03-18T13:25:03.444Z",
+              "title": "some string",
+              "visibilityType": "some string"
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "event": {
+            "properties": {
+              "applicationType": {
+                "title": "ApplicationType",
+                "type": "string"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "credits": {
+                "properties": {
+                  "amount": {
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "enabled": {
+                    "title": "Enabled",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "enabled"
+                ],
+                "title": "Credits",
+                "type": "object"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              },
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "imageUrl": {
+                "format": "uri",
+                "title": "ImageUrl",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "maxAttendees": {
+                "minimum": 0,
+                "title": "MaxAttendees",
+                "type": "integer"
+              },
+              "money": {
+                "properties": {
+                  "amount": {
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "enabled": {
+                    "title": "Enabled",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "enabled"
+                ],
+                "title": "Money",
+                "type": "object"
+              },
+              "networkRef": {
+                "title": "NetworkRef",
+                "type": "string"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "visibilityType": {
+                "title": "VisibilityType",
+                "type": "string"
+              }
+            },
+            "required": [
+              "applicationType",
+              "createDate",
+              "description",
+              "endDate",
+              "id",
+              "locationRef",
+              "networkRef",
+              "startDate",
+              "title",
+              "visibilityType",
+              "money",
+              "credits"
+            ],
+            "title": "Event",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "type of event",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event",
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "event.ticket.created",
+    "description": "This event is triggered when an event ticket is created using any payment method.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "ticket": {
+              "createDate": "2025-03-18T13:25:11.628Z",
+              "event": {
+                "endDate": "2025-03-18T13:25:11.628Z",
+                "id": "3da2be4f-e2e2-46c9-bc1b-3b3660370698",
+                "startDate": "2025-03-18T13:25:11.628Z",
+                "title": "some string"
+              },
+              "id": "32cd0bdb-a235-4c5f-8e52-642611408b16",
+              "locationRef": "0ecade30-1db2-48aa-ae37-cb1da7c6413f",
+              "membershipRef": "4e5678d1-9604-4019-8dca-a27b743419a2",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "role": "attendee",
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "7621532e-8d2c-407e-81e2-1a36226e8cbc",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "ticket": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "event": {
+                "properties": {
+                  "endDate": {
+                    "format": "date-time",
+                    "title": "EndDate",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "startDate": {
+                    "format": "date-time",
+                    "title": "StartDate",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Event",
+                "type": "object"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRef": {
+                "format": "uuid",
+                "title": "MembershipRef",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "role": {
+                "enum": [
+                  "attendee",
+                  "host"
+                ],
+                "title": "Role",
+                "type": "string"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "title": "Ticket",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "event.ticket.paid",
+    "description": "This event is triggered when an event ticket payment is successfully processed. For non-card payment methods, the event is triggered simultaneously with the `event.ticket.created` event. You can use `ticket.payment.type` to distinguish between different types of tickets based on the payment type.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "ticket": {
+              "createDate": "2025-03-18T13:25:15.478Z",
+              "event": {
+                "endDate": "2025-03-18T13:25:15.478Z",
+                "id": "bdc0b97d-d4f9-410d-ac83-b0c7e3f78453",
+                "startDate": "2025-03-18T13:25:15.478Z",
+                "title": "some string"
+              },
+              "id": "50c5ef96-0c09-448a-8a50-22425d1dc632",
+              "locationRef": "13e833b1-25d6-4521-a8e2-2a28e3aa6358",
+              "membershipRef": "de1e2cbf-6853-4c11-b555-9a77c1667eb5",
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "role": "attendee",
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "e08974e8-a2d8-40cb-914e-5ca8dd758ed3",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "ticket": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "event": {
+                "properties": {
+                  "endDate": {
+                    "format": "date-time",
+                    "title": "EndDate",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "startDate": {
+                    "format": "date-time",
+                    "title": "StartDate",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Event",
+                "type": "object"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRef": {
+                "format": "uuid",
+                "title": "MembershipRef",
+                "type": "string"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "role": {
+                "enum": [
+                  "attendee",
+                  "host"
+                ],
+                "title": "Role",
+                "type": "string"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "title": "Ticket",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "invoice.issued",
+    "description": "",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "location.created",
+    "description": "This event is triggered when new location is created.",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "location.deleted",
+    "description": "This event triggers when location is deleted.",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "location.updated",
+    "description": "",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "membership.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "membership": {
+              "companyRef": "a8db3d04-8afd-45ee-8cec-8c5654093eb1",
+              "createDate": "2025-03-18T13:25:25.445Z",
+              "deleteDate": "2025-03-18T13:25:25.445Z",
+              "id": "79dd32b5-bdc4-47c8-837d-68f909e97367",
+              "invitationDate": "2025-03-18T13:25:25.445Z",
+              "locationRef": "some string",
+              "metadata": {},
+              "notes": "some string",
+              "role": "member",
+              "status": "requested",
+              "subscriptionRef": "63bf5093-cdc4-4b51-b469-d22bb7a6a981",
+              "type": "member",
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "a15ab99a-65ae-4220-b8f6-69ef770708cc",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              },
+              "userRef": "645fff55-132b-402c-aa1c-be85bb0dbda6"
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "membership": {
+            "properties": {
+              "companyRef": {
+                "format": "uuid",
+                "title": "CompanyRef",
+                "type": "string"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "deleteDate": {
+                "format": "date-time",
+                "title": "DeleteDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "invitationDate": {
+                "format": "date-time",
+                "title": "InvitationDate",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "role": {
+                "enum": [
+                  "member",
+                  "admin"
+                ],
+                "title": "Role",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "requested",
+                  "approved"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "subscriptionRef": {
+                "format": "uuid",
+                "title": "SubscriptionRef",
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "member",
+                  "nonmember"
+                ],
+                "title": "Type",
+                "type": "string"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              },
+              "userRef": {
+                "format": "uuid",
+                "title": "UserRef",
+                "type": "string"
+              }
+            },
+            "title": "Membership",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "membership.invited",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "membership": {
+              "companyRef": "ef2b81b4-9fa5-47d2-913f-473a00bd8266",
+              "createDate": "2025-03-18T13:25:32.304Z",
+              "deleteDate": "2025-03-18T13:25:32.304Z",
+              "id": "2205df47-9f84-452f-b2fd-f9cacf996364",
+              "invitationDate": "2025-03-18T13:25:32.304Z",
+              "locationRef": "some string",
+              "metadata": {},
+              "notes": "some string",
+              "role": "member",
+              "status": "requested",
+              "subscriptionRef": "5ac64abb-eaae-4b8d-bf0a-fd23122c4c0a",
+              "type": "member",
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "6267710c-a9db-4ac3-bca5-1f483b9ab81b",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              },
+              "userRef": "1ab98bf7-82c7-4558-98b2-66e80142d82e"
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "membership": {
+            "properties": {
+              "companyRef": {
+                "format": "uuid",
+                "title": "CompanyRef",
+                "type": "string"
+              },
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "deleteDate": {
+                "format": "date-time",
+                "title": "DeleteDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "invitationDate": {
+                "format": "date-time",
+                "title": "InvitationDate",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "role": {
+                "enum": [
+                  "member",
+                  "admin"
+                ],
+                "title": "Role",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "requested",
+                  "approved"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "subscriptionRef": {
+                "format": "uuid",
+                "title": "SubscriptionRef",
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "member",
+                  "nonmember"
+                ],
+                "title": "Type",
+                "type": "string"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              },
+              "userRef": {
+                "format": "uuid",
+                "title": "UserRef",
+                "type": "string"
+              }
+            },
+            "title": "Membership",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "resource.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "resource.deleted",
+    "description": "",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "resource.updated",
+    "description": "",
+    "deprecated": false,
+    "schemas": null
+  },
+  {
+    "name": "shop.order.created",
+    "description": "This event is triggered when an shop order is created using any payment method.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "order": {
+              "createDate": "2025-03-18T13:25:44.969Z",
+              "id": "79a37440-6225-4e6e-a705-9b57cf3ec534",
+              "locationRef": "025baa81-73b6-456a-8bba-bfc8cadf5dc6",
+              "membershipRef": "5c42a6d4-49eb-44ed-b546-675d261a503b",
+              "number": 3.14,
+              "option": {
+                "id": "d1381d5c-bdff-4c63-b853-b882c5b6938e",
+                "title": "some string"
+              },
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "product": {
+                "id": "3ddfb714-1160-4b02-99db-d131e1128260",
+                "title": "some string"
+              },
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "a9d994ca-b25b-4f3f-bef3-5fd85ae08463",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "order": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRef": {
+                "format": "uuid",
+                "title": "MembershipRef",
+                "type": "string"
+              },
+              "number": {
+                "title": "Number",
+                "type": "number"
+              },
+              "option": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Option",
+                "type": "object"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "product": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Product",
+                "type": "object"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "title": "Order",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "shop.order.paid",
+    "description": "This event is triggered when a shop order payment is successfully processed. For non-card payment methods, the event is triggered simultaneously with the `shop.order.created` event. You can use `order.payment.type` to distinguish between different types of orders based on the payment type.",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "examples": [
+          {
+            "order": {
+              "createDate": "2025-03-18T13:25:49.125Z",
+              "id": "390c58ef-fd07-4d73-b9f8-4683b36c80ed",
+              "locationRef": "bb81a0b5-1559-4fe9-bcdc-721a7f4de34d",
+              "membershipRef": "c4df0ea0-531e-48f7-80f9-ca5879d0186a",
+              "number": 3.14,
+              "option": {
+                "id": "e3eec8d6-db23-43ff-a88f-f02939c46886",
+                "title": "some string"
+              },
+              "payment": {
+                "amount": 3.14,
+                "currencyCode": "some string",
+                "invoiceItemRef": "some string",
+                "status": "succeeded",
+                "tax": {
+                  "inclusive": true,
+                  "rate": 3.14
+                },
+                "transactionRef": "some string",
+                "type": "flow"
+              },
+              "product": {
+                "id": "30cd304c-dd48-4af8-a307-5fbed3b1b0f0",
+                "title": "some string"
+              },
+              "user": {
+                "about": "some string",
+                "email": "some string",
+                "id": "7364b7e3-cf8d-4752-b11a-b7543d9cc76c",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "order": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRef": {
+                "format": "uuid",
+                "title": "MembershipRef",
+                "type": "string"
+              },
+              "number": {
+                "title": "Number",
+                "type": "number"
+              },
+              "option": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Option",
+                "type": "object"
+              },
+              "payment": {
+                "properties": {
+                  "amount": {
+                    "description": "The amount of the payment",
+                    "title": "Amount",
+                    "type": "number"
+                  },
+                  "currencyCode": {
+                    "description": "The currency code of the payment",
+                    "title": "CurrencyCode",
+                    "type": "string"
+                  },
+                  "invoiceItemRef": {
+                    "description": "The reference ID of the invoice item",
+                    "title": "InvoiceItemRef",
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "succeeded",
+                      "pending",
+                      "processing",
+                      "canceled",
+                      "failed"
+                    ],
+                    "title": "Status",
+                    "type": "string"
+                  },
+                  "tax": {
+                    "properties": {
+                      "inclusive": {
+                        "title": "Inclusive",
+                        "type": "boolean"
+                      },
+                      "rate": {
+                        "title": "Rate",
+                        "type": "number"
+                      }
+                    },
+                    "title": "Tax",
+                    "type": "object"
+                  },
+                  "transactionRef": {
+                    "description": "The reference ID of the transaction",
+                    "title": "TransactionRef",
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "flow",
+                      "fondy",
+                      "kakaopay",
+                      "mercadopago",
+                      "freedompay",
+                      "paypal",
+                      "paystack",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay",
+                      "invoice",
+                      "external",
+                      "credits"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  }
+                },
+                "title": "Payment",
+                "type": "object"
+              },
+              "product": {
+                "properties": {
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "title": {
+                    "title": "Title",
+                    "type": "string"
+                  }
+                },
+                "title": "Product",
+                "type": "object"
+              },
+              "user": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "title": "Order",
+            "type": "object"
+          },
+          "type": {
+            "description": "",
+            "properties": {},
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "subscription.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "examples": [
+          {
+            "company": {
+              "createDate": "2020-10-09T00:00:00+02:00",
+              "id": "company-id-placeholder",
+              "locationRef": "organization-ref-placeholder",
+              "metadata": {},
+              "notes": "",
+              "title": "Sample Company"
+            },
+            "companyRef": "company-id-placeholder",
+            "createDate": "2020-10-09T00:00:00+02:00",
+            "credits": 5,
+            "currentInterval": {
+              "endDate": "2020-11-10T00:00:00+02:00",
+              "startDate": "2020-10-10T00:00:00+02:00"
+            },
+            "dayPasses": 0,
+            "endDate": "2020-10-10T01:00:00+02:00",
+            "id": "ad70a36e-0b38-4ac8-aa50-e4db5bb4577e",
+            "items": [],
+            "locationRef": "organization-ref-placeholder",
+            "membershipRef": "membership-uuid-placeholder",
+            "nextInterval": {
+              "startDate": "2020-11-10T00:00:00+02:00"
+            },
+            "payWithInvoice": {
+              "creditPackages": true,
+              "desks": true,
+              "events": true,
+              "rooms": true,
+              "shop": true
+            },
+            "period": "month",
+            "price": 250,
+            "startDate": "2020-10-10T00:00:00+02:00",
+            "timezoneId": "timezone-id-placeholder",
+            "user": {
+              "about": null,
+              "email": null,
+              "id": 123,
+              "name": null,
+              "phoneNumber": null,
+              "photoUrl": null,
+              "surname": null
+            }
+          }
+        ],
+        "properties": {
+          "company": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "locationRef",
+              "metadata",
+              "notes",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "companyRef": {
+            "title": "CompanyRef",
+            "type": "string"
+          },
+          "createDate": {
+            "format": "date-time",
+            "title": "CreateDate",
+            "type": "string"
+          },
+          "credits": {
+            "title": "Credits",
+            "type": "integer"
+          },
+          "currentInterval": {
+            "properties": {
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endDate",
+              "startDate"
+            ],
+            "title": "CurrentInterval",
+            "type": "object"
+          },
+          "dayPasses": {
+            "title": "DayPasses",
+            "type": "integer"
+          },
+          "endDate": {
+            "format": "date-time",
+            "title": "EndDate",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {},
+            "title": "Items",
+            "type": "array"
+          },
+          "locationRef": {
+            "title": "LocationRef",
+            "type": "string"
+          },
+          "membershipRef": {
+            "title": "MembershipRef",
+            "type": "string"
+          },
+          "nextInterval": {
+            "properties": {
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate"
+            ],
+            "title": "NextInterval",
+            "type": "object"
+          },
+          "payWithInvoice": {
+            "properties": {
+              "creditPackages": {
+                "title": "CreditPackages",
+                "type": "boolean"
+              },
+              "desks": {
+                "title": "Desks",
+                "type": "boolean"
+              },
+              "events": {
+                "title": "Events",
+                "type": "boolean"
+              },
+              "rooms": {
+                "title": "Rooms",
+                "type": "boolean"
+              },
+              "shop": {
+                "title": "Shop",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "creditPackages",
+              "desks",
+              "events",
+              "rooms",
+              "shop"
+            ],
+            "title": "PayWithInvoice",
+            "type": "object"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "integer"
+          },
+          "purchaseDate": {
+            "format": "date-time",
+            "title": "purchaseDate",
+            "type": "string"
+          },
+          "startDate": {
+            "format": "date-time",
+            "title": "StartDate",
+            "type": "string"
+          },
+          "timezoneId": {
+            "title": "TimezoneId",
+            "type": "string"
+          },
+          "user": {
+            "properties": {
+              "about": {
+                "title": "About",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "title": "Email",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phoneNumber": {
+                "title": "PhoneNumber",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "photoUrl": {
+                "title": "PhotoUrl",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "surname": {
+                "title": "Surname",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "User",
+            "type": "object"
+          }
+        },
+        "required": [
+          "items",
+          "createDate",
+          "credits",
+          "dayPasses",
+          "id",
+          "locationRef",
+          "payWithInvoice",
+          "period",
+          "price",
+          "startDate",
+          "timezoneId"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "subscription.deleted",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "examples": [
+          {
+            "company": {
+              "createDate": "2020-10-09T00:00:00+02:00",
+              "id": "company-id-placeholder",
+              "locationRef": "organization-ref-placeholder",
+              "metadata": {},
+              "notes": "",
+              "title": "Sample Company"
+            },
+            "companyRef": "company-id-placeholder",
+            "createDate": "2020-10-09T00:00:00+02:00",
+            "credits": 5,
+            "currentInterval": {
+              "endDate": "2020-11-10T00:00:00+02:00",
+              "startDate": "2020-10-10T00:00:00+02:00"
+            },
+            "dayPasses": 0,
+            "endDate": "2020-10-10T01:00:00+02:00",
+            "id": "ad70a36e-0b38-4ac8-aa50-e4db5bb4577e",
+            "items": [],
+            "locationRef": "organization-ref-placeholder",
+            "membershipRef": "membership-uuid-placeholder",
+            "nextInterval": {
+              "startDate": "2020-11-10T00:00:00+02:00"
+            },
+            "payWithInvoice": {
+              "creditPackages": true,
+              "desks": true,
+              "events": true,
+              "rooms": true,
+              "shop": true
+            },
+            "period": "month",
+            "price": 250,
+            "startDate": "2020-10-10T00:00:00+02:00",
+            "timezoneId": "timezone-id-placeholder",
+            "user": {
+              "about": null,
+              "email": null,
+              "id": 123,
+              "name": null,
+              "phoneNumber": null,
+              "photoUrl": null,
+              "surname": null
+            }
+          }
+        ],
+        "properties": {
+          "company": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "locationRef",
+              "metadata",
+              "notes",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "companyRef": {
+            "title": "CompanyRef",
+            "type": "string"
+          },
+          "createDate": {
+            "format": "date-time",
+            "title": "CreateDate",
+            "type": "string"
+          },
+          "credits": {
+            "title": "Credits",
+            "type": "integer"
+          },
+          "currentInterval": {
+            "properties": {
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endDate",
+              "startDate"
+            ],
+            "title": "CurrentInterval",
+            "type": "object"
+          },
+          "dayPasses": {
+            "title": "DayPasses",
+            "type": "integer"
+          },
+          "deleteDate": {
+            "format": "date-time",
+            "title": "deleteDate",
+            "type": "string"
+          },
+          "endDate": {
+            "format": "date-time",
+            "title": "EndDate",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {},
+            "title": "Items",
+            "type": "array"
+          },
+          "locationRef": {
+            "title": "LocationRef",
+            "type": "string"
+          },
+          "membershipRef": {
+            "title": "MembershipRef",
+            "type": "string"
+          },
+          "nextInterval": {
+            "properties": {
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate"
+            ],
+            "title": "NextInterval",
+            "type": "object"
+          },
+          "payWithInvoice": {
+            "properties": {
+              "creditPackages": {
+                "title": "CreditPackages",
+                "type": "boolean"
+              },
+              "desks": {
+                "title": "Desks",
+                "type": "boolean"
+              },
+              "events": {
+                "title": "Events",
+                "type": "boolean"
+              },
+              "rooms": {
+                "title": "Rooms",
+                "type": "boolean"
+              },
+              "shop": {
+                "title": "Shop",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "creditPackages",
+              "desks",
+              "events",
+              "rooms",
+              "shop"
+            ],
+            "title": "PayWithInvoice",
+            "type": "object"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "integer"
+          },
+          "purchaseDate": {
+            "format": "date-time",
+            "title": "purchaseDate",
+            "type": "string"
+          },
+          "startDate": {
+            "format": "date-time",
+            "title": "StartDate",
+            "type": "string"
+          },
+          "timezoneId": {
+            "title": "TimezoneId",
+            "type": "string"
+          },
+          "user": {
+            "properties": {
+              "about": {
+                "title": "About",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "title": "Email",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phoneNumber": {
+                "title": "PhoneNumber",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "photoUrl": {
+                "title": "PhotoUrl",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "surname": {
+                "title": "Surname",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "User",
+            "type": "object"
+          }
+        },
+        "required": [
+          "items",
+          "createDate",
+          "credits",
+          "dayPasses",
+          "id",
+          "locationRef",
+          "payWithInvoice",
+          "period",
+          "price",
+          "startDate",
+          "timezoneId"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "subscription.purchased",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "examples": [
+          {
+            "company": {
+              "createDate": "2020-10-09T00:00:00+02:00",
+              "id": "company-id-placeholder",
+              "locationRef": "organization-ref-placeholder",
+              "metadata": {},
+              "notes": "",
+              "title": "Sample Company"
+            },
+            "companyRef": "company-id-placeholder",
+            "createDate": "2020-10-09T00:00:00+02:00",
+            "credits": 5,
+            "currentInterval": {
+              "endDate": "2020-11-10T00:00:00+02:00",
+              "startDate": "2020-10-10T00:00:00+02:00"
+            },
+            "dayPasses": 0,
+            "endDate": "2020-10-10T01:00:00+02:00",
+            "id": "ad70a36e-0b38-4ac8-aa50-e4db5bb4577e",
+            "items": [],
+            "locationRef": "organization-ref-placeholder",
+            "membershipRef": "membership-uuid-placeholder",
+            "nextInterval": {
+              "startDate": "2020-11-10T00:00:00+02:00"
+            },
+            "payWithInvoice": {
+              "creditPackages": true,
+              "desks": true,
+              "events": true,
+              "rooms": true,
+              "shop": true
+            },
+            "period": "month",
+            "price": 250,
+            "startDate": "2020-10-10T00:00:00+02:00",
+            "timezoneId": "timezone-id-placeholder",
+            "user": {
+              "about": null,
+              "email": null,
+              "id": 123,
+              "name": null,
+              "phoneNumber": null,
+              "photoUrl": null,
+              "surname": null
+            }
+          }
+        ],
+        "properties": {
+          "company": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "locationRef",
+              "metadata",
+              "notes",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "companyRef": {
+            "title": "CompanyRef",
+            "type": "string"
+          },
+          "createDate": {
+            "format": "date-time",
+            "title": "CreateDate",
+            "type": "string"
+          },
+          "credits": {
+            "title": "Credits",
+            "type": "integer"
+          },
+          "currentInterval": {
+            "properties": {
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endDate",
+              "startDate"
+            ],
+            "title": "CurrentInterval",
+            "type": "object"
+          },
+          "dayPasses": {
+            "title": "DayPasses",
+            "type": "integer"
+          },
+          "endDate": {
+            "format": "date-time",
+            "title": "EndDate",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {},
+            "title": "Items",
+            "type": "array"
+          },
+          "locationRef": {
+            "title": "LocationRef",
+            "type": "string"
+          },
+          "membershipRef": {
+            "title": "MembershipRef",
+            "type": "string"
+          },
+          "nextInterval": {
+            "properties": {
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate"
+            ],
+            "title": "NextInterval",
+            "type": "object"
+          },
+          "payWithInvoice": {
+            "properties": {
+              "creditPackages": {
+                "title": "CreditPackages",
+                "type": "boolean"
+              },
+              "desks": {
+                "title": "Desks",
+                "type": "boolean"
+              },
+              "events": {
+                "title": "Events",
+                "type": "boolean"
+              },
+              "rooms": {
+                "title": "Rooms",
+                "type": "boolean"
+              },
+              "shop": {
+                "title": "Shop",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "creditPackages",
+              "desks",
+              "events",
+              "rooms",
+              "shop"
+            ],
+            "title": "PayWithInvoice",
+            "type": "object"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "integer"
+          },
+          "purchaseDate": {
+            "format": "date-time",
+            "title": "purchaseDate",
+            "type": "string"
+          },
+          "startDate": {
+            "format": "date-time",
+            "title": "StartDate",
+            "type": "string"
+          },
+          "timezoneId": {
+            "title": "TimezoneId",
+            "type": "string"
+          },
+          "user": {
+            "properties": {
+              "about": {
+                "title": "About",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "title": "Email",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phoneNumber": {
+                "title": "PhoneNumber",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "photoUrl": {
+                "title": "PhotoUrl",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "surname": {
+                "title": "Surname",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "User",
+            "type": "object"
+          }
+        },
+        "required": [
+          "items",
+          "createDate",
+          "credits",
+          "dayPasses",
+          "id",
+          "locationRef",
+          "payWithInvoice",
+          "period",
+          "price",
+          "startDate",
+          "timezoneId"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "subscription.updated",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "examples": [
+          {
+            "company": {
+              "createDate": "2020-10-09T00:00:00+02:00",
+              "id": "company-id-placeholder",
+              "locationRef": "organization-ref-placeholder",
+              "metadata": {},
+              "notes": "",
+              "title": "Sample Company"
+            },
+            "companyRef": "company-id-placeholder",
+            "createDate": "2020-10-09T00:00:00+02:00",
+            "credits": 5,
+            "currentInterval": {
+              "endDate": "2020-11-10T00:00:00+02:00",
+              "startDate": "2020-10-10T00:00:00+02:00"
+            },
+            "dayPasses": 0,
+            "endDate": "2020-10-10T01:00:00+02:00",
+            "id": "ad70a36e-0b38-4ac8-aa50-e4db5bb4577e",
+            "items": [],
+            "locationRef": "organization-ref-placeholder",
+            "membershipRef": "membership-uuid-placeholder",
+            "nextInterval": {
+              "startDate": "2020-11-10T00:00:00+02:00"
+            },
+            "payWithInvoice": {
+              "creditPackages": true,
+              "desks": true,
+              "events": true,
+              "rooms": true,
+              "shop": true
+            },
+            "period": "month",
+            "price": 250,
+            "startDate": "2020-10-10T00:00:00+02:00",
+            "timezoneId": "timezone-id-placeholder",
+            "user": {
+              "about": null,
+              "email": null,
+              "id": 123,
+              "name": null,
+              "phoneNumber": null,
+              "photoUrl": null,
+              "surname": null
+            }
+          }
+        ],
+        "properties": {
+          "company": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "metadata": {
+                "title": "Metadata",
+                "type": "object"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "locationRef",
+              "metadata",
+              "notes",
+              "title"
+            ],
+            "title": "Company",
+            "type": "object"
+          },
+          "companyRef": {
+            "title": "CompanyRef",
+            "type": "string"
+          },
+          "createDate": {
+            "format": "date-time",
+            "title": "CreateDate",
+            "type": "string"
+          },
+          "credits": {
+            "title": "Credits",
+            "type": "integer"
+          },
+          "currentInterval": {
+            "properties": {
+              "endDate": {
+                "format": "date-time",
+                "title": "EndDate",
+                "type": "string"
+              },
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endDate",
+              "startDate"
+            ],
+            "title": "CurrentInterval",
+            "type": "object"
+          },
+          "dayPasses": {
+            "title": "DayPasses",
+            "type": "integer"
+          },
+          "endDate": {
+            "format": "date-time",
+            "title": "EndDate",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {},
+            "title": "Items",
+            "type": "array"
+          },
+          "locationRef": {
+            "title": "LocationRef",
+            "type": "string"
+          },
+          "membershipRef": {
+            "title": "MembershipRef",
+            "type": "string"
+          },
+          "nextInterval": {
+            "properties": {
+              "startDate": {
+                "format": "date-time",
+                "title": "StartDate",
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate"
+            ],
+            "title": "NextInterval",
+            "type": "object"
+          },
+          "payWithInvoice": {
+            "properties": {
+              "creditPackages": {
+                "title": "CreditPackages",
+                "type": "boolean"
+              },
+              "desks": {
+                "title": "Desks",
+                "type": "boolean"
+              },
+              "events": {
+                "title": "Events",
+                "type": "boolean"
+              },
+              "rooms": {
+                "title": "Rooms",
+                "type": "boolean"
+              },
+              "shop": {
+                "title": "Shop",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "creditPackages",
+              "desks",
+              "events",
+              "rooms",
+              "shop"
+            ],
+            "title": "PayWithInvoice",
+            "type": "object"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "integer"
+          },
+          "purchaseDate": {
+            "format": "date-time",
+            "title": "purchaseDate",
+            "type": "string"
+          },
+          "startDate": {
+            "format": "date-time",
+            "title": "StartDate",
+            "type": "string"
+          },
+          "timezoneId": {
+            "title": "TimezoneId",
+            "type": "string"
+          },
+          "user": {
+            "properties": {
+              "about": {
+                "title": "About",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "title": "Email",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phoneNumber": {
+                "title": "PhoneNumber",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "photoUrl": {
+                "title": "PhotoUrl",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "surname": {
+                "title": "Surname",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "User",
+            "type": "object"
+          }
+        },
+        "required": [
+          "items",
+          "createDate",
+          "credits",
+          "dayPasses",
+          "id",
+          "locationRef",
+          "payWithInvoice",
+          "period",
+          "price",
+          "startDate",
+          "timezoneId"
+        ],
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "support.ticket.created",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "examples": [
+          {
+            "ticket": {
+              "createDate": "2025-03-18T13:25:56.647Z",
+              "description": "some string",
+              "id": "7d44ff15-c768-4045-8ccf-7ac3c169f777",
+              "locationRef": "ff775731-cbe4-4818-b8bd-add45c221039",
+              "membershipRefAssignee": "bf71d7c9-bcb0-48ab-b44c-15335187babf",
+              "membershipRefRequester": "f45fd9b6-6d9b-4f33-9895-04b7f9746fd2",
+              "number": 42,
+              "status": "new",
+              "type": "access",
+              "updateDate": "2025-03-18T13:25:56.648Z",
+              "userAssignee": {
+                "about": "some string",
+                "email": "email",
+                "id": "1776a781-ff3c-4ef6-91c2-c083c47def9b",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "uri",
+                "surname": "some string"
+              },
+              "userRequester": {
+                "about": "some string",
+                "email": "email",
+                "id": "ca31d4f9-7f29-44ee-82f4-b95cd24cd3aa",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "uri",
+                "surname": "some string"
+              }
+            },
+            "type": "some string"
+          }
+        ],
+        "properties": {
+          "ticket": {
+            "properties": {
+              "createDate": {
+                "format": "date-time",
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "format": "uuid",
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRefAssignee": {
+                "format": "uuid",
+                "title": "MembershipRefAssignee",
+                "type": "string"
+              },
+              "membershipRefRequester": {
+                "format": "uuid",
+                "title": "MembershipRefRequester",
+                "type": "string"
+              },
+              "number": {
+                "description": "Unique identifier of ticket in location.",
+                "format": "int64",
+                "title": "Number",
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "new",
+                  "inProgress",
+                  "solved",
+                  "closed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "access",
+                  "accountAndBilling",
+                  "bookings",
+                  "cleaning",
+                  "discriminationAndHarassment",
+                  "internet",
+                  "mailAndPackages",
+                  "noiseAndAcoustics",
+                  "other",
+                  "printing",
+                  "repairAndMaintenance",
+                  "temperatureAndVentilation",
+                  "websiteAndApp"
+                ],
+                "title": "Type",
+                "type": "string"
+              },
+              "updateDate": {
+                "format": "date-time",
+                "title": "UpdateDate",
+                "type": "string"
+              },
+              "userAssignee": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "format": "email",
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "format": "uri",
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              },
+              "userRequester": {
+                "properties": {
+                  "about": {
+                    "title": "About",
+                    "type": "string"
+                  },
+                  "email": {
+                    "format": "email",
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uuid",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "format": "uri",
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "title": "User",
+                "type": "object"
+              }
+            },
+            "title": "Ticket",
+            "type": "object"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "visitors.request.approved",
+    "description": "This even is triggered when visit request is being approved ",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "",
+        "examples": [
+          {
+            "visit": {
+              "checkInDate": "some string",
+              "checkOutDate": "some string",
+              "code": "some string",
+              "comment": "some string",
+              "createDate": "some string",
+              "date": "some string",
+              "id": "some string",
+              "locationRef": "some string",
+              "membershipRefHost": "some string",
+              "userHost": {
+                "email": "some string",
+                "id": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              },
+              "userRefVisitor": "some string",
+              "visitor": {
+                "email": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "surname": "some string"
+              }
+            }
+          }
+        ],
+        "properties": {
+          "visit": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+              "checkInDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckInDate",
+                "type": "string"
+              },
+              "checkOutDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckOutDate",
+                "type": "string"
+              },
+              "code": {
+                "description": "",
+                "properties": {},
+                "title": "Code",
+                "type": "string"
+              },
+              "comment": {
+                "description": "",
+                "properties": {},
+                "title": "comment",
+                "type": "string"
+              },
+              "createDate": {
+                "description": "",
+                "properties": {},
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "date": {
+                "description": "",
+                "properties": {},
+                "title": "Date",
+                "type": "string"
+              },
+              "id": {
+                "description": "",
+                "properties": {},
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "description": "",
+                "properties": {},
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRefHost": {
+                "description": "",
+                "properties": {},
+                "title": "MembershipRefHost",
+                "type": "string"
+              },
+              "userHost": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "id",
+                  "name",
+                  "phoneNumber",
+                  "photoUrl",
+                  "surname"
+                ],
+                "title": "UserHost",
+                "type": "object"
+              },
+              "userRefVisitor": {
+                "description": "",
+                "properties": {},
+                "title": "UserRefVisitor",
+                "type": "string"
+              },
+              "visitor": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "name",
+                  "phoneNumber",
+                  "surname"
+                ],
+                "title": "Visitor",
+                "type": "object"
+              }
+            },
+            "required": [
+              "comment",
+              "checkInDate",
+              "checkOutDate",
+              "code",
+              "createDate",
+              "date",
+              "id",
+              "locationRef",
+              "membershipRefHost",
+              "userHost",
+              "userRefVisitor",
+              "visitor"
+            ],
+            "title": "visit",
+            "type": "object"
+          }
+        },
+        "required": [
+          "visit"
+        ],
+        "title": "visit",
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "visitors.visit.checked_in",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "",
+        "examples": [
+          {
+            "visit": {
+              "checkInDate": "some string",
+              "checkOutDate": "some string",
+              "code": "some string",
+              "comment": "some string",
+              "createDate": "some string",
+              "date": "some string",
+              "id": "some string",
+              "locationRef": "some string",
+              "membershipRefHost": "some string",
+              "userHost": {
+                "email": "some string",
+                "id": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              },
+              "userRefVisitor": "some string",
+              "visitor": {
+                "email": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "surname": "some string"
+              }
+            }
+          }
+        ],
+        "properties": {
+          "visit": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+              "checkInDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckInDate",
+                "type": "string"
+              },
+              "checkOutDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckOutDate",
+                "type": "string"
+              },
+              "code": {
+                "description": "",
+                "properties": {},
+                "title": "Code",
+                "type": "string"
+              },
+              "comment": {
+                "description": "",
+                "properties": {},
+                "title": "comment",
+                "type": "string"
+              },
+              "createDate": {
+                "description": "",
+                "properties": {},
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "date": {
+                "description": "",
+                "properties": {},
+                "title": "Date",
+                "type": "string"
+              },
+              "id": {
+                "description": "",
+                "properties": {},
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "description": "",
+                "properties": {},
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRefHost": {
+                "description": "",
+                "properties": {},
+                "title": "MembershipRefHost",
+                "type": "string"
+              },
+              "userHost": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "id",
+                  "name",
+                  "phoneNumber",
+                  "photoUrl",
+                  "surname"
+                ],
+                "title": "UserHost",
+                "type": "object"
+              },
+              "userRefVisitor": {
+                "description": "",
+                "properties": {},
+                "title": "UserRefVisitor",
+                "type": "string"
+              },
+              "visitor": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "name",
+                  "phoneNumber",
+                  "surname"
+                ],
+                "title": "Visitor",
+                "type": "object"
+              }
+            },
+            "required": [
+              "comment",
+              "checkInDate",
+              "checkOutDate",
+              "code",
+              "createDate",
+              "date",
+              "id",
+              "locationRef",
+              "membershipRefHost",
+              "userHost",
+              "userRefVisitor",
+              "visitor"
+            ],
+            "title": "visit",
+            "type": "object"
+          }
+        },
+        "required": [
+          "visit"
+        ],
+        "title": "visit",
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  },
+  {
+    "name": "visitors.visit.checked_out",
+    "description": "",
+    "deprecated": false,
+    "schemas": {
+      "1": {
+        "$id": "http://json-schema.org/draft-07/schema#",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "",
+        "examples": [
+          {
+            "visit": {
+              "checkInDate": "some string",
+              "checkOutDate": "some string",
+              "code": "some string",
+              "comment": "some string",
+              "createDate": "some string",
+              "date": "some string",
+              "id": "some string",
+              "locationRef": "some string",
+              "membershipRefHost": "some string",
+              "userHost": {
+                "email": "some string",
+                "id": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "photoUrl": "some string",
+                "surname": "some string"
+              },
+              "userRefVisitor": "some string",
+              "visitor": {
+                "email": "some string",
+                "name": "some string",
+                "phoneNumber": "some string",
+                "surname": "some string"
+              }
+            }
+          }
+        ],
+        "properties": {
+          "visit": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+              "checkInDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckInDate",
+                "type": "string"
+              },
+              "checkOutDate": {
+                "description": "",
+                "properties": {},
+                "title": "CheckOutDate",
+                "type": "string"
+              },
+              "code": {
+                "description": "",
+                "properties": {},
+                "title": "Code",
+                "type": "string"
+              },
+              "comment": {
+                "description": "",
+                "properties": {},
+                "title": "comment",
+                "type": "string"
+              },
+              "createDate": {
+                "description": "",
+                "properties": {},
+                "title": "CreateDate",
+                "type": "string"
+              },
+              "date": {
+                "description": "",
+                "properties": {},
+                "title": "Date",
+                "type": "string"
+              },
+              "id": {
+                "description": "",
+                "properties": {},
+                "title": "Id",
+                "type": "string"
+              },
+              "locationRef": {
+                "description": "",
+                "properties": {},
+                "title": "LocationRef",
+                "type": "string"
+              },
+              "membershipRefHost": {
+                "description": "",
+                "properties": {},
+                "title": "MembershipRefHost",
+                "type": "string"
+              },
+              "userHost": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhotoUrl",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "id",
+                  "name",
+                  "phoneNumber",
+                  "photoUrl",
+                  "surname"
+                ],
+                "title": "UserHost",
+                "type": "object"
+              },
+              "userRefVisitor": {
+                "description": "",
+                "properties": {},
+                "title": "UserRefVisitor",
+                "type": "string"
+              },
+              "visitor": {
+                "additionalProperties": false,
+                "description": "",
+                "properties": {
+                  "email": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Email",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "",
+                    "properties": {},
+                    "title": "PhoneNumber",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "",
+                    "properties": {},
+                    "title": "Surname",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "name",
+                  "phoneNumber",
+                  "surname"
+                ],
+                "title": "Visitor",
+                "type": "object"
+              }
+            },
+            "required": [
+              "comment",
+              "checkInDate",
+              "checkOutDate",
+              "code",
+              "createDate",
+              "date",
+              "id",
+              "locationRef",
+              "membershipRefHost",
+              "userHost",
+              "userRefVisitor",
+              "visitor"
+            ],
+            "title": "visit",
+            "type": "object"
+          }
+        },
+        "required": [
+          "visit"
+        ],
+        "title": "visit",
+        "type": "object",
+        "x-svix-preserve-example": true
+      }
+    }
+  }
+]

@@ -34,6 +34,8 @@ The generator derives namespaces from path segments and method names from path s
 
 The `npm run generate` output is committed; CI regenerates and runs `git diff --exit-code`, so a stale or hand-edited generated file fails the build.
 
+Webhook event types work the same way: `npm run fetch:webhook-catalog` downloads the Svix event catalog (https://webhooks.spacebring.com/, event schemas embedded in the page's `__NEXT_DATA__`) into `spec/webhook-events.json`, and `npm run generate:webhooks` (part of `npm run generate`) emits `src/generated/webhook-events.ts` from it. The verifier/router itself is hand-written in `src/webhooks.ts` (Web Crypto only — no `node:crypto`, so it runs on Workers/edge).
+
 ## Scripts
 
 | Script | What it does |

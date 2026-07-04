@@ -57,9 +57,11 @@ function withRetry(fetchImpl: typeof globalThis.fetch, maxRetries: number): type
       if (response.status !== 429 || attempt >= maxRetries) return response;
       const retryAfterHeader = response.headers.get("retry-after");
       const retryAfter = retryAfterHeader === null ? Number.NaN : Number(retryAfterHeader);
+      // Cap the server-supplied delay: a misbehaving proxy must not be able to
+      // park the client on a multi-hour setTimeout.
       const delayMs =
         Number.isFinite(retryAfter) && retryAfter >= 0
-          ? retryAfter * 1000
+          ? Math.min(retryAfter * 1000, 60_000)
           : Math.min(250 * 2 ** attempt + Math.random() * 100, 5_000);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
