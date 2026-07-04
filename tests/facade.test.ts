@@ -8,7 +8,10 @@ interface RecordedRequest {
   body: string;
 }
 
-function mockClient(responses: Array<{ status: number; body?: unknown }>, config?: { networkId?: string }) {
+function mockClient(
+  responses: Array<{ status: number; body?: unknown; headers?: Record<string, string> }>,
+  config?: { networkId?: string; maxRetries?: number },
+) {
   const requests: RecordedRequest[] = [];
   let call = 0;
   const fetch = async (input: Request | string | URL): Promise<Response> => {
@@ -22,17 +25,18 @@ function mockClient(responses: Array<{ status: number; body?: unknown }>, config
     const next = responses[Math.min(call, responses.length - 1)];
     call += 1;
     if (next.body === undefined) {
-      return new Response(null, { status: next.status });
+      return new Response(null, { status: next.status, headers: next.headers });
     }
     return new Response(JSON.stringify(next.body), {
       status: next.status,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...next.headers },
     });
   };
   const sb = new Spacebring({
     clientId: "client id",
     clientSecret: "client secret",
     networkId: config?.networkId,
+    maxRetries: config?.maxRetries,
     fetch: fetch as typeof globalThis.fetch,
   });
   return { sb, requests };
@@ -109,6 +113,29 @@ describe("Spacebring client", () => {
     const secondPage = new URL(requests[1].url);
     expect(secondPage.searchParams.get("nextPageToken")).toBe("page-2");
     expect(secondPage.searchParams.get("locationRef")).toBe("loc-1");
+  });
+
+  it("retries rate-limited requests and resends the body", async () => {
+    const rateLimited = { status: 429, body: { message: "rate limited" }, headers: { "Retry-After": "0" } };
+    const { sb, requests } = mockClient([rateLimited, rateLimited, { status: 200, body: { benefit: { id: "b1" } } }]);
+    const created = await sb.benefits.create({ locationRef: "loc-1", title: "Coffee" } as never);
+    expect(created).toMatchObject({ benefit: { id: "b1" } });
+    expect(requests).toHaveLength(3);
+    // Request bodies are one-shot streams; each retry must carry a fresh clone.
+    expect(JSON.parse(requests[2].body)).toEqual(JSON.parse(requests[0].body));
+  });
+
+  it("gives up after maxRetries and throws the 429", async () => {
+    const rateLimited = { status: 429, body: { message: "rate limited" }, headers: { "Retry-After": "0" } };
+    const { sb, requests } = mockClient([rateLimited], { maxRetries: 1 });
+    await expect(sb.benefits.list()).rejects.toMatchObject({ status: 429 });
+    expect(requests).toHaveLength(2);
+  });
+
+  it("does not retry when maxRetries is 0", async () => {
+    const { sb, requests } = mockClient([{ status: 429, body: {} }], { maxRetries: 0 });
+    await expect(sb.benefits.list()).rejects.toMatchObject({ status: 429 });
+    expect(requests).toHaveLength(1);
   });
 
   it("exposes the raw openapi-fetch client as an escape hatch", async () => {

@@ -85,6 +85,8 @@ Values are passed through exactly as the API sends them — no runtime conversio
 
 HTTP Basic with your **Client ID** and **Client Secret** from **Spacebring → [Network] → Network Settings → Developers**. The client builds the `Authorization: Basic …` header for you. The API's OAuth2 flow is not currently supported.
 
+For development without touching live data, Spacebring offers a [test environment](https://www.spacebring.com/docs/administration/test-environment) (Network settings → Billing add-on) with free sandbox API credentials that work with this client unchanged.
+
 ---
 
 ## Error handling
@@ -104,6 +106,10 @@ try {
 ```
 
 Malformed successes are covered too: a 2xx with an empty or incomplete body throws a `SpacebringError` (never a bare `TypeError`), and `iterate()` throws instead of looping forever if the API repeats a page token.
+
+### Rate limits
+
+The API allows **10 requests per second**. Rate-limited requests (429) are retried automatically — up to 3 times, honoring `Retry-After` or backing off exponentially — so `iterate()` survives the limit out of the box. Tune or disable via `maxRetries` in the config (`maxRetries: 0` turns it off); a 429 that persists past the retries is thrown as a normal `SpacebringError`.
 
 ---
 
