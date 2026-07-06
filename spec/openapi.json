@@ -14,7 +14,7 @@
     "/alt_currencies/v1": {
       "get": {
         "tags": [
-          "Alternative Currencies"
+          "Alternative currencies"
         ],
         "summary": "Retrieve alternative currencies",
         "description": "Retrieve all alternative currencies in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
@@ -113,7 +113,7 @@
       },
       "post": {
         "tags": [
-          "Alternative Currencies"
+          "Alternative currencies"
         ],
         "summary": "Create an alternative currency",
         "description": "Create an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
@@ -175,7 +175,7 @@
     "/alt_currencies/v1/{id}": {
       "delete": {
         "tags": [
-          "Alternative Currencies"
+          "Alternative currencies"
         ],
         "summary": "Delete an alternative currency",
         "description": "Delete an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
@@ -230,7 +230,7 @@
       },
       "patch": {
         "tags": [
-          "Alternative Currencies"
+          "Alternative currencies"
         ],
         "summary": "Update an alternative currency",
         "description": "Update an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
@@ -1206,6 +1206,24 @@
               "deprecated": true,
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -9033,43 +9051,71 @@
         "parameters": [
           {
             "in": "query",
-            "name": "locationRef",
-            "description": "The id of the location.",
+            "name": "customerRef",
+            "required": false,
+            "description": "UUID of the customer whose subscriptions to list.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "required": true
+            }
           },
           {
             "in": "query",
             "name": "limit",
+            "required": false,
+            "description": "Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
             "schema": {
               "type": "integer",
-              "format": "int64",
               "minimum": 1,
-              "maximum": 100,
-              "default": 25
-            },
-            "description": "The number of items to return"
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": false,
+            "description": "UUID of the location whose subscriptions to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           {
             "in": "query",
             "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
             "schema": {
-              "$ref": "#/components/schemas/nextPageToken"
-            },
-            "description": "Token to retrieve the next page of results."
+              "type": "string"
+            }
           },
           {
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "description": "Sort order for results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "description": "Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.\n\nSupported values:\n- **active** — currently active\n- **scheduled** — scheduled to start\n- **incomplete** — pending setup or payment\n- **incompleteExpired** — incomplete and expired\n- **canceled** — canceled",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
             "in": "header",
             "name": "spacebring-network-id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
             "required": false,
-            "description": "The id of the network. Required when using bearer token authentication"
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "security": [
@@ -9089,21 +9135,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "nextPageToken": {
-                      "$ref": "#/components/schemas/nextPageToken"
-                    },
-                    "searchQueryNext": {
-                      "$ref": "#/components/schemas/searchQueryNext"
-                    },
-                    "subscriptions": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/subscription"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/getSubscriptions"
                 }
               }
             }
@@ -9181,7 +9213,7 @@
         }
       }
     },
-    "/subscriptions/v1/{id}": {
+    "/subscriptions/v1/{subscriptionId}": {
       "get": {
         "tags": [
           "Subscriptions"
@@ -9191,24 +9223,24 @@
         "operationId": "getSubscription",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "subscriptionId",
+            "required": true,
             "description": "The id of the subscription.",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "spacebring-network-id",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
             "required": false,
-            "description": "The id of the network. Required when using bearer token authentication"
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "security": [
@@ -9228,12 +9260,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "subscription": {
-                      "$ref": "#/components/schemas/subscription"
-                    }
-                  }
+                  "$ref": "#/components/schemas/getSubscription"
                 }
               }
             }
@@ -9259,24 +9286,24 @@
         "operationId": "updateSubscription",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "subscriptionId",
+            "required": true,
             "description": "The id of the subscription.",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "spacebring-network-id",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
             "required": false,
-            "description": "The id of the network. Required when using bearer token authentication"
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -9317,24 +9344,24 @@
         "operationId": "deleteSubscription",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "subscriptionId",
+            "required": true,
             "description": "The id of the subscription.",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "spacebring-network-id",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
             "required": false,
-            "description": "The id of the network. Required when using bearer token authentication"
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "security": [
@@ -9364,7 +9391,7 @@
         }
       }
     },
-    "/subscriptions/v1/{id}/items": {
+    "/subscriptions/v1/{subscriptionId}/items": {
       "post": {
         "tags": [
           "Subscriptions"
@@ -9374,7 +9401,7 @@
         "operationId": "createSubscriptionItem",
         "parameters": [
           {
-            "name": "id",
+            "name": "subscriptionId",
             "in": "path",
             "description": "The id of the subscription.",
             "schema": {
@@ -9436,7 +9463,7 @@
         }
       }
     },
-    "/subscriptions/v1/{id}/items/{itemId}": {
+    "/subscriptions/v1/{subscriptionId}/items/{itemId}": {
       "patch": {
         "tags": [
           "Subscriptions"
@@ -9446,7 +9473,7 @@
         "operationId": "updateSubscriptionItem",
         "parameters": [
           {
-            "name": "id",
+            "name": "subscriptionId",
             "in": "path",
             "description": "The id of the subscription.",
             "schema": {
@@ -9504,7 +9531,7 @@
         "operationId": "deleteSubscriptionItem",
         "parameters": [
           {
-            "name": "id",
+            "name": "subscriptionId",
             "in": "path",
             "description": "The id of the subscription.",
             "schema": {
@@ -12015,7 +12042,8 @@
             "enum": [
               "fastForex",
               "nbu",
-              "bcra"
+              "bcra",
+              "nbg"
             ]
           }
         },
@@ -26565,6 +26593,1100 @@
         ],
         "additionalProperties": false
       },
+      "getSubscriptions": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          },
+          "subscriptions": {
+            "description": "List of subscriptions.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "addPendingItemsToInvoice": {
+                  "description": "Whether pending items are added to the next invoice.",
+                  "type": "boolean"
+                },
+                "advanceInvoicing": {
+                  "description": "Advance invoicing settings.",
+                  "type": "object",
+                  "properties": {
+                    "days": {
+                      "description": "Number of days before renewal to issue an invoice.",
+                      "type": "number"
+                    },
+                    "type": {
+                      "description": "Advance invoicing mode.",
+                      "type": "string",
+                      "enum": [
+                        "days",
+                        "default"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "days",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
+                "assignments": {
+                  "description": "Resource assignments for this subscription.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entire": {
+                        "description": "Whether the assignment grants access to the entire resource.",
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "description": "Unique identifier of the assignment.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "quantity": {
+                        "description": "Assigned quantity.",
+                        "type": "number"
+                      },
+                      "resource": {
+                        "description": "Assigned resource details.",
+                        "type": "object",
+                        "properties": {
+                          "coverUrl": {
+                            "description": "Cover image URL of the assigned resource.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "Unique identifier of the assigned resource.",
+                            "type": "string"
+                          },
+                          "title": {
+                            "description": "Display name of the assigned resource.",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "Resource type.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "title": {
+                        "description": "Display title of the assignment.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "resource",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "billingCycleAnchor": {
+                  "description": "Billing cycle anchor mode.",
+                  "type": "string",
+                  "enum": [
+                    "any",
+                    "day"
+                  ]
+                },
+                "company": {
+                  "description": "Company associated with this subscription.",
+                  "type": "object",
+                  "properties": {
+                    "createDate": {
+                      "description": "ISO timestamp of when the company was created.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "id": {
+                      "description": "Unique identifier of the company.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "locationRef": {
+                      "description": "ID of the location this company belongs to.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "description": "Storage key of the company logo.",
+                          "type": "string"
+                        },
+                        "url": {
+                          "description": "Public URL of the company logo.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "metadata": {
+                      "description": "Custom metadata for the company.",
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "notes": {
+                      "description": "Internal notes about the company.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "publicLogoUrl": {
+                      "description": "Logo URL resolved from the company website.",
+                      "type": "string"
+                    },
+                    "title": {
+                      "description": "Display name of the company.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "createDate",
+                    "id",
+                    "locationRef",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                },
+                "companyRef": {
+                  "description": "ID of the company this subscription belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "contract": {
+                  "description": "Contract associated with this subscription.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "Unique identifier of the contract.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "url": {
+                      "description": "URL of the contract document.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "createDate": {
+                  "description": "ISO timestamp of when the subscription was created.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "credits": {
+                  "description": "Total credits included in the subscription.",
+                  "type": "number"
+                },
+                "currentInterval": {
+                  "description": "Current billing interval.",
+                  "type": "object",
+                  "properties": {
+                    "endDate": {
+                      "description": "ISO timestamp when the interval ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "futureIntervalItemsCreated": {
+                      "description": "Whether future interval items have been created.",
+                      "type": "boolean"
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp when the interval starts.",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "endDate",
+                    "startDate"
+                  ],
+                  "additionalProperties": false
+                },
+                "customerRef": {
+                  "description": "ID of the customer billed for this subscription.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "dayPasses": {
+                  "description": "Total day passes included in the subscription.",
+                  "type": "number"
+                },
+                "deleteDate": {
+                  "description": "ISO timestamp of when the subscription was deleted.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "discounts": {
+                  "deprecated": true,
+                  "description": "Maximum synthetic discount percentages across items.",
+                  "type": "object",
+                  "properties": {
+                    "creditPackages": {
+                      "description": "Maximum discount percentage for credit packages across items.",
+                      "type": "number"
+                    },
+                    "desks": {
+                      "description": "Maximum discount percentage for desk bookings across items.",
+                      "type": "number"
+                    },
+                    "equipment": {
+                      "description": "Maximum discount percentage for equipment bookings across items.",
+                      "type": "number"
+                    },
+                    "events": {
+                      "description": "Maximum discount percentage for event tickets across items.",
+                      "type": "number"
+                    },
+                    "rooms": {
+                      "description": "Maximum discount percentage for room bookings across items.",
+                      "type": "number"
+                    },
+                    "shop": {
+                      "description": "Maximum discount percentage for shop products across items.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "creditPackages",
+                    "desks",
+                    "equipment",
+                    "events",
+                    "rooms",
+                    "shop"
+                  ],
+                  "additionalProperties": false
+                },
+                "endDate": {
+                  "description": "ISO timestamp when the subscription ends.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "description": "Unique identifier of the subscription.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "items": {
+                  "description": "Subscription line items.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "autoUpdateFromProduct": {
+                        "description": "Whether the item syncs from its linked product.",
+                        "type": "boolean"
+                      },
+                      "avigilonAltaGroupRef": {
+                        "description": "Avigilon Alta access group reference.",
+                        "nullable": true,
+                        "type": "number"
+                      },
+                      "brivoGroupRef": {
+                        "description": "Brivo access group reference.",
+                        "nullable": true,
+                        "type": "number"
+                      },
+                      "commitmentCycles": {
+                        "description": "Number of billing cycles in the commitment period.",
+                        "type": "number"
+                      },
+                      "commitmentEndDate": {
+                        "description": "ISO timestamp when the commitment period ends.",
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "couponRef": {
+                        "description": "ID of the coupon applied to this item.",
+                        "type": "string"
+                      },
+                      "createDate": {
+                        "description": "ISO timestamp of when the item was created.",
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "credits": {
+                        "description": "Credits included per billing cycle.",
+                        "type": "number"
+                      },
+                      "customEnd": {
+                        "description": "Whether the item has a custom end date.",
+                        "type": "boolean"
+                      },
+                      "customStart": {
+                        "description": "Whether the item has a custom start date.",
+                        "type": "boolean"
+                      },
+                      "customTax": {
+                        "description": "Custom tax settings for this item.",
+                        "type": "object",
+                        "properties": {
+                          "enabled": {
+                            "description": "Whether custom tax is enabled for this item.",
+                            "type": "boolean"
+                          },
+                          "rate": {
+                            "description": "Custom tax rate as a decimal.",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "enabled",
+                          "rate"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "dayPasses": {
+                        "description": "Day passes included per billing cycle.",
+                        "type": "number"
+                      },
+                      "discounts": {
+                        "description": "Synthetic discount percentages by product type.",
+                        "deprecated": true,
+                        "type": "object",
+                        "properties": {
+                          "creditPackages": {
+                            "description": "Discount percentage applied to credit packages.",
+                            "type": "number"
+                          },
+                          "desks": {
+                            "description": "Discount percentage applied to desk bookings.",
+                            "type": "number"
+                          },
+                          "equipment": {
+                            "description": "Discount percentage applied to equipment bookings.",
+                            "type": "number"
+                          },
+                          "events": {
+                            "description": "Discount percentage applied to event tickets.",
+                            "type": "number"
+                          },
+                          "rooms": {
+                            "description": "Discount percentage applied to room bookings.",
+                            "type": "number"
+                          },
+                          "shop": {
+                            "description": "Discount percentage applied to shop products.",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "creditPackages",
+                          "desks",
+                          "equipment",
+                          "events",
+                          "rooms",
+                          "shop"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "endDate": {
+                        "description": "ISO timestamp when the item ends.",
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "endFixed": {
+                        "description": "Whether the end date is fixed and cannot shift with billing cycles.",
+                        "type": "boolean"
+                      },
+                      "entire": {
+                        "description": "Whether the item grants access to the entire resource.",
+                        "type": "boolean"
+                      },
+                      "exclusiveAccess": {
+                        "description": "Resources with exclusive access.",
+                        "type": "object",
+                        "properties": {
+                          "resourceRefs": {
+                            "description": "Resource IDs with exclusive access.",
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          }
+                        },
+                        "required": [
+                          "resourceRefs"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "ezeepBlueGroupRef": {
+                        "description": "Ezeep Blue group reference.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "grantedDiscounts": {
+                        "description": "Coupons granted to this item.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "coupon": {
+                              "description": "Granted coupon details.",
+                              "type": "object",
+                              "properties": {
+                                "amountOff": {
+                                  "description": "Fixed discount amount.",
+                                  "type": "number"
+                                },
+                                "currencyCode": {
+                                  "description": "Currency code for amountOff.",
+                                  "type": "string"
+                                },
+                                "enabledForCredits": {
+                                  "description": "Whether the coupon applies to credit purchases.",
+                                  "type": "boolean"
+                                },
+                                "id": {
+                                  "description": "Unique identifier of the coupon.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "limitedItems": {
+                                  "description": "Item-level redemption limits.",
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "description": "Whether item-level limits are enabled.",
+                                      "type": "boolean"
+                                    },
+                                    "values": {
+                                      "description": "Items the coupon applies to when limits are enabled.",
+                                      "type": "array",
+                                      "items": {
+                                        "description": "Product or package the coupon is limited to.",
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "description": "Unique identifier of the limited item.",
+                                            "type": "string",
+                                            "format": "uuid"
+                                          },
+                                          "title": {
+                                            "description": "Display name of the limited item.",
+                                            "type": "string"
+                                          },
+                                          "type": {
+                                            "description": "Product type of the limited item.",
+                                            "type": "string",
+                                            "enum": [
+                                              "roomBookings",
+                                              "eventSpaceBookings",
+                                              "conferenceRoomBookings",
+                                              "meetingRoomBookings",
+                                              "phoneBoothBookings",
+                                              "stationBookings",
+                                              "studioBookings",
+                                              "hotDeskBookings",
+                                              "dedicatedDeskBookings",
+                                              "parkingBookings",
+                                              "equipmentBookings",
+                                              "eventTickets",
+                                              "shopProducts",
+                                              "packages",
+                                              "subscriptionItems"
+                                            ]
+                                          }
+                                        },
+                                        "required": [
+                                          "id",
+                                          "type"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled",
+                                    "values"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "limitedRedemption": {
+                                  "description": "Redemption limits for the coupon.",
+                                  "type": "object",
+                                  "properties": {
+                                    "enabled": {
+                                      "description": "Whether redemption limits are enabled.",
+                                      "type": "boolean"
+                                    },
+                                    "usage": {
+                                      "description": "Current redemption count.",
+                                      "type": "number"
+                                    },
+                                    "value": {
+                                      "description": "Maximum redemption count.",
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled",
+                                    "usage",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "percentOff": {
+                                  "description": "Percentage discount.",
+                                  "type": "number"
+                                },
+                                "productTypes": {
+                                  "description": "Product types the coupon applies to.",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "roomBookings",
+                                      "eventSpaceBookings",
+                                      "conferenceRoomBookings",
+                                      "meetingRoomBookings",
+                                      "phoneBoothBookings",
+                                      "stationBookings",
+                                      "studioBookings",
+                                      "hotDeskBookings",
+                                      "dedicatedDeskBookings",
+                                      "parkingBookings",
+                                      "equipmentBookings",
+                                      "eventTickets",
+                                      "shopProducts",
+                                      "packages",
+                                      "subscriptionItems"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "coupon"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "id": {
+                        "description": "Unique identifier of the subscription item.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "kisiGroupRef": {
+                        "description": "Kisi access group reference.",
+                        "nullable": true,
+                        "type": "number"
+                      },
+                      "optionRef": {
+                        "description": "ID of the product option linked to this item.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "plan": {
+                        "description": "Linked plan details.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "Unique identifier of the plan.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "resourceRef": {
+                            "description": "Resource reference associated with the plan.",
+                            "type": "string"
+                          },
+                          "title": {
+                            "description": "Display name of the plan.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "planRef": {
+                        "description": "ID of the linked plan.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "price": {
+                        "description": "Price per billing cycle.",
+                        "type": "number"
+                      },
+                      "productRef": {
+                        "description": "ID of the linked product.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "quantity": {
+                        "description": "Quantity of this item.",
+                        "type": "number"
+                      },
+                      "resource": {
+                        "description": "Linked resource details.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "Unique identifier of the resource.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "imageUrl": {
+                            "description": "Cover image URL of the resource.",
+                            "type": "string"
+                          },
+                          "title": {
+                            "description": "Display name of the resource.",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "Resource type.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "resourceRef": {
+                        "description": "Reference to the linked resource.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "saltoksAccessGroupRef": {
+                        "description": "Salto KS access group reference.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "setupFee": {
+                        "description": "One-time setup fee for this item.",
+                        "type": "number"
+                      },
+                      "startDate": {
+                        "description": "ISO timestamp when the item starts.",
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "startFixed": {
+                        "description": "Whether the start date is fixed.",
+                        "type": "boolean"
+                      },
+                      "tapkeyGroupRef": {
+                        "description": "Tapkey access group reference.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "tier": {
+                        "description": "Linked tier details.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "Unique identifier of the tier.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "title": {
+                            "description": "Display name of the tier.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "tierRef": {
+                        "description": "ID of the linked tier.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "title": {
+                        "description": "Display title of the item.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Billing type of the item.",
+                        "type": "string",
+                        "enum": [
+                          "oneOff",
+                          "recurring"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "autoUpdateFromProduct",
+                      "createDate",
+                      "credits",
+                      "customEnd",
+                      "customStart",
+                      "customTax",
+                      "dayPasses",
+                      "endFixed",
+                      "grantedDiscounts",
+                      "id",
+                      "price",
+                      "quantity",
+                      "setupFee",
+                      "startFixed",
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "locationRef": {
+                  "description": "ID of the location this subscription belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "membershipRef": {
+                  "description": "ID of the membership this subscription belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "networkRef": {
+                  "description": "ID of the network this subscription belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "nextInterval": {
+                  "description": "Next billing interval.",
+                  "type": "object",
+                  "properties": {
+                    "endDate": {
+                      "description": "ISO timestamp when the next interval ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp when the next interval starts.",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "startDate"
+                  ],
+                  "additionalProperties": false
+                },
+                "pausePaymentCollection": {
+                  "description": "Payment collection pause settings.",
+                  "type": "object",
+                  "properties": {
+                    "behavior": {
+                      "description": "Behavior while payment collection is paused.",
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "void"
+                      ]
+                    },
+                    "createDate": {
+                      "description": "ISO timestamp when payment collection was paused.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resumesAt": {
+                      "description": "ISO timestamp when payment collection resumes.",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "behavior",
+                    "createDate"
+                  ],
+                  "additionalProperties": false
+                },
+                "payment": {
+                  "description": "Payment status for subscriptions created by the current user.",
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "description": "Pending payment request details.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "description": "Unique identifier of the payment request.",
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "url": {
+                          "description": "URL to complete the payment.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "status": {
+                      "description": "Payment status.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                },
+                "payWithInvoice": {
+                  "description": "Invoice payment settings by product type.",
+                  "type": "object",
+                  "properties": {
+                    "creditPackages": {
+                      "description": "Whether credit packages are invoiced.",
+                      "type": "boolean"
+                    },
+                    "desks": {
+                      "description": "Whether desk bookings are invoiced.",
+                      "type": "boolean"
+                    },
+                    "equipment": {
+                      "description": "Whether equipment bookings are invoiced.",
+                      "type": "boolean"
+                    },
+                    "events": {
+                      "description": "Whether events are invoiced.",
+                      "type": "boolean"
+                    },
+                    "parking": {
+                      "description": "Whether parking bookings are invoiced.",
+                      "type": "boolean"
+                    },
+                    "rooms": {
+                      "description": "Whether room bookings are invoiced.",
+                      "type": "boolean"
+                    },
+                    "shop": {
+                      "description": "Whether shop purchases are invoiced.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "creditPackages",
+                    "desks",
+                    "events",
+                    "rooms",
+                    "shop"
+                  ],
+                  "additionalProperties": false
+                },
+                "period": {
+                  "description": "Billing period.",
+                  "type": "string",
+                  "enum": [
+                    "day",
+                    "week",
+                    "month",
+                    "threeMonths",
+                    "sixMonths",
+                    "year"
+                  ]
+                },
+                "price": {
+                  "description": "Total recurring price of the subscription.",
+                  "type": "number"
+                },
+                "purchaseDate": {
+                  "description": "ISO timestamp of when the subscription was purchased.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "startDate": {
+                  "description": "ISO timestamp when the subscription starts.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "startFixed": {
+                  "description": "Whether the start date is fixed.",
+                  "type": "boolean"
+                },
+                "status": {
+                  "description": "Subscription status.",
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "scheduled",
+                    "incomplete",
+                    "incompleteExpired",
+                    "canceled"
+                  ]
+                },
+                "subscriptionType": {
+                  "description": "Whether the subscription belongs to a company or user.",
+                  "type": "string",
+                  "enum": [
+                    "company",
+                    "user"
+                  ]
+                },
+                "timezoneId": {
+                  "description": "Timezone identifier for billing dates.",
+                  "type": "string"
+                },
+                "user": {
+                  "description": "User associated with this subscription.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "description": "User bio.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "description": "User email address.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "Unique identifier of the user.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "description": "User first name.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "description": "User phone number.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "description": "User profile photo URL.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "description": "User last name.",
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userCreator": {
+                  "description": "User who created this subscription.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "description": "User bio.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "description": "User email address.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "Unique identifier of the user.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "description": "User first name.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "description": "User phone number.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "description": "User profile photo URL.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "description": "User last name.",
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userRef": {
+                  "description": "ID of the user associated with this subscription.",
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "addPendingItemsToInvoice",
+                "advanceInvoicing",
+                "assignments",
+                "billingCycleAnchor",
+                "createDate",
+                "credits",
+                "customerRef",
+                "dayPasses",
+                "id",
+                "items",
+                "locationRef",
+                "networkRef",
+                "payWithInvoice",
+                "period",
+                "price",
+                "startDate",
+                "startFixed",
+                "status",
+                "subscriptionType",
+                "timezoneId"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "subscriptions"
+        ],
+        "additionalProperties": false
+      },
       "subscription": {
         "type": "object",
         "properties": {
@@ -27635,6 +28757,1089 @@
           "status",
           "subscriptionType",
           "timezoneId"
+        ],
+        "additionalProperties": false
+      },
+      "getSubscription": {
+        "type": "object",
+        "properties": {
+          "subscription": {
+            "description": "The subscription.",
+            "type": "object",
+            "properties": {
+              "addPendingItemsToInvoice": {
+                "description": "Whether pending items are added to the next invoice.",
+                "type": "boolean"
+              },
+              "advanceInvoicing": {
+                "description": "Advance invoicing settings.",
+                "type": "object",
+                "properties": {
+                  "days": {
+                    "description": "Number of days before renewal to issue an invoice.",
+                    "type": "number"
+                  },
+                  "type": {
+                    "description": "Advance invoicing mode.",
+                    "type": "string",
+                    "enum": [
+                      "days",
+                      "default"
+                    ]
+                  }
+                },
+                "required": [
+                  "days",
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "assignments": {
+                "description": "Resource assignments for this subscription.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "entire": {
+                      "description": "Whether the assignment grants access to the entire resource.",
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "description": "Unique identifier of the assignment.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "quantity": {
+                      "description": "Assigned quantity.",
+                      "type": "number"
+                    },
+                    "resource": {
+                      "description": "Assigned resource details.",
+                      "type": "object",
+                      "properties": {
+                        "coverUrl": {
+                          "description": "Cover image URL of the assigned resource.",
+                          "type": "string"
+                        },
+                        "id": {
+                          "description": "Unique identifier of the assigned resource.",
+                          "type": "string"
+                        },
+                        "title": {
+                          "description": "Display name of the assigned resource.",
+                          "type": "string"
+                        },
+                        "type": {
+                          "description": "Resource type.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": {
+                      "description": "Display title of the assignment.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "resource",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "billingCycleAnchor": {
+                "description": "Billing cycle anchor mode.",
+                "type": "string",
+                "enum": [
+                  "any",
+                  "day"
+                ]
+              },
+              "company": {
+                "description": "Company associated with this subscription.",
+                "type": "object",
+                "properties": {
+                  "createDate": {
+                    "description": "ISO timestamp of when the company was created.",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "id": {
+                    "description": "Unique identifier of the company.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "locationRef": {
+                    "description": "ID of the location this company belongs to.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "logo": {
+                    "description": "Company logo.",
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "description": "Storage key of the company logo.",
+                        "type": "string"
+                      },
+                      "url": {
+                        "description": "Public URL of the company logo.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "metadata": {
+                    "description": "Custom metadata for the company.",
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "notes": {
+                    "description": "Internal notes about the company.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "publicLogoUrl": {
+                    "description": "Logo URL resolved from the company website.",
+                    "type": "string"
+                  },
+                  "title": {
+                    "description": "Display name of the company.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "createDate",
+                  "id",
+                  "locationRef",
+                  "title"
+                ],
+                "additionalProperties": false
+              },
+              "companyRef": {
+                "description": "ID of the company this subscription belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "contract": {
+                "description": "Contract associated with this subscription.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Unique identifier of the contract.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "url": {
+                    "description": "URL of the contract document.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "createDate": {
+                "description": "ISO timestamp of when the subscription was created.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "credits": {
+                "description": "Total credits included in the subscription.",
+                "type": "number"
+              },
+              "currentInterval": {
+                "description": "Current billing interval.",
+                "type": "object",
+                "properties": {
+                  "endDate": {
+                    "description": "ISO timestamp when the interval ends.",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "futureIntervalItemsCreated": {
+                    "description": "Whether future interval items have been created.",
+                    "type": "boolean"
+                  },
+                  "startDate": {
+                    "description": "ISO timestamp when the interval starts.",
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "endDate",
+                  "startDate"
+                ],
+                "additionalProperties": false
+              },
+              "customerRef": {
+                "description": "ID of the customer billed for this subscription.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "dayPasses": {
+                "description": "Total day passes included in the subscription.",
+                "type": "number"
+              },
+              "deleteDate": {
+                "description": "ISO timestamp of when the subscription was deleted.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "discounts": {
+                "deprecated": true,
+                "description": "Maximum synthetic discount percentages across items.",
+                "type": "object",
+                "properties": {
+                  "creditPackages": {
+                    "description": "Maximum discount percentage for credit packages across items.",
+                    "type": "number"
+                  },
+                  "desks": {
+                    "description": "Maximum discount percentage for desk bookings across items.",
+                    "type": "number"
+                  },
+                  "equipment": {
+                    "description": "Maximum discount percentage for equipment bookings across items.",
+                    "type": "number"
+                  },
+                  "events": {
+                    "description": "Maximum discount percentage for event tickets across items.",
+                    "type": "number"
+                  },
+                  "rooms": {
+                    "description": "Maximum discount percentage for room bookings across items.",
+                    "type": "number"
+                  },
+                  "shop": {
+                    "description": "Maximum discount percentage for shop products across items.",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "creditPackages",
+                  "desks",
+                  "equipment",
+                  "events",
+                  "rooms",
+                  "shop"
+                ],
+                "additionalProperties": false
+              },
+              "endDate": {
+                "description": "ISO timestamp when the subscription ends.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "id": {
+                "description": "Unique identifier of the subscription.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "items": {
+                "description": "Subscription line items.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "autoUpdateFromProduct": {
+                      "description": "Whether the item syncs from its linked product.",
+                      "type": "boolean"
+                    },
+                    "avigilonAltaGroupRef": {
+                      "description": "Avigilon Alta access group reference.",
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "brivoGroupRef": {
+                      "description": "Brivo access group reference.",
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "commitmentCycles": {
+                      "description": "Number of billing cycles in the commitment period.",
+                      "type": "number"
+                    },
+                    "commitmentEndDate": {
+                      "description": "ISO timestamp when the commitment period ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "couponRef": {
+                      "description": "ID of the coupon applied to this item.",
+                      "type": "string"
+                    },
+                    "createDate": {
+                      "description": "ISO timestamp of when the item was created.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "credits": {
+                      "description": "Credits included per billing cycle.",
+                      "type": "number"
+                    },
+                    "customEnd": {
+                      "description": "Whether the item has a custom end date.",
+                      "type": "boolean"
+                    },
+                    "customStart": {
+                      "description": "Whether the item has a custom start date.",
+                      "type": "boolean"
+                    },
+                    "customTax": {
+                      "description": "Custom tax settings for this item.",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "description": "Whether custom tax is enabled for this item.",
+                          "type": "boolean"
+                        },
+                        "rate": {
+                          "description": "Custom tax rate as a decimal.",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "rate"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "dayPasses": {
+                      "description": "Day passes included per billing cycle.",
+                      "type": "number"
+                    },
+                    "discounts": {
+                      "description": "Synthetic discount percentages by product type.",
+                      "deprecated": true,
+                      "type": "object",
+                      "properties": {
+                        "creditPackages": {
+                          "description": "Discount percentage applied to credit packages.",
+                          "type": "number"
+                        },
+                        "desks": {
+                          "description": "Discount percentage applied to desk bookings.",
+                          "type": "number"
+                        },
+                        "equipment": {
+                          "description": "Discount percentage applied to equipment bookings.",
+                          "type": "number"
+                        },
+                        "events": {
+                          "description": "Discount percentage applied to event tickets.",
+                          "type": "number"
+                        },
+                        "rooms": {
+                          "description": "Discount percentage applied to room bookings.",
+                          "type": "number"
+                        },
+                        "shop": {
+                          "description": "Discount percentage applied to shop products.",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "creditPackages",
+                        "desks",
+                        "equipment",
+                        "events",
+                        "rooms",
+                        "shop"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "endDate": {
+                      "description": "ISO timestamp when the item ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "endFixed": {
+                      "description": "Whether the end date is fixed and cannot shift with billing cycles.",
+                      "type": "boolean"
+                    },
+                    "entire": {
+                      "description": "Whether the item grants access to the entire resource.",
+                      "type": "boolean"
+                    },
+                    "exclusiveAccess": {
+                      "description": "Resources with exclusive access.",
+                      "type": "object",
+                      "properties": {
+                        "resourceRefs": {
+                          "description": "Resource IDs with exclusive access.",
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      },
+                      "required": [
+                        "resourceRefs"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "ezeepBlueGroupRef": {
+                      "description": "Ezeep Blue group reference.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "grantedDiscounts": {
+                      "description": "Coupons granted to this item.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "coupon": {
+                            "description": "Granted coupon details.",
+                            "type": "object",
+                            "properties": {
+                              "amountOff": {
+                                "description": "Fixed discount amount.",
+                                "type": "number"
+                              },
+                              "currencyCode": {
+                                "description": "Currency code for amountOff.",
+                                "type": "string"
+                              },
+                              "enabledForCredits": {
+                                "description": "Whether the coupon applies to credit purchases.",
+                                "type": "boolean"
+                              },
+                              "id": {
+                                "description": "Unique identifier of the coupon.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "limitedItems": {
+                                "description": "Item-level redemption limits.",
+                                "type": "object",
+                                "properties": {
+                                  "enabled": {
+                                    "description": "Whether item-level limits are enabled.",
+                                    "type": "boolean"
+                                  },
+                                  "values": {
+                                    "description": "Items the coupon applies to when limits are enabled.",
+                                    "type": "array",
+                                    "items": {
+                                      "description": "Product or package the coupon is limited to.",
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "description": "Unique identifier of the limited item.",
+                                          "type": "string",
+                                          "format": "uuid"
+                                        },
+                                        "title": {
+                                          "description": "Display name of the limited item.",
+                                          "type": "string"
+                                        },
+                                        "type": {
+                                          "description": "Product type of the limited item.",
+                                          "type": "string",
+                                          "enum": [
+                                            "roomBookings",
+                                            "eventSpaceBookings",
+                                            "conferenceRoomBookings",
+                                            "meetingRoomBookings",
+                                            "phoneBoothBookings",
+                                            "stationBookings",
+                                            "studioBookings",
+                                            "hotDeskBookings",
+                                            "dedicatedDeskBookings",
+                                            "parkingBookings",
+                                            "equipmentBookings",
+                                            "eventTickets",
+                                            "shopProducts",
+                                            "packages",
+                                            "subscriptionItems"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "type"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "enabled",
+                                  "values"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "limitedRedemption": {
+                                "description": "Redemption limits for the coupon.",
+                                "type": "object",
+                                "properties": {
+                                  "enabled": {
+                                    "description": "Whether redemption limits are enabled.",
+                                    "type": "boolean"
+                                  },
+                                  "usage": {
+                                    "description": "Current redemption count.",
+                                    "type": "number"
+                                  },
+                                  "value": {
+                                    "description": "Maximum redemption count.",
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "enabled",
+                                  "usage",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "percentOff": {
+                                "description": "Percentage discount.",
+                                "type": "number"
+                              },
+                              "productTypes": {
+                                "description": "Product types the coupon applies to.",
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "roomBookings",
+                                    "eventSpaceBookings",
+                                    "conferenceRoomBookings",
+                                    "meetingRoomBookings",
+                                    "phoneBoothBookings",
+                                    "stationBookings",
+                                    "studioBookings",
+                                    "hotDeskBookings",
+                                    "dedicatedDeskBookings",
+                                    "parkingBookings",
+                                    "equipmentBookings",
+                                    "eventTickets",
+                                    "shopProducts",
+                                    "packages",
+                                    "subscriptionItems"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "coupon"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "id": {
+                      "description": "Unique identifier of the subscription item.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "kisiGroupRef": {
+                      "description": "Kisi access group reference.",
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "optionRef": {
+                      "description": "ID of the product option linked to this item.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "plan": {
+                      "description": "Linked plan details.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "description": "Unique identifier of the plan.",
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "resourceRef": {
+                          "description": "Resource reference associated with the plan.",
+                          "type": "string"
+                        },
+                        "title": {
+                          "description": "Display name of the plan.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "planRef": {
+                      "description": "ID of the linked plan.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "price": {
+                      "description": "Price per billing cycle.",
+                      "type": "number"
+                    },
+                    "productRef": {
+                      "description": "ID of the linked product.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "quantity": {
+                      "description": "Quantity of this item.",
+                      "type": "number"
+                    },
+                    "resource": {
+                      "description": "Linked resource details.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "description": "Unique identifier of the resource.",
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "imageUrl": {
+                          "description": "Cover image URL of the resource.",
+                          "type": "string"
+                        },
+                        "title": {
+                          "description": "Display name of the resource.",
+                          "type": "string"
+                        },
+                        "type": {
+                          "description": "Resource type.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "resourceRef": {
+                      "description": "Reference to the linked resource.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "saltoksAccessGroupRef": {
+                      "description": "Salto KS access group reference.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "setupFee": {
+                      "description": "One-time setup fee for this item.",
+                      "type": "number"
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp when the item starts.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "startFixed": {
+                      "description": "Whether the start date is fixed.",
+                      "type": "boolean"
+                    },
+                    "tapkeyGroupRef": {
+                      "description": "Tapkey access group reference.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "tier": {
+                      "description": "Linked tier details.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "description": "Unique identifier of the tier.",
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "title": {
+                          "description": "Display name of the tier.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "tierRef": {
+                      "description": "ID of the linked tier.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "title": {
+                      "description": "Display title of the item.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Billing type of the item.",
+                      "type": "string",
+                      "enum": [
+                        "oneOff",
+                        "recurring"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "autoUpdateFromProduct",
+                    "createDate",
+                    "credits",
+                    "customEnd",
+                    "customStart",
+                    "customTax",
+                    "dayPasses",
+                    "endFixed",
+                    "grantedDiscounts",
+                    "id",
+                    "price",
+                    "quantity",
+                    "setupFee",
+                    "startFixed",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "locationRef": {
+                "description": "ID of the location this subscription belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "membershipRef": {
+                "description": "ID of the membership this subscription belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "networkRef": {
+                "description": "ID of the network this subscription belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "nextInterval": {
+                "description": "Next billing interval.",
+                "type": "object",
+                "properties": {
+                  "endDate": {
+                    "description": "ISO timestamp when the next interval ends.",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "startDate": {
+                    "description": "ISO timestamp when the next interval starts.",
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "startDate"
+                ],
+                "additionalProperties": false
+              },
+              "pausePaymentCollection": {
+                "description": "Payment collection pause settings.",
+                "type": "object",
+                "properties": {
+                  "behavior": {
+                    "description": "Behavior while payment collection is paused.",
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "void"
+                    ]
+                  },
+                  "createDate": {
+                    "description": "ISO timestamp when payment collection was paused.",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "resumesAt": {
+                    "description": "ISO timestamp when payment collection resumes.",
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "behavior",
+                  "createDate"
+                ],
+                "additionalProperties": false
+              },
+              "payment": {
+                "description": "Payment status for subscriptions created by the current user.",
+                "type": "object",
+                "properties": {
+                  "request": {
+                    "description": "Pending payment request details.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier of the payment request.",
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "url": {
+                        "description": "URL to complete the payment.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "status": {
+                    "description": "Payment status.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              "payWithInvoice": {
+                "description": "Invoice payment settings by product type.",
+                "type": "object",
+                "properties": {
+                  "creditPackages": {
+                    "description": "Whether credit packages are invoiced.",
+                    "type": "boolean"
+                  },
+                  "desks": {
+                    "description": "Whether desk bookings are invoiced.",
+                    "type": "boolean"
+                  },
+                  "equipment": {
+                    "description": "Whether equipment bookings are invoiced.",
+                    "type": "boolean"
+                  },
+                  "events": {
+                    "description": "Whether events are invoiced.",
+                    "type": "boolean"
+                  },
+                  "parking": {
+                    "description": "Whether parking bookings are invoiced.",
+                    "type": "boolean"
+                  },
+                  "rooms": {
+                    "description": "Whether room bookings are invoiced.",
+                    "type": "boolean"
+                  },
+                  "shop": {
+                    "description": "Whether shop purchases are invoiced.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "creditPackages",
+                  "desks",
+                  "events",
+                  "rooms",
+                  "shop"
+                ],
+                "additionalProperties": false
+              },
+              "period": {
+                "description": "Billing period.",
+                "type": "string",
+                "enum": [
+                  "day",
+                  "week",
+                  "month",
+                  "threeMonths",
+                  "sixMonths",
+                  "year"
+                ]
+              },
+              "price": {
+                "description": "Total recurring price of the subscription.",
+                "type": "number"
+              },
+              "purchaseDate": {
+                "description": "ISO timestamp of when the subscription was purchased.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "startDate": {
+                "description": "ISO timestamp when the subscription starts.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "startFixed": {
+                "description": "Whether the start date is fixed.",
+                "type": "boolean"
+              },
+              "status": {
+                "description": "Subscription status.",
+                "type": "string",
+                "enum": [
+                  "active",
+                  "scheduled",
+                  "incomplete",
+                  "incompleteExpired",
+                  "canceled"
+                ]
+              },
+              "subscriptionType": {
+                "description": "Whether the subscription belongs to a company or user.",
+                "type": "string",
+                "enum": [
+                  "company",
+                  "user"
+                ]
+              },
+              "timezoneId": {
+                "description": "Timezone identifier for billing dates.",
+                "type": "string"
+              },
+              "user": {
+                "description": "User associated with this subscription.",
+                "type": "object",
+                "properties": {
+                  "about": {
+                    "description": "User bio.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "email": {
+                    "description": "User email address.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "Unique identifier of the user.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "description": "User first name.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "User phone number.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "User profile photo URL.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "User last name.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "userCreator": {
+                "description": "User who created this subscription.",
+                "type": "object",
+                "properties": {
+                  "about": {
+                    "description": "User bio.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "email": {
+                    "description": "User email address.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "Unique identifier of the user.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "description": "User first name.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "User phone number.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "User profile photo URL.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "User last name.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "userRef": {
+                "description": "ID of the user associated with this subscription.",
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "addPendingItemsToInvoice",
+              "advanceInvoicing",
+              "assignments",
+              "billingCycleAnchor",
+              "createDate",
+              "credits",
+              "customerRef",
+              "dayPasses",
+              "id",
+              "items",
+              "locationRef",
+              "networkRef",
+              "payWithInvoice",
+              "period",
+              "price",
+              "startDate",
+              "startFixed",
+              "status",
+              "subscriptionType",
+              "timezoneId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "subscription"
         ],
         "additionalProperties": false
       },
@@ -29340,7 +31545,8 @@
                               "enum": [
                                 "fastForex",
                                 "nbu",
-                                "bcra"
+                                "bcra",
+                                "nbg"
                               ]
                             }
                           },
@@ -29399,7 +31605,8 @@
                               "enum": [
                                 "fastForex",
                                 "nbu",
-                                "bcra"
+                                "bcra",
+                                "nbg"
                               ]
                             }
                           },

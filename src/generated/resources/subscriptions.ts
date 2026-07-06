@@ -10,11 +10,11 @@ export type Subscription = NonNullable<operations["getSubscription"]["responses"
 export function createSubscriptions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve subscriptions */
-    async list(query: operations["getSubscriptions"]["parameters"]["query"]): Promise<operations["getSubscriptions"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: operations["getSubscriptions"]["parameters"]["query"]): Promise<operations["getSubscriptions"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/subscriptions/v1", { params: { query } }));
     },
     /** Retrieve subscriptions — iterates every item across all pages. */
-    iterate(query: Omit<NonNullable<operations["getSubscriptions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Subscription, void, undefined> {
+    iterate(query?: Omit<NonNullable<operations["getSubscriptions"]["parameters"]["query"]>, "nextPageToken">): AsyncGenerator<Subscription, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/subscriptions/v1", { params: { query: { ...query, nextPageToken } } })),
@@ -26,8 +26,8 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve a certain subscription.
      */
-    async get(id: string): Promise<Subscription> {
-      return unwrapProp(await client.GET("/subscriptions/v1/{id}", { params: { path: { id } } }), "subscription");
+    async get(subscriptionId: string): Promise<Subscription> {
+      return unwrapProp(await client.GET("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } } }), "subscription");
     },
     /**
      * Create a subscription
@@ -42,28 +42,28 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
      *
      * Update a certain subscription.
      */
-    async update(id: string, body: NonNullable<operations["updateSubscription"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
-      return unwrap(await client.PATCH("/subscriptions/v1/{id}", { params: { path: { id } }, body }));
+    async update(subscriptionId: string, body: NonNullable<operations["updateSubscription"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
+      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } }, body }));
     },
     /**
      * Delete a subscription
      *
      * Delete a certain subscription.
      */
-    async delete(id: string): Promise<undefined> {
-      return unwrap(await client.DELETE("/subscriptions/v1/{id}", { params: { path: { id } } }));
+    async delete(subscriptionId: string): Promise<undefined> {
+      return unwrap(await client.DELETE("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } } }));
     },
     /** Create a subscription item */
-    async createItem(id: string, body: NonNullable<operations["createSubscriptionItem"]["requestBody"]>["content"]["application/json"]): Promise<Subscription> {
-      return unwrapProp(await client.POST("/subscriptions/v1/{id}/items", { params: { path: { id } }, body }), "subscription");
+    async createItem(subscriptionId: string, body: NonNullable<operations["createSubscriptionItem"]["requestBody"]>["content"]["application/json"]): Promise<Subscription> {
+      return unwrapProp(await client.POST("/subscriptions/v1/{subscriptionId}/items", { params: { path: { subscriptionId } }, body }), "subscription");
     },
     /** Delete a subscription item */
-    async deleteItem(id: string, itemId: string): Promise<undefined> {
-      return unwrap(await client.DELETE("/subscriptions/v1/{id}/items/{itemId}", { params: { path: { id, itemId } } }));
+    async deleteItem(subscriptionId: string, itemId: string): Promise<undefined> {
+      return unwrap(await client.DELETE("/subscriptions/v1/{subscriptionId}/items/{itemId}", { params: { path: { subscriptionId, itemId } } }));
     },
     /** Update a subscription item */
-    async updateItem(id: string, itemId: string, body: NonNullable<operations["updateSubscriptionItem"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
-      return unwrap(await client.PATCH("/subscriptions/v1/{id}/items/{itemId}", { params: { path: { id, itemId } }, body }));
+    async updateItem(subscriptionId: string, itemId: string, body: NonNullable<operations["updateSubscriptionItem"]["requestBody"]>["content"]["application/json"]): Promise<undefined> {
+      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}/items/{itemId}", { params: { path: { subscriptionId, itemId } }, body }));
     },
   };
 }

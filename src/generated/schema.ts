@@ -1672,7 +1672,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/subscriptions/v1/{id}": {
+    "/subscriptions/v1/{subscriptionId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1700,7 +1700,7 @@ export interface paths {
         patch: operations["updateSubscription"];
         trace?: never;
     };
-    "/subscriptions/v1/{id}/items": {
+    "/subscriptions/v1/{subscriptionId}/items": {
         parameters: {
             query?: never;
             header?: never;
@@ -1720,7 +1720,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/subscriptions/v1/{id}/items/{itemId}": {
+    "/subscriptions/v1/{subscriptionId}/items/{itemId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2266,7 +2266,7 @@ export interface components {
              * @description Exchange rate provider when auto-update is enabled.
              * @enum {string}
              */
-            provider?: "fastForex" | "nbu" | "bcra";
+            provider?: "fastForex" | "nbu" | "bcra" | "nbg";
         };
         /** @description Pre-built query string for the next page of results. Contains all active filter parameters combined with the next page token, ready to append to the endpoint URL. */
         searchQueryNext: string;
@@ -8931,6 +8931,534 @@ export interface components {
                 };
             };
         };
+        getSubscriptions: {
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+            /** @description List of subscriptions. */
+            subscriptions: {
+                /** @description Whether pending items are added to the next invoice. */
+                addPendingItemsToInvoice: boolean;
+                /** @description Advance invoicing settings. */
+                advanceInvoicing: {
+                    /** @description Number of days before renewal to issue an invoice. */
+                    days: number;
+                    /**
+                     * @description Advance invoicing mode.
+                     * @enum {string}
+                     */
+                    type: "days" | "default";
+                };
+                /** @description Resource assignments for this subscription. */
+                assignments: {
+                    /** @description Whether the assignment grants access to the entire resource. */
+                    entire?: boolean;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the assignment.
+                     */
+                    id: string;
+                    /** @description Assigned quantity. */
+                    quantity?: number;
+                    /** @description Assigned resource details. */
+                    resource: {
+                        /** @description Cover image URL of the assigned resource. */
+                        coverUrl?: string;
+                        /** @description Unique identifier of the assigned resource. */
+                        id: string;
+                        /** @description Display name of the assigned resource. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
+                    /** @description Display title of the assignment. */
+                    title: string;
+                }[];
+                /**
+                 * @description Billing cycle anchor mode.
+                 * @enum {string}
+                 */
+                billingCycleAnchor: "any" | "day";
+                /** @description Company associated with this subscription. */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the company was created.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the company.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the location this company belongs to.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Custom metadata for the company. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes about the company. */
+                    notes?: string | null;
+                    /** @description Logo URL resolved from the company website. */
+                    publicLogoUrl?: string;
+                    /** @description Display name of the company. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the company this subscription belongs to.
+                 */
+                companyRef?: string;
+                /** @description Contract associated with this subscription. */
+                contract?: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the contract.
+                     */
+                    id: string;
+                    /** @description URL of the contract document. */
+                    url: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was created.
+                 */
+                createDate: string;
+                /** @description Total credits included in the subscription. */
+                credits: number;
+                /** @description Current billing interval. */
+                currentInterval?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the interval ends.
+                     */
+                    endDate: string;
+                    /** @description Whether future interval items have been created. */
+                    futureIntervalItemsCreated?: boolean;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the interval starts.
+                     */
+                    startDate: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer billed for this subscription.
+                 */
+                customerRef: string;
+                /** @description Total day passes included in the subscription. */
+                dayPasses: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was deleted.
+                 */
+                deleteDate?: string;
+                /**
+                 * @deprecated
+                 * @description Maximum synthetic discount percentages across items.
+                 */
+                discounts?: {
+                    /** @description Maximum discount percentage for credit packages across items. */
+                    creditPackages: number;
+                    /** @description Maximum discount percentage for desk bookings across items. */
+                    desks: number;
+                    /** @description Maximum discount percentage for equipment bookings across items. */
+                    equipment: number;
+                    /** @description Maximum discount percentage for event tickets across items. */
+                    events: number;
+                    /** @description Maximum discount percentage for room bookings across items. */
+                    rooms: number;
+                    /** @description Maximum discount percentage for shop products across items. */
+                    shop: number;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the subscription ends.
+                 */
+                endDate?: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the subscription.
+                 */
+                id: string;
+                /** @description Subscription line items. */
+                items: {
+                    /** @description Whether the item syncs from its linked product. */
+                    autoUpdateFromProduct: boolean;
+                    /** @description Avigilon Alta access group reference. */
+                    avigilonAltaGroupRef?: number | null;
+                    /** @description Brivo access group reference. */
+                    brivoGroupRef?: number | null;
+                    /** @description Number of billing cycles in the commitment period. */
+                    commitmentCycles?: number;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the commitment period ends.
+                     */
+                    commitmentEndDate?: string;
+                    /** @description ID of the coupon applied to this item. */
+                    couponRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the item was created.
+                     */
+                    createDate: string;
+                    /** @description Credits included per billing cycle. */
+                    credits: number;
+                    /** @description Whether the item has a custom end date. */
+                    customEnd: boolean;
+                    /** @description Whether the item has a custom start date. */
+                    customStart: boolean;
+                    /** @description Custom tax settings for this item. */
+                    customTax: {
+                        /** @description Whether custom tax is enabled for this item. */
+                        enabled: boolean;
+                        /** @description Custom tax rate as a decimal. */
+                        rate: number;
+                    };
+                    /** @description Day passes included per billing cycle. */
+                    dayPasses: number;
+                    /**
+                     * @deprecated
+                     * @description Synthetic discount percentages by product type.
+                     */
+                    discounts?: {
+                        /** @description Discount percentage applied to credit packages. */
+                        creditPackages: number;
+                        /** @description Discount percentage applied to desk bookings. */
+                        desks: number;
+                        /** @description Discount percentage applied to equipment bookings. */
+                        equipment: number;
+                        /** @description Discount percentage applied to event tickets. */
+                        events: number;
+                        /** @description Discount percentage applied to room bookings. */
+                        rooms: number;
+                        /** @description Discount percentage applied to shop products. */
+                        shop: number;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the item ends.
+                     */
+                    endDate?: string;
+                    /** @description Whether the end date is fixed and cannot shift with billing cycles. */
+                    endFixed: boolean;
+                    /** @description Whether the item grants access to the entire resource. */
+                    entire?: boolean;
+                    /** @description Resources with exclusive access. */
+                    exclusiveAccess?: {
+                        /** @description Resource IDs with exclusive access. */
+                        resourceRefs: string[];
+                    };
+                    /** @description Ezeep Blue group reference. */
+                    ezeepBlueGroupRef?: string | null;
+                    /** @description Coupons granted to this item. */
+                    grantedDiscounts: {
+                        /** @description Granted coupon details. */
+                        coupon: {
+                            /** @description Fixed discount amount. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Whether the coupon applies to credit purchases. */
+                            enabledForCredits?: boolean;
+                            /**
+                             * Format: uuid
+                             * @description Unique identifier of the coupon.
+                             */
+                            id: string;
+                            /** @description Item-level redemption limits. */
+                            limitedItems?: {
+                                /** @description Whether item-level limits are enabled. */
+                                enabled: boolean;
+                                /** @description Items the coupon applies to when limits are enabled. */
+                                values: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the limited item.
+                                     */
+                                    id: string;
+                                    /** @description Display name of the limited item. */
+                                    title?: string;
+                                    /**
+                                     * @description Product type of the limited item.
+                                     * @enum {string}
+                                     */
+                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                }[];
+                            };
+                            /** @description Redemption limits for the coupon. */
+                            limitedRedemption?: {
+                                /** @description Whether redemption limits are enabled. */
+                                enabled: boolean;
+                                /** @description Current redemption count. */
+                                usage: number;
+                                /** @description Maximum redemption count. */
+                                value: number;
+                            };
+                            /** @description Percentage discount. */
+                            percentOff?: number;
+                            /** @description Product types the coupon applies to. */
+                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        };
+                    }[];
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the subscription item.
+                     */
+                    id: string;
+                    /** @description Kisi access group reference. */
+                    kisiGroupRef?: number | null;
+                    /**
+                     * Format: uuid
+                     * @description ID of the product option linked to this item.
+                     */
+                    optionRef?: string;
+                    /** @description Linked plan details. */
+                    plan?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the plan.
+                         */
+                        id: string;
+                        /** @description Resource reference associated with the plan. */
+                        resourceRef?: string;
+                        /** @description Display name of the plan. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked plan.
+                     */
+                    planRef?: string;
+                    /** @description Price per billing cycle. */
+                    price: number;
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked product.
+                     */
+                    productRef?: string;
+                    /** @description Quantity of this item. */
+                    quantity: number;
+                    /** @description Linked resource details. */
+                    resource?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the resource.
+                         */
+                        id: string;
+                        /** @description Cover image URL of the resource. */
+                        imageUrl?: string;
+                        /** @description Display name of the resource. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
+                    /** @description Reference to the linked resource. */
+                    resourceRef?: string | null;
+                    /** @description Salto KS access group reference. */
+                    saltoksAccessGroupRef?: string | null;
+                    /** @description One-time setup fee for this item. */
+                    setupFee: number;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the item starts.
+                     */
+                    startDate?: string;
+                    /** @description Whether the start date is fixed. */
+                    startFixed: boolean;
+                    /** @description Tapkey access group reference. */
+                    tapkeyGroupRef?: string | null;
+                    /** @description Linked tier details. */
+                    tier?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the tier.
+                         */
+                        id: string;
+                        /** @description Display name of the tier. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked tier.
+                     */
+                    tierRef?: string;
+                    /** @description Display title of the item. */
+                    title?: string | null;
+                    /**
+                     * @description Billing type of the item.
+                     * @enum {string}
+                     */
+                    type: "oneOff" | "recurring";
+                }[];
+                /**
+                 * Format: uuid
+                 * @description ID of the location this subscription belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the membership this subscription belongs to.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this subscription belongs to.
+                 */
+                networkRef: string;
+                /** @description Next billing interval. */
+                nextInterval?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the next interval ends.
+                     */
+                    endDate?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the next interval starts.
+                     */
+                    startDate: string;
+                };
+                /** @description Payment collection pause settings. */
+                pausePaymentCollection?: {
+                    /**
+                     * @description Behavior while payment collection is paused.
+                     * @enum {string}
+                     */
+                    behavior: "draft" | "void";
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when payment collection was paused.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when payment collection resumes.
+                     */
+                    resumesAt?: string;
+                };
+                /** @description Payment status for subscriptions created by the current user. */
+                payment?: {
+                    /** @description Pending payment request details. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the payment request.
+                         */
+                        id: string;
+                        /** @description URL to complete the payment. */
+                        url: string;
+                    };
+                    /** @description Payment status. */
+                    status: string;
+                };
+                /** @description Invoice payment settings by product type. */
+                payWithInvoice: {
+                    /** @description Whether credit packages are invoiced. */
+                    creditPackages: boolean;
+                    /** @description Whether desk bookings are invoiced. */
+                    desks: boolean;
+                    /** @description Whether equipment bookings are invoiced. */
+                    equipment?: boolean;
+                    /** @description Whether events are invoiced. */
+                    events: boolean;
+                    /** @description Whether parking bookings are invoiced. */
+                    parking?: boolean;
+                    /** @description Whether room bookings are invoiced. */
+                    rooms: boolean;
+                    /** @description Whether shop purchases are invoiced. */
+                    shop: boolean;
+                };
+                /**
+                 * @description Billing period.
+                 * @enum {string}
+                 */
+                period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                /** @description Total recurring price of the subscription. */
+                price: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was purchased.
+                 */
+                purchaseDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the subscription starts.
+                 */
+                startDate: string;
+                /** @description Whether the start date is fixed. */
+                startFixed: boolean;
+                /**
+                 * @description Subscription status.
+                 * @enum {string}
+                 */
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled";
+                /**
+                 * @description Whether the subscription belongs to a company or user.
+                 * @enum {string}
+                 */
+                subscriptionType: "company" | "user";
+                /** @description Timezone identifier for billing dates. */
+                timezoneId: string;
+                /** @description User associated with this subscription. */
+                user?: {
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User phone number. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+                /** @description User who created this subscription. */
+                userCreator?: {
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User phone number. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the user associated with this subscription.
+                 */
+                userRef?: string;
+            }[];
+        };
         subscription: {
             /** @description Whether pending items are added to the next invoice. */
             addPendingItemsToInvoice: boolean;
@@ -9451,6 +9979,530 @@ export interface components {
              * @description ID of the user associated with this subscription.
              */
             userRef?: string;
+        };
+        getSubscription: {
+            /** @description The subscription. */
+            subscription: {
+                /** @description Whether pending items are added to the next invoice. */
+                addPendingItemsToInvoice: boolean;
+                /** @description Advance invoicing settings. */
+                advanceInvoicing: {
+                    /** @description Number of days before renewal to issue an invoice. */
+                    days: number;
+                    /**
+                     * @description Advance invoicing mode.
+                     * @enum {string}
+                     */
+                    type: "days" | "default";
+                };
+                /** @description Resource assignments for this subscription. */
+                assignments: {
+                    /** @description Whether the assignment grants access to the entire resource. */
+                    entire?: boolean;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the assignment.
+                     */
+                    id: string;
+                    /** @description Assigned quantity. */
+                    quantity?: number;
+                    /** @description Assigned resource details. */
+                    resource: {
+                        /** @description Cover image URL of the assigned resource. */
+                        coverUrl?: string;
+                        /** @description Unique identifier of the assigned resource. */
+                        id: string;
+                        /** @description Display name of the assigned resource. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
+                    /** @description Display title of the assignment. */
+                    title: string;
+                }[];
+                /**
+                 * @description Billing cycle anchor mode.
+                 * @enum {string}
+                 */
+                billingCycleAnchor: "any" | "day";
+                /** @description Company associated with this subscription. */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the company was created.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the company.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the location this company belongs to.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Custom metadata for the company. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes about the company. */
+                    notes?: string | null;
+                    /** @description Logo URL resolved from the company website. */
+                    publicLogoUrl?: string;
+                    /** @description Display name of the company. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the company this subscription belongs to.
+                 */
+                companyRef?: string;
+                /** @description Contract associated with this subscription. */
+                contract?: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the contract.
+                     */
+                    id: string;
+                    /** @description URL of the contract document. */
+                    url: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was created.
+                 */
+                createDate: string;
+                /** @description Total credits included in the subscription. */
+                credits: number;
+                /** @description Current billing interval. */
+                currentInterval?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the interval ends.
+                     */
+                    endDate: string;
+                    /** @description Whether future interval items have been created. */
+                    futureIntervalItemsCreated?: boolean;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the interval starts.
+                     */
+                    startDate: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer billed for this subscription.
+                 */
+                customerRef: string;
+                /** @description Total day passes included in the subscription. */
+                dayPasses: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was deleted.
+                 */
+                deleteDate?: string;
+                /**
+                 * @deprecated
+                 * @description Maximum synthetic discount percentages across items.
+                 */
+                discounts?: {
+                    /** @description Maximum discount percentage for credit packages across items. */
+                    creditPackages: number;
+                    /** @description Maximum discount percentage for desk bookings across items. */
+                    desks: number;
+                    /** @description Maximum discount percentage for equipment bookings across items. */
+                    equipment: number;
+                    /** @description Maximum discount percentage for event tickets across items. */
+                    events: number;
+                    /** @description Maximum discount percentage for room bookings across items. */
+                    rooms: number;
+                    /** @description Maximum discount percentage for shop products across items. */
+                    shop: number;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the subscription ends.
+                 */
+                endDate?: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the subscription.
+                 */
+                id: string;
+                /** @description Subscription line items. */
+                items: {
+                    /** @description Whether the item syncs from its linked product. */
+                    autoUpdateFromProduct: boolean;
+                    /** @description Avigilon Alta access group reference. */
+                    avigilonAltaGroupRef?: number | null;
+                    /** @description Brivo access group reference. */
+                    brivoGroupRef?: number | null;
+                    /** @description Number of billing cycles in the commitment period. */
+                    commitmentCycles?: number;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the commitment period ends.
+                     */
+                    commitmentEndDate?: string;
+                    /** @description ID of the coupon applied to this item. */
+                    couponRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the item was created.
+                     */
+                    createDate: string;
+                    /** @description Credits included per billing cycle. */
+                    credits: number;
+                    /** @description Whether the item has a custom end date. */
+                    customEnd: boolean;
+                    /** @description Whether the item has a custom start date. */
+                    customStart: boolean;
+                    /** @description Custom tax settings for this item. */
+                    customTax: {
+                        /** @description Whether custom tax is enabled for this item. */
+                        enabled: boolean;
+                        /** @description Custom tax rate as a decimal. */
+                        rate: number;
+                    };
+                    /** @description Day passes included per billing cycle. */
+                    dayPasses: number;
+                    /**
+                     * @deprecated
+                     * @description Synthetic discount percentages by product type.
+                     */
+                    discounts?: {
+                        /** @description Discount percentage applied to credit packages. */
+                        creditPackages: number;
+                        /** @description Discount percentage applied to desk bookings. */
+                        desks: number;
+                        /** @description Discount percentage applied to equipment bookings. */
+                        equipment: number;
+                        /** @description Discount percentage applied to event tickets. */
+                        events: number;
+                        /** @description Discount percentage applied to room bookings. */
+                        rooms: number;
+                        /** @description Discount percentage applied to shop products. */
+                        shop: number;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the item ends.
+                     */
+                    endDate?: string;
+                    /** @description Whether the end date is fixed and cannot shift with billing cycles. */
+                    endFixed: boolean;
+                    /** @description Whether the item grants access to the entire resource. */
+                    entire?: boolean;
+                    /** @description Resources with exclusive access. */
+                    exclusiveAccess?: {
+                        /** @description Resource IDs with exclusive access. */
+                        resourceRefs: string[];
+                    };
+                    /** @description Ezeep Blue group reference. */
+                    ezeepBlueGroupRef?: string | null;
+                    /** @description Coupons granted to this item. */
+                    grantedDiscounts: {
+                        /** @description Granted coupon details. */
+                        coupon: {
+                            /** @description Fixed discount amount. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Whether the coupon applies to credit purchases. */
+                            enabledForCredits?: boolean;
+                            /**
+                             * Format: uuid
+                             * @description Unique identifier of the coupon.
+                             */
+                            id: string;
+                            /** @description Item-level redemption limits. */
+                            limitedItems?: {
+                                /** @description Whether item-level limits are enabled. */
+                                enabled: boolean;
+                                /** @description Items the coupon applies to when limits are enabled. */
+                                values: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the limited item.
+                                     */
+                                    id: string;
+                                    /** @description Display name of the limited item. */
+                                    title?: string;
+                                    /**
+                                     * @description Product type of the limited item.
+                                     * @enum {string}
+                                     */
+                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                }[];
+                            };
+                            /** @description Redemption limits for the coupon. */
+                            limitedRedemption?: {
+                                /** @description Whether redemption limits are enabled. */
+                                enabled: boolean;
+                                /** @description Current redemption count. */
+                                usage: number;
+                                /** @description Maximum redemption count. */
+                                value: number;
+                            };
+                            /** @description Percentage discount. */
+                            percentOff?: number;
+                            /** @description Product types the coupon applies to. */
+                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        };
+                    }[];
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the subscription item.
+                     */
+                    id: string;
+                    /** @description Kisi access group reference. */
+                    kisiGroupRef?: number | null;
+                    /**
+                     * Format: uuid
+                     * @description ID of the product option linked to this item.
+                     */
+                    optionRef?: string;
+                    /** @description Linked plan details. */
+                    plan?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the plan.
+                         */
+                        id: string;
+                        /** @description Resource reference associated with the plan. */
+                        resourceRef?: string;
+                        /** @description Display name of the plan. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked plan.
+                     */
+                    planRef?: string;
+                    /** @description Price per billing cycle. */
+                    price: number;
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked product.
+                     */
+                    productRef?: string;
+                    /** @description Quantity of this item. */
+                    quantity: number;
+                    /** @description Linked resource details. */
+                    resource?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the resource.
+                         */
+                        id: string;
+                        /** @description Cover image URL of the resource. */
+                        imageUrl?: string;
+                        /** @description Display name of the resource. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
+                    /** @description Reference to the linked resource. */
+                    resourceRef?: string | null;
+                    /** @description Salto KS access group reference. */
+                    saltoksAccessGroupRef?: string | null;
+                    /** @description One-time setup fee for this item. */
+                    setupFee: number;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the item starts.
+                     */
+                    startDate?: string;
+                    /** @description Whether the start date is fixed. */
+                    startFixed: boolean;
+                    /** @description Tapkey access group reference. */
+                    tapkeyGroupRef?: string | null;
+                    /** @description Linked tier details. */
+                    tier?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the tier.
+                         */
+                        id: string;
+                        /** @description Display name of the tier. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the linked tier.
+                     */
+                    tierRef?: string;
+                    /** @description Display title of the item. */
+                    title?: string | null;
+                    /**
+                     * @description Billing type of the item.
+                     * @enum {string}
+                     */
+                    type: "oneOff" | "recurring";
+                }[];
+                /**
+                 * Format: uuid
+                 * @description ID of the location this subscription belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the membership this subscription belongs to.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this subscription belongs to.
+                 */
+                networkRef: string;
+                /** @description Next billing interval. */
+                nextInterval?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the next interval ends.
+                     */
+                    endDate?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when the next interval starts.
+                     */
+                    startDate: string;
+                };
+                /** @description Payment collection pause settings. */
+                pausePaymentCollection?: {
+                    /**
+                     * @description Behavior while payment collection is paused.
+                     * @enum {string}
+                     */
+                    behavior: "draft" | "void";
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when payment collection was paused.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp when payment collection resumes.
+                     */
+                    resumesAt?: string;
+                };
+                /** @description Payment status for subscriptions created by the current user. */
+                payment?: {
+                    /** @description Pending payment request details. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the payment request.
+                         */
+                        id: string;
+                        /** @description URL to complete the payment. */
+                        url: string;
+                    };
+                    /** @description Payment status. */
+                    status: string;
+                };
+                /** @description Invoice payment settings by product type. */
+                payWithInvoice: {
+                    /** @description Whether credit packages are invoiced. */
+                    creditPackages: boolean;
+                    /** @description Whether desk bookings are invoiced. */
+                    desks: boolean;
+                    /** @description Whether equipment bookings are invoiced. */
+                    equipment?: boolean;
+                    /** @description Whether events are invoiced. */
+                    events: boolean;
+                    /** @description Whether parking bookings are invoiced. */
+                    parking?: boolean;
+                    /** @description Whether room bookings are invoiced. */
+                    rooms: boolean;
+                    /** @description Whether shop purchases are invoiced. */
+                    shop: boolean;
+                };
+                /**
+                 * @description Billing period.
+                 * @enum {string}
+                 */
+                period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                /** @description Total recurring price of the subscription. */
+                price: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the subscription was purchased.
+                 */
+                purchaseDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the subscription starts.
+                 */
+                startDate: string;
+                /** @description Whether the start date is fixed. */
+                startFixed: boolean;
+                /**
+                 * @description Subscription status.
+                 * @enum {string}
+                 */
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled";
+                /**
+                 * @description Whether the subscription belongs to a company or user.
+                 * @enum {string}
+                 */
+                subscriptionType: "company" | "user";
+                /** @description Timezone identifier for billing dates. */
+                timezoneId: string;
+                /** @description User associated with this subscription. */
+                user?: {
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User phone number. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+                /** @description User who created this subscription. */
+                userCreator?: {
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User phone number. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the user associated with this subscription.
+                 */
+                userRef?: string;
+            };
         };
         ticket: {
             /**
@@ -10231,7 +11283,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -10248,7 +11300,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -14279,6 +15331,10 @@ export interface operations {
             query?: {
                 /** @description Deprecated. Use customerRef instead. UUID of the company whose invoices to list. */
                 companyRef?: string;
+                /** @description Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
                 /** @description UUID of the customer whose invoices to list. */
                 customerRef?: string;
                 /** @description Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
@@ -18409,13 +19465,28 @@ export interface operations {
     };
     getSubscriptions: {
         parameters: {
-            query: {
-                /** @description The id of the location. */
-                locationRef: string;
-                /** @description The number of items to return */
+            query?: {
+                /** @description UUID of the customer whose subscriptions to list. */
+                customerRef?: string;
+                /** @description Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description UUID of the location whose subscriptions to list. */
+                locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Sort order for results. */
+                order?: string;
+                /**
+                 * @description Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
+                 *
+                 *     Supported values:
+                 *     - **active** — currently active
+                 *     - **scheduled** — scheduled to start
+                 *     - **incomplete** — pending setup or payment
+                 *     - **incompleteExpired** — incomplete and expired
+                 *     - **canceled** — canceled
+                 */
+                status?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -18432,11 +19503,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        nextPageToken?: components["schemas"]["nextPageToken"];
-                        searchQueryNext?: components["schemas"]["searchQueryNext"];
-                        subscriptions?: components["schemas"]["subscription"][];
-                    };
+                    "application/json": components["schemas"]["getSubscriptions"];
                 };
             };
             /** @description Bad Request */
@@ -18493,7 +19560,7 @@ export interface operations {
             };
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
             };
             cookie?: never;
         };
@@ -18505,9 +19572,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        subscription?: components["schemas"]["subscription"];
-                    };
+                    "application/json": components["schemas"]["getSubscription"];
                 };
             };
             /** @description Bad Request */
@@ -18530,7 +19595,7 @@ export interface operations {
             };
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
             };
             cookie?: never;
         };
@@ -18563,7 +19628,7 @@ export interface operations {
             };
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
             };
             cookie?: never;
         };
@@ -18596,7 +19661,7 @@ export interface operations {
             };
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
             };
             cookie?: never;
         };
@@ -18630,7 +19695,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
                 /** @description The id of the subscription item. */
                 itemId: string;
             };
@@ -18662,7 +19727,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description The id of the subscription. */
-                id: string;
+                subscriptionId: string;
                 /** @description The id of the subscription item. */
                 itemId: string;
             };
