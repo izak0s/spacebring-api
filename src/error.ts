@@ -10,13 +10,20 @@ export class SpacebringError extends Error {
   readonly status: number;
   /** Parsed error body returned by the API, if any. */
   readonly body: SpacebringErrorBody | undefined;
+  /** The operation the request targeted, e.g. `GET /billing/invoices/v1/{invoiceId}`. */
+  readonly operation: string | undefined;
+  /** Full URL of the failed request, if known. */
+  readonly url: string | undefined;
 
-  constructor(status: number, body?: unknown) {
+  constructor(status: number, body?: unknown, request?: { operation?: string; url?: string }) {
     const parsed = isErrorBody(body) ? body : undefined;
-    super(parsed?.message ?? `Spacebring API request failed with status ${status}`);
+    const base = parsed?.message ?? `Spacebring API request failed with status ${status}`;
+    super(request?.operation ? `${base} (${request.operation})` : base);
     this.name = "SpacebringError";
     this.status = status;
     this.body = parsed;
+    this.operation = request?.operation;
+    this.url = request?.url;
   }
 }
 

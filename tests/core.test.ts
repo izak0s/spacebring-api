@@ -103,4 +103,14 @@ describe("SpacebringError", () => {
     expect(error.body?.type).toBe("invalid");
     expect(error.name).toBe("SpacebringError");
   });
+
+  it("carries the operation and url and appends the operation to the message", () => {
+    const error = new SpacebringError(404, undefined, {
+      operation: "GET /benefits/v1/{benefitId}",
+      url: "https://api.spacebring.com/benefits/v1/b1",
+    });
+    expect(error.message).toBe("Spacebring API request failed with status 404 (GET /benefits/v1/{benefitId})");
+    expect(error.operation).toBe("GET /benefits/v1/{benefitId}");
+    expect(error.url).toBe("https://api.spacebring.com/benefits/v1/b1");
+  });
 });

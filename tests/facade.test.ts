@@ -80,14 +80,15 @@ describe("Spacebring client", () => {
     expect(JSON.parse(requests[0].body)).toEqual({ paymentMethod: { type: "stripe" } });
   });
 
-  it("throws SpacebringError with status and body on API errors", async () => {
+  it("throws SpacebringError with status, body, and the operation on API errors", async () => {
     const { sb } = mockClient([{ status: 400, body: { message: "locationRef is required", type: "invalid_request" } }]);
     const failure = sb.benefits.list();
     await expect(failure).rejects.toBeInstanceOf(SpacebringError);
     await expect(failure).rejects.toMatchObject({
       status: 400,
-      message: "locationRef is required",
+      message: "locationRef is required (GET /benefits/v1)",
       body: { type: "invalid_request" },
+      operation: "GET /benefits/v1",
     });
   });
 
@@ -136,6 +137,81 @@ describe("Spacebring client", () => {
     const { sb, requests } = mockClient([{ status: 429, body: {} }], { maxRetries: 0 });
     await expect(sb.benefits.list()).rejects.toMatchObject({ status: 429 });
     expect(requests).toHaveLength(1);
+  });
+
+  it("retries idempotent requests on gateway errors", async () => {
+    const { sb, requests } = mockClient([
+      { status: 503, body: {}, headers: { "Retry-After": "0" } },
+      { status: 200, body: { benefits: [] } },
+    ]);
+    await expect(sb.benefits.list()).resolves.toEqual({ benefits: [] });
+    expect(requests).toHaveLength(2);
+  });
+
+  it("does not replay POSTs on gateway errors", async () => {
+    const { sb, requests } = mockClient([{ status: 502, body: {} }]);
+    await expect(sb.benefits.create({} as never)).rejects.toMatchObject({ status: 502 });
+    expect(requests).toHaveLength(1);
+  });
+
+  it("retries network errors on idempotent requests", async () => {
+    let calls = 0;
+    const fetch = async (): Promise<Response> => {
+      calls += 1;
+      if (calls === 1) throw new TypeError("fetch failed");
+      return new Response(JSON.stringify({ benefits: [] }), { status: 200, headers: { "Content-Type": "application/json" } });
+    };
+    const sb = new Spacebring({ clientId: "a", clientSecret: "b", fetch: fetch as typeof globalThis.fetch });
+    await expect(sb.benefits.list()).resolves.toEqual({ benefits: [] });
+    expect(calls).toBe(2);
+  });
+
+  it("does not replay POSTs after a network error", async () => {
+    let calls = 0;
+    const fetch = async (): Promise<Response> => {
+      calls += 1;
+      throw new TypeError("fetch failed");
+    };
+    const sb = new Spacebring({ clientId: "a", clientSecret: "b", fetch: fetch as typeof globalThis.fetch });
+    await expect(sb.benefits.create({} as never)).rejects.toThrowError(TypeError);
+    expect(calls).toBe(1);
+  });
+
+  it("honors an HTTP-date Retry-After header", async () => {
+    // A date in the past means "retry now" — no exponential backoff wait.
+    const { sb, requests } = mockClient([
+      { status: 429, body: {}, headers: { "Retry-After": new Date(Date.now() - 1000).toUTCString() } },
+      { status: 200, body: { benefits: [] } },
+    ]);
+    const started = Date.now();
+    await expect(sb.benefits.list()).resolves.toEqual({ benefits: [] });
+    expect(requests).toHaveLength(2);
+    expect(Date.now() - started).toBeLessThan(200); // backoff would wait >= 250ms
+  });
+
+  it("aborting the per-request signal cancels a pending retry wait", async () => {
+    const { sb, requests } = mockClient([{ status: 429, body: {}, headers: { "Retry-After": "60" } }]);
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 20);
+    await expect(sb.benefits.list(undefined, { signal: controller.signal })).rejects.toMatchObject({
+      name: "AbortError",
+    });
+    expect(requests).toHaveLength(1); // aborted during the wait, before the retry
+  });
+
+  it("times out hung requests when timeoutMs is set", async () => {
+    const fetch = (_input: unknown, init?: RequestInit): Promise<Response> =>
+      new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(init.signal?.reason), { once: true });
+      });
+    const sb = new Spacebring({
+      clientId: "a",
+      clientSecret: "b",
+      timeoutMs: 20,
+      maxRetries: 0,
+      fetch: fetch as typeof globalThis.fetch,
+    });
+    await expect(sb.benefits.list()).rejects.toMatchObject({ name: "TimeoutError" });
   });
 
   it("exposes the raw openapi-fetch client as an escape hatch", async () => {

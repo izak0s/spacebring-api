@@ -6,6 +6,12 @@ export interface SpacebringDefaults {
   networkId?: string;
 }
 
+/** Per-request options accepted by every generated facade method. */
+export interface SpacebringRequestOptions {
+  /** Aborts the request — including any pending retry wait — when triggered. */
+  signal?: AbortSignal;
+}
+
 interface FetchResult<T> {
   data?: T;
   error?: unknown;
@@ -16,9 +22,12 @@ interface FetchResult<T> {
  * Unwraps an openapi-fetch result: returns `data` on success,
  * throws {@link SpacebringError} on any non-2xx response.
  */
-export function unwrap<T>(result: FetchResult<T>): T {
+export function unwrap<T>(result: FetchResult<T>, operation?: string): T {
   if (result.error !== undefined || !result.response.ok) {
-    throw new SpacebringError(result.response.status, result.error);
+    throw new SpacebringError(result.response.status, result.error, {
+      operation,
+      url: result.response.url || undefined,
+    });
   }
   return result.data as T;
 }
@@ -30,12 +39,15 @@ export function unwrap<T>(result: FetchResult<T>): T {
 export function unwrapProp<Envelope, Key extends keyof Envelope>(
   result: FetchResult<Envelope>,
   key: Key,
+  operation?: string,
 ): NonNullable<Envelope[Key]> {
-  const value = unwrap(result)?.[key];
+  const value = unwrap(result, operation)?.[key];
   if (value === undefined || value === null) {
-    throw new SpacebringError(result.response.status, {
-      message: `Response is missing the "${String(key)}" property`,
-    });
+    throw new SpacebringError(
+      result.response.status,
+      { message: `Response is missing the "${String(key)}" property` },
+      { operation, url: result.response.url || undefined },
+    );
   }
   return value as NonNullable<Envelope[Key]>;
 }

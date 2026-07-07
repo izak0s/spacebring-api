@@ -17,7 +17,8 @@ A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com)
 - **Nested, discoverable API** — `sb.billing.invoices.pay(id)`, `sb.visitors.visits.checkIn(body)`
 - **Auto-pagination** — every paginated list endpoint has an `iterate()` async generator that walks `nextPageToken` for you
 - **Ergonomic returns** — single-property response envelopes are unwrapped: entities and plain arrays come back directly
-- **Rich error handling** — non-2xx responses throw a typed `SpacebringError`; malformed 2xx bodies and stuck pagination tokens throw instead of failing silently
+- **Rich error handling** — non-2xx responses throw a typed `SpacebringError` carrying the status, parsed body, and the operation that failed; malformed 2xx bodies and stuck pagination tokens throw instead of failing silently
+- **Resilient by default** — automatic retries for rate limits, gateway errors, and network failures (never replaying non-idempotent requests); optional per-attempt timeouts and `AbortSignal` cancellation on every method
 - **Zero runtime dependencies** — Node ≥ 20, `fetch`-based
 - **Dual module** — ships both ESM and CommonJS builds with type declarations for each
 
@@ -101,15 +102,30 @@ try {
 } catch (error) {
   if (error instanceof SpacebringError) {
     console.error(error.status, error.body?.message);
+    console.error(error.operation); // "GET /benefits/v1/{benefitId}"
+    console.error(error.url);       // the full request URL
   }
 }
 ```
 
 Malformed successes are covered too: a 2xx with an empty or incomplete body throws a `SpacebringError` (never a bare `TypeError`), and `iterate()` throws instead of looping forever if the API repeats a page token.
 
-### Rate limits
+### Rate limits & retries
 
-The API allows **10 requests per second**. Rate-limited requests (429) are retried automatically — up to 3 times, honoring `Retry-After` or backing off exponentially — so `iterate()` survives the limit out of the box. Tune or disable via `maxRetries` in the config (`maxRetries: 0` turns it off); a 429 that persists past the retries is thrown as a normal `SpacebringError`.
+The API allows **10 requests per second**. Rate-limited requests (429) are retried automatically — up to 3 times, honoring `Retry-After` (seconds or HTTP-date) or backing off exponentially — so `iterate()` survives the limit out of the box. Gateway errors (502/503/504), network failures, and timeouts are retried the same way, but only for idempotent methods (`GET`/`PUT`/`DELETE`) — a `POST` is never replayed, since the request may have reached the API. Tune or disable via `maxRetries` in the config (`maxRetries: 0` turns it off); an error that persists past the retries is thrown as-is.
+
+### Timeouts & cancellation
+
+Every method accepts a trailing options argument with an `AbortSignal`; aborting cancels the in-flight request and any pending retry wait. A client-wide per-attempt timeout is available via `timeoutMs`:
+
+```ts
+const sb = new Spacebring({ clientId, clientSecret, timeoutMs: 15_000 });
+
+const controller = new AbortController();
+const benefits = await sb.benefits.list({ locationRef }, { signal: controller.signal });
+```
+
+`timeoutMs` uses `AbortSignal.timeout`; combining it with your own signal relies on `AbortSignal.any` (Node ≥ 20.3, all modern browsers/workers/edge runtimes).
 
 ---
 

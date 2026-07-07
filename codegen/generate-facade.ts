@@ -164,7 +164,7 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     return { unwrapKey: keys[0], unwrapIsArray: propSchema.type === "array" };
   }
 
-  const arrayKeys = Object.keys(properties).filter((key) => properties[key].type === "array");
+  const arrayKeys = Object.keys(properties).filter((key) => resolveRef<{ type?: string }>(properties[key]).type === "array");
   if (arrayKeys.length !== 1) {
     warnings.push(`${op.operationId}: paginated response with ${arrayKeys.length} array properties, iterate() skipped`);
     return {};
@@ -430,6 +430,7 @@ function emitMethod(
   const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
   if (body) args.push(`body${body.required ? "" : "?"}: ${bodyType}`);
   if (hasQuery) args.push(`query${queryRequired ? "" : "?"}: ${queryType}`);
+  args.push("options?: SpacebringRequestOptions");
 
   const requestParts: string[] = [];
   const paramsParts: string[] = [];
@@ -438,7 +439,8 @@ function emitMethod(
   if (hasQuery) paramsParts.push("query");
   if (paramsParts.length > 0) requestParts.push(`params: { ${paramsParts.join(", ")} }`);
   if (body) requestParts.push("body");
-  const request = requestParts.length > 0 ? `{ ${requestParts.join(", ")} }` : "{}";
+  requestParts.push("signal: options?.signal");
+  const request = `{ ${requestParts.join(", ")} }`;
 
   const doc = opDoc(op);
   const responseType = successJsonType(op);
@@ -451,6 +453,8 @@ function emitMethod(
         : unwrapAlias
       : rawUnwrapType
     : responseType;
+  // Attached to thrown SpacebringErrors so failures identify their operation.
+  const opLabel = `${method.toUpperCase()} ${path}`;
   const call = `await client.${method.toUpperCase()}("${path}", ${request})`;
   const methods: EmittedMethod[] = [
     {
@@ -460,7 +464,7 @@ function emitMethod(
       code:
         doc +
         `async ${name}(${args.join(", ")}): Promise<${returnType}> {\n` +
-        `  return ${unwrapKey ? `unwrapProp(${call}, "${unwrapKey}")` : `unwrap(${call})`};\n` +
+        `  return ${unwrapKey ? `unwrapProp(${call}, "${unwrapKey}", "${opLabel}")` : `unwrap(${call}, "${opLabel}")`};\n` +
         `},`,
     },
   ];
@@ -471,6 +475,7 @@ function emitMethod(
     const iterateArgs = [
       ...pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`),
       `query${queryRequired ? "" : "?"}: Omit<NonNullable<${queryType}>, "nextPageToken">`,
+      "options?: SpacebringRequestOptions",
     ];
     const iterateParamsParts: string[] = [];
     if (requiredNetworkHeader) iterateParamsParts.push(headerPart);
@@ -489,7 +494,7 @@ function emitMethod(
         `${iterateName}(${iterateArgs.join(", ")}): AsyncGenerator<${itemType}, void, undefined> {\n` +
         `  return paginate(\n` +
         `    async (nextPageToken: string | undefined) =>\n` +
-        `      unwrap(await client.${method.toUpperCase()}("${path}", { params: { ${iterateParamsParts.join(", ")} } })),\n` +
+        `      unwrap(await client.${method.toUpperCase()}("${path}", { params: { ${iterateParamsParts.join(", ")} }, signal: options?.signal }), "${opLabel}"),\n` +
         `    "${pagination.itemsKey}",\n` +
         `  );\n` +
         `},`,
@@ -612,6 +617,7 @@ for (const rootName of rootNames) {
     "unwrap",
     ...(nodeUses(node, "usesUnwrapProp") ? ["unwrapProp"] : []),
     "type SpacebringDefaults",
+    "type SpacebringRequestOptions",
   ].join(", ");
   const entityDefs = (entitiesByRoot.get(rootName) ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
