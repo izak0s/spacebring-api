@@ -104,6 +104,24 @@ describe("SpacebringError", () => {
     expect(error.name).toBe("SpacebringError");
   });
 
+  it("surfaces validation issues in the message", () => {
+    const error = new SpacebringError(
+      400,
+      {
+        message: "Invalid request parameters",
+        type: "validationError",
+        issues: [
+          { code: "invalid_type", path: ["locationRef"], message: "Required" },
+          { code: "custom", path: [], message: "Provide locationRef or customerRef" },
+        ],
+      },
+      { operation: "GET /subscriptions/v1" },
+    );
+    expect(error.message).toBe(
+      "Invalid request parameters — locationRef: Required; Provide locationRef or customerRef (GET /subscriptions/v1)",
+    );
+  });
+
   it("carries the operation and url and appends the operation to the message", () => {
     const error = new SpacebringError(404, undefined, {
       operation: "GET /benefits/v1/{benefitId}",

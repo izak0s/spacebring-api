@@ -17,7 +17,11 @@ export class SpacebringError extends Error {
 
   constructor(status: number, body?: unknown, request?: { operation?: string; url?: string }) {
     const parsed = isErrorBody(body) ? body : undefined;
-    const base = parsed?.message ?? `Spacebring API request failed with status ${status}`;
+    let base = parsed?.message ?? `Spacebring API request failed with status ${status}`;
+    // Validation errors carry the actual problems in an (untyped) issues array;
+    // surface them so the message is actionable without dumping error.body.
+    const issues = parsed ? issueSummary(parsed) : undefined;
+    if (issues) base += ` — ${issues}`;
     super(request?.operation ? `${base} (${request.operation})` : base);
     this.name = "SpacebringError";
     this.status = status;
@@ -29,4 +33,19 @@ export class SpacebringError extends Error {
 
 function isErrorBody(body: unknown): body is SpacebringErrorBody {
   return typeof body === "object" && body !== null;
+}
+
+/** Compact "path: message" list from a zod-style `issues` array, if the body has one. */
+function issueSummary(body: object): string | undefined {
+  const issues = (body as { issues?: unknown }).issues;
+  if (!Array.isArray(issues) || issues.length === 0) return undefined;
+  const parts = issues.slice(0, 3).map((issue) => {
+    if (typeof issue !== "object" || issue === null) return String(issue);
+    const { path, message } = issue as { path?: unknown; message?: unknown };
+    const where = Array.isArray(path) && path.length > 0 ? path.join(".") : undefined;
+    const what = typeof message === "string" ? message : JSON.stringify(issue);
+    return where ? `${where}: ${what}` : what;
+  });
+  const more = issues.length > 3 ? `; +${issues.length - 3} more` : "";
+  return parts.join("; ") + more;
 }
