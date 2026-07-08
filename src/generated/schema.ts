@@ -4297,6 +4297,295 @@ export interface components {
              */
             transactionRef: string;
         };
+        getCreditNotes: {
+            /** @description List of credit notes. */
+            creditNotes: {
+                /** @description Amounts in the base currency. */
+                baseAmounts: {
+                    /** @description ISO currency code. */
+                    currencyCode: string;
+                    /**
+                     * @deprecated
+                     * @description Deprecated.
+                     */
+                    grossAmount: number;
+                    /** @description Post-payment credit amount in major units. */
+                    postPaymentAmount: number;
+                    /** @description Pre-payment credit amount in major units. */
+                    prePaymentAmount: number;
+                    /** @description Subtotal in major units. */
+                    subtotalAmount: number;
+                    /** @description Subtotal excluding tax in major units. */
+                    subtotalAmountExcludingTax: number;
+                    /** @description Tax breakdown. */
+                    taxes: {
+                        /** @description Tax amount in major units. */
+                        amount: number;
+                        /** @description Whether tax is included in the price. */
+                        inclusive: boolean;
+                        /** @description Tax rate as a decimal. */
+                        rate: number;
+                        /** @description Amount subject to tax in major units. */
+                        taxableAmount: number;
+                    }[];
+                    /** @description Total in major units. */
+                    totalAmount: number;
+                    /** @description Total excluding tax in major units. */
+                    totalExcludingTaxAmount: number;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the credit note was created.
+                 */
+                createDate: string;
+                /** @description Amount credited to customer balance in major units. */
+                creditAmount?: number;
+                /** @description ISO currency code (from base or alt currency). */
+                currencyCode: string;
+                /** @description Effective date in YYYY-MM-DD format. */
+                effectiveDate?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated.
+                 */
+                grossAmount: number;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the credit note.
+                 */
+                id: string;
+                /** @description Internal memo (visible to admins only). */
+                internalNote?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the invoice being credited.
+                 */
+                invoiceRef: string;
+                /** @description Credit note line items. */
+                lines: {
+                    /** @description Amounts in the base currency. */
+                    baseAmounts: {
+                        /** @description ISO currency code. */
+                        currencyCode: string;
+                        /** @description Discount deduction in major units. */
+                        discountedAmount: number;
+                        /** @description Tax details. */
+                        tax?: {
+                            /** @description Tax amount in major units. */
+                            amount: number;
+                            /** @description Whether tax is included in the price. */
+                            inclusive: boolean;
+                            /** @description Tax rate as a decimal. */
+                            rate: number;
+                            /** @description Amount subject to tax in major units. */
+                            taxableAmount: number;
+                        };
+                        /** @description Total in major units. */
+                        totalAmount: number;
+                        /** @description Total excluding tax in major units. */
+                        totalExcludingTaxAmount: number;
+                        /** @description Unit price in major units. */
+                        unitAmount?: number;
+                        /** @description Unit price excluding tax in major units. */
+                        unitExcludingTaxAmount?: number;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of line item creation.
+                     */
+                    createDate: string;
+                    /** @description ISO currency code. */
+                    currencyCode: string;
+                    /** @description Discount deduction in major units. */
+                    discountedAmount: number;
+                    /** @description Applied discounts. */
+                    discounts?: {
+                        /** @description Coupon applied. */
+                        coupon: {
+                            /** @description Fixed discount amount in major units. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Discount duration type. */
+                            duration?: string;
+                            /** @description Number of months the discount applies. */
+                            durationInMonths?: number;
+                            /**
+                             * Format: uuid
+                             * @description Coupon ID.
+                             */
+                            id?: string;
+                            /** @description Percentage discount. */
+                            percentOff?: number;
+                            /** @description Coupon type. */
+                            type?: string;
+                        };
+                        /** @description Promocode applied. */
+                        promocode?: {
+                            code: string;
+                            /** Format: date-time */
+                            expiration?: string;
+                            /** Format: uuid */
+                            id: string;
+                            limitByFirstPurchase?: boolean;
+                        };
+                        /**
+                         * Format: uuid
+                         * @description Associated subscription ID.
+                         */
+                        subscriptionId?: string;
+                    }[];
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the line item.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the original invoice item.
+                     */
+                    invoiceItemRef: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the invoice.
+                     */
+                    invoiceRef: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the organization (location).
+                     */
+                    locationRef: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the network.
+                     */
+                    networkRef: string;
+                    /** @description Quantity refunded. */
+                    quantity?: number;
+                    /** @description Tax details. */
+                    tax?: {
+                        /** @description Tax amount in major units. */
+                        amount: number;
+                        /** @description Whether tax is included in the price. */
+                        inclusive: boolean;
+                        /** @description Tax rate as a decimal. */
+                        rate: number;
+                        /** @description Amount subject to tax in major units. */
+                        taxableAmount: number;
+                    };
+                    /** @description Total in major units. */
+                    totalAmount: number;
+                    /** @description Total excluding tax in major units. */
+                    totalExcludingTaxAmount: number;
+                    /** @description Unit price in major units. */
+                    unitAmount?: number;
+                    /** @description Unit price excluding tax in major units. */
+                    unitExcludingTaxAmount?: number;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of last update.
+                     */
+                    updateDate: string;
+                }[];
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /** @description Credit note number. */
+                number?: number;
+                /** @description Out-of-band refund amount in major units. */
+                outOfBandAmount?: number;
+                /** @description URL to download the credit note PDF. */
+                pdfUrl: string;
+                /** @description Post-payment credit amount in major units. */
+                postPaymentAmount: number;
+                /** @description Pre-payment credit amount in major units. */
+                prePaymentAmount: number;
+                /**
+                 * @description Reason for the credit note.
+                 * @enum {string}
+                 */
+                reason: "duplicate" | "orderChange" | "productUnsatisfactory" | "fraudulent" | "other";
+                /** @description Refunds associated with this credit note. */
+                refunds?: {
+                    /** @description Refund amount in major units. */
+                    amount: number;
+                    /** @description ISO currency code. */
+                    currencyCode: string;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the refund.
+                     */
+                    id: string;
+                    /** @description Refund payment method. */
+                    method?: {
+                        /** @description Payment method label. */
+                        label?: string;
+                        /**
+                         * @description Payment method type.
+                         * @enum {string}
+                         */
+                        type: "external" | "paymentGateway";
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the transaction being refunded.
+                     */
+                    transactionRef: string;
+                }[];
+                /**
+                 * @description Credit note status.
+                 * @enum {string}
+                 */
+                status: "issued" | "voided";
+                /** @description Subtotal in major units. */
+                subtotalAmount: number;
+                /** @description Subtotal excluding tax in major units. */
+                subtotalAmountExcludingTax: number;
+                /** @description Tax breakdown. */
+                taxes: {
+                    /** @description Tax amount in major units. */
+                    amount: number;
+                    /** @description Whether tax is included in the price. */
+                    inclusive: boolean;
+                    /** @description Tax rate as a decimal. */
+                    rate: number;
+                    /** @description Amount subject to tax in major units. */
+                    taxableAmount: number;
+                }[];
+                /** @description Credit note title. */
+                title: string;
+                /** @description Total in major units. */
+                totalAmount: number;
+                /** @description Total excluding tax in major units. */
+                totalExcludingTaxAmount: number;
+                /**
+                 * @description Credit note type.
+                 * @enum {string}
+                 */
+                type: "prePayment" | "postPayment" | "mixed";
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of last update.
+                 */
+                updateDate: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the credit note was voided.
+                 */
+                voidDate?: string;
+            }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
         creditNote: {
             /** @description Amounts in the base currency. */
             baseAmounts: {
@@ -10920,64 +11209,531 @@ export interface components {
             /** Format: uuid */
             userRefCreator?: string;
         };
-        transactionDayPassesExpanded: {
-            amount?: number;
-            booking?: {
-                /** Format: uuid */
-                id?: string;
-                resource?: {
-                    /** Format: uuid */
-                    id?: string;
-                    title?: string;
+        getDayPassesTransactions: {
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description List of day pass transactions. */
+            transactions: {
+                /** @description Total day pass amount (absolute sum of expiring and permanent). */
+                amount: number;
+                /** @description Per-bucket amounts for charge transactions. */
+                amounts: {
+                    /** @description Amount deducted from this balance bucket. */
+                    amount: number;
+                    /**
+                     * Format: date-time
+                     * @description Expiration date for expiring balances.
+                     */
+                    expirationDate?: string;
+                    /**
+                     * Format: uuid
+                     * @description Subscription associated with expiring balances.
+                     */
+                    subscriptionRef?: string;
+                    /**
+                     * @description Balance bucket type.
+                     * @enum {string}
+                     */
+                    type: "expiring" | "permanent";
+                }[];
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product instead.
+                 */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description Booking id.
+                     */
+                    id: string;
+                    /** @description Booked resource. */
+                    resource: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource title. */
+                        title: string;
+                    };
                 };
-            };
-            company?: components["schemas"]["company"];
-            /** Format: uuid */
-            companyRef?: string;
-            createDate?: components["schemas"]["dateSchema"];
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            locationRef?: string;
-            /** Format: uuid */
-            membershipRefCreator?: string;
-            /** Format: uuid */
-            membershipRefOwner?: string;
-            refund?: {
-                amount?: number;
-                createDate?: components["schemas"]["dateSchema"];
-            };
-            /** @enum {string} */
-            type?: "booking" | "chargeExpiringDayPasses" | "chargePermanentDayPasses" | "refund" | "subscriptionExpiration" | "subscriptionRenewal" | "transferExpiringDayPasses" | "transferPermanentDayPasses";
-            userCreator?: components["schemas"]["user"];
-            userOwner?: components["schemas"]["user"];
-            /** Format: uuid */
-            userRefCreator?: string;
-            /** Format: uuid */
-            userRefOwner?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of company creation.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description Location id.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Company metadata. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes. */
+                    notes?: string;
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description Primary subscription id.
+                     */
+                    subscriptionRef: string | null;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                companyRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the transaction was created.
+                 */
+                createDate: string;
+                /** @description Customer associated with this transaction. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        about?: string | null;
+                        email?: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        name?: string | null;
+                        phoneNumber?: string | null;
+                        photoUrl?: string | null;
+                        surname?: string | null;
+                    };
+                };
+                /** @description Transaction description. */
+                description?: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the transaction.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreator instead.
+                 */
+                membershipRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /** @description Product details. */
+                product?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated booking.
+                     */
+                    bookingRef?: string;
+                    /** @description Display title of the product. */
+                    title: string;
+                    /**
+                     * @description Product type.
+                     * @enum {string}
+                     */
+                    type: "booking";
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated.
+                 */
+                refund?: {
+                    /** @description Refunded expiring amount. */
+                    amount: number;
+                    /**
+                     * Format: date-time
+                     * @description Refund creation timestamp.
+                     */
+                    createDate: string;
+                };
+                /** @description Transaction status. */
+                status: string;
+                /**
+                 * @description Day pass transaction type.
+                 * @enum {string}
+                 */
+                type: "adminAllocation" | "adminCharge" | "booking" | "expiration" | "purchaseAllocation" | "refund" | "subscriptionAllocation" | "subscriptionExpiration";
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userOwner instead.
+                 */
+                user?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /** @description User who created the transaction. */
+                userCreatedBy?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userCreator?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userOwner?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userRefOwner?: string;
+            }[];
         };
-        transactionDayPasses: {
-            amount?: number;
-            company?: components["schemas"]["company"];
-            /** Format: uuid */
-            companyRef?: string;
-            createDate?: components["schemas"]["dateSchema"];
-            description?: string;
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            locationRef?: string;
-            /** Format: uuid */
-            membershipRef?: string;
-            /** Format: uuid */
-            membershipRefCreator?: string;
-            /** @enum {string} */
-            type?: "chargeExpiringDayPasses" | "chargePermanentDayPasses" | "transferExpiringDayPasses" | "transferPermanentDayPasses";
-            user?: components["schemas"]["user"];
-            /** Format: uuid */
-            userRef?: string;
-            /** Format: uuid */
-            userRefCreator?: string;
+        createDayPassesTransaction: {
+            /** @description The created day passes transaction. */
+            transaction: {
+                /** @description Total day pass amount (absolute sum of expiring and permanent). */
+                amount: number;
+                /** @description Per-bucket amounts for charge transactions. */
+                amounts: {
+                    /** @description Amount deducted from this balance bucket. */
+                    amount: number;
+                    /**
+                     * Format: date-time
+                     * @description Expiration date for expiring balances.
+                     */
+                    expirationDate?: string;
+                    /**
+                     * Format: uuid
+                     * @description Subscription associated with expiring balances.
+                     */
+                    subscriptionRef?: string;
+                    /**
+                     * @description Balance bucket type.
+                     * @enum {string}
+                     */
+                    type: "expiring" | "permanent";
+                }[];
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product instead.
+                 */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description Booking id.
+                     */
+                    id: string;
+                    /** @description Booked resource. */
+                    resource: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource title. */
+                        title: string;
+                    };
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of company creation.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description Location id.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Company metadata. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes. */
+                    notes?: string;
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description Primary subscription id.
+                     */
+                    subscriptionRef: string | null;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                companyRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the transaction was created.
+                 */
+                createDate: string;
+                /** @description Customer associated with this transaction. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        about?: string | null;
+                        email?: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        name?: string | null;
+                        phoneNumber?: string | null;
+                        photoUrl?: string | null;
+                        surname?: string | null;
+                    };
+                };
+                /** @description Transaction description. */
+                description?: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the transaction.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreator instead.
+                 */
+                membershipRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /** @description Product details. */
+                product?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated booking.
+                     */
+                    bookingRef?: string;
+                    /** @description Display title of the product. */
+                    title: string;
+                    /**
+                     * @description Product type.
+                     * @enum {string}
+                     */
+                    type: "booking";
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated.
+                 */
+                refund?: {
+                    /** @description Refunded expiring amount. */
+                    amount: number;
+                    /**
+                     * Format: date-time
+                     * @description Refund creation timestamp.
+                     */
+                    createDate: string;
+                };
+                /** @description Transaction status. */
+                status: string;
+                /**
+                 * @description Day pass transaction type.
+                 * @enum {string}
+                 */
+                type: "adminAllocation" | "adminCharge" | "booking" | "expiration" | "purchaseAllocation" | "refund" | "subscriptionAllocation" | "subscriptionExpiration";
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userOwner instead.
+                 */
+                user?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /** @description User who created the transaction. */
+                userCreatedBy?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userCreator?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userOwner?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userRefOwner?: string;
+            };
         };
         transaction: {
             amount?: number;
@@ -14578,27 +15334,40 @@ export interface components {
             content: {
                 "application/json": {
                     transaction: {
+                        /** @description Day pass amount. Must be greater than zero. */
                         amount: number;
                         /**
                          * Format: uuid
-                         * @description The company id to charge or transfer day passes to.
+                         * @deprecated
+                         * @description Deprecated. Use customerRef instead.
                          */
                         companyRef?: string;
-                        /** @description The description of the transaction. */
-                        description?: string;
                         /**
                          * Format: uuid
-                         * @description The location id where to create a company.
+                         * @description The company or membership id to charge or transfer day passes to or from.
+                         */
+                        customerRef?: string;
+                        /** @description Description of the transaction. */
+                        description?: string;
+                        /** @description Expiration date for expiring day passes. */
+                        expirationDate?: string;
+                        /**
+                         * Format: uuid
+                         * @description The location id where to create the transaction.
                          */
                         locationRef: string;
                         /**
                          * Format: uuid
-                         * @description The membership id to charge or transfer day passes from.
+                         * @deprecated
+                         * @description Deprecated. Use customerRef instead.
                          */
                         membershipRef?: string;
-                        /** @enum {string} */
-                        type: "chargeExpiringDayPasses" | "chargePermanentDayPasses" | "transferExpiringDayPasses" | "transferPermanentDayPasses";
-                    } & (unknown | unknown);
+                        /**
+                         * @description Transaction type. chargeExpiringDayPasses, chargePermanentDayPasses, transferExpiringDayPasses, and transferPermanentDayPasses are deprecated; use adminCharge or adminAllocation instead.
+                         * @enum {string}
+                         */
+                        type: "adminAllocation" | "adminCharge" | "chargeExpiringDayPasses" | "chargePermanentDayPasses" | "transferExpiringDayPasses" | "transferPermanentDayPasses";
+                    };
                 };
             };
         };
@@ -16000,14 +16769,26 @@ export interface operations {
     getCreditNotes: {
         parameters: {
             query?: {
-                /** @description The id of the invoice. One of invoiceRef or locationRef is required. */
+                /** @description Filter credit notes created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter credit notes created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
+                /** @description UUID of the invoice whose credit notes to list. */
                 invoiceRef?: string;
-                /** @description The id of the location. One of invoiceRef or locationRef is required. */
-                locationRef?: string;
-                /** @description The maximum number of items to return (max 100, default 25) */
+                /** @description Maximum number of credit notes per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description UUID of the location whose credit notes to list. */
+                locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /**
+                 * @description Filter by credit note status. Comma-separated values, e.g. `issued,voided`.
+                 *
+                 *     Supported values:
+                 *     - **issued** — active credit note
+                 *     - **voided** — cancelled and no longer valid
+                 */
+                status?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -16024,11 +16805,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        creditNotes?: components["schemas"]["creditNote"][];
-                        nextPageToken?: components["schemas"]["nextPageToken"];
-                        searchQueryNext?: components["schemas"]["searchQueryNext"];
-                    };
+                    "application/json": components["schemas"]["getCreditNotes"];
                 };
             };
             /** @description Bad Request */
@@ -20149,29 +20926,24 @@ export interface operations {
     getDayPassesTransactions: {
         parameters: {
             query?: {
-                /** @description The number of items to return */
-                limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
-                /** @description The date filter of items. */
-                createDate?: {
-                    /**
-                     * Format: date-time
-                     * @description Get transactions with less createDate. Example: createDate[lte]=2021-05-21T10:00:00Z
-                     */
-                    lte?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get transactions with greater createDate. Example: createDate[gte]=2021-05-21T10:00:00Z
-                     */
-                    gte?: string;
-                };
-                /** @description The id of the location to get transactions for */
-                locationRef?: string;
-                /** @description The id of the membership to get transactions for */
-                membershipRef?: string;
-                /** @description The id of the company to get transactions for */
+                /** @description Deprecated. Use customerRef instead. The id of the company to get transactions for. */
                 companyRef?: string;
+                /** @description Get transactions with greater or equal createDate. Example: createDate[gte]=2021-05-21T10:00:00Z */
+                "createDate[gte]"?: string;
+                /** @description Get transactions with less or equal createDate. Example: createDate[lte]=2021-05-21T10:00:00Z */
+                "createDate[lte]"?: string;
+                /** @description UUID of the company or membership whose day pass transactions to list. */
+                customerRef?: string;
+                /** @description Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location whose day pass transactions to list. */
+                locationRef?: string;
+                /** @description Deprecated. Use customerRef instead. The id of the membership to get transactions for. */
+                membershipRef?: string;
+                /** @description Token to retrieve the next page of results. */
+                nextPageToken?: string;
+                /** @description Filter by transaction type. Comma-separated storage type values, e.g. `type=refund,booking`. Matches analytics report type filters. */
+                type?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -20188,10 +20960,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        transactions?: components["schemas"]["transactionDayPassesExpanded"][];
-                        nextPageToken?: components["schemas"]["nextPageToken"];
-                    };
+                    "application/json": components["schemas"]["getDayPassesTransactions"];
                 };
             };
             /** @description Bad Request */
@@ -20223,9 +20992,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        transaction?: components["schemas"]["transactionDayPasses"];
-                    };
+                    "application/json": components["schemas"]["createDayPassesTransaction"];
                 };
             };
             /** @description Bad Request */
