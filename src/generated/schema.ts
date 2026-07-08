@@ -2266,7 +2266,7 @@ export interface components {
              * @description Exchange rate provider when auto-update is enabled.
              * @enum {string}
              */
-            provider?: "fastForex" | "nbu" | "bcra" | "nbg";
+            provider?: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
         };
         /** @description Pre-built query string for the next page of results. Contains all active filter parameters combined with the next page token, ready to append to the endpoint URL. */
         searchQueryNext: string;
@@ -7511,7 +7511,13 @@ export interface components {
             memo?: string;
             /** Format: uuid */
             membershipRefOwner?: string;
+            /**
+             * @deprecated
+             * @description Deprecated. Use `payments` instead.
+             */
             payment?: components["schemas"]["payment"];
+            /** @description Booking payments. Multiple entries when the booking has several ledger transactions. */
+            payments?: components["schemas"]["payment"][];
             /** Format: uuid */
             resourceRef?: string;
             seats?: number;
@@ -11283,7 +11289,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -11300,7 +11306,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -19386,6 +19392,8 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
+                /** @description Comma-separated product UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+                productRef?: string;
                 /**
                  * @description Filter by order status. Comma-separated values, e.g. `new,inProgress`. Defaults to `new`, `inProgress`, and `completed` when omitted.
                  *
