@@ -8912,6 +8912,15 @@
           },
           {
             "in": "query",
+            "name": "productRef",
+            "required": false,
+            "description": "Comma-separated product UUIDs used to filter orders, e.g. `uuid1,uuid2`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "status",
             "required": false,
             "description": "Filter by order status. Comma-separated values, e.g. `new,inProgress`. Defaults to `new`, `inProgress`, and `completed` when omitted.\n\nSupported values:\n- **new** — placed, awaiting fulfillment\n- **inProgress** — being fulfilled\n- **completed** — fulfilled\n- **canceled** — canceled",
@@ -12043,7 +12052,8 @@
               "fastForex",
               "nbu",
               "bcra",
-              "nbg"
+              "nbg",
+              "bcch"
             ]
           }
         },
@@ -23490,7 +23500,20 @@
             "type": "string"
           },
           "payment": {
-            "$ref": "#/components/schemas/payment"
+            "deprecated": true,
+            "description": "Deprecated. Use `payments` instead.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/payment"
+              }
+            ]
+          },
+          "payments": {
+            "type": "array",
+            "description": "Booking payments. Multiple entries when the booking has several ledger transactions.",
+            "items": {
+              "$ref": "#/components/schemas/payment"
+            }
           },
           "resourceRef": {
             "format": "uuid",
@@ -31546,7 +31569,8 @@
                                 "fastForex",
                                 "nbu",
                                 "bcra",
-                                "nbg"
+                                "nbg",
+                                "bcch"
                               ]
                             }
                           },
@@ -31606,7 +31630,8 @@
                                 "fastForex",
                                 "nbu",
                                 "bcra",
-                                "nbg"
+                                "nbg",
+                                "bcch"
                               ]
                             }
                           },
