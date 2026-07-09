@@ -2,7 +2,7 @@ name: Spec sync
 
 on:
   schedule:
-    - cron: "17 3 * * *"
+    - cron: "0 16 * * *"
   workflow_dispatch:
 
 permissions:
