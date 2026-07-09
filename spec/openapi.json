@@ -20335,7 +20335,8 @@
                   "plata",
                   "stripe",
                   "tap",
-                  "wayforpay"
+                  "wayforpay",
+                  "xendit"
                 ]
               }
             },
@@ -20348,6 +20349,12 @@
               "type"
             ],
             "additionalProperties": false
+          },
+          "quantity": {
+            "description": "Number of tickets included in this purchase.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
           },
           "role": {
             "description": "Role of the ticket holder.",
@@ -20408,6 +20415,7 @@
           "event",
           "id",
           "locationRef",
+          "quantity",
           "role",
           "user"
         ],
@@ -25771,7 +25779,8 @@
                                 "stripe",
                                 "tap",
                                 "wayforpay",
-                                "mollie"
+                                "mollie",
+                                "xendit"
                               ]
                             }
                           },
@@ -26820,7 +26829,8 @@
                               "stripe",
                               "tap",
                               "wayforpay",
-                              "mollie"
+                              "mollie",
+                              "xendit"
                             ]
                           }
                         },
@@ -33851,7 +33861,8 @@
                         "plata",
                         "stripe",
                         "tap",
-                        "wayforpay"
+                        "wayforpay",
+                        "xendit"
                       ]
                     }
                   },

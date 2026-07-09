@@ -6199,8 +6199,10 @@ export interface components {
                  * @description Payment type.
                  * @enum {string}
                  */
-                type: "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay";
+                type: "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
             };
+            /** @description Number of tickets included in this purchase. */
+            quantity: number;
             /**
              * @description Role of the ticket holder.
              * @enum {string}
@@ -8583,7 +8585,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie";
+                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -9051,7 +9053,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie";
+                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -12439,7 +12441,7 @@ export interface components {
                          * @description Payment gateway type.
                          * @enum {string}
                          */
-                        type: "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay";
+                        type: "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                     };
                     /** @description Whether the user has accepted the payment terms. */
                     termsConsent?: boolean;
