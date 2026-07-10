@@ -47,7 +47,7 @@ The `npm run generate` output is committed; CI regenerates and runs `git diff --
 
 ## Release flow
 
-- `.github/workflows/regen.yml` — daily cron (16:00 UTC): downloads the latest spec, regenerates, validates, and opens a PR on the `auto/spec-update` branch when anything changed (using `RELEASE_TOKEN` so CI runs on the PR). The PR body flags whether the public API surface changed.
+- `.github/workflows/regen.yml` — daily cron (16:00 UTC): downloads the latest spec, regenerates, validates, and opens a PR on the `auto/spec-update` branch when anything changed (using `RELEASE_TOKEN` so CI runs on the PR). The PR body flags whether the public API surface changed and includes a markdown summary of method, operation, and schema changes (`codegen/diff-spec.ts` diffs the old and new spec + surface snapshot).
 - `.github/workflows/auto-release.yml` — when that PR merges, bumps the version and pushes a `v*` tag: **minor** normally, **major** when the surface snapshot lost any public method (removed/renamed = breaking). Needs a `RELEASE_TOKEN` repo secret (PAT with contents write) so the tag push can trigger workflows.
 - `.github/workflows/publish.yml` — on `v*` tags: runs full CI as a gate, verifies the tag matches `package.json`, publishes to npm via OIDC trusted publishing, and creates a GitHub release.
 

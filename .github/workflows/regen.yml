@@ -48,9 +48,12 @@ jobs:
         id: prbody
         run: |
           coverage=$(grep -o '<!-- coverage -->[^<]*' README.md | sed 's/<!-- coverage -->//')
+          git show HEAD:spec/openapi.json > /tmp/old-spec.json
+          git show HEAD:tests/__snapshots__/surface.test.ts.snap > /tmp/old-surface.snap
+          summary=$(npx tsx codegen/diff-spec.ts /tmp/old-spec.json spec/openapi.json /tmp/old-surface.snap tests/__snapshots__/surface.test.ts.snap)
           {
             echo 'body<<PR_BODY_EOF'
-            echo 'Nightly spec sync detected upstream changes and regenerated `src/generated/` (plus README counts and the API-surface snapshot).'
+            echo 'Daily spec sync detected upstream changes and regenerated `src/generated/` (plus README counts and the API-surface snapshot).'
             echo ''
             echo "**Generated:** $coverage"
             echo ''
@@ -59,6 +62,10 @@ jobs:
             else
               echo '⚠️ **The public API surface changed** — review `tests/__snapshots__/surface.test.ts.snap` in this diff for added/renamed/removed methods.'
             fi
+            echo ''
+            echo '## What changed'
+            echo ''
+            echo "$summary"
             echo ''
             echo 'Merging this PR triggers an automatic release via `auto-release.yml`: minor normally, **major** if any public method was removed or renamed.'
             echo 'PR_BODY_EOF'
