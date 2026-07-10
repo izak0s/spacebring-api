@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { camelCase, firstWord, pascalCase, singular, words } from "../codegen/naming.js";
+import { camelCase, firstWord, pascalCase, singular, words } from "../codegen/facade/naming.js";
 
 describe("naming", () => {
   it("splits snake_case and kebab-case literals", () => {
