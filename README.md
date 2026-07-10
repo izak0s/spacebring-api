@@ -20,7 +20,7 @@ A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com)
 - **Readable, named types** — entities (`Booking`, `Invoice`) and query parameters (`GetBookingsQuery`) are exported named types, so hovers show `Booking[]` instead of generated type soup, and enum filters are literal unions
 - **Rich error handling** — non-2xx responses throw a typed `SpacebringError` carrying the status, parsed body, and the operation that failed; malformed 2xx bodies and stuck pagination tokens throw instead of failing silently
 - **Resilient by default** — automatic retries for rate limits, gateway errors, and network failures (never replaying non-idempotent requests); optional per-attempt timeouts and `AbortSignal` cancellation on every method
-- **Zero runtime dependencies** — Node ≥ 20, `fetch`-based
+- **Zero runtime dependencies** — Node ≥ 20, `fetch`-based; type declarations are fully self-contained (TypeScript ≥ 5.4)
 - **Dual module** — ships both ESM and CommonJS builds with type declarations for each
 
 ---

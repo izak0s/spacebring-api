@@ -1,0 +1,143 @@
+/**
+ * Emits the facade method code for one analyzed operation: the plain method
+ * (unwrapped/paginated/raw return type) plus its iterate() companion when the
+ * response is paginated.
+ */
+import type { AnalyzedOp } from "./analyze.js";
+import { type Entity, entityBase } from "./entities.js";
+import { type SpecOperation, TS_TYPES } from "./spec.js";
+import { cleanDescription, docComment } from "./text.js";
+import type { EmittedMethod } from "./tree.js";
+
+function opDoc(op: SpecOperation, suffix = ""): string {
+  const summary = op.summary ? cleanDescription(op.summary) : "";
+  const description = op.description ? cleanDescription(op.description) : "";
+  const lines = [summary + suffix];
+  // Descriptions usually restate the summary; only keep genuinely new text.
+  if (description && description !== summary && description !== `${summary}.`) lines.push(description);
+  if (op.deprecated) lines.push("@deprecated Marked as deprecated in the OpenAPI spec.");
+  return docComment(lines);
+}
+
+function successResponseStatus(op: SpecOperation): string | undefined {
+  return Object.keys(op.responses)
+    .filter((status) => /^\d+$/.test(status) && Number(status) >= 200 && Number(status) < 300)
+    .sort((a, b) => Number(a) - Number(b))[0];
+}
+
+export function successJsonType(op: SpecOperation): string {
+  const status = successResponseStatus(op);
+  if (!status) return "undefined";
+  const response = op.responses[status] as { content?: Record<string, unknown> } | undefined;
+  if (!response?.content?.["application/json"]) return "undefined";
+  return `operations["${op.operationId}"]["responses"][${status}]["content"]["application/json"]`;
+}
+
+export function emitMethod(
+  analyzed: AnalyzedOp,
+  name: string,
+  entities: Map<string, Entity> | undefined,
+  queryTypeName: string | undefined,
+): EmittedMethod[] {
+  const { op, method, path, pathParams, queryParams, requiredNetworkHeader, body, pagination, unwrapKey } = analyzed;
+  // Runtime value comes from client-level config; openapi-fetch drops undefined header values.
+  const headerPart = `header: { "spacebring-network-id": defaults.networkId as string }`;
+  const hasQuery = queryParams.length > 0;
+  const queryRequired = queryParams.some((p) => p.required);
+  const queryType = queryTypeName ?? `operations["${op.operationId}"]["parameters"]["query"]`;
+  const bodyType = `NonNullable<operations["${op.operationId}"]["requestBody"]>["content"]["application/json"]`;
+
+  const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
+  if (body) args.push(`body${body.required ? "" : "?"}: ${bodyType}`);
+  if (hasQuery) args.push(`query${queryRequired ? "" : "?"}: ${queryType}`);
+  args.push("options?: SpacebringRequestOptions");
+
+  const requestParts: string[] = [];
+  const paramsParts: string[] = [];
+  if (requiredNetworkHeader) paramsParts.push(headerPart);
+  if (pathParams.length > 0) paramsParts.push(`path: { ${pathParams.map((p) => p.name).join(", ")} }`);
+  if (hasQuery) paramsParts.push("query");
+  if (paramsParts.length > 0) requestParts.push(`params: { ${paramsParts.join(", ")} }`);
+  if (body) requestParts.push("body");
+  requestParts.push("signal: options?.signal");
+  const request = `{ ${requestParts.join(", ")} }`;
+
+  const doc = opDoc(op);
+  const responseType = successJsonType(op);
+  const unwrapAlias = unwrapKey ? entities?.get(entityBase(unwrapKey))?.name : undefined;
+  const rawUnwrapType = unwrapKey ? `NonNullable<${responseType}["${unwrapKey}"]>` : responseType;
+  // Paginated envelopes are re-stated as a literal type using the entity alias
+  // ({ bookings?: Booking[]; nextPageToken?: string }) — structurally identical
+  // to the operations[...] type (typecheck enforces this), but readable on hover.
+  const listAlias = !unwrapKey && pagination ? entities?.get(entityBase(pagination.itemsKey))?.name : undefined;
+  const paginatedType =
+    pagination && listAlias
+      ? `{ ${pagination.props
+          .map(
+            (p) =>
+              `${p.key}${p.optional ? "?" : ""}: ${
+                p.key === pagination.itemsKey ? `${listAlias}[]` : (p.scalar ?? `${responseType}["${p.key}"]`)
+              }`,
+          )
+          .join("; ")} }`
+      : undefined;
+  const returnType = unwrapKey
+    ? unwrapAlias
+      ? analyzed.unwrapIsArray
+        ? `${unwrapAlias}[]`
+        : unwrapAlias
+      : rawUnwrapType
+    : (paginatedType ?? responseType);
+  // Attached to thrown SpacebringErrors so failures identify their operation.
+  const opLabel = `${method.toUpperCase()} ${path}`;
+  const call = `await client.${method.toUpperCase()}("${path}", ${request})`;
+  const methods: EmittedMethod[] = [
+    {
+      name,
+      usesPaginate: false,
+      usesUnwrapProp: unwrapKey !== undefined,
+      code:
+        doc +
+        `async ${name}(${args.join(", ")}): Promise<${returnType}> {\n` +
+        `  return ${unwrapKey ? `unwrapProp(${call}, "${unwrapKey}", "${opLabel}")` : `unwrap(${call}, "${opLabel}")`};\n` +
+        `},`,
+    },
+  ];
+
+  // list -> iterate, listItems -> iterateItems: follows nextPageToken across pages.
+  if (method === "get" && pagination && name.startsWith("list")) {
+    const iterateName = "iterate" + name.slice("list".length);
+    const iterateQueryType = queryTypeName
+      ? `Omit<${queryTypeName}, "nextPageToken">`
+      : `Omit<NonNullable<${queryType}>, "nextPageToken">`;
+    const iterateArgs = [
+      ...pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`),
+      `query${queryRequired ? "" : "?"}: ${iterateQueryType}`,
+      "options?: SpacebringRequestOptions",
+    ];
+    const iterateParamsParts: string[] = [];
+    if (requiredNetworkHeader) iterateParamsParts.push(headerPart);
+    if (pathParams.length > 0) iterateParamsParts.push(`path: { ${pathParams.map((p) => p.name).join(", ")} }`);
+    iterateParamsParts.push("query: { ...query, nextPageToken }");
+    const iterateDoc = opDoc(op, " — iterates every item across all pages.");
+    const itemType =
+      entities?.get(entityBase(pagination.itemsKey))?.name ??
+      `NonNullable<${responseType}["${pagination.itemsKey}"]>[number]`;
+    methods.push({
+      name: iterateName,
+      usesPaginate: true,
+      usesUnwrapProp: false,
+      code:
+        iterateDoc +
+        `${iterateName}(${iterateArgs.join(", ")}): AsyncGenerator<${itemType}, void, undefined> {\n` +
+        `  return paginate(\n` +
+        `    async (nextPageToken: string | undefined) =>\n` +
+        `      unwrap(await client.${method.toUpperCase()}("${path}", { params: { ${iterateParamsParts.join(", ")} }, signal: options?.signal }), "${opLabel}"),\n` +
+        `    "${pagination.itemsKey}",\n` +
+        `  );\n` +
+        `},`,
+    });
+  }
+
+  return methods;
+}
