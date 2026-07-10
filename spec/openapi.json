@@ -9072,6 +9072,24 @@
         "parameters": [
           {
             "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter subscriptions created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter subscriptions created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "customerRef",
             "required": false,
             "description": "UUID of the customer whose subscriptions to list.",
@@ -9117,6 +9135,16 @@
             "description": "Sort order for results.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "planRef",
+            "required": false,
+            "description": "UUID of the plan to filter subscriptions by.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -10956,6 +10984,26 @@
             "description": "The id of the location."
           },
           {
+            "in": "query",
+            "name": "createDate",
+            "description": "The create date filter of items.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get contacts with less or equal create date. Example: createDate[lte]=2021-05-21T10:00:00Z"
+                },
+                "gte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get contacts with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z"
+                }
+              }
+            }
+          },
+          {
             "in": "header",
             "name": "spacebring-network-id",
             "schema": {
@@ -11186,6 +11234,26 @@
             },
             "description": "The number of items to return.",
             "required": false
+          },
+          {
+            "in": "query",
+            "name": "createDate",
+            "description": "The create date filter of items.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get requests with less or equal create date. Example: createDate[lte]=2021-05-21T10:00:00Z"
+                },
+                "gte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get requests with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z"
+                }
+              }
+            }
           },
           {
             "in": "header",
@@ -11542,6 +11610,26 @@
                   "format": "date-time",
                   "type": "string",
                   "description": "Get visits with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "description": "The visit date filter of items.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits with less or equal visit date. Example: date[lte]=2021-05-21T10:00:00Z"
+                },
+                "gte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits with greater or equal visit date. Example: date[gte]=2021-05-21T10:00:00Z"
                 }
               }
             }
@@ -12071,7 +12159,8 @@
               "nbu",
               "bcra",
               "nbg",
-              "bcch"
+              "bcch",
+              "ecb"
             ]
           }
         },
@@ -33130,7 +33219,8 @@
                                 "nbu",
                                 "bcra",
                                 "nbg",
-                                "bcch"
+                                "bcch",
+                                "ecb"
                               ]
                             }
                           },
@@ -33191,7 +33281,8 @@
                                 "nbu",
                                 "bcra",
                                 "nbg",
-                                "bcch"
+                                "bcch",
+                                "ecb"
                               ]
                             }
                           },

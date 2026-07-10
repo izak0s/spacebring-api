@@ -9,6 +9,10 @@ export type Subscription = NonNullable<operations["getSubscription"]["responses"
 
 /** Query parameters for `sb.subscriptions.list()`. */
 export interface GetSubscriptionsQuery {
+  /** Filter subscriptions created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter subscriptions created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
   /** UUID of the customer whose subscriptions to list. */
   customerRef?: string;
   /** Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
@@ -19,6 +23,8 @@ export interface GetSubscriptionsQuery {
   nextPageToken?: string;
   /** Sort order for results. */
   order?: string;
+  /** UUID of the plan to filter subscriptions by. */
+  planRef?: string;
   /** Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
 
   Supported values:

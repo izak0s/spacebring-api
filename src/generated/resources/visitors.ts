@@ -24,6 +24,8 @@ export interface GetContactsQuery {
   nextPageToken?: string;
   /** The id of the location. */
   locationRef: string;
+  /** The create date filter of items. */
+  createDate?: { lte?: string; gte?: string };
 }
 
 /** Query parameters for `sb.visitors.requests.list()`. */
@@ -34,6 +36,8 @@ export interface GetRequestsQuery {
   nextPageToken?: string;
   /** The number of items to return. */
   limit?: number;
+  /** The create date filter of items. */
+  createDate?: { lte?: string; gte?: string };
 }
 
 /** Query parameters for `sb.visitors.visits.list()`. */
@@ -44,6 +48,8 @@ export interface GetVisitsQuery {
   userRefHost?: string;
   /** The date filter of items. */
   createDate?: { lte?: string; gte?: string };
+  /** The visit date filter of items. */
+  date?: { lte?: string; gte?: string };
   /** The number of items to return */
   limit?: number;
   /** Token to retrieve the next page of results. */

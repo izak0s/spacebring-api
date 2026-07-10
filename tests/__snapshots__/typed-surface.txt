@@ -502,11 +502,14 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
 // subscriptions.ts
 export type Subscription = NonNullable<operations["getSubscription"]["responses"][200]["content"]["application/json"]["subscription"]>;
 export interface GetSubscriptionsQuery {
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
   customerRef?: string;
   limit?: number;
   locationRef?: string;
   nextPageToken?: string;
   order?: string;
+  planRef?: string;
   Supported values:
   - **active** — currently active
   - **scheduled** — scheduled to start
@@ -620,16 +623,19 @@ export interface GetContactsQuery {
   limit?: number;
   nextPageToken?: string;
   locationRef: string;
+  createDate?: { lte?: string; gte?: string };
 }
 export interface GetRequestsQuery {
   locationRef: string;
   nextPageToken?: string;
   limit?: number;
+  createDate?: { lte?: string; gte?: string };
 }
 export interface GetVisitsQuery {
   locationRef: string;
   userRefHost?: string;
   createDate?: { lte?: string; gte?: string };
+  date?: { lte?: string; gte?: string };
   limit?: number;
   nextPageToken?: string;
 }
