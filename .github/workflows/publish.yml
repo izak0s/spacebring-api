@@ -81,3 +81,23 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Read API-changes section for the notification
+        id: tgnotes
+        run: |
+          {
+            echo 'body<<TG_EOF'
+            if [ -n "${{ steps.notes.outputs.file }}" ]; then cat "${{ steps.notes.outputs.file }}"; fi
+            echo 'TG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Telegram — released
+        uses: ./.github/actions/telegram
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          message: |
+            🚀 ${{ github.repository }} ${{ github.ref_name }} published to npm
+            https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+
+            ${{ steps.tgnotes.outputs.body }}

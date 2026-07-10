@@ -27,12 +27,13 @@ jobs:
       # would otherwise sail through as an auto-opened major-release PR.
       - name: Sanity-check downloaded spec
         run: |
+          # Via file, not execSync: the spec exceeds Node's 1 MiB default maxBuffer.
+          git show HEAD:spec/openapi.json > /tmp/committed-spec.json
           node -e '
-            const { execSync } = require("node:child_process");
             const { readFileSync } = require("node:fs");
             const count = (json) => Object.values(JSON.parse(json).paths)
               .reduce((n, p) => n + ["get", "put", "post", "delete", "patch"].filter((m) => p[m]).length, 0);
-            const before = count(execSync("git show HEAD:spec/openapi.json").toString());
+            const before = count(readFileSync("/tmp/committed-spec.json", "utf8"));
             const after = count(readFileSync("spec/openapi.json", "utf8"));
             console.log(`operations: ${before} -> ${after}`);
             if (after < before * 0.9) {
@@ -75,6 +76,11 @@ jobs:
           else
             echo "surface_changed=true" >> "$GITHUB_OUTPUT"
           fi
+          {
+            echo 'summary<<SUMMARY_EOF'
+            echo "$summary"
+            echo 'SUMMARY_EOF'
+          } >> "$GITHUB_OUTPUT"
           {
             echo 'body<<PR_BODY_EOF'
             echo 'Daily spec sync detected upstream changes and regenerated `src/generated/` (plus README counts and the API-surface snapshot).'
@@ -122,3 +128,27 @@ jobs:
         run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Telegram — review needed
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'true' && steps.cpr.outputs.pull-request-url != ''
+        uses: ./.github/actions/telegram
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          message: |
+            ⚠️ Spacebring spec sync changed the public API — review needed
+            ${{ steps.cpr.outputs.pull-request-url }}
+
+            ${{ steps.prbody.outputs.summary }}
+
+      - name: Telegram — auto-merging schema-only sync
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'false' && steps.cpr.outputs.pull-request-url != ''
+        uses: ./.github/actions/telegram
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          message: |
+            ✅ Spacebring spec sync: schema-only changes, auto-merging (release follows once CI passes)
+            ${{ steps.cpr.outputs.pull-request-url }}
+
+            ${{ steps.prbody.outputs.summary }}

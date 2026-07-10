@@ -1,0 +1,25 @@
+name: Notify on failure
+
+# Telegram alert when an automation workflow fails on main — with auto-merge
+# active, a silent red pipeline is the failure mode to guard against.
+on:
+  workflow_run:
+    workflows: [CI, Spec sync, Publish, Auto release]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    if: github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7 # local composite action needs the repo
+      - uses: ./.github/actions/telegram
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          message: |
+            ❌ ${{ github.event.workflow_run.name }} failed on main
+            ${{ github.event.workflow_run.html_url }}
