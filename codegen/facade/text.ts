@@ -5,12 +5,17 @@
  * to this Basic-auth client; strip that, convert <code> to backticks, drop tags.
  */
 export function cleanDescription(html: string): string {
-  return html
-    .split(/<h3>OAuth<\/h3>/)[0]
-    .replace(/<code>(.*?)<\/code>/g, "`$1`")
-    .replace(/<[^>]+>/g, "")
-    .replace(/\*\//g, "*\\/")
-    .trim();
+  let text = html.split(/<h3>OAuth<\/h3>/)[0].replace(/<code>(.*?)<\/code>/g, "`$1`");
+  // Strip tags until stable: a single pass can splice new tags together
+  // ("<scr<b>ipt>" -> "<script>"). The spec is remote input, and this text
+  // lands inside generated block comments.
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(/<[^>]+>/g, "");
+  } while (text !== previous);
+  // Last, so no earlier replacement can reconstruct a comment terminator.
+  return text.replace(/\*\//g, "*\\/").trim();
 }
 
 export function docComment(lines: string[]): string {
