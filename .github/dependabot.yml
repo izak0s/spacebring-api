@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # One PR for all dev deps — full CI (regen drift, typecheck, tests, build,
+    # pack) gates it, so a toolchain break surfaces in the PR, not locally.
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
+    ignore:
+      # TS 7 (native compiler) drops the in-process JS API that
+      # openapi-typescript and tsup's dts build depend on. Unpin once both
+      # support it. Verified broken 2026-07-10.
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

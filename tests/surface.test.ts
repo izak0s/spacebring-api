@@ -2,11 +2,13 @@
  * Guards the generated API surface. After a regen, this suite fails when:
  * - an operation disappears from the facade (coverage count vs the spec)
  * - a method or namespace gets renamed (surface snapshot)
+ * - any signature or exported type changes (typed-surface file snapshot):
+ *   catches generator regressions the name-only snapshot can't see
  *
- * A legitimate upstream API change updates the snapshot via `vitest -u` —
+ * A legitimate upstream API change updates the snapshots via `vitest -u` —
  * the snapshot diff in the regen PR then documents the surface change.
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -51,4 +53,44 @@ describe("generated API surface", () => {
   it("matches the recorded surface", () => {
     expect(methods.sort().join("\n")).toMatchSnapshot();
   });
+
+  it("matches the recorded typed surface", async () => {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "generated", "resources");
+    const files = readdirSync(dir)
+      .filter((file) => file.endsWith(".ts") && file !== "index.ts")
+      .sort();
+    const surface = files
+      .map((file) => `// ${file}\n${typeSurface(readFileSync(join(dir, file), "utf8"))}`)
+      .join("\n\n");
+    await expect(surface).toMatchFileSnapshot("__snapshots__/typed-surface.txt");
+  });
 });
+
+/**
+ * Reduces a generated resource file to its type-level surface: signatures,
+ * exported types/interfaces, and namespace structure — no doc comments,
+ * imports, or method bodies. Relies on the generator's fixed output format
+ * (one-line signatures ending in " {", bodies closed by "}," at the same
+ * indentation).
+ */
+function typeSurface(source: string): string {
+  const out: string[] = [];
+  let bodyEnd: string | undefined;
+  for (const line of source.split("\n")) {
+    if (bodyEnd !== undefined) {
+      if (line === bodyEnd) bodyEnd = undefined;
+      continue;
+    }
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("import ") || trimmed.startsWith("//")) continue;
+    if (trimmed.startsWith("/*") || trimmed.startsWith("*")) continue;
+    const method = /^(\s*)(?:async )?[\w$]+\(.*\{$/.exec(line);
+    if (method && !trimmed.startsWith("export function")) {
+      out.push(line.replace(/ \{$/, ""));
+      bodyEnd = `${method[1]}},`;
+      continue;
+    }
+    out.push(line);
+  }
+  return out.join("\n");
+}

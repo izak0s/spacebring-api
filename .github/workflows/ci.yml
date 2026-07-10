@@ -35,3 +35,68 @@ jobs:
 
       - name: Verify package contents
         run: npm run pack:dry-run
+
+  # The published d.ts must stay consumable by the oldest TypeScript we
+  # support — new compiler versions can emit declaration syntax older ones
+  # can't parse. Installs the packed tarball into a scratch project pinned to
+  # the floor TS version and typechecks a small consumer with skipLibCheck off.
+  consumer-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      # Floor is 5.4: the inlined openapi-fetch types need TS ≥ 5.4 inference.
+      - name: Compile consumer against dist with TypeScript 5.4
+        run: |
+          tarball="$PWD/$(npm pack --silent)"
+          mkdir /tmp/consumer && cd /tmp/consumer
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund "$tarball" typescript@5.4 @types/node@20 > /dev/null
+          cat > tsconfig.json << 'EOF'
+          {
+            "compilerOptions": {
+              "strict": true,
+              "noEmit": true,
+              "target": "es2022",
+              "module": "node16",
+              "moduleResolution": "node16",
+              "skipLibCheck": false
+            }
+          }
+          EOF
+          cat > check.ts << 'EOF'
+          import {
+            Spacebring,
+            SpacebringError,
+            type Booking,
+            type GetBookingsQuery,
+            type Invoice,
+          } from "@izak0s/spacebring-api";
+
+          const sb = new Spacebring({ clientId: "id", clientSecret: "secret", timeoutMs: 5_000 });
+
+          export async function checkSurface(locationRef: string): Promise<void> {
+            const query: GetBookingsQuery = { locationRef, limit: 10 };
+            const { bookings, nextPageToken } = await sb.resources.bookings.list(query);
+            const pages: Booking[] = bookings ?? [];
+            void nextPageToken;
+            for await (const booking of sb.resources.bookings.iterate({ locationRef })) {
+              pages.push(booking);
+            }
+            const invoice: Invoice = await sb.billing.invoices.get("00000000-0000-0000-0000-000000000000");
+            void invoice;
+            try {
+              await sb.locations.list();
+            } catch (error) {
+              if (error instanceof SpacebringError) void error.status;
+            }
+          }
+          EOF
+          ./node_modules/.bin/tsc -p tsconfig.json
+          echo "d.ts compiles under $(./node_modules/.bin/tsc --version)"

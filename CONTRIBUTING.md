@@ -30,7 +30,7 @@ npm run typecheck
 npm run test:update   # refreshes the API-surface snapshot; review its diff for surface changes
 ```
 
-The generator derives namespaces from path segments and method names from path shape + operationId verbs (rules in `codegen/generate-facade.ts` and `codegen/naming.ts`). It never drops an operation: anything that matches no naming rule is emitted under its full operationId and reported as a warning — a new warning after a regen means Spacebring broke a convention and the rule set needs a look. `tests/surface.test.ts` fails whenever the facade and spec disagree on coverage, and its snapshot (`tests/__snapshots__/surface.test.ts.snap`) records every public method, so surface changes always show up in review.
+The generator derives namespaces from path segments and method names from path shape + operationId verbs (rules in `codegen/generate-facade.ts` and `codegen/naming.ts`). It never drops an operation: anything that matches no naming rule is emitted under its full operationId and reported as a warning — a new warning after a regen means Spacebring broke a convention and the rule set needs a look. `tests/surface.test.ts` fails whenever the facade and spec disagree on coverage; its snapshots record every public method by name (`tests/__snapshots__/surface.test.ts.snap`) and every signature and exported type (`tests/__snapshots__/typed-surface.txt`), so both surface and signature changes always show up in review.
 
 The `npm run generate` output is committed; CI regenerates and runs `git diff --exit-code`, so a stale or hand-edited generated file fails the build.
 
