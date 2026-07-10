@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # release notes diff against the previous v* tag
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
@@ -43,7 +45,39 @@ jobs:
       # attached automatically once the repo is public.
       - run: npm publish --access public
 
+      # Prepend a human-readable API diff (same generator as the regen PR
+      # body) to the auto-generated notes, so the release tab answers "what
+      # changed for me" without reading generated-code diffs.
+      - name: Build API-changes section
+        id: notes
+        run: |
+          prev=$(git tag --list 'v*' --sort=-v:refname | grep -vx "$GITHUB_REF_NAME" | head -1)
+          notes_file=""
+          if [ -n "$prev" ] && git show "$prev:spec/openapi.json" > /tmp/prev-spec.json 2>/dev/null; then
+            args="/tmp/prev-spec.json spec/openapi.json"
+            if git show "$prev:tests/__snapshots__/surface.test.ts.snap" > /tmp/prev-surface.snap 2>/dev/null; then
+              args="$args /tmp/prev-surface.snap tests/__snapshots__/surface.test.ts.snap"
+            fi
+            {
+              echo "## API changes since $prev"
+              echo ""
+              if cmp -s /tmp/prev-spec.json spec/openapi.json; then
+                echo "_None — internal/tooling release._"
+              else
+                npx tsx codegen/diff-spec.ts $args
+              fi
+              echo ""
+            } > /tmp/release-notes.md
+            notes_file="/tmp/release-notes.md"
+          fi
+          echo "file=$notes_file" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        run: |
+          if [ -n "${{ steps.notes.outputs.file }}" ]; then
+            gh release create "$GITHUB_REF_NAME" --generate-notes --notes-file "${{ steps.notes.outputs.file }}"
+          else
+            gh release create "$GITHUB_REF_NAME" --generate-notes
+          fi
         env:
           GH_TOKEN: ${{ github.token }}

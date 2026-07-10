@@ -61,10 +61,7 @@ if (oldSnapPath && newSnapPath) {
   if (added.length > 0 || removed.length > 0) {
     sections.push(
       "### Methods\n" +
-        capped([
-          ...removed.map((m) => `- 🔴 \`${m}\` removed`),
-          ...added.map((m) => `- 🟢 \`${m}\` added`),
-        ]).join("\n"),
+        capped([...removed.map((m) => `- 🔴 \`${m}\` removed`), ...added.map((m) => `- 🟢 \`${m}\` added`)]).join("\n"),
     );
   }
 }
@@ -73,7 +70,9 @@ if (oldSnapPath && newSnapPath) {
 
 const HTTP_METHODS = ["get", "put", "post", "delete", "patch"];
 
-function operations(spec: Spec): Map<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }> {
+function operations(
+  spec: Spec,
+): Map<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }> {
   const map = new Map<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }>();
   for (const [path, methods] of Object.entries(spec.paths ?? {})) {
     for (const method of HTTP_METHODS) {
@@ -108,10 +107,19 @@ if (opLines.length > 0) sections.push("### Operations\n" + capped(opLines).join(
 // --- Component schemas -------------------------------------------------------
 
 /** Collects dotted paths of added/removed/changed leaves between two JSON nodes. */
-function diffPaths(before: unknown, after: unknown, prefix: string, out: { added: string[]; removed: string[]; changed: string[] }): void {
+function diffPaths(
+  before: unknown,
+  after: unknown,
+  prefix: string,
+  out: { added: string[]; removed: string[]; changed: string[] },
+): void {
   if (same(before, after)) return;
   const bothObjects =
-    before !== null && after !== null && typeof before === "object" && typeof after === "object" && Array.isArray(before) === Array.isArray(after);
+    before !== null &&
+    after !== null &&
+    typeof before === "object" &&
+    typeof after === "object" &&
+    Array.isArray(before) === Array.isArray(after);
   if (!bothObjects) {
     out.changed.push(prefix);
     return;

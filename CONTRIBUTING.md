@@ -40,6 +40,7 @@ The `npm run generate` output is committed; CI regenerates and runs `git diff --
 | --- | --- |
 | `npm run generate` | Regenerate types + facade from `spec/openapi.json` |
 | `npm run typecheck` | `tsc --noEmit` over src, codegen, tests, and examples |
+| `npm run lint` | Biome (lint + format check) over hand-written code; `npm run lint:fix` applies |
 | `npm test` | Vitest suite (mocked `fetch`, generator units, API-surface snapshot) |
 | `npm run test:update` | Same, refreshing the surface snapshot after an intentional change |
 | `npm run build` | tsup → `dist/` (ESM + CJS + d.ts) |
@@ -47,8 +48,8 @@ The `npm run generate` output is committed; CI regenerates and runs `git diff --
 
 ## Release flow
 
-- `.github/workflows/regen.yml` — daily cron (16:00 UTC): downloads the latest spec, regenerates, validates, and opens a PR on the `auto/spec-update` branch when anything changed (using `RELEASE_TOKEN` so CI runs on the PR). The PR body flags whether the public API surface changed and includes a markdown summary of method, operation, and schema changes (`codegen/diff-spec.ts` diffs the old and new spec + surface snapshot).
+- `.github/workflows/regen.yml` — daily cron (16:00 UTC): downloads the latest spec (sanity-checked: refuses a spec that lost >10% of operations), regenerates, validates, and opens a PR on the `auto/spec-update` branch when anything changed (using `RELEASE_TOKEN` so CI runs on the PR). The PR body flags whether the public API surface changed and includes a markdown summary of method, operation, and schema changes (`codegen/diff-spec.ts` diffs the old and new spec + surface snapshot). Schema-only PRs (no snapshot diff) auto-merge once required CI passes; surface-visible changes wait for review. Dependabot patch/minor PRs auto-merge the same way (`dependabot-automerge.yml`).
 - `.github/workflows/auto-release.yml` — when that PR merges, bumps the version and pushes a `v*` tag: **minor** normally, **major** when the surface snapshot lost any public method (removed/renamed = breaking). Needs a `RELEASE_TOKEN` repo secret (PAT with contents write) so the tag push can trigger workflows.
-- `.github/workflows/publish.yml` — on `v*` tags: runs full CI as a gate, verifies the tag matches `package.json`, publishes to npm via OIDC trusted publishing, and creates a GitHub release.
+- `.github/workflows/publish.yml` — on `v*` tags: runs full CI as a gate, verifies the tag matches `package.json`, publishes to npm via OIDC trusted publishing, and creates a GitHub release whose notes lead with the API diff since the previous tag (same `diff-spec.ts` summary).
 
 Manual releases: `npm version <patch|minor|major> && git push --follow-tags`.

@@ -1,6 +1,6 @@
 import createClient, { type Client } from "openapi-fetch";
-import type { paths } from "./generated/schema.js";
 import { createResources, type SpacebringResources } from "./generated/resources/index.js";
+import type { paths } from "./generated/schema.js";
 
 export interface SpacebringConfig {
   /** Client ID from Spacebring > Network Settings > Developers. */
@@ -35,6 +35,7 @@ export interface SpacebringConfig {
 
 export interface Spacebring extends SpacebringResources {}
 
+// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: the constructor Object.assigns every resource group onto the instance, so the merge is backed at runtime.
 export class Spacebring {
   /** Typed openapi-fetch client — escape hatch for endpoints or options the facade does not cover. */
   readonly raw: Client<paths>;
@@ -80,14 +81,12 @@ function withRetry(
       try {
         response = await fetchImpl(request.clone(), attemptInit(request, timeoutMs));
       } catch (error) {
-        const retryable =
-          attempt < maxRetries && idempotent && !request.signal.aborted && isTransientError(error);
+        const retryable = attempt < maxRetries && idempotent && !request.signal.aborted && isTransientError(error);
         if (!retryable) throw error;
         await sleep(backoffMs(attempt), request.signal);
         continue;
       }
-      const retryableStatus =
-        response.status === 429 || (idempotent && RETRYABLE_STATUSES.has(response.status));
+      const retryableStatus = response.status === 429 || (idempotent && RETRYABLE_STATUSES.has(response.status));
       if (!retryableStatus || attempt >= maxRetries) return response;
       await sleep(retryDelayMs(response.headers.get("retry-after"), attempt), request.signal);
     }

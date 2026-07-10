@@ -57,9 +57,7 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
   }
 
   const parameters = (op.parameters ?? []).map((p) => resolveRef<SpecParameter>(p));
-  const requestBody = op.requestBody
-    ? resolveRef<{ required?: boolean }>(op.requestBody)
-    : undefined;
+  const requestBody = op.requestBody ? resolveRef<{ required?: boolean }>(op.requestBody) : undefined;
 
   for (const param of parameters) {
     if (param.in === "header" && param.required && param.name !== "spacebring-network-id") {
@@ -90,9 +88,7 @@ function isParam(segment: string): boolean {
 }
 
 function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
-  const success = (op.responses["200"] ?? op.responses["201"]) as
-    | { content?: Record<string, { schema?: unknown }> }
-    | undefined;
+  const success = (op.responses["200"] ?? op.responses["201"]) as { content?: Record<string, { schema?: unknown }> } | undefined;
   const schema = success?.content?.["application/json"]?.schema;
   if (!schema) return {};
   const resolved = resolveRef<{ properties?: Record<string, { type?: string }>; required?: string[] }>(schema);

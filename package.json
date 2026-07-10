@@ -48,7 +48,9 @@
     "test": "vitest run",
     "test:update": "vitest run --update",
     "pack:dry-run": "npm pack --dry-run",
-    "prepublishOnly": "npm run generate && npm run typecheck && npm test && npm run build"
+    "prepublishOnly": "npm run generate && npm run typecheck && npm test && npm run build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "keywords": [
     "spacebring",
@@ -66,6 +68,7 @@
     "esbuild": "^0.28.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.3",
     "@types/node": "^26.1.1",
     "openapi-fetch": "^0.17.0",
     "openapi-typescript": "^7.13.0",

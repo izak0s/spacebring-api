@@ -181,7 +181,9 @@ export function buildQueryTypes(
     for (const param of analyzed.queryParams) {
       const type = queryParamType(param.schema);
       if (!type) {
-        warnings.push(`${analyzed.op.operationId}: query param ${param.name} has an unsupported schema, named query type skipped`);
+        warnings.push(
+          `${analyzed.op.operationId}: query param ${param.name} has an unsupported schema, named query type skipped`,
+        );
         convertible = false;
         break;
       }
@@ -197,9 +199,7 @@ export function buildQueryTypes(
       } else if (description) {
         docLines.push(description);
       }
-      fields.push(
-        indentBlock(docComment(docLines), "  ") + `  ${quoteKey(param.name)}${param.required ? "" : "?"}: ${type};`,
-      );
+      fields.push(indentBlock(docComment(docLines), "  ") + `  ${quoteKey(param.name)}${param.required ? "" : "?"}: ${type};`);
     }
     if (!convertible) continue;
 

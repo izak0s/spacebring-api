@@ -1,6 +1,6 @@
 export { Spacebring, type SpacebringConfig } from "./client.js";
-export { SpacebringError, type SpacebringErrorBody } from "./error.js";
 export type { SpacebringRequestOptions } from "./core.js";
-export type { SpacebringResources } from "./generated/resources/index.js";
+export { SpacebringError, type SpacebringErrorBody } from "./error.js";
 export * from "./generated/entities.js";
-export type { paths, components, operations } from "./generated/schema.js";
+export type { SpacebringResources } from "./generated/resources/index.js";
+export type { components, operations, paths } from "./generated/schema.js";

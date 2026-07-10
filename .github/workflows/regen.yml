@@ -20,10 +20,29 @@ jobs:
           cache: npm
       - run: npm ci
 
-      - name: Download latest spec and regenerate
+      - name: Download latest spec
+        run: curl --fail --silent --show-error -o spec/openapi.json https://www.spacebring.com/docs/assets/openapi.json
+
+      # A valid-but-broken upstream spec (accidentally dropping half the API)
+      # would otherwise sail through as an auto-opened major-release PR.
+      - name: Sanity-check downloaded spec
         run: |
-          curl --fail --silent --show-error -o spec/openapi.json https://www.spacebring.com/docs/assets/openapi.json
-          npm run generate
+          node -e '
+            const { execSync } = require("node:child_process");
+            const { readFileSync } = require("node:fs");
+            const count = (json) => Object.values(JSON.parse(json).paths)
+              .reduce((n, p) => n + ["get", "put", "post", "delete", "patch"].filter((m) => p[m]).length, 0);
+            const before = count(execSync("git show HEAD:spec/openapi.json").toString());
+            const after = count(readFileSync("spec/openapi.json", "utf8"));
+            console.log(`operations: ${before} -> ${after}`);
+            if (after < before * 0.9) {
+              console.error(`::error::Spec lost more than 10% of its operations (${before} -> ${after}) — refusing to regenerate. Upstream accident?`);
+              process.exit(1);
+            }
+          '
+
+      - name: Regenerate
+        run: npm run generate
 
       - name: Detect changes
         id: diff
@@ -51,6 +70,11 @@ jobs:
           git show HEAD:spec/openapi.json > /tmp/old-spec.json
           git show HEAD:tests/__snapshots__/surface.test.ts.snap > /tmp/old-surface.snap
           summary=$(npx tsx codegen/diff-spec.ts /tmp/old-spec.json spec/openapi.json /tmp/old-surface.snap tests/__snapshots__/surface.test.ts.snap)
+          if git diff --quiet -- tests/__snapshots__; then
+            echo "surface_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "surface_changed=true" >> "$GITHUB_OUTPUT"
+          fi
           {
             echo 'body<<PR_BODY_EOF'
             echo 'Daily spec sync detected upstream changes and regenerated `src/generated/` (plus README counts and the API-surface snapshot).'
@@ -73,6 +97,7 @@ jobs:
 
       - name: Create or update PR
         if: steps.diff.outputs.changed == 'true'
+        id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
           # Created with RELEASE_TOKEN (not the default token) so CI runs on
@@ -88,3 +113,12 @@ jobs:
           title: "Regenerate from upstream OpenAPI spec"
           body: ${{ steps.prbody.outputs.body }}
           delete-branch: true
+
+      # Schema-internal changes (no snapshot diff: method names, signatures,
+      # and exported types all unchanged) merge themselves once required CI
+      # passes; anything surface-visible waits for human review.
+      - name: Enable auto-merge for schema-only changes
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'false' && steps.cpr.outputs.pull-request-number != ''
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}

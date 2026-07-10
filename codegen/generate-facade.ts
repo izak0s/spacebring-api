@@ -21,8 +21,15 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type AnalyzedOp, analyze, methodName } from "./facade/analyze.js";
-import { buildQueryTypes, type Entity, entityBase, type EntityCandidate, methodPriority, resolveEntities } from "./facade/entities.js";
 import { emitMethod, successJsonType } from "./facade/emit.js";
+import {
+  buildQueryTypes,
+  type Entity,
+  type EntityCandidate,
+  entityBase,
+  methodPriority,
+  resolveEntities,
+} from "./facade/entities.js";
 import { pascalCase } from "./facade/naming.js";
 import { HTTP_METHODS, ROOT, spec, specPaths, warnings } from "./facade/spec.js";
 import { nodeFor, nodeUses, renderNode, roots, type TreeNode } from "./facade/tree.js";
@@ -124,8 +131,7 @@ for (const rootName of rootNames) {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(
       (entity) =>
-        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` +
-        `export type ${entity.name} = ${entity.expr};\n`,
+        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` + `export type ${entity.name} = ${entity.expr};\n`,
     )
     .join("\n");
   const queryDefs = (queryTypesByRoot.get(rootName) ?? [])

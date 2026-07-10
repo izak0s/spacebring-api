@@ -59,9 +59,7 @@ describe("generated API surface", () => {
     const files = readdirSync(dir)
       .filter((file) => file.endsWith(".ts") && file !== "index.ts")
       .sort();
-    const surface = files
-      .map((file) => `// ${file}\n${typeSurface(readFileSync(join(dir, file), "utf8"))}`)
-      .join("\n\n");
+    const surface = files.map((file) => `// ${file}\n${typeSurface(readFileSync(join(dir, file), "utf8"))}`).join("\n\n");
     await expect(surface).toMatchFileSnapshot("__snapshots__/typed-surface.txt");
   });
 });

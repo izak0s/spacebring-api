@@ -16,9 +16,7 @@ describe("unwrap", () => {
   });
 
   it("throws SpacebringError when the result carries an error", () => {
-    expect(() => unwrap({ error: { message: "nope", type: "bad" }, response: response(400) })).toThrowError(
-      SpacebringError,
-    );
+    expect(() => unwrap({ error: { message: "nope", type: "bad" }, response: response(400) })).toThrowError(SpacebringError);
     try {
       unwrap({ error: { message: "nope", type: "bad" }, response: response(400) });
       expect.unreachable();
@@ -41,9 +39,7 @@ describe("unwrapProp", () => {
   });
 
   it("throws SpacebringError instead of a TypeError when a 200 body is empty", () => {
-    expect(() => unwrapProp({ data: undefined, response: response(200) }, "benefit" as never)).toThrowError(
-      SpacebringError,
-    );
+    expect(() => unwrapProp({ data: undefined, response: response(200) }, "benefit" as never)).toThrowError(SpacebringError);
     expect(() => unwrapProp<{ benefit?: object }, "benefit">({ data: {}, response: response(200) }, "benefit")).toThrowError(
       'Response is missing the "benefit" property',
     );
@@ -85,7 +81,9 @@ describe("paginate", () => {
   });
 
   it("tolerates pages with a missing items array", async () => {
-    const items = await collect(paginate(async () => ({ nextPageToken: undefined }) as { items?: string[]; nextPageToken?: string }, "items"));
+    const items = await collect(
+      paginate(async () => ({ nextPageToken: undefined }) as { items?: string[]; nextPageToken?: string }, "items"),
+    );
     expect(items).toEqual([]);
   });
 });

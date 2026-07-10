@@ -121,8 +121,7 @@ export function emitMethod(
     iterateParamsParts.push("query: { ...query, nextPageToken }");
     const iterateDoc = opDoc(op, " — iterates every item across all pages.");
     const itemType =
-      entities?.get(entityBase(pagination.itemsKey))?.name ??
-      `NonNullable<${responseType}["${pagination.itemsKey}"]>[number]`;
+      entities?.get(entityBase(pagination.itemsKey))?.name ?? `NonNullable<${responseType}["${pagination.itemsKey}"]>[number]`;
     methods.push({
       name: iterateName,
       usesPaginate: true,
