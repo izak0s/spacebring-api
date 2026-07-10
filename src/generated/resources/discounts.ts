@@ -13,6 +13,38 @@ export type Promocode = NonNullable<operations["getPromocode"]["responses"][200]
 /** A Redemption entity as returned by the Spacebring API. */
 export type Redemption = NonNullable<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]["redemptions"]>[number];
 
+/** Query parameters for `sb.discounts.coupons.list()`. */
+export interface GetCouponsQuery {
+  /** The id of the location */
+  locationRef: string;
+  /** Comma-separated list of coupon types to filter by */
+  type?: "creditPackages" | "desks" | "equipment" | "events" | "products" | "rooms" | "subscriptionItems";
+  /** The number of coupons to retrieve. Default: 25 */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
+/** Query parameters for `sb.discounts.redemptions.list()`. */
+export interface GetDiscountRedemptionsQuery {
+  /** The id of the coupon. Either couponRef or promocodeRef is required */
+  couponRef?: string;
+  /** The id of the promocode. Either couponRef or promocodeRef is required */
+  promocodeRef?: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
+/** Query parameters for `sb.discounts.promocodes.list()`. */
+export interface GetPromocodesQuery {
+  /** The id of the location. At least one of locationRef or couponRef is required */
+  locationRef?: string;
+  /** The id of the coupon. At least one of locationRef or couponRef is required */
+  couponRef?: string;
+}
+
 export function createDiscounts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     coupons: {
@@ -21,7 +53,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all coupons in the location.
        */
-      async list(query: operations["getCoupons"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getCoupons"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/discounts/coupons/v1", { params: { query }, signal: options?.signal }), "GET /discounts/coupons/v1");
       },
       /**
@@ -29,7 +61,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all coupons in the location.
        */
-      iterate(query: Omit<NonNullable<operations["getCoupons"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined> {
+      iterate(query: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/discounts/coupons/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/coupons/v1"),
@@ -59,7 +91,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all promocodes.
        */
-      async list(query?: operations["getPromocodes"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<Promocode[]> {
+      async list(query?: GetPromocodesQuery, options?: SpacebringRequestOptions): Promise<Promocode[]> {
         return unwrapProp(await client.GET("/discounts/promocodes/v1", { params: { query }, signal: options?.signal }), "promocodes", "GET /discounts/promocodes/v1");
       },
       /** Get a promocode */
@@ -81,7 +113,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
        */
-      async list(query?: operations["getDiscountRedemptions"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/discounts/redemptions/v1", { params: { query }, signal: options?.signal }), "GET /discounts/redemptions/v1");
       },
       /**
@@ -89,7 +121,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
        */
-      iterate(query?: Omit<NonNullable<operations["getDiscountRedemptions"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined> {
+      iterate(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/discounts/redemptions/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/redemptions/v1"),

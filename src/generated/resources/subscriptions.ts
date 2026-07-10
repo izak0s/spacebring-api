@@ -7,14 +7,37 @@ import type { operations, paths } from "../schema.js";
 /** A Subscription entity as returned by the Spacebring API. */
 export type Subscription = NonNullable<operations["getSubscription"]["responses"][200]["content"]["application/json"]["subscription"]>;
 
+/** Query parameters for `sb.subscriptions.list()`. */
+export interface GetSubscriptionsQuery {
+  /** UUID of the customer whose subscriptions to list. */
+  customerRef?: string;
+  /** Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose subscriptions to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Sort order for results. */
+  order?: string;
+  /** Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
+
+  Supported values:
+  - **active** — currently active
+  - **scheduled** — scheduled to start
+  - **incomplete** — pending setup or payment
+  - **incompleteExpired** — incomplete and expired
+  - **canceled** — canceled */
+  status?: string;
+}
+
 export function createSubscriptions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve subscriptions */
-    async list(query?: operations["getSubscriptions"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getSubscriptions"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetSubscriptionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; subscriptions: Subscription[] }> {
       return unwrap(await client.GET("/subscriptions/v1", { params: { query }, signal: options?.signal }), "GET /subscriptions/v1");
     },
     /** Retrieve subscriptions — iterates every item across all pages. */
-    iterate(query?: Omit<NonNullable<operations["getSubscriptions"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Subscription, void, undefined> {
+    iterate(query?: Omit<GetSubscriptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Subscription, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/subscriptions/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /subscriptions/v1"),

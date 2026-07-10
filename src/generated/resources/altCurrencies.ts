@@ -7,6 +7,16 @@ import type { operations, paths } from "../schema.js";
 /** A AltCurrency entity as returned by the Spacebring API. */
 export type AltCurrency = NonNullable<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]["altCurrencies"]>[number];
 
+/** Query parameters for `sb.altCurrencies.list()`. */
+export interface GetAltCurrenciesQuery {
+  /** The id of the location */
+  locationRef: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The number of items to return. */
+  limit?: number;
+}
+
 export function createAltcurrencies(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -14,7 +24,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all alternative currencies in the location.
      */
-    async list(query: operations["getAltCurrencies"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]> {
+    async list(query: GetAltCurrenciesQuery, options?: SpacebringRequestOptions): Promise<{ altCurrencies?: AltCurrency[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/alt_currencies/v1", { params: { query }, signal: options?.signal }), "GET /alt_currencies/v1");
     },
     /**
@@ -22,7 +32,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all alternative currencies in the location.
      */
-    iterate(query: Omit<NonNullable<operations["getAltCurrencies"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<AltCurrency, void, undefined> {
+    iterate(query: Omit<GetAltCurrenciesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<AltCurrency, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/alt_currencies/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /alt_currencies/v1"),

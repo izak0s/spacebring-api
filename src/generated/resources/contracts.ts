@@ -7,6 +7,29 @@ import type { operations, paths } from "../schema.js";
 /** A Contract entity as returned by the Spacebring API. */
 export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
 
+/** Query parameters for `sb.contracts.list()`. */
+export interface GetContractsQuery {
+  /** UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
+  customerRef?: string;
+  /** Maximum number of contracts per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location. Provide customerRef or locationRef; when set, returns contracts in that location. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Case-insensitive search by contract title. Requires customerRef or locationRef to scope the search. */
+  q?: string;
+  /** Filter by contract status. Comma-separated values, e.g. `draft,issued`.
+
+  Supported values:
+  - **draft** — created but not sent
+  - **issued** — sent, awaiting signature
+  - **signed** — active
+  - **declined** — rejected
+  - **terminated** — cancelled after signing */
+  status?: string;
+}
+
 export function createContracts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -14,7 +37,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve all contracts in the location.
      */
-    async list(query?: operations["getContracts"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getContracts"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetContractsQuery, options?: SpacebringRequestOptions): Promise<{ contracts: Contract[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/contracts/v1", { params: { query }, signal: options?.signal }), "GET /contracts/v1");
     },
     /**
@@ -22,7 +45,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve all contracts in the location.
      */
-    iterate(query?: Omit<NonNullable<operations["getContracts"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Contract, void, undefined> {
+    iterate(query?: Omit<GetContractsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Contract, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/contracts/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /contracts/v1"),

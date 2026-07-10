@@ -4,10 +4,20 @@ import type { Client } from "openapi-fetch";
 import { unwrap, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
 import type { operations, paths } from "../schema.js";
 
+/** Query parameters for `sb.floors.list()`. */
+export interface GetFloorsQuery {
+  /** The limit of the floors. */
+  limit?: number;
+  /** The id of the location. */
+  locationRef: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createFloors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Get floors */
-    async list(query: operations["getFloors"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getFloors"]["responses"][200]["content"]["application/json"]> {
+    async list(query: GetFloorsQuery, options?: SpacebringRequestOptions): Promise<operations["getFloors"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/floors/v1", { params: { query }, signal: options?.signal }), "GET /floors/v1");
     },
     /** Delete a floor */

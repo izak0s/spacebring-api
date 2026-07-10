@@ -13,6 +13,56 @@ export type Product = NonNullable<operations["getProduct"]["responses"][200]["co
 /** A ShopCategory entity as returned by the Spacebring API. */
 export type ShopCategory = NonNullable<operations["getShopCategory"]["responses"][200]["content"]["application/json"]["category"]>;
 
+/** Query parameters for `sb.shop.orders.list()`. */
+export interface GetOrdersQuery {
+  /** Comma-separated shop category UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+  categoryRef?: string;
+  /** Filter orders created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter orders created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
+  /** UUID of the customer whose orders to list. */
+  customerRef?: string;
+  /** Maximum number of orders per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose orders to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Comma-separated product UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+  productRef?: string;
+  /** Filter by order status. Comma-separated values, e.g. `new,inProgress`. Defaults to `new`, `inProgress`, and `completed` when omitted.
+
+  Supported values:
+  - **new** — placed, awaiting fulfillment
+  - **inProgress** — being fulfilled
+  - **completed** — fulfilled
+  - **canceled** — canceled */
+  status?: string;
+  /** UUID of the user whose orders to list. */
+  userRef?: string;
+}
+
+/** Query parameters for `sb.shop.products.list()`. */
+export interface GetProductsQuery {
+  /** UUID of the shop category. */
+  categoryRef?: string;
+  /** Comma-separated product UUIDs, e.g. `uuid1,uuid2`. Up to 25 ids per request. */
+  id?: string;
+  /** Maximum number of products per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+}
+
+/** Query parameters for `sb.shop.categories.list()`. */
+export interface GetShopCategoriesQuery {
+  /** UUID of the location whose shop categories to list. */
+  locationRef: string;
+}
+
 export function createShop(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     categories: {
@@ -21,7 +71,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all shop categories in the location.
        */
-      async list(query: operations["getShopCategories"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<ShopCategory[]> {
+      async list(query: GetShopCategoriesQuery, options?: SpacebringRequestOptions): Promise<ShopCategory[]> {
         return unwrapProp(await client.GET("/shop/categories/v1", { params: { query }, signal: options?.signal }), "categories", "GET /shop/categories/v1");
       },
       /**
@@ -63,7 +113,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all orders of products from shop.
        */
-      async list(query?: operations["getOrders"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getOrders"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetOrdersQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; orders: Order[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/shop/orders/v1", { params: { query }, signal: options?.signal }), "GET /shop/orders/v1");
       },
       /**
@@ -71,7 +121,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve all orders of products from shop.
        */
-      iterate(query?: Omit<NonNullable<operations["getOrders"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Order, void, undefined> {
+      iterate(query?: Omit<GetOrdersQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Order, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/shop/orders/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /shop/orders/v1"),
@@ -93,7 +143,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve products from shop.
        */
-      async list(query?: operations["getProducts"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getProducts"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetProductsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; products: Product[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/shop/products/v1", { params: { query }, signal: options?.signal }), "GET /shop/products/v1");
       },
       /**
@@ -101,7 +151,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Retrieve products from shop.
        */
-      iterate(query?: Omit<NonNullable<operations["getProducts"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Product, void, undefined> {
+      iterate(query?: Omit<GetProductsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Product, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/shop/products/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /shop/products/v1"),

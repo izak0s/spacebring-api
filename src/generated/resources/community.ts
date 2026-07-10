@@ -10,6 +10,52 @@ export type Company = NonNullable<operations["getCompany"]["responses"][200]["co
 /** A Membership entity as returned by the Spacebring API. */
 export type Membership = NonNullable<operations["getMembership"]["responses"][200]["content"]["application/json"]["membership"]>;
 
+/** Query parameters for `sb.community.companies.list()`. */
+export interface GetCompaniesQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** Filter by company's title */
+  title?: string;
+  /** Filter by types. Pass them as comma separated values. */
+  types?: "member" | "nonmember";
+}
+
+/** Query parameters for `sb.community.memberships.listDeleted()`. */
+export interface GetMembershipsDeletedQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Filter by user's email */
+  userEmail?: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
+/** Query parameters for `sb.community.memberships.list()`. */
+export interface GetMembershipsQuery {
+  /** Filter by company reference */
+  companyRef?: string;
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** Filter by user's email */
+  userEmail?: string;
+  /** The id of the user */
+  userRef?: string;
+  /** use requested to get all membership requests */
+  status?: "requested";
+  /** Filter by types. Pass them as comma separated values. */
+  types?: "member" | "nonmember";
+}
+
 export function createCommunity(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     companies: {
@@ -18,7 +64,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all companies.
        */
-      async list(query: operations["getCompanies"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getCompanies"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetCompaniesQuery, options?: SpacebringRequestOptions): Promise<{ companies?: Company[]; nextPageToken?: string }> {
         return unwrap(await client.GET("/community/companies/v1", { params: { query }, signal: options?.signal }), "GET /community/companies/v1");
       },
       /**
@@ -26,7 +72,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all companies.
        */
-      iterate(query: Omit<NonNullable<operations["getCompanies"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Company, void, undefined> {
+      iterate(query: Omit<GetCompaniesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Company, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/companies/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /community/companies/v1"),
@@ -60,7 +106,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all memberships.
        */
-      async list(query: operations["getMemberships"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getMemberships"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetMembershipsQuery, options?: SpacebringRequestOptions): Promise<{ memberships?: Membership[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/community/memberships/v1", { params: { query }, signal: options?.signal }), "GET /community/memberships/v1");
       },
       /**
@@ -68,7 +114,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all memberships.
        */
-      iterate(query: Omit<NonNullable<operations["getMemberships"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Membership, void, undefined> {
+      iterate(query: Omit<GetMembershipsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Membership, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/memberships/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /community/memberships/v1"),
@@ -112,7 +158,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all deleted memberships.
        */
-      iterateDeleted(query: Omit<NonNullable<operations["getMembershipsDeleted"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Membership, void, undefined> {
+      iterateDeleted(query: Omit<GetMembershipsDeletedQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Membership, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/community/memberships/v1/deleted", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /community/memberships/v1/deleted"),
@@ -124,7 +170,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all deleted memberships.
        */
-      async listDeleted(query: operations["getMembershipsDeleted"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getMembershipsDeleted"]["responses"][200]["content"]["application/json"]> {
+      async listDeleted(query: GetMembershipsDeletedQuery, options?: SpacebringRequestOptions): Promise<{ memberships?: Membership[]; nextPageToken?: string }> {
         return unwrap(await client.GET("/community/memberships/v1/deleted", { params: { query }, signal: options?.signal }), "GET /community/memberships/v1/deleted");
       },
     },

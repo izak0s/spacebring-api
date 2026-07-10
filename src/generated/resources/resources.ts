@@ -10,6 +10,40 @@ export type Booking = NonNullable<operations["getBooking"]["responses"][200]["co
 /** A Resource entity as returned by the Spacebring API. */
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 
+/** Query parameters for `sb.resources.bookings.list()`. */
+export interface GetBookingsQuery {
+  /** The id of the resource. Required if `locationRef` is not passed. */
+  resourceRef?: string;
+  /** The id of the location. Required if `resourceRef` is not passed. */
+  locationRef?: string;
+  /** The id of the membership owner. */
+  membershipRefOwner?: string;
+  /** The date filter of items. */
+  endDate?: { lte?: string; gte?: string; lt?: string; gt?: string };
+  /** The date filter of items. */
+  startDate?: { lte?: string; gte?: string; lt?: string; gt?: string };
+  /** The number of items to return */
+  limit?: number;
+  /** The order of filtered items. Format - `field:order`. Possible field values are `createDate`, `endDate`, `startDate`, `id`. Order values - `asc`, `desc`. */
+  order?: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The types of resources to retrieve bookings for. Pass them as comma separated values. */
+  types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
+}
+
+/** Query parameters for `sb.resources.list()`. */
+export interface GetResourcesQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The types of resources to retrieve. Pass them as comma separated values. */
+  types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The number of items to return. */
+  limit?: number;
+}
+
 export function createResources(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -17,7 +51,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    async list(query: operations["getResources"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getResources"]["responses"][200]["content"]["application/json"]> {
+    async list(query: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources?: Resource[]; searchQueryNext?: string }> {
       return unwrap(await client.GET("/resources/v1", { params: { query }, signal: options?.signal }), "GET /resources/v1");
     },
     /**
@@ -25,7 +59,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    iterate(query: Omit<NonNullable<operations["getResources"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined> {
+    iterate(query: Omit<GetResourcesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/resources/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /resources/v1"),
@@ -62,7 +96,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all bookings of resources.
        */
-      async list(query?: operations["getBookings"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getBookings"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetBookingsQuery, options?: SpacebringRequestOptions): Promise<{ bookings?: Booking[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/resources/bookings/v1", { params: { query }, signal: options?.signal }), "GET /resources/bookings/v1");
       },
       /**
@@ -70,7 +104,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all bookings of resources.
        */
-      iterate(query?: Omit<NonNullable<operations["getBookings"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Booking, void, undefined> {
+      iterate(query?: Omit<GetBookingsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Booking, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/resources/bookings/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /resources/bookings/v1"),

@@ -10,10 +10,32 @@ export type Event = NonNullable<operations["getEvent"]["responses"][200]["conten
 /** A EventTicket entity as returned by the Spacebring API. */
 export type EventTicket = NonNullable<operations["getEventTicket"]["responses"][200]["content"]["application/json"]["ticket"]>;
 
+/** Query parameters for `sb.events.list()`. */
+export interface GetEventsByOrganizationQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of events to retrieve. Default: 25 */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The order of the events. createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc or relevance */
+  order?: string;
+}
+
+/** Query parameters for `sb.events.tickets.list()`. */
+export interface GetEventTicketsQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve events */
-    async list(query: operations["getEventsByOrganization"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]> {
+    async list(query: GetEventsByOrganizationQuery, options?: SpacebringRequestOptions): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/events/v1", { params: { query }, signal: options?.signal }), "GET /events/v1");
     },
     /** Retrieve an event */
@@ -42,7 +64,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      async list(query: operations["getEventTickets"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getEventTickets"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/events/tickets/v1", { params: { query }, signal: options?.signal }), "GET /events/tickets/v1");
       },
       /**
@@ -50,7 +72,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      iterate(query: Omit<NonNullable<operations["getEventTickets"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined> {
+      iterate(query: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/events/tickets/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /events/tickets/v1"),

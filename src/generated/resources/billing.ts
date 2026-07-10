@@ -13,6 +13,76 @@ export type Invoice = NonNullable<operations["getInvoice"]["responses"][200]["co
 /** A InvoiceItem entity as returned by the Spacebring API. */
 export type InvoiceItem = NonNullable<operations["getInvoiceItem"]["responses"][200]["content"]["application/json"]["invoiceItem"]>;
 
+/** Query parameters for `sb.billing.creditNotes.list()`. */
+export interface GetCreditNotesQuery {
+  /** Filter credit notes created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter credit notes created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
+  /** UUID of the invoice whose credit notes to list. */
+  invoiceRef?: string;
+  /** Maximum number of credit notes per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose credit notes to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Filter by credit note status. Comma-separated values, e.g. `issued,voided`.
+
+  Supported values:
+  - **issued** — active credit note
+  - **voided** — cancelled and no longer valid */
+  status?: string;
+}
+
+/** Query parameters for `sb.billing.invoices.list()`. */
+export interface GetInvoicesQuery {
+  /** @deprecated Use customerRef instead. UUID of the company whose invoices to list. */
+  companyRef?: string;
+  /** Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
+  /** UUID of the customer whose invoices to list. */
+  customerRef?: string;
+  /** Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
+  "issueDate[gte]"?: string;
+  /** Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range. */
+  "issueDate[lte]"?: string;
+  /** Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose invoices to list. */
+  locationRef?: string;
+  /** @deprecated Use customerRef instead. UUID of the membership whose invoices to list. */
+  membershipRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Case-insensitive search by invoice code or number. Requires customerRef or locationRef. */
+  q?: string;
+  /** Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
+
+  Supported values:
+  - **draft** — created but not sent
+  - **issued** — sent to the customer but unpaid
+  - **paid** — fully paid
+  - **voided** — cancelled and no longer valid */
+  status?: string;
+}
+
+/** Query parameters for `sb.billing.invoices.items.getUpcoming()`. */
+export interface GetUpcomingInvoiceItemsQuery {
+  /** The id of the company. */
+  companyRef?: string;
+  /** The id of the membership. */
+  membershipRef?: string;
+}
+
+/** Query parameters for `sb.billing.invoices.getUpcoming()`. */
+export interface GetUpcomingInvoiceQuery {
+  /** The id of the subscription. */
+  subscriptionRef?: string;
+}
+
 export function createBilling(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     creditNotes: {
@@ -21,7 +91,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required.
        */
-      async list(query?: operations["getCreditNotes"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getCreditNotes"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetCreditNotesQuery, options?: SpacebringRequestOptions): Promise<{ creditNotes: CreditNote[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/billing/credit_notes/v1", { params: { query }, signal: options?.signal }), "GET /billing/credit_notes/v1");
       },
       /**
@@ -29,7 +99,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required.
        */
-      iterate(query?: Omit<NonNullable<operations["getCreditNotes"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditNote, void, undefined> {
+      iterate(query?: Omit<GetCreditNotesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditNote, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/billing/credit_notes/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /billing/credit_notes/v1"),
@@ -71,7 +141,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all invoices based on certain parameters.
        */
-      async list(query?: operations["getInvoices"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getInvoices"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetInvoicesQuery, options?: SpacebringRequestOptions): Promise<{ invoices: Invoice[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/billing/invoices/v1", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1");
       },
       /**
@@ -79,7 +149,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all invoices based on certain parameters.
        */
-      iterate(query?: Omit<NonNullable<operations["getInvoices"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Invoice, void, undefined> {
+      iterate(query?: Omit<GetInvoicesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Invoice, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/billing/invoices/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /billing/invoices/v1"),
@@ -147,7 +217,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve the upcoming invoice preview for a membership or subscription.
        */
-      async getUpcoming(query?: operations["getUpcomingInvoice"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getUpcomingInvoice"]["responses"][200]["content"]["application/json"]> {
+      async getUpcoming(query?: GetUpcomingInvoiceQuery, options?: SpacebringRequestOptions): Promise<operations["getUpcomingInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/invoices/v1/upcoming", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1/upcoming");
       },
       /**
@@ -216,7 +286,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
           return unwrap(await client.DELETE("/billing/invoices/v1/items/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /billing/invoices/v1/items/{id}");
         },
         /** List upcoming invoice items */
-        async getUpcoming(query?: operations["getUpcomingInvoiceItems"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<InvoiceItem[]> {
+        async getUpcoming(query?: GetUpcomingInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<InvoiceItem[]> {
           return unwrapProp(await client.GET("/billing/invoices/v1/items/upcoming", { params: { query }, signal: options?.signal }), "invoiceItems", "GET /billing/invoices/v1/items/upcoming");
         },
       },

@@ -10,6 +10,16 @@ export type Activity = NonNullable<operations["createSupportTicketComment"]["res
 /** A SupportTicket entity as returned by the Spacebring API. */
 export type SupportTicket = NonNullable<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]["tickets"]>[number];
 
+/** Query parameters for `sb.support.tickets.list()`. */
+export interface GetSupportTicketsQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createSupport(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     tickets: {
@@ -18,7 +28,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all support tickets.
        */
-      async list(query: operations["getSupportTickets"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetSupportTicketsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; tickets?: SupportTicket[] }> {
         return unwrap(await client.GET("/support/tickets/v1", { params: { query }, signal: options?.signal }), "GET /support/tickets/v1");
       },
       /**
@@ -26,7 +36,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Retrieve all support tickets.
        */
-      iterate(query: Omit<NonNullable<operations["getSupportTickets"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<SupportTicket, void, undefined> {
+      iterate(query: Omit<GetSupportTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<SupportTicket, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/support/tickets/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /support/tickets/v1"),

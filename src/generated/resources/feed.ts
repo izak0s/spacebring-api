@@ -19,6 +19,16 @@ export type PostComment = NonNullable<operations["getPostComments"]["responses"]
 /** A PostLike entity as returned by the Spacebring API. */
 export type PostLike = NonNullable<operations["getLikesForPost"]["responses"][200]["content"]["application/json"]["likes"]>[number];
 
+/** Query parameters for `sb.feed.posts.list()`. */
+export interface GetFeedPostsQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The number of items to return. */
+  limit?: number;
+}
+
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     comments: {
@@ -49,7 +59,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get feed posts.
        */
-      async list(query: operations["getFeedPosts"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getFeedPosts"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetFeedPostsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; posts?: Post[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/feed/posts/v1", { params: { query }, signal: options?.signal }), "GET /feed/posts/v1");
       },
       /**
@@ -57,7 +67,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get feed posts.
        */
-      iterate(query: Omit<NonNullable<operations["getFeedPosts"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined> {
+      iterate(query: Omit<GetFeedPostsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/feed/posts/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /feed/posts/v1"),

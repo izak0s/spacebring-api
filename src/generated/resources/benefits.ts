@@ -13,6 +13,48 @@ export type Benefit = NonNullable<operations["getBenefit"]["responses"][200]["co
 /** A BenefitCategory entity as returned by the Spacebring API. */
 export type BenefitCategory = NonNullable<operations["getBenefitCategory"]["responses"][200]["content"]["application/json"]["category"]>;
 
+/** Query parameters for `sb.benefits.applications.list()`. */
+export interface GetBenefitApplicationsQuery {
+  /** UUID of the benefit. */
+  benefitRef?: string;
+  /** Comma-separated benefit category UUIDs, e.g. `uuid1,uuid2`. */
+  categoryRef?: string;
+  /** Filter applications submitted on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter applications submitted on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
+  /** UUID of the customer whose applications to list. */
+  customerRef?: string;
+  /** Maximum number of applications per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** UUID of the user whose applications to list. */
+  userRef?: string;
+}
+
+/** Query parameters for `sb.benefits.categories.list()`. */
+export interface GetBenefitCategoriesQuery {
+  /** UUID of the location whose benefit categories to list. */
+  locationRef: string;
+}
+
+/** Query parameters for `sb.benefits.list()`. */
+export interface GetBenefitsQuery {
+  /** UUID of the benefit category. */
+  categoryRef?: string;
+  /** Filter by featured status. Pass true or false. */
+  featured?: boolean;
+  /** Maximum number of benefits per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+}
+
 export function createBenefits(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -20,7 +62,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all benefits in the location.
      */
-    async list(query?: operations["getBenefits"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getBenefits"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetBenefitsQuery, options?: SpacebringRequestOptions): Promise<{ benefits: Benefit[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/benefits/v1", { params: { query }, signal: options?.signal }), "GET /benefits/v1");
     },
     /**
@@ -28,7 +70,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all benefits in the location.
      */
-    iterate(query?: Omit<NonNullable<operations["getBenefits"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Benefit, void, undefined> {
+    iterate(query?: Omit<GetBenefitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Benefit, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/benefits/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /benefits/v1"),
@@ -57,7 +99,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit applications in the location or for certain benefit.
        */
-      async list(query?: operations["getBenefitApplications"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getBenefitApplications"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetBenefitApplicationsQuery, options?: SpacebringRequestOptions): Promise<{ applications: Application[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/benefits/applications/v1", { params: { query }, signal: options?.signal }), "GET /benefits/applications/v1");
       },
       /**
@@ -65,7 +107,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit applications in the location or for certain benefit.
        */
-      iterate(query?: Omit<NonNullable<operations["getBenefitApplications"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Application, void, undefined> {
+      iterate(query?: Omit<GetBenefitApplicationsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Application, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/benefits/applications/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /benefits/applications/v1"),
@@ -91,7 +133,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit categories in the location.
        */
-      async list(query: operations["getBenefitCategories"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<BenefitCategory[]> {
+      async list(query: GetBenefitCategoriesQuery, options?: SpacebringRequestOptions): Promise<BenefitCategory[]> {
         return unwrapProp(await client.GET("/benefits/categories/v1", { params: { query }, signal: options?.signal }), "categories", "GET /benefits/categories/v1");
       },
       /**

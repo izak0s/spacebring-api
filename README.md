@@ -17,6 +17,7 @@ A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com)
 - **Nested, discoverable API** — `sb.billing.invoices.pay(id)`, `sb.visitors.visits.checkIn(body)`
 - **Auto-pagination** — every paginated list endpoint has an `iterate()` async generator that walks `nextPageToken` for you
 - **Ergonomic returns** — single-property response envelopes are unwrapped: entities and plain arrays come back directly
+- **Readable, named types** — entities (`Booking`, `Invoice`) and query parameters (`GetBookingsQuery`) are exported named types, so hovers show `Booking[]` instead of generated type soup, and enum filters are literal unions
 - **Rich error handling** — non-2xx responses throw a typed `SpacebringError` carrying the status, parsed body, and the operation that failed; malformed 2xx bodies and stuck pagination tokens throw instead of failing silently
 - **Resilient by default** — automatic retries for rate limits, gateway errors, and network failures (never replaying non-idempotent requests); optional per-attempt timeouts and `AbortSignal` cancellation on every method
 - **Zero runtime dependencies** — Node ≥ 20, `fetch`-based
@@ -70,7 +71,7 @@ async function main() {
 main().catch(console.error);
 ```
 
-Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
+Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Query parameters get named interfaces too (`GetBookingsQuery`, `GetInvoicesQuery`), with per-field docs from the spec and enum filters as literal unions. Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
 
 ### Data formats
 
@@ -141,7 +142,7 @@ const { data, error, response } = await sb.raw.GET("/networks/v1", {});
 
 ## Keeping up with API changes
 
-The whole client (types + methods) is generated from Spacebring's OpenAPI spec; a nightly GitHub Action picks up spec changes and publishes a new version automatically. Details in [CONTRIBUTING.md](CONTRIBUTING.md).
+The whole client (types + methods) is generated from Spacebring's OpenAPI spec; a daily GitHub Action picks up spec changes and publishes a new version automatically. Details in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 

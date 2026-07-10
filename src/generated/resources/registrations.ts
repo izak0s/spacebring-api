@@ -7,6 +7,14 @@ import type { operations, paths } from "../schema.js";
 /** A Registration entity as returned by the Spacebring API. */
 export type Registration = NonNullable<operations["getRegistrations"]["responses"][200]["content"]["application/json"]["registrations"]>[number];
 
+/** Query parameters for `sb.registrations.list()`. */
+export interface GetRegistrationsQuery {
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createRegistrations(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -14,7 +22,7 @@ export function createRegistrations(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all registrations in network.
      */
-    async list(query?: operations["getRegistrations"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getRegistrations"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetRegistrationsQuery, options?: SpacebringRequestOptions): Promise<{ registrations?: Registration[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/registrations/v1", { params: { query }, signal: options?.signal }), "GET /registrations/v1");
     },
     /**
@@ -22,7 +30,7 @@ export function createRegistrations(client: Client<paths>, defaults: SpacebringD
      *
      * Retrieve all registrations in network.
      */
-    iterate(query?: Omit<NonNullable<operations["getRegistrations"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Registration, void, undefined> {
+    iterate(query?: Omit<GetRegistrationsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Registration, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/registrations/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /registrations/v1"),

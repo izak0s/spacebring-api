@@ -27,6 +27,8 @@ interface SpecParameter {
   name: string;
   in: "query" | "path" | "header" | "cookie";
   required?: boolean;
+  deprecated?: boolean;
+  description?: string;
   schema?: { type?: string };
 }
 
@@ -68,6 +70,12 @@ function resolveRef<T>(node: unknown): T {
 
 interface PaginationInfo {
   itemsKey: string;
+  /**
+   * Envelope properties in declaration order, so list() can be annotated with a
+   * readable literal type ({ bookings?: Booking[]; nextPageToken?: string })
+   * instead of the operations[...] indexed-access soup.
+   */
+  props: { key: string; optional: boolean; scalar?: string }[];
 }
 
 interface EnvelopeInfo {
@@ -151,7 +159,7 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     | undefined;
   const schema = success?.content?.["application/json"]?.schema;
   if (!schema) return {};
-  const resolved = resolveRef<{ properties?: Record<string, { type?: string }> }>(schema);
+  const resolved = resolveRef<{ properties?: Record<string, { type?: string }>; required?: string[] }>(schema);
   const properties = resolved.properties;
   if (!properties) return {};
 
@@ -169,7 +177,12 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     warnings.push(`${op.operationId}: paginated response with ${arrayKeys.length} array properties, iterate() skipped`);
     return {};
   }
-  return { pagination: { itemsKey: arrayKeys[0] } };
+  const required = new Set(resolved.required ?? []);
+  const props = Object.keys(properties).map((key) => {
+    const propSchema = resolveRef<{ type?: string }>(properties[key]);
+    return { key, optional: !required.has(key), scalar: TS_TYPES[propSchema.type ?? ""] };
+  });
+  return { pagination: { itemsKey: arrayKeys[0], props } };
 }
 
 // ---------------------------------------------------------------------------
@@ -260,6 +273,62 @@ function nodeFor(namespace: string[]): TreeNode {
 // ---------------------------------------------------------------------------
 
 const TS_TYPES: Record<string, string> = { string: "string", integer: "number", number: "number", boolean: "boolean" };
+
+// ---------------------------------------------------------------------------
+// Named query types
+//
+// Every operation with query parameters gets an exported interface named after
+// its operationId (getCreditsTransactions -> GetCreditsTransactionsQuery), so
+// signatures read `query?: GetCreditsTransactionsQuery` instead of the
+// operations[...] indexed-access soup. The interface is rebuilt from the spec's
+// parameter schemas; the facade body still assigns it into openapi-fetch's
+// schema-derived query type, so any divergence fails the typecheck.
+// ---------------------------------------------------------------------------
+
+interface QuerySchema {
+  type?: string;
+  enum?: unknown[];
+  nullable?: boolean;
+  properties?: Record<string, unknown>;
+  required?: string[];
+  items?: unknown;
+}
+
+function quoteKey(key: string): string {
+  return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key) ? key : JSON.stringify(key);
+}
+
+/** Converts a query-parameter schema to a TS type; undefined = shape we don't handle. */
+function queryParamType(schemaNode: unknown): string | undefined {
+  const schema = resolveRef<QuerySchema>(schemaNode);
+  let type: string | undefined;
+  if (schema.enum) {
+    type = schema.enum.map((value) => JSON.stringify(value)).join(" | ");
+  } else if (schema.type === "object" && schema.properties) {
+    const required = new Set(schema.required ?? []);
+    const parts: string[] = [];
+    for (const [key, value] of Object.entries(schema.properties)) {
+      const propType = queryParamType(value);
+      if (!propType) return undefined;
+      parts.push(`${quoteKey(key)}${required.has(key) ? "" : "?"}: ${propType}`);
+    }
+    type = `{ ${parts.join("; ")} }`;
+  } else if (schema.type === "array" && schema.items) {
+    const itemType = queryParamType(schema.items);
+    type = itemType ? `${itemType}[]` : undefined;
+  } else {
+    type = TS_TYPES[schema.type ?? ""];
+  }
+  if (type && schema.nullable) type = `${type} | null`;
+  return type;
+}
+
+function indentBlock(text: string, indent: string): string {
+  return text
+    .split("\n")
+    .map((line) => (line ? indent + line : line))
+    .join("\n");
+}
 
 /**
  * Spec descriptions are HTML with an OAuth-scopes section that doesn't apply
@@ -418,13 +487,14 @@ function emitMethod(
   analyzed: AnalyzedOp,
   name: string,
   entities: Map<string, Entity> | undefined,
+  queryTypeName: string | undefined,
 ): EmittedMethod[] {
   const { op, method, path, pathParams, queryParams, requiredNetworkHeader, body, pagination, unwrapKey } = analyzed;
   // Runtime value comes from client-level config; openapi-fetch drops undefined header values.
   const headerPart = `header: { "spacebring-network-id": defaults.networkId as string }`;
   const hasQuery = queryParams.length > 0;
   const queryRequired = queryParams.some((p) => p.required);
-  const queryType = `operations["${op.operationId}"]["parameters"]["query"]`;
+  const queryType = queryTypeName ?? `operations["${op.operationId}"]["parameters"]["query"]`;
   const bodyType = `NonNullable<operations["${op.operationId}"]["requestBody"]>["content"]["application/json"]`;
 
   const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
@@ -446,13 +516,28 @@ function emitMethod(
   const responseType = successJsonType(op);
   const unwrapAlias = unwrapKey ? entities?.get(entityBase(unwrapKey))?.name : undefined;
   const rawUnwrapType = unwrapKey ? `NonNullable<${responseType}["${unwrapKey}"]>` : responseType;
+  // Paginated envelopes are re-stated as a literal type using the entity alias
+  // ({ bookings?: Booking[]; nextPageToken?: string }) — structurally identical
+  // to the operations[...] type (typecheck enforces this), but readable on hover.
+  const listAlias = !unwrapKey && pagination ? entities?.get(entityBase(pagination.itemsKey))?.name : undefined;
+  const paginatedType =
+    pagination && listAlias
+      ? `{ ${pagination.props
+          .map(
+            (p) =>
+              `${p.key}${p.optional ? "?" : ""}: ${
+                p.key === pagination.itemsKey ? `${listAlias}[]` : (p.scalar ?? `${responseType}["${p.key}"]`)
+              }`,
+          )
+          .join("; ")} }`
+      : undefined;
   const returnType = unwrapKey
     ? unwrapAlias
       ? analyzed.unwrapIsArray
         ? `${unwrapAlias}[]`
         : unwrapAlias
       : rawUnwrapType
-    : responseType;
+    : (paginatedType ?? responseType);
   // Attached to thrown SpacebringErrors so failures identify their operation.
   const opLabel = `${method.toUpperCase()} ${path}`;
   const call = `await client.${method.toUpperCase()}("${path}", ${request})`;
@@ -472,9 +557,12 @@ function emitMethod(
   // list -> iterate, listItems -> iterateItems: follows nextPageToken across pages.
   if (method === "get" && pagination && name.startsWith("list")) {
     const iterateName = "iterate" + name.slice("list".length);
+    const iterateQueryType = queryTypeName
+      ? `Omit<${queryTypeName}, "nextPageToken">`
+      : `Omit<NonNullable<${queryType}>, "nextPageToken">`;
     const iterateArgs = [
       ...pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`),
-      `query${queryRequired ? "" : "?"}: Omit<NonNullable<${queryType}>, "nextPageToken">`,
+      `query${queryRequired ? "" : "?"}: ${iterateQueryType}`,
       "options?: SpacebringRequestOptions",
     ];
     const iterateParamsParts: string[] = [];
@@ -583,9 +671,69 @@ for (const path of specPaths) {
 
 const entitiesByNode = resolveEntities(entityCandidates);
 
+// Named query interfaces, one per operation with query parameters. operationIds
+// are unique by spec, so the names never clash with each other; entity aliases
+// are checked explicitly below.
+interface QueryType {
+  name: string;
+  decl: string;
+}
+
+const allEntityNames = new Set(
+  [...entitiesByNode.values()].flatMap((entities) => [...entities.values()].map((entity) => entity.name)),
+);
+const queryTypesByOp = new Map<string, QueryType>();
+const queryTypesByRoot = new Map<string, QueryType[]>();
+
+for (const { analyzed, name } of records) {
+  if (analyzed.queryParams.length === 0) continue;
+  const fields: string[] = [];
+  let convertible = true;
+  for (const param of analyzed.queryParams) {
+    const type = queryParamType(param.schema);
+    if (!type) {
+      warnings.push(`${analyzed.op.operationId}: query param ${param.name} has an unsupported schema, named query type skipped`);
+      convertible = false;
+      break;
+    }
+    const docLines: string[] = [];
+    // The spec never sets deprecated: true on parameters; deprecations are
+    // prose ("Deprecated. Use customerRef instead. ..."), so detect the prefix
+    // and turn it into a real @deprecated tag for IDE strikethrough.
+    let description = param.description ? cleanDescription(param.description) : "";
+    const proseDeprecated = /^Deprecated[.:]\s*/i.exec(description);
+    if (proseDeprecated) description = description.slice(proseDeprecated[0].length);
+    if (param.deprecated || proseDeprecated) {
+      docLines.push(`@deprecated ${description || "Marked as deprecated in the OpenAPI spec."}`);
+    } else if (description) {
+      docLines.push(description);
+    }
+    fields.push(
+      indentBlock(docComment(docLines), "  ") + `  ${quoteKey(param.name)}${param.required ? "" : "?"}: ${type};`,
+    );
+  }
+  if (!convertible) continue;
+
+  const typeName = upperFirst(analyzed.op.operationId) + "Query";
+  if (allEntityNames.has(typeName)) {
+    console.error(`Query type ${typeName} clashes with an entity alias.`);
+    process.exit(1);
+  }
+  const methodPath = ["sb", ...analyzed.namespace, name].join(".");
+  const queryType: QueryType = {
+    name: typeName,
+    decl: `/** Query parameters for \`${methodPath}()\`. */\nexport interface ${typeName} {\n${fields.join("\n")}\n}\n`,
+  };
+  queryTypesByOp.set(analyzed.op.operationId, queryType);
+  const root = analyzed.namespace[0];
+  const group = queryTypesByRoot.get(root) ?? [];
+  group.push(queryType);
+  queryTypesByRoot.set(root, group);
+}
+
 // Pass 2: emit methods with entity aliases resolved.
 for (const { analyzed, name, node } of records) {
-  for (const emitted of emitMethod(analyzed, name, entitiesByNode.get(node))) {
+  for (const emitted of emitMethod(analyzed, name, entitiesByNode.get(node), queryTypesByOp.get(analyzed.op.operationId)?.name)) {
     const clash = node.methods.find((m) => m.name === emitted.name);
     if (clash) {
       console.error(`Name clash in ${analyzed.namespace.join(".")}: ${emitted.name} (${analyzed.op.operationId})`);
@@ -627,16 +775,25 @@ for (const rootName of rootNames) {
         `export type ${entity.name} = ${entity.expr};\n`,
     )
     .join("\n");
-  const source =
-    HEADER +
-    `import type { Client } from "openapi-fetch";\n` +
-    `import { ${coreImports} } from "../../core.js";\n` +
-    `import type { operations, paths } from "../schema.js";\n\n` +
+  const queryDefs = (queryTypesByRoot.get(rootName) ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((query) => query.decl)
+    .join("\n");
+  const body =
     (entityDefs ? entityDefs + "\n" : "") +
+    (queryDefs ? queryDefs + "\n" : "") +
     `export function ${factory}(client: Client<paths>, defaults: SpacebringDefaults) {\n` +
     `  return {\n` +
     renderNode(node, "    ") +
     `\n  };\n}\n`;
+  // With named query types some files no longer reference operations[...] at all.
+  const schemaImports = body.includes("operations[") ? "operations, paths" : "paths";
+  const source =
+    HEADER +
+    `import type { Client } from "openapi-fetch";\n` +
+    `import { ${coreImports} } from "../../core.js";\n` +
+    `import type { ${schemaImports} } from "../schema.js";\n\n` +
+    body;
   writeFileSync(join(OUT_DIR, `${rootName}.ts`), source);
 }
 
@@ -653,18 +810,19 @@ const indexSource =
   `export type SpacebringResources = ReturnType<typeof createResources>;\n`;
 writeFileSync(join(OUT_DIR, "index.ts"), indexSource);
 
-// Named entity aliases re-exported for consumers (import type { Booking } ...).
+// Named entity aliases and query interfaces re-exported for consumers
+// (import type { Booking, GetBookingsQuery } ...).
 const entitiesSource =
   HEADER +
   rootNames
-    .filter((name) => (entitiesByRoot.get(name) ?? []).length > 0)
     .map((name) => {
-      const names = entitiesByRoot
-        .get(name)!
-        .map((entity) => entity.name)
+      const names = [
+        ...(entitiesByRoot.get(name) ?? []).map((entity) => entity.name),
+        ...(queryTypesByRoot.get(name) ?? []).map((query) => query.name),
+      ]
         .sort()
         .join(", ");
-      return `export type { ${names} } from "./resources/${name}.js";\n`;
+      return names ? `export type { ${names} } from "./resources/${name}.js";\n` : "";
     })
     .join("");
 writeFileSync(join(ROOT, "src", "generated", "entities.ts"), entitiesSource);

@@ -16,15 +16,49 @@ export type RequestVisit = NonNullable<operations["approveRequest"]["responses"]
 /** A VisitorVisit entity as returned by the Spacebring API. */
 export type VisitorVisit = NonNullable<operations["getVisit"]["responses"][200]["content"]["application/json"]["visit"]>;
 
+/** Query parameters for `sb.visitors.contacts.list()`. */
+export interface GetContactsQuery {
+  /** The maximum number of contacts to return. Default is 25. */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The id of the location. */
+  locationRef: string;
+}
+
+/** Query parameters for `sb.visitors.requests.list()`. */
+export interface GetRequestsQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The number of items to return. */
+  limit?: number;
+}
+
+/** Query parameters for `sb.visitors.visits.list()`. */
+export interface GetVisitsQuery {
+  /** The id of the location. */
+  locationRef: string;
+  /** The id of the user, host of the visit. */
+  userRefHost?: string;
+  /** The date filter of items. */
+  createDate?: { lte?: string; gte?: string };
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createVisitors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     contacts: {
       /** Get contacts */
-      async list(query: operations["getContacts"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getContacts"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetContactsQuery, options?: SpacebringRequestOptions): Promise<{ contacts?: Contact[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/visitors/contacts/v1", { params: { query }, signal: options?.signal }), "GET /visitors/contacts/v1");
       },
       /** Get contacts — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getContacts"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Contact, void, undefined> {
+      iterate(query: Omit<GetContactsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Contact, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/contacts/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /visitors/contacts/v1"),
@@ -42,11 +76,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
     },
     requests: {
       /** Get requests */
-      async list(query: operations["getRequests"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getRequests"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetRequestsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; requests?: Request[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/visitors/requests/v1", { params: { query }, signal: options?.signal }), "GET /visitors/requests/v1");
       },
       /** Get requests — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getRequests"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Request, void, undefined> {
+      iterate(query: Omit<GetRequestsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Request, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/requests/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /visitors/requests/v1"),
@@ -72,11 +106,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
     },
     visits: {
       /** Retrieve visits */
-      async list(query: operations["getVisits"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getVisits"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetVisitsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; visits?: VisitorVisit[] }> {
         return unwrap(await client.GET("/visitors/visits/v1", { params: { query }, signal: options?.signal }), "GET /visitors/visits/v1");
       },
       /** Retrieve visits — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getVisits"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<VisitorVisit, void, undefined> {
+      iterate(query: Omit<GetVisitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<VisitorVisit, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/visits/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /visitors/visits/v1"),

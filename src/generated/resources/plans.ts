@@ -7,6 +7,20 @@ import type { operations, paths } from "../schema.js";
 /** A Plan entity as returned by the Spacebring API. */
 export type Plan = NonNullable<operations["getPlan"]["responses"][200]["content"]["application/json"]["plan"]>;
 
+/** Query parameters for `sb.plans.list()`. */
+export interface GetPlansQuery {
+  /** When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
+  entire?: string;
+  /** Maximum number of plans per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose plans to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** UUID of the resource whose tier plans to list. */
+  resourceRef?: string;
+}
+
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -14,7 +28,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Retrieve all plans.
      */
-    async list(query?: operations["getPlans"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getPlans"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetPlansQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; plans: Plan[]; searchQueryNext?: string }> {
       return unwrap(await client.GET("/plans/v1", { params: { query }, signal: options?.signal }), "GET /plans/v1");
     },
     /**
@@ -22,7 +36,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Retrieve all plans.
      */
-    iterate(query?: Omit<NonNullable<operations["getPlans"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Plan, void, undefined> {
+    iterate(query?: Omit<GetPlansQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Plan, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/plans/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /plans/v1"),

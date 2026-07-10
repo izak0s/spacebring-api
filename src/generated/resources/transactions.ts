@@ -16,6 +16,60 @@ export type DayPassTransaction = NonNullable<operations["getDayPassesTransaction
 /** A MoneyTransaction entity as returned by the Spacebring API. */
 export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
 
+/** Query parameters for `sb.transactions.credits.list()`. */
+export interface GetCreditsTransactionsQuery {
+  /** The number of items to return */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** The date filter of items. */
+  createDate?: { lte?: string; gte?: string };
+  /** The id of the location to get transactions for */
+  locationRef?: string;
+  /** The id of the membership to get transactions for */
+  membershipRef?: string;
+  /** The id of the company to get transactions for */
+  companyRef?: string;
+}
+
+/** Query parameters for `sb.transactions.dayPasses.list()`. */
+export interface GetDayPassesTransactionsQuery {
+  /** @deprecated Use customerRef instead. The id of the company to get transactions for. */
+  companyRef?: string;
+  /** Get transactions with greater or equal createDate. Example: createDate[gte]=2021-05-21T10:00:00Z */
+  "createDate[gte]"?: string;
+  /** Get transactions with less or equal createDate. Example: createDate[lte]=2021-05-21T10:00:00Z */
+  "createDate[lte]"?: string;
+  /** UUID of the company or membership whose day pass transactions to list. */
+  customerRef?: string;
+  /** Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose day pass transactions to list. */
+  locationRef?: string;
+  /** @deprecated Use customerRef instead. The id of the membership to get transactions for. */
+  membershipRef?: string;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** Filter by transaction type. Comma-separated storage type values, e.g. `type=refund,booking`. Matches analytics report type filters. */
+  type?: string;
+}
+
+/** Query parameters for `sb.transactions.money.list()`. */
+export interface GetMoneyTransactionsQuery {
+  /** The id of the location */
+  locationRef: string;
+  /** The number of items to return */
+  limit?: number;
+  /** The payment status of transactions */
+  status?: "canceled" | "failed" | "pending" | "processing" | "succeeded";
+  /** The type of transactions */
+  type?: "booking" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
+  /** The date filter of items. */
+  createDate?: { lte?: string; gte?: string };
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+}
+
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     balances: {
@@ -38,7 +92,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits transactions.
        */
-      async list(query?: operations["getCreditsTransactions"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getCreditsTransactions"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: CreditTransaction[]; nextPageToken?: string }> {
         return unwrap(await client.GET("/transactions/credits/v1", { params: { query }, signal: options?.signal }), "GET /transactions/credits/v1");
       },
       /**
@@ -46,7 +100,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits transactions.
        */
-      iterate(query?: Omit<NonNullable<operations["getCreditsTransactions"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditTransaction, void, undefined> {
+      iterate(query?: Omit<GetCreditsTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/credits/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/credits/v1"),
@@ -68,7 +122,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve day passes transactions.
        */
-      async list(query?: operations["getDayPassesTransactions"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]> {
+      async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; transactions: DayPassTransaction[] }> {
         return unwrap(await client.GET("/transactions/day_passes/v1", { params: { query }, signal: options?.signal }), "GET /transactions/day_passes/v1");
       },
       /**
@@ -76,7 +130,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve day passes transactions.
        */
-      iterate(query?: Omit<NonNullable<operations["getDayPassesTransactions"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassTransaction, void, undefined> {
+      iterate(query?: Omit<GetDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/day_passes/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/day_passes/v1"),
@@ -94,11 +148,11 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
     },
     money: {
       /** Retrieve money transactions */
-      async list(query: operations["getMoneyTransactions"]["parameters"]["query"], options?: SpacebringRequestOptions): Promise<operations["getMoneyTransactions"]["responses"][200]["content"]["application/json"]> {
+      async list(query: GetMoneyTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: MoneyTransaction[]; nextPageToken?: string }> {
         return unwrap(await client.GET("/transactions/money/v1", { params: { query }, signal: options?.signal }), "GET /transactions/money/v1");
       },
       /** Retrieve money transactions — iterates every item across all pages. */
-      iterate(query: Omit<NonNullable<operations["getMoneyTransactions"]["parameters"]["query"]>, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined> {
+      iterate(query: Omit<GetMoneyTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/money/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/money/v1"),
