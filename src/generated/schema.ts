@@ -2266,7 +2266,7 @@ export interface components {
              * @description Exchange rate provider when auto-update is enabled.
              * @enum {string}
              */
-            provider?: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
+            provider?: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
         };
         /** @description Pre-built query string for the next page of results. Contains all active filter parameters combined with the next page token, ready to append to the endpoint URL. */
         searchQueryNext: string;
@@ -12047,7 +12047,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -12064,7 +12064,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch";
+                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -20253,6 +20253,10 @@ export interface operations {
     getSubscriptions: {
         parameters: {
             query?: {
+                /** @description Filter subscriptions created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter subscriptions created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
                 /** @description UUID of the customer whose subscriptions to list. */
                 customerRef?: string;
                 /** @description Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
@@ -20263,6 +20267,8 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Sort order for results. */
                 order?: string;
+                /** @description UUID of the plan to filter subscriptions by. */
+                planRef?: string;
                 /**
                  * @description Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
                  *
@@ -21187,6 +21193,19 @@ export interface operations {
                 nextPageToken?: components["schemas"]["nextPageToken"];
                 /** @description The id of the location. */
                 locationRef: string;
+                /** @description The create date filter of items. */
+                createDate?: {
+                    /**
+                     * Format: date-time
+                     * @description Get contacts with less or equal create date. Example: createDate[lte]=2021-05-21T10:00:00Z
+                     */
+                    lte?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get contacts with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z
+                     */
+                    gte?: string;
+                };
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -21301,6 +21320,19 @@ export interface operations {
                 nextPageToken?: components["schemas"]["nextPageToken"];
                 /** @description The number of items to return. */
                 limit?: number;
+                /** @description The create date filter of items. */
+                createDate?: {
+                    /**
+                     * Format: date-time
+                     * @description Get requests with less or equal create date. Example: createDate[lte]=2021-05-21T10:00:00Z
+                     */
+                    lte?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get requests with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z
+                     */
+                    gte?: string;
+                };
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -21493,6 +21525,19 @@ export interface operations {
                     /**
                      * Format: date-time
                      * @description Get visits with greater or equal create date. Example: createDate[gte]=2021-05-21T10:00:00Z
+                     */
+                    gte?: string;
+                };
+                /** @description The visit date filter of items. */
+                date?: {
+                    /**
+                     * Format: date-time
+                     * @description Get visits with less or equal visit date. Example: date[lte]=2021-05-21T10:00:00Z
+                     */
+                    lte?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get visits with greater or equal visit date. Example: date[gte]=2021-05-21T10:00:00Z
                      */
                     gte?: string;
                 };
