@@ -38,37 +38,43 @@ No runtime dependencies — HTTP uses the built-in `fetch`.
 ## Quick Start
 
 ```ts
-import { Spacebring } from "@izak0s/spacebring-api";
+import { Spacebring, SpacebringError } from "@izak0s/spacebring-api";
 
 const sb = new Spacebring({
   clientId: process.env.SPACEBRING_CLIENT_ID!,
   clientSecret: process.env.SPACEBRING_CLIENT_SECRET!,
-  networkId: "your-network-id", // optional, sent as spacebring-network-id header
-  // baseUrl: "https://api.spacebring.com",  // default
-  // fetch: customFetch,                     // inject your own fetch (tests, proxies)
+  networkId: process.env.SPACEBRING_NETWORK_ID, // optional — sent as the spacebring-network-id header
 });
 
-async function main() {
-  // Single-property envelopes are unwrapped: entities and plain arrays come back directly
-  const invoice = await sb.billing.invoices.get(invoiceId);
-  const locations = await sb.locations.list();
-  await sb.visitors.visits.checkIn({ locationRef, visitRef });
+// Single-property envelopes are unwrapped — list() gives you Location[] directly.
+const locations = await sb.locations.list();
+const locationRef = locations[0].id;
 
-  // Paginated lists return the page envelope, so nextPageToken stays available
-  const { benefits, nextPageToken } = await sb.benefits.list({ locationRef });
+// Paginated lists return the page envelope, so nextPageToken stays available…
+const { benefits, nextPageToken } = await sb.benefits.list({ locationRef });
 
-  // ...or let iterate() walk nextPageToken for you; breaking early stops fetching
-  for await (const booking of sb.resources.bookings.iterate({ locationRef })) {
-    console.log(booking.id);
-  }
-
-  // Endpoints returning multiple payloads keep the envelope
-  const { invoice: paid, payment } = await sb.billing.invoices.pay(invoiceId, {
-    paymentMethod: { type: "stripe" },
-  });
+// …or hand it to iterate(), which follows nextPageToken across pages.
+// Break out early and it simply stops fetching — no wasted requests.
+for await (const booking of sb.resources.bookings.iterate({ locationRef })) {
+  console.log(`${booking.startDate} → ${booking.endDate}`);
 }
 
-main().catch(console.error);
+// Non-2xx responses throw a typed SpacebringError.
+try {
+  await sb.billing.invoices.get("does-not-exist");
+} catch (error) {
+  if (error instanceof SpacebringError) {
+    console.error(`${error.status} on ${error.operation}: ${error.body?.message}`);
+  }
+}
+```
+
+Writes read the same, and endpoints that return more than one payload keep the envelope intact:
+
+```ts
+const { invoice, payment } = await sb.billing.invoices.pay(invoiceId, {
+  paymentMethod: { type: "stripe" },
+});
 ```
 
 Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Query parameters get named interfaces too (`GetBookingsQuery`, `GetInvoicesQuery`), with per-field docs from the spec and enum filters as literal unions. Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
@@ -86,6 +92,8 @@ Values are passed through exactly as the API sends them — no runtime conversio
 ## Authentication
 
 HTTP Basic with your **Client ID** and **Client Secret** from **Spacebring → [Network] → Network Settings → Developers**. The client builds the `Authorization: Basic …` header for you. The API's OAuth2 flow is not currently supported.
+
+Because those credentials ride on every request, the client rejects a non-`https` `baseUrl` at construction — `http` is allowed only for loopback hosts (local proxies or mock servers). The default `baseUrl` is `https://api.spacebring.com`.
 
 For development without touching live data, Spacebring offers a [test environment](https://www.spacebring.com/docs/administration/test-environment) (Network settings → Billing add-on) with free sandbox API credentials that work with this client unchanged.
 

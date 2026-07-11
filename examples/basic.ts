@@ -1,67 +1,63 @@
 /**
- * Basic usage example. Only performs read-only calls, so it is safe to run
- * against a live network:
+ * A small, read-only tour of the client — safe to run against a live network:
  *
  *   SPACEBRING_CLIENT_ID=... SPACEBRING_CLIENT_SECRET=... npm run example
  *
- * Credentials come from Spacebring > [Network] > Network Settings > Developers.
+ * Credentials come from Spacebring → [Network] → Network Settings → Developers.
  */
-import { Spacebring, SpacebringError } from "../src/index.js";
+import { type Booking, Spacebring, SpacebringError } from "../src/index.js";
 
-const clientId = process.env.SPACEBRING_CLIENT_ID;
-const clientSecret = process.env.SPACEBRING_CLIENT_SECRET;
+const { SPACEBRING_CLIENT_ID, SPACEBRING_CLIENT_SECRET, SPACEBRING_NETWORK_ID } = process.env;
 
-if (!clientId || !clientSecret) {
-  console.error("Set SPACEBRING_CLIENT_ID and SPACEBRING_CLIENT_SECRET environment variables.");
+if (!SPACEBRING_CLIENT_ID || !SPACEBRING_CLIENT_SECRET) {
+  console.error("Set SPACEBRING_CLIENT_ID and SPACEBRING_CLIENT_SECRET to run this example.");
   process.exit(1);
 }
 
 const sb = new Spacebring({
-  clientId,
-  clientSecret,
-  networkId: process.env.SPACEBRING_NETWORK_ID, // optional
+  clientId: SPACEBRING_CLIENT_ID,
+  clientSecret: SPACEBRING_CLIENT_SECRET,
+  networkId: SPACEBRING_NETWORK_ID, // optional
 });
 
-// Wrapped in main() instead of top-level await so this file runs unchanged
-// in both ESM and CommonJS projects.
-async function main() {
-  // --- Single-property envelopes are unwrapped: entities/arrays come back directly
+// Wrapped in main() rather than top-level await so the file runs unchanged
+// under both ESM and CommonJS.
+async function main(): Promise<void> {
+  // Single-property envelopes are unwrapped — list() hands back Location[] directly.
   const locations = await sb.locations.list();
   console.log(`Network has ${locations.length} location(s):`);
   for (const location of locations) {
-    console.log(`  - ${location.title} (${location.id})`);
+    console.log(`  • ${location.title} (${location.id})`);
   }
 
-  const firstLocation = locations[0];
-  if (!firstLocation) {
-    console.log("No locations available; nothing more to show.");
+  const location = locations[0];
+  if (!location) {
+    console.log("\nNo locations to explore — done.");
     return;
   }
 
-  // --- Auto-pagination: iterate() follows nextPageToken --------------------
-  console.log(`\nUpcoming bookings in "${firstLocation.title}":`);
-  let bookingCount = 0;
-  for await (const booking of sb.resources.bookings.iterate({ locationRef: firstLocation.id })) {
-    console.log(`  - ${booking.id}: ${booking.startDate} -> ${booking.endDate}`);
-    bookingCount += 1;
-    if (bookingCount >= 10) break; // stop early; no more pages are fetched
+  // Auto-pagination: iterate() follows nextPageToken across pages; breaking
+  // early stops fetching. Entities come back as named types (Booking here).
+  console.log(`\nUpcoming bookings in "${location.title}":`);
+  const upcoming: Booking[] = [];
+  for await (const booking of sb.resources.bookings.iterate({ locationRef: location.id })) {
+    upcoming.push(booking);
+    console.log(`  • ${booking.startDate} → ${booking.endDate}  (${booking.id})`);
+    if (upcoming.length >= 10) break;
   }
-  if (bookingCount === 0) console.log("  (none)");
+  if (upcoming.length === 0) console.log("  (none)");
 
-  // --- Error handling: non-2xx responses throw SpacebringError -------------
+  // Non-2xx responses throw a typed SpacebringError carrying status, body,
+  // the failing operation, and the URL.
   try {
     await sb.benefits.get("00000000-0000-0000-0000-000000000000");
   } catch (error) {
-    if (error instanceof SpacebringError) {
-      console.log(`\nExpected failure: HTTP ${error.status} — ${error.message}`);
-    } else {
-      throw error;
-    }
+    if (!(error instanceof SpacebringError)) throw error;
+    console.log(`\nExpected failure — ${error.status} on ${error.operation}: ${error.body?.message ?? error.message}`);
   }
-
-  // --- Escape hatch: typed openapi-fetch client -----------------------------
-  const { data, response } = await sb.raw.GET("/networks/v1", {});
-  console.log(`\nRaw call to /networks/v1 -> HTTP ${response.status}, ${data?.networks?.length ?? 0} network(s).`);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
