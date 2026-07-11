@@ -22,7 +22,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - run: npm ci
+      # --ignore-scripts: no dep needs install scripts (esbuild's binary comes
+      # via optionalDependencies), and it keeps a compromised dependency's
+      # install script from executing in CI.
+      - run: npm ci --ignore-scripts
 
       - name: Generated code is in sync with the committed spec
         run: |
@@ -49,7 +52,7 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
 
       # Floor is 5.4: the inlined openapi-fetch types need TS ≥ 5.4 inference.
@@ -58,7 +61,7 @@ jobs:
           tarball="$PWD/$(npm pack --silent)"
           mkdir /tmp/consumer && cd /tmp/consumer
           npm init -y > /dev/null
-          npm install --no-audit --no-fund "$tarball" typescript@5.4 @types/node@20 > /dev/null
+          npm install --ignore-scripts --no-audit --no-fund "$tarball" typescript@5.4 @types/node@20 > /dev/null
           cat > tsconfig.json << 'EOF'
           {
             "compilerOptions": {

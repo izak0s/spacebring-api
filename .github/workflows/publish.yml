@@ -29,7 +29,9 @@ jobs:
 
       # Trusted publishing needs npm >= 11.5.1 (Node 24 image already satisfies this).
 
-      - run: npm ci
+      # --ignore-scripts blocks dependency install scripts (supply chain);
+      # our own prepublishOnly still runs at `npm publish` below.
+      - run: npm ci --ignore-scripts
 
       - name: Verify tag matches package.json version
         run: |

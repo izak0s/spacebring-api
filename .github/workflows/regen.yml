@@ -18,7 +18,9 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-      - run: npm ci
+      # --ignore-scripts: block dependency install scripts (supply chain);
+      # nothing in this repo's dep tree needs them.
+      - run: npm ci --ignore-scripts
 
       - name: Download latest spec
         run: curl --fail --silent --show-error -o spec/openapi.json https://www.spacebring.com/docs/assets/openapi.json

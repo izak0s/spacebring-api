@@ -6,7 +6,7 @@
 import type { AnalyzedOp } from "./analyze.js";
 import { type Entity, entityBase } from "./entities.js";
 import { type SpecOperation, TS_TYPES } from "./spec.js";
-import { cleanDescription, docComment } from "./text.js";
+import { cleanDescription, docComment, quoteKey } from "./text.js";
 import type { EmittedMethod } from "./tree.js";
 
 function opDoc(op: SpecOperation, suffix = ""): string {
@@ -30,7 +30,7 @@ export function successJsonType(op: SpecOperation): string {
   if (!status) return "undefined";
   const response = op.responses[status] as { content?: Record<string, unknown> } | undefined;
   if (!response?.content?.["application/json"]) return "undefined";
-  return `operations["${op.operationId}"]["responses"][${status}]["content"]["application/json"]`;
+  return `operations[${JSON.stringify(op.operationId)}]["responses"][${status}]["content"]["application/json"]`;
 }
 
 export function emitMethod(
@@ -40,12 +40,22 @@ export function emitMethod(
   queryTypeName: string | undefined,
 ): EmittedMethod[] {
   const { op, method, path, pathParams, queryParams, requiredNetworkHeader, body, pagination, unwrapKey } = analyzed;
+  // Path params become TS identifiers (`id: string`, `path: { id }`) — an
+  // identifier can't be string-escaped, so reject non-identifier names loudly
+  // rather than emit a value a compromised spec could inject through.
+  for (const p of pathParams) {
+    if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(p.name)) {
+      console.error(`${op.operationId}: path parameter "${p.name}" is not a valid identifier.`);
+      process.exit(1);
+    }
+  }
   // Runtime value comes from client-level config; openapi-fetch drops undefined header values.
   const headerPart = `header: { "spacebring-network-id": defaults.networkId as string }`;
   const hasQuery = queryParams.length > 0;
   const queryRequired = queryParams.some((p) => p.required);
-  const queryType = queryTypeName ?? `operations["${op.operationId}"]["parameters"]["query"]`;
-  const bodyType = `NonNullable<operations["${op.operationId}"]["requestBody"]>["content"]["application/json"]`;
+  const opId = JSON.stringify(op.operationId);
+  const queryType = queryTypeName ?? `operations[${opId}]["parameters"]["query"]`;
+  const bodyType = `NonNullable<operations[${opId}]["requestBody"]>["content"]["application/json"]`;
 
   const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
   if (body) args.push(`body${body.required ? "" : "?"}: ${bodyType}`);
@@ -65,7 +75,7 @@ export function emitMethod(
   const doc = opDoc(op);
   const responseType = successJsonType(op);
   const unwrapAlias = unwrapKey ? entities?.get(entityBase(unwrapKey))?.name : undefined;
-  const rawUnwrapType = unwrapKey ? `NonNullable<${responseType}["${unwrapKey}"]>` : responseType;
+  const rawUnwrapType = unwrapKey ? `NonNullable<${responseType}[${JSON.stringify(unwrapKey)}]>` : responseType;
   // Paginated envelopes are re-stated as a literal type using the entity alias
   // ({ bookings?: Booking[]; nextPageToken?: string }) — structurally identical
   // to the operations[...] type (typecheck enforces this), but readable on hover.
@@ -75,8 +85,8 @@ export function emitMethod(
       ? `{ ${pagination.props
           .map(
             (p) =>
-              `${p.key}${p.optional ? "?" : ""}: ${
-                p.key === pagination.itemsKey ? `${listAlias}[]` : (p.scalar ?? `${responseType}["${p.key}"]`)
+              `${quoteKey(p.key)}${p.optional ? "?" : ""}: ${
+                p.key === pagination.itemsKey ? `${listAlias}[]` : (p.scalar ?? `${responseType}[${JSON.stringify(p.key)}]`)
               }`,
           )
           .join("; ")} }`
@@ -90,7 +100,9 @@ export function emitMethod(
     : (paginatedType ?? responseType);
   // Attached to thrown SpacebringErrors so failures identify their operation.
   const opLabel = `${method.toUpperCase()} ${path}`;
-  const call = `await client.${method.toUpperCase()}("${path}", ${request})`;
+  const opLabelLit = JSON.stringify(opLabel);
+  const pathLit = JSON.stringify(path);
+  const call = `await client.${method.toUpperCase()}(${pathLit}, ${request})`;
   const methods: EmittedMethod[] = [
     {
       name,
@@ -99,7 +111,7 @@ export function emitMethod(
       code:
         doc +
         `async ${name}(${args.join(", ")}): Promise<${returnType}> {\n` +
-        `  return ${unwrapKey ? `unwrapProp(${call}, "${unwrapKey}", "${opLabel}")` : `unwrap(${call}, "${opLabel}")`};\n` +
+        `  return ${unwrapKey ? `unwrapProp(${call}, ${JSON.stringify(unwrapKey)}, ${opLabelLit})` : `unwrap(${call}, ${opLabelLit})`};\n` +
         `},`,
     },
   ];
@@ -121,7 +133,8 @@ export function emitMethod(
     iterateParamsParts.push("query: { ...query, nextPageToken }");
     const iterateDoc = opDoc(op, " — iterates every item across all pages.");
     const itemType =
-      entities?.get(entityBase(pagination.itemsKey))?.name ?? `NonNullable<${responseType}["${pagination.itemsKey}"]>[number]`;
+      entities?.get(entityBase(pagination.itemsKey))?.name ??
+      `NonNullable<${responseType}[${JSON.stringify(pagination.itemsKey)}]>[number]`;
     methods.push({
       name: iterateName,
       usesPaginate: true,
@@ -131,8 +144,8 @@ export function emitMethod(
         `${iterateName}(${iterateArgs.join(", ")}): AsyncGenerator<${itemType}, void, undefined> {\n` +
         `  return paginate(\n` +
         `    async (nextPageToken: string | undefined) =>\n` +
-        `      unwrap(await client.${method.toUpperCase()}("${path}", { params: { ${iterateParamsParts.join(", ")} }, signal: options?.signal }), "${opLabel}"),\n` +
-        `    "${pagination.itemsKey}",\n` +
+        `      unwrap(await client.${method.toUpperCase()}(${pathLit}, { params: { ${iterateParamsParts.join(", ")} }, signal: options?.signal }), ${opLabelLit}),\n` +
+        `    ${JSON.stringify(pagination.itemsKey)},\n` +
         `  );\n` +
         `},`,
     });
