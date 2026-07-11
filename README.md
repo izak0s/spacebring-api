@@ -2,7 +2,10 @@
 
 [![CI](https://github.com/izak0s/spacebring-api/actions/workflows/ci.yml/badge.svg)](https://github.com/izak0s/spacebring-api/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/%40izak0s%2Fspacebring-api)](https://www.npmjs.com/package/@izak0s/spacebring-api)
+[![docs](https://img.shields.io/badge/docs-API%20reference-blue)](https://izak0s.github.io/spacebring-api/)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+📖 **[Full API reference](https://izak0s.github.io/spacebring-api/)** — every resource, method, and type, generated from the source.
 
 A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com) coworking space management API, auto-generated from the official OpenAPI spec.
 
