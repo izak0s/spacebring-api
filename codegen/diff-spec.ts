@@ -7,7 +7,8 @@
  * Sections:
  * - Methods: facade methods added/removed (from the surface snapshot)
  * - Operations: endpoints added/removed, and which part of an operation
- *   changed (parameters / request body / responses)
+ *   changed (parameters — with per-parameter +/−/~ detail — / request body /
+ *   responses)
  * - Schemas: component schemas added/removed, and per-schema property-level
  *   additions/removals/changes
  *
@@ -86,6 +87,39 @@ const oldOps = operations(oldSpec);
 const newOps = operations(newSpec);
 const opLines: string[] = [];
 
+/**
+ * Per-parameter +/−/~ detail for a changed operation, mirroring the schema
+ * section's notation. Parameters are keyed by (in, name); a parameter whose
+ * definition changed in any way (schema, description, required, deprecated)
+ * shows as ~. Falls back to the bare "parameters" label when an entry isn't
+ * the inline named-object shape this spec uses.
+ */
+function parameterDetail(before: unknown, after: unknown): string {
+  const toMap = (params: unknown): Map<string, { name: string; value: unknown }> | null => {
+    if (params === undefined) return new Map();
+    if (!Array.isArray(params)) return null;
+    const map = new Map<string, { name: string; value: unknown }>();
+    for (const param of params) {
+      if (param === null || typeof param !== "object") return null;
+      const { name, in: location } = param as { name?: unknown; in?: unknown };
+      if (typeof name !== "string" || typeof location !== "string") return null;
+      map.set(`${location}:${name}`, { name, value: param });
+    }
+    return map;
+  };
+  const beforeMap = toMap(before);
+  const afterMap = toMap(after);
+  if (!beforeMap || !afterMap) return "parameters";
+  const parts: string[] = [];
+  for (const [key, { name }] of afterMap) if (!beforeMap.has(key)) parts.push(`+\`${name}\``);
+  for (const [key, { name }] of beforeMap) if (!afterMap.has(key)) parts.push(`−\`${name}\``);
+  for (const [key, { name, value }] of afterMap) {
+    if (beforeMap.has(key) && !same(beforeMap.get(key)?.value, value)) parts.push(`~\`${name}\``);
+  }
+  const detail = parts.length > 8 ? [...parts.slice(0, 8), `…${parts.length - 8} more`] : parts;
+  return `parameters: ${detail.join(" ")}`;
+}
+
 for (const [key, op] of [...oldOps].sort(([a], [b]) => a.localeCompare(b))) {
   if (!newOps.has(key)) opLines.push(`- 🔴 \`${key}\` removed${op.summary ? ` — ${op.summary}` : ""}`);
 }
@@ -95,11 +129,11 @@ for (const [key, op] of [...newOps].sort(([a], [b]) => a.localeCompare(b))) {
     opLines.push(`- 🟢 \`${key}\` added${op.summary ? ` — ${op.summary}` : ""}`);
   } else if (!same(before, op)) {
     const parts = [
-      !same(before.parameters, op.parameters) && "parameters",
+      !same(before.parameters, op.parameters) && parameterDetail(before.parameters, op.parameters),
       !same(before.requestBody, op.requestBody) && "request body",
       !same(before.responses, op.responses) && "responses",
     ].filter(Boolean);
-    opLines.push(`- 🟡 \`${key}\` changed${parts.length ? ` (${parts.join(", ")})` : ""}`);
+    opLines.push(`- 🟡 \`${key}\` changed${parts.length ? ` (${parts.join("; ")})` : ""}`);
   }
 }
 if (opLines.length > 0) sections.push("### Operations\n" + capped(opLines).join("\n"));

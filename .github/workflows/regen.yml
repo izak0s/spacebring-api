@@ -70,12 +70,13 @@ jobs:
           coverage=$(grep -o '<!-- coverage -->[^<]*' README.md | sed 's/<!-- coverage -->//')
           git show HEAD:spec/openapi.json > /tmp/old-spec.json
           git show HEAD:tests/__snapshots__/surface.test.ts.snap > /tmp/old-surface.snap
+          git show HEAD:tests/__snapshots__/typed-surface.txt > /tmp/old-typed-surface.txt
           summary=$(npx tsx codegen/diff-spec.ts /tmp/old-spec.json spec/openapi.json /tmp/old-surface.snap tests/__snapshots__/surface.test.ts.snap)
-          if git diff --quiet -- tests/__snapshots__; then
-            echo "surface_changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "surface_changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          # unchanged | additive | breaking — additive (new methods, new
+          # optional params) is safe to auto-merge; breaking (anything
+          # removed/renamed/changed, or a new required param) needs review.
+          surface=$(npx tsx codegen/classify-surface.ts /tmp/old-typed-surface.txt tests/__snapshots__/typed-surface.txt)
+          echo "surface=$surface" >> "$GITHUB_OUTPUT"
           {
             echo 'summary<<SUMMARY_EOF'
             echo "$summary"
@@ -87,11 +88,11 @@ jobs:
             echo ''
             echo "**Generated:** $coverage"
             echo ''
-            if git diff --quiet -- tests/__snapshots__; then
-              echo '✅ API surface unchanged — internal/schema changes only.'
-            else
-              echo '⚠️ **The public API surface changed** — review `tests/__snapshots__/surface.test.ts.snap` in this diff for added/renamed/removed methods.'
-            fi
+            case "$surface" in
+              unchanged) echo '✅ API surface unchanged — internal/schema changes only.' ;;
+              additive)  echo '🟢 API surface changed **additively** (new methods/params only) — existing code keeps compiling, safe to auto-merge.' ;;
+              breaking)  echo '⚠️ **The public API surface changed in a potentially breaking way** — review `tests/__snapshots__/typed-surface.txt` in this diff for removed/renamed methods or changed signatures.' ;;
+            esac
             echo ''
             echo '## What changed'
             echo ''
@@ -120,35 +121,36 @@ jobs:
           body: ${{ steps.prbody.outputs.body }}
           delete-branch: true
 
-      # Schema-internal changes (no snapshot diff: method names, signatures,
-      # and exported types all unchanged) merge themselves once required CI
-      # passes; anything surface-visible waits for human review.
-      - name: Enable auto-merge for schema-only changes
-        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'false' && steps.cpr.outputs.pull-request-number != ''
+      # Schema-internal and purely additive changes (new methods, new optional
+      # params — classified by codegen/classify-surface.ts) merge themselves
+      # once required CI passes; anything removed, renamed, or with a changed
+      # signature waits for human review.
+      - name: Enable auto-merge for non-breaking changes
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface != 'breaking' && steps.cpr.outputs.pull-request-number != ''
         run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Telegram — review needed
-        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'true' && steps.cpr.outputs.pull-request-url != ''
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface == 'breaking' && steps.cpr.outputs.pull-request-url != ''
         uses: ./.github/actions/telegram
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
           message: |
-            ⚠️ Spacebring spec sync changed the public API — review needed
+            ⚠️ Spacebring spec sync changed the public API in a potentially breaking way — review needed
             ${{ steps.cpr.outputs.pull-request-url }}
 
             ${{ steps.prbody.outputs.summary }}
 
-      - name: Telegram — auto-merging schema-only sync
-        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface_changed == 'false' && steps.cpr.outputs.pull-request-url != ''
+      - name: Telegram — auto-merging non-breaking sync
+        if: steps.diff.outputs.changed == 'true' && steps.prbody.outputs.surface != 'breaking' && steps.cpr.outputs.pull-request-url != ''
         uses: ./.github/actions/telegram
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
           message: |
-            ✅ Spacebring spec sync: schema-only changes, auto-merging (release follows once CI passes)
+            ✅ Spacebring spec sync: ${{ steps.prbody.outputs.surface == 'additive' && 'additive API changes' || 'schema-only changes' }}, auto-merging (release follows once CI passes)
             ${{ steps.cpr.outputs.pull-request-url }}
 
             ${{ steps.prbody.outputs.summary }}
