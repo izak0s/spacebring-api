@@ -4,7 +4,7 @@ name: Notify on failure
 # active, a silent red pipeline is the failure mode to guard against.
 on:
   workflow_run:
-    workflows: [CI, Spec sync, Publish, Auto release]
+    workflows: [CI, Spec sync, Publish, Auto release, Docs]
     types: [completed]
 
 permissions:

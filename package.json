@@ -43,6 +43,7 @@
     "generate:facade": "tsx codegen/generate-facade.ts",
     "generate": "npm run generate:types && npm run generate:facade",
     "build": "tsup",
+    "docs": "typedoc",
     "example": "tsx examples/basic.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -54,13 +55,17 @@
   },
   "keywords": [
     "spacebring",
+    "spacebring-api",
     "andcards",
     "api",
+    "api-client",
     "sdk",
     "client",
     "typescript",
     "rest",
     "openapi",
+    "nodejs",
+    "esm",
     "coworking",
     "coworking-space"
   ],
@@ -74,6 +79,7 @@
     "openapi-typescript": "^7.13.0",
     "tsup": "^8.5.1",
     "tsx": "^4.23.0",
+    "typedoc": "^0.28.20",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
   }
