@@ -56,6 +56,24 @@ describe("Spacebring client", () => {
     expect(requests[0].headers.get("spacebring-network-id")).toBe("net-1");
   });
 
+  it("rejects an http baseUrl so Basic-auth credentials are never sent in cleartext", () => {
+    const fetch = (async () => new Response("{}")) as typeof globalThis.fetch;
+    expect(() => new Spacebring({ clientId: "a", clientSecret: "b", baseUrl: "http://api.spacebring.com", fetch })).toThrow(
+      /must use https/,
+    );
+  });
+
+  it("allows an http baseUrl for loopback hosts (local proxy/mock)", () => {
+    const fetch = (async () => new Response("{}")) as typeof globalThis.fetch;
+    expect(() => new Spacebring({ clientId: "a", clientSecret: "b", baseUrl: "http://localhost:3000", fetch })).not.toThrow();
+    expect(() => new Spacebring({ clientId: "a", clientSecret: "b", baseUrl: "http://127.0.0.1:3000", fetch })).not.toThrow();
+  });
+
+  it("rejects a malformed baseUrl", () => {
+    const fetch = (async () => new Response("{}")) as typeof globalThis.fetch;
+    expect(() => new Spacebring({ clientId: "a", clientSecret: "b", baseUrl: "not a url", fetch })).toThrow(/not a valid URL/);
+  });
+
   it("omits the network id header when not configured", async () => {
     const { sb, requests } = mockClient([{ status: 200, body: { benefits: [] } }]);
     await sb.benefits.list();

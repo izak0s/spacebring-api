@@ -29,7 +29,10 @@ runs:
           echo "Telegram secrets not configured — skipping notification."
           exit 0
         fi
-        response=$(printf '%s' "$MESSAGE" | head -c 4000 | curl -sS -X POST \
+        # head -c cuts on a byte boundary and can leave a dangling partial
+        # UTF-8 sequence (spec text is non-ASCII); iconv -c drops it so the
+        # text field stays valid UTF-8. 4000 < Telegram's 4096-char limit.
+        response=$(printf '%s' "$MESSAGE" | head -c 4000 | iconv -f UTF-8 -t UTF-8 -c | curl -sS -X POST \
           "https://api.telegram.org/bot$TOKEN/sendMessage" \
           -d "chat_id=$CHAT_ID" \
           -d "disable_web_page_preview=true" \

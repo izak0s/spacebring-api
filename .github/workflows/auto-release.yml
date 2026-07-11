@@ -12,12 +12,15 @@ permissions:
 
 jobs:
   bump:
+    # head.repo check: only the bot branch in THIS repo can trigger a release —
+    # a fork PR whose branch happens to be named auto/spec-update cannot.
     if: >
       github.event.pull_request.merged == true &&
-      github.event.pull_request.head.ref == 'auto/spec-update'
+      github.event.pull_request.head.ref == 'auto/spec-update' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           ref: main
           fetch-depth: 0
@@ -25,26 +28,31 @@ jobs:
           # (PAT with contents write) makes the tag push start publish.yml.
           token: ${{ secrets.RELEASE_TOKEN }}
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24.x
+          cache: npm
+      - run: npm ci --ignore-scripts
 
       - name: Configure git
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Removed/renamed public methods are breaking for consumers: bump major.
-      # Additions or internal/schema-only changes stay a minor. The snapshot
-      # records every public method, so its removed lines are exactly the
-      # methods that disappeared.
+      # Bump major only for a consumer-breaking change. "Breaking" is decided by
+      # the same classifier that gates auto-merge (codegen/classify-surface.ts),
+      # run over the full typed-surface snapshot — so a removed/renamed method
+      # OR a changed signature / new required query param bumps major, and pure
+      # additions stay minor. Keying off surface.test.ts.snap here would miss
+      # signature changes: that snapshot records method names only, not types.
       - name: Decide version bump from the API-surface diff
         id: bump
         run: |
-          removed=$(git diff HEAD^ HEAD -- tests/__snapshots__/surface.test.ts.snap | grep -c '^-.*()' || true)
-          if [ "$removed" -gt 0 ]; then
+          git show HEAD^:tests/__snapshots__/typed-surface.txt > /tmp/old-typed-surface.txt
+          verdict=$(npx tsx codegen/classify-surface.ts /tmp/old-typed-surface.txt tests/__snapshots__/typed-surface.txt)
+          if [ "$verdict" = "breaking" ]; then
             echo "level=major" >> "$GITHUB_OUTPUT"
-            echo "::warning::$removed public method(s) removed or renamed — bumping MAJOR."
+            echo "::warning::Breaking public API change (removed/renamed method, changed signature, or new required param) — bumping MAJOR."
           else
             echo "level=minor" >> "$GITHUB_OUTPUT"
           fi

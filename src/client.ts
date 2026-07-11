@@ -41,6 +41,10 @@ export class Spacebring {
   readonly raw: Client<paths>;
 
   constructor(config: SpacebringConfig) {
+    const baseUrl = config.baseUrl ?? "https://api.spacebring.com";
+    // Basic-auth credentials ride on every request; refuse to send them in
+    // cleartext. Loopback is allowed for local proxies/mock servers over http.
+    assertSecureBaseUrl(baseUrl);
     const headers: Record<string, string> = {
       Authorization: `Basic ${toBase64(`${config.clientId}:${config.clientSecret}`)}`,
     };
@@ -48,7 +52,7 @@ export class Spacebring {
       headers["spacebring-network-id"] = config.networkId;
     }
     this.raw = createClient<paths>({
-      baseUrl: config.baseUrl ?? "https://api.spacebring.com",
+      baseUrl,
       headers,
       fetch: withRetry(config.fetch ?? globalThis.fetch, config.maxRetries ?? 3, config.timeoutMs),
     });
@@ -140,6 +144,23 @@ function sleep(ms: number, signal: AbortSignal): Promise<void> {
     }, ms);
     signal.addEventListener("abort", onAbort, { once: true });
   });
+}
+
+/** Rejects an http:// baseUrl (credentials would go in cleartext); allows loopback. */
+function assertSecureBaseUrl(baseUrl: string): void {
+  let url: URL;
+  try {
+    url = new URL(baseUrl);
+  } catch {
+    throw new Error(`Spacebring baseUrl is not a valid URL: ${baseUrl}`);
+  }
+  if (url.protocol === "https:") return;
+  const isLoopback =
+    url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]" || url.hostname === "::1";
+  if (url.protocol === "http:" && isLoopback) return;
+  throw new Error(
+    `Spacebring baseUrl must use https (got "${url.protocol}//"): Basic-auth credentials would otherwise be sent in cleartext. Use https, or http only for a loopback host.`,
+  );
 }
 
 function toBase64(value: string): string {
