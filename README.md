@@ -5,13 +5,13 @@
 [![docs](https://img.shields.io/badge/docs-API%20reference-blue)](https://izak0s.github.io/spacebring-api/)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-📖 **[Full API reference](https://izak0s.github.io/spacebring-api/)** — every resource, method, and type, generated from the source.
-
 A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com) coworking space management API, auto-generated from the official OpenAPI spec.
 
 > **Community package** — This is not an official Spacebring package. It is independently developed and maintained by the community. Use at your own risk. For the official API documentation, see [spacebring.com/docs/api](https://www.spacebring.com/docs/api).
 
 ---
+
+📖 **[Full API reference](https://izak0s.github.io/spacebring-api/)** — every resource, method, and type, generated from the source.
 
 ## Features
 
