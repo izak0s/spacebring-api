@@ -21077,11 +21077,9 @@
                       }
                     },
                     "required": [
-                      "height",
                       "key",
                       "mime",
-                      "url",
-                      "width"
+                      "url"
                     ],
                     "additionalProperties": false
                   }
@@ -21180,11 +21178,9 @@
                 }
               },
               "required": [
-                "height",
                 "key",
                 "mime",
-                "url",
-                "width"
+                "url"
               ],
               "additionalProperties": false
             }
@@ -21272,11 +21268,9 @@
                     }
                   },
                   "required": [
-                    "height",
                     "key",
                     "mime",
-                    "url",
-                    "width"
+                    "url"
                   ],
                   "additionalProperties": false
                 }
@@ -26258,17 +26252,17 @@
                     },
                     "name": {
                       "description": "First name of the user who deleted the order.",
+                      "nullable": true,
                       "type": "string"
                     },
                     "surname": {
                       "description": "Last name of the user who deleted the order.",
+                      "nullable": true,
                       "type": "string"
                     }
                   },
                   "required": [
-                    "id",
-                    "name",
-                    "surname"
+                    "id"
                   ],
                   "additionalProperties": false
                 }
@@ -27308,17 +27302,17 @@
                   },
                   "name": {
                     "description": "First name of the user who deleted the order.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "surname": {
                     "description": "Last name of the user who deleted the order.",
+                    "nullable": true,
                     "type": "string"
                   }
                 },
                 "required": [
-                  "id",
-                  "name",
-                  "surname"
+                  "id"
                 ],
                 "additionalProperties": false
               }

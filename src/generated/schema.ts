@@ -6521,7 +6521,7 @@ export interface components {
                 /** @description Images extracted from the guide description. */
                 media: {
                     /** @description Image height in pixels. */
-                    height: number;
+                    height?: number;
                     /** @description Storage key of the image. */
                     key: string;
                     /** @description MIME type of the image. */
@@ -6529,7 +6529,7 @@ export interface components {
                     /** @description Public URL of the image. */
                     url: string;
                     /** @description Image width in pixels. */
-                    width: number;
+                    width?: number;
                 }[];
                 /** @description Display name of the guide. */
                 title: string;
@@ -6567,7 +6567,7 @@ export interface components {
             /** @description Images extracted from the guide description. */
             media: {
                 /** @description Image height in pixels. */
-                height: number;
+                height?: number;
                 /** @description Storage key of the image. */
                 key: string;
                 /** @description MIME type of the image. */
@@ -6575,7 +6575,7 @@ export interface components {
                 /** @description Public URL of the image. */
                 url: string;
                 /** @description Image width in pixels. */
-                width: number;
+                width?: number;
             }[];
             /** @description Display name of the guide. */
             title: string;
@@ -6610,7 +6610,7 @@ export interface components {
                 /** @description Images extracted from the guide description. */
                 media: {
                     /** @description Image height in pixels. */
-                    height: number;
+                    height?: number;
                     /** @description Storage key of the image. */
                     key: string;
                     /** @description MIME type of the image. */
@@ -6618,7 +6618,7 @@ export interface components {
                     /** @description Public URL of the image. */
                     url: string;
                     /** @description Image width in pixels. */
-                    width: number;
+                    width?: number;
                 }[];
                 /** @description Display name of the guide. */
                 title: string;
@@ -8754,9 +8754,9 @@ export interface components {
                      */
                     id: string;
                     /** @description First name of the user who deleted the order. */
-                    name: string;
+                    name?: string | null;
                     /** @description Last name of the user who deleted the order. */
-                    surname: string;
+                    surname?: string | null;
                 };
             }[];
             /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
@@ -9222,9 +9222,9 @@ export interface components {
                      */
                     id: string;
                     /** @description First name of the user who deleted the order. */
-                    name: string;
+                    name?: string | null;
                     /** @description Last name of the user who deleted the order. */
-                    surname: string;
+                    surname?: string | null;
                 };
             };
         };
