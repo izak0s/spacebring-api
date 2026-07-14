@@ -133,8 +133,7 @@ for (const rootName of rootNames) {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(
       (entity) =>
-        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` +
-        `export type ${entity.name} = ${entity.expr};\n`,
+        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` + `export type ${entity.name} = ${entity.expr};\n`,
     )
     .join("\n");
   const coreImports = [

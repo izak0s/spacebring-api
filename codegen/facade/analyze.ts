@@ -4,7 +4,16 @@
  * facade method name derived from path shape + operationId verb.
  */
 import { camelCase, firstWord, pascalCase, singular } from "./naming.js";
-import { type HttpMethod, resolveRef, spec, type SpecOperation, type SpecParameter, specPaths, TS_TYPES, warnings } from "./spec.js";
+import {
+  type HttpMethod,
+  resolveRef,
+  type SpecOperation,
+  type SpecParameter,
+  spec,
+  specPaths,
+  TS_TYPES,
+  warnings,
+} from "./spec.js";
 
 export interface PaginationInfo {
   itemsKey: string;
@@ -156,9 +165,7 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     const propSchema = resolveRef<{ type?: string }>(rawProp);
     const isArray = propSchema.type === "array";
     // The entity is the property itself (object) or its array item.
-    const unwrapSchemaRef = isArray
-      ? entityComponentRef(singular(keys[0]), rawProp.items)
-      : entityComponentRef(keys[0], rawProp);
+    const unwrapSchemaRef = isArray ? entityComponentRef(singular(keys[0]), rawProp.items) : entityComponentRef(keys[0], rawProp);
     return { unwrapKey: keys[0], unwrapIsArray: isArray, unwrapSchemaRef };
   }
 
