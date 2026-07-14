@@ -1,6 +1,6 @@
 {
   "name": "@izak0s/spacebring-api",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Community-maintained TypeScript client (SDK) for the Spacebring (formerly andcards) coworking space management API",
   "license": "MIT",
   "author": "izak0s",
