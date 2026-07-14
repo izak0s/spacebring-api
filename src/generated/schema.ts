@@ -13183,6 +13183,7 @@ export interface components {
         patchGuide: {
             content: {
                 "application/json": {
+                    /** @description Guide fields to update. */
                     guide: {
                         /** @description Markdown content of the guide. */
                         description?: string;
@@ -14716,6 +14717,7 @@ export interface components {
         patchSubscription: {
             content: {
                 "application/json": {
+                    /** @description Subscription fields to update. */
                     subscription: {
                         /** @description Whether pending items are added to the next invoice. */
                         addPendingItemsToInvoice?: boolean;
@@ -15071,6 +15073,7 @@ export interface components {
         updateSubscriptionItem: {
             content: {
                 "application/json": {
+                    /** @description Subscription item fields to update. */
                     item: {
                         /** @description Whether the item syncs from its linked product. */
                         autoUpdateFromProduct?: boolean;
@@ -15335,6 +15338,7 @@ export interface components {
         createDayPassesTransaction: {
             content: {
                 "application/json": {
+                    /** @description Day passes transaction to create. */
                     transaction: {
                         /** @description Day pass amount. Must be greater than zero. */
                         amount: number;
