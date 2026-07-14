@@ -2,16 +2,16 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A CreditNote entity as returned by the Spacebring API. */
-export type CreditNote = NonNullable<operations["getCreditNote"]["responses"][200]["content"]["application/json"]["creditNote"]>;
+export type CreditNote = NonNullable<components["schemas"]["creditNote"]>;
 
 /** A Invoice entity as returned by the Spacebring API. */
-export type Invoice = NonNullable<operations["getInvoice"]["responses"][200]["content"]["application/json"]["invoice"]>;
+export type Invoice = NonNullable<components["schemas"]["invoice"]>;
 
 /** A InvoiceItem entity as returned by the Spacebring API. */
-export type InvoiceItem = NonNullable<operations["getInvoiceItem"]["responses"][200]["content"]["application/json"]["invoiceItem"]>;
+export type InvoiceItem = NonNullable<components["schemas"]["invoiceItem"]>;
 
 /** Query parameters for `sb.billing.creditNotes.list()`. */
 export interface GetCreditNotesQuery {

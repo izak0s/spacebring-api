@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Order entity as returned by the Spacebring API. */
 export type Order = NonNullable<operations["getOrder"]["responses"][200]["content"]["application/json"]["order"]>;
 
 /** A Product entity as returned by the Spacebring API. */
-export type Product = NonNullable<operations["getProduct"]["responses"][200]["content"]["application/json"]["product"]>;
+export type Product = NonNullable<components["schemas"]["product"]>;
 
 /** A ShopCategory entity as returned by the Spacebring API. */
 export type ShopCategory = NonNullable<operations["getShopCategory"]["responses"][200]["content"]["application/json"]["category"]>;

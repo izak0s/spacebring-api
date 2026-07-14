@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, paths } from "../schema.js";
 
 /** A Location entity as returned by the Spacebring API. */
-export type Location = NonNullable<operations["getLocation"]["responses"][200]["content"]["application/json"]["location"]>;
+export type Location = NonNullable<components["schemas"]["location"]>;
 
 export function createLocations(client: Client<paths>, defaults: SpacebringDefaults) {
   return {

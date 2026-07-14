@@ -2,16 +2,16 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Coupon entity as returned by the Spacebring API. */
-export type Coupon = NonNullable<operations["getCoupon"]["responses"][200]["content"]["application/json"]["coupon"]>;
+export type Coupon = NonNullable<components["schemas"]["coupon"]>;
 
 /** A Promocode entity as returned by the Spacebring API. */
-export type Promocode = NonNullable<operations["getPromocode"]["responses"][200]["content"]["application/json"]["promocode"]>;
+export type Promocode = NonNullable<components["schemas"]["promocode"]>;
 
 /** A Redemption entity as returned by the Spacebring API. */
-export type Redemption = NonNullable<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]["redemptions"]>[number];
+export type Redemption = NonNullable<components["schemas"]["discountRedemption"]>;
 
 /** Query parameters for `sb.discounts.coupons.list()`. */
 export interface GetCouponsQuery {

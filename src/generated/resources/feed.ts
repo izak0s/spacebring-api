@@ -2,22 +2,22 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A CommentLike entity as returned by the Spacebring API. */
-export type CommentLike = NonNullable<operations["createLikeForPostComment"]["responses"][201]["content"]["application/json"]["like"]>;
+export type CommentLike = NonNullable<components["schemas"]["postLike"]>;
 
 /** A FeedComment entity as returned by the Spacebring API. */
-export type FeedComment = NonNullable<operations["createFeedPostComment"]["responses"][201]["content"]["application/json"]["comment"]>;
+export type FeedComment = NonNullable<components["schemas"]["postComment"]>;
 
 /** A Post entity as returned by the Spacebring API. */
-export type Post = NonNullable<operations["getFeedPost"]["responses"][200]["content"]["application/json"]["post"]>;
+export type Post = NonNullable<components["schemas"]["post"]>;
 
 /** A PostComment entity as returned by the Spacebring API. */
-export type PostComment = NonNullable<operations["getPostComments"]["responses"][200]["content"]["application/json"]["comments"]>[number];
+export type PostComment = NonNullable<components["schemas"]["postComment"]>;
 
 /** A PostLike entity as returned by the Spacebring API. */
-export type PostLike = NonNullable<operations["getLikesForPost"]["responses"][200]["content"]["application/json"]["likes"]>[number];
+export type PostLike = NonNullable<components["schemas"]["postLike"]>;
 
 /** Query parameters for `sb.feed.posts.list()`. */
 export interface GetFeedPostsQuery {

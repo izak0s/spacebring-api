@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Guide entity as returned by the Spacebring API. */
-export type Guide = NonNullable<operations["getGuide"]["responses"][200]["content"]["application/json"]["guide"]>;
+export type Guide = NonNullable<components["schemas"]["guide"]>;
 
 /** Query parameters for `sb.guides.list()`. */
 export interface GetGuidesQuery {

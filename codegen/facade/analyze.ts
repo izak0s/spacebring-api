@@ -4,10 +4,12 @@
  * facade method name derived from path shape + operationId verb.
  */
 import { camelCase, firstWord, pascalCase, singular } from "./naming.js";
-import { type HttpMethod, resolveRef, type SpecOperation, type SpecParameter, specPaths, TS_TYPES, warnings } from "./spec.js";
+import { type HttpMethod, resolveRef, spec, type SpecOperation, type SpecParameter, specPaths, TS_TYPES, warnings } from "./spec.js";
 
 export interface PaginationInfo {
   itemsKey: string;
+  /** Component-schema name the list item `$ref`s to (e.g. "subscription"), if any. */
+  itemsSchemaRef?: string;
   /**
    * Envelope properties in declaration order, so list() can be annotated with a
    * readable literal type ({ bookings?: Booking[]; nextPageToken?: string })
@@ -22,6 +24,54 @@ interface EnvelopeInfo {
   unwrapKey?: string;
   /** True when the unwrapped property is an array (non-paginated list endpoints). */
   unwrapIsArray?: boolean;
+  /** Component-schema name the unwrapped entity (or its array item) `$ref`s to, if any. */
+  unwrapSchemaRef?: string;
+}
+
+/** Component name if `node` is a `$ref` into components/schemas, else undefined. */
+function schemaRefName(node: unknown): string | undefined {
+  const ref = (node as { $ref?: unknown } | null | undefined)?.$ref;
+  if (typeof ref !== "string") return undefined;
+  const match = /^#\/components\/schemas\/([^/]+)$/.exec(ref);
+  return match?.[1];
+}
+
+/** Type-relevant canonical form: drops descriptions, sorts keys. */
+function canonicalSchema(node: unknown): string {
+  const strip = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(strip);
+    if (value && typeof value === "object") {
+      const out: Record<string, unknown> = {};
+      for (const key of Object.keys(value as object).sort()) {
+        if (key === "description") continue;
+        out[key] = strip((value as Record<string, unknown>)[key]);
+      }
+      return out;
+    }
+    return value;
+  };
+  return JSON.stringify(strip(node));
+}
+
+/**
+ * The canonical component schema name for an entity node. This spec inlines
+ * entity objects into responses rather than `$ref`-ing the component, so we
+ * match by name (the property key) and only accept the component when it's
+ * type-identical to the inline shape — otherwise fall back to the operation
+ * form, keeping the generated type faithful to the actual response.
+ */
+function entityComponentRef(candidateName: string, entityNode: unknown): string | undefined {
+  const direct = schemaRefName(entityNode);
+  if (direct) return direct;
+  const schemas = spec.components?.schemas as Record<string, unknown> | undefined;
+  if (!schemas) return undefined;
+  const inline = canonicalSchema(resolveRef(entityNode));
+  // Prefer a same-named component; the property key (e.g. "category") often
+  // differs from the component name (e.g. "shopCategory"), so also accept a
+  // uniquely-matching component by structure. Ambiguous matches are skipped.
+  if (schemas[candidateName] && canonicalSchema(schemas[candidateName]) === inline) return candidateName;
+  const matches = Object.keys(schemas).filter((name) => canonicalSchema(schemas[name]) === inline);
+  return matches.length === 1 ? matches[0] : undefined;
 }
 
 export interface AnalyzedOp {
@@ -37,6 +87,7 @@ export interface AnalyzedOp {
   pagination: PaginationInfo | undefined;
   unwrapKey: string | undefined;
   unwrapIsArray: boolean;
+  unwrapSchemaRef: string | undefined;
 }
 
 export function analyze(path: string, method: HttpMethod, op: SpecOperation): AnalyzedOp {
@@ -80,6 +131,7 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
     pagination: envelope.pagination,
     unwrapKey: envelope.unwrapKey,
     unwrapIsArray: envelope.unwrapIsArray === true,
+    unwrapSchemaRef: envelope.unwrapSchemaRef,
   };
 }
 
@@ -100,8 +152,14 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     // the facade returns the property directly.
     const keys = Object.keys(properties);
     if (keys.length !== 1) return {};
-    const propSchema = resolveRef<{ type?: string }>(properties[keys[0]]);
-    return { unwrapKey: keys[0], unwrapIsArray: propSchema.type === "array" };
+    const rawProp = properties[keys[0]] as { items?: unknown };
+    const propSchema = resolveRef<{ type?: string }>(rawProp);
+    const isArray = propSchema.type === "array";
+    // The entity is the property itself (object) or its array item.
+    const unwrapSchemaRef = isArray
+      ? entityComponentRef(singular(keys[0]), rawProp.items)
+      : entityComponentRef(keys[0], rawProp);
+    return { unwrapKey: keys[0], unwrapIsArray: isArray, unwrapSchemaRef };
   }
 
   const arrayKeys = Object.keys(properties).filter((key) => resolveRef<{ type?: string }>(properties[key]).type === "array");
@@ -114,7 +172,8 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     const propSchema = resolveRef<{ type?: string }>(properties[key]);
     return { key, optional: !required.has(key), scalar: TS_TYPES[propSchema.type ?? ""] };
   });
-  return { pagination: { itemsKey: arrayKeys[0], props } };
+  const itemsSchemaRef = entityComponentRef(singular(arrayKeys[0]), (properties[arrayKeys[0]] as { items?: unknown }).items);
+  return { pagination: { itemsKey: arrayKeys[0], itemsSchemaRef, props } };
 }
 
 export function methodName(analyzed: AnalyzedOp): string {

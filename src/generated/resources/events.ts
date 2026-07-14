@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Event entity as returned by the Spacebring API. */
-export type Event = NonNullable<operations["getEvent"]["responses"][200]["content"]["application/json"]["event"]>;
+export type Event = NonNullable<components["schemas"]["event"]>;
 
 /** A EventTicket entity as returned by the Spacebring API. */
-export type EventTicket = NonNullable<operations["getEventTicket"]["responses"][200]["content"]["application/json"]["ticket"]>;
+export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
 
 /** Query parameters for `sb.events.list()`. */
 export interface GetEventsByOrganizationQuery {

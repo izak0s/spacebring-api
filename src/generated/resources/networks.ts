@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, paths } from "../schema.js";
 
 /** A Network entity as returned by the Spacebring API. */
-export type Network = NonNullable<operations["getNetworks"]["responses"][200]["content"]["application/json"]["networks"]>[number];
+export type Network = NonNullable<components["schemas"]["network"]>;
 
 export function createNetworks(client: Client<paths>, defaults: SpacebringDefaults) {
   return {

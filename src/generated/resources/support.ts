@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Activity entity as returned by the Spacebring API. */
-export type Activity = NonNullable<operations["createSupportTicketComment"]["responses"][201]["content"]["application/json"]["activity"]>;
+export type Activity = NonNullable<components["schemas"]["ticketActivity"]>;
 
 /** A SupportTicket entity as returned by the Spacebring API. */
-export type SupportTicket = NonNullable<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]["tickets"]>[number];
+export type SupportTicket = NonNullable<components["schemas"]["ticket"]>;
 
 /** Query parameters for `sb.support.tickets.list()`. */
 export interface GetSupportTicketsQuery {

@@ -59,13 +59,20 @@ for (const path of specPaths) {
 
     const responseType = successJsonType(op);
     const root = analyzed.namespace[0];
+    // Prefer the canonical component schema (stable, matches the API's own type
+    // names) over reaching through this operation's response envelope, which is
+    // fragile if the endpoint is renamed/removed. Falls back to the envelope
+    // form when the response property is inline rather than a $ref.
+    const componentExpr = (ref: string) => `NonNullable<components["schemas"]["${ref}"]>`;
     if (analyzed.unwrapKey) {
       entityCandidates.push({
         node,
         root,
         namespace: analyzed.namespace,
         base: entityBase(analyzed.unwrapKey),
-        expr: `NonNullable<${responseType}["${analyzed.unwrapKey}"]>${analyzed.unwrapIsArray ? "[number]" : ""}`,
+        expr: analyzed.unwrapSchemaRef
+          ? componentExpr(analyzed.unwrapSchemaRef)
+          : `NonNullable<${responseType}["${analyzed.unwrapKey}"]>${analyzed.unwrapIsArray ? "[number]" : ""}`,
         priority: methodPriority(name),
         opId: op.operationId,
       });
@@ -76,7 +83,9 @@ for (const path of specPaths) {
         root,
         namespace: analyzed.namespace,
         base: entityBase(analyzed.pagination.itemsKey),
-        expr: `NonNullable<${responseType}["${analyzed.pagination.itemsKey}"]>[number]`,
+        expr: analyzed.pagination.itemsSchemaRef
+          ? componentExpr(analyzed.pagination.itemsSchemaRef)
+          : `NonNullable<${responseType}["${analyzed.pagination.itemsKey}"]>[number]`,
         priority: methodPriority(name),
         opId: op.operationId,
       });
@@ -120,6 +129,14 @@ const rootNames = [...roots.keys()].sort();
 for (const rootName of rootNames) {
   const node = roots.get(rootName)!;
   const factory = `create${pascalCase(rootName)}`;
+  const entityDefs = (entitiesByRoot.get(rootName) ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(
+      (entity) =>
+        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` +
+        `export type ${entity.name} = ${entity.expr};\n`,
+    )
+    .join("\n");
   const coreImports = [
     ...(nodeUses(node, "usesPaginate") ? ["paginate"] : []),
     "unwrap",
@@ -127,13 +144,6 @@ for (const rootName of rootNames) {
     "type SpacebringDefaults",
     "type SpacebringRequestOptions",
   ].join(", ");
-  const entityDefs = (entitiesByRoot.get(rootName) ?? [])
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(
-      (entity) =>
-        `/** A ${entity.name} entity as returned by the Spacebring API. */\n` + `export type ${entity.name} = ${entity.expr};\n`,
-    )
-    .join("\n");
   const queryDefs = (queryTypesByRoot.get(rootName) ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((query) => query.decl)
@@ -145,8 +155,13 @@ for (const rootName of rootNames) {
     `  return {\n` +
     renderNode(node, "    ") +
     `\n  };\n}\n`;
-  // With named query types some files no longer reference operations[...] at all.
-  const schemaImports = body.includes("operations[") ? "operations, paths" : "paths";
+  // With named query types some files no longer reference operations[...] at all;
+  // entities that resolve to a component schema reference components[...] instead.
+  const schemaImports = [
+    ...(body.includes("components[") ? ["components"] : []),
+    ...(body.includes("operations[") ? ["operations"] : []),
+    "paths",
+  ].join(", ");
   const source =
     HEADER +
     `import type { Client } from "openapi-fetch";\n` +

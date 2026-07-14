@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A AltCurrency entity as returned by the Spacebring API. */
-export type AltCurrency = NonNullable<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]["altCurrencies"]>[number];
+export type AltCurrency = NonNullable<components["schemas"]["altCurrency"]>;
 
 /** Query parameters for `sb.altCurrencies.list()`. */
 export interface GetAltCurrenciesQuery {

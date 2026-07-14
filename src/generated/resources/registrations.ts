@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, paths } from "../schema.js";
 
 /** A Registration entity as returned by the Spacebring API. */
-export type Registration = NonNullable<operations["getRegistrations"]["responses"][200]["content"]["application/json"]["registrations"]>[number];
+export type Registration = NonNullable<components["schemas"]["registration"]>;
 
 /** Query parameters for `sb.registrations.list()`. */
 export interface GetRegistrationsQuery {

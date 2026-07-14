@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Plan entity as returned by the Spacebring API. */
-export type Plan = NonNullable<operations["getPlan"]["responses"][200]["content"]["application/json"]["plan"]>;
+export type Plan = NonNullable<components["schemas"]["plan"]>;
 
 /** Query parameters for `sb.plans.list()`. */
 export interface GetPlansQuery {

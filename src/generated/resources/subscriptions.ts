@@ -2,10 +2,10 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Subscription entity as returned by the Spacebring API. */
-export type Subscription = NonNullable<operations["getSubscription"]["responses"][200]["content"]["application/json"]["subscription"]>;
+export type Subscription = NonNullable<components["schemas"]["subscription"]>;
 
 /** Query parameters for `sb.subscriptions.list()`. */
 export interface GetSubscriptionsQuery {

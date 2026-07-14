@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Booking entity as returned by the Spacebring API. */
-export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
+export type Booking = NonNullable<components["schemas"]["booking"]>;
 
 /** A Resource entity as returned by the Spacebring API. */
-export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
+export type Resource = NonNullable<components["schemas"]["resource"]>;
 
 /** Query parameters for `sb.resources.bookings.list()`. */
 export interface GetBookingsQuery {

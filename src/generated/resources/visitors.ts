@@ -2,19 +2,19 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Contact entity as returned by the Spacebring API. */
-export type Contact = NonNullable<operations["getContact"]["responses"][200]["content"]["application/json"]["contact"]>;
+export type Contact = NonNullable<components["schemas"]["contact"]>;
 
 /** A Request entity as returned by the Spacebring API. */
-export type Request = NonNullable<operations["getRequest"]["responses"][200]["content"]["application/json"]["request"]>;
+export type Request = NonNullable<components["schemas"]["visitRequest"]>;
 
 /** A RequestVisit entity as returned by the Spacebring API. */
-export type RequestVisit = NonNullable<operations["approveRequest"]["responses"][201]["content"]["application/json"]["visit"]>;
+export type RequestVisit = NonNullable<components["schemas"]["visit"]>;
 
 /** A VisitorVisit entity as returned by the Spacebring API. */
-export type VisitorVisit = NonNullable<operations["getVisit"]["responses"][200]["content"]["application/json"]["visit"]>;
+export type VisitorVisit = NonNullable<components["schemas"]["visit"]>;
 
 /** Query parameters for `sb.visitors.contacts.list()`. */
 export interface GetContactsQuery {

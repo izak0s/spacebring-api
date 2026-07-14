@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Application entity as returned by the Spacebring API. */
-export type Application = NonNullable<operations["getBenefitApplication"]["responses"][200]["content"]["application/json"]["application"]>;
+export type Application = NonNullable<components["schemas"]["benefitApplication"]>;
 
 /** A Benefit entity as returned by the Spacebring API. */
-export type Benefit = NonNullable<operations["getBenefit"]["responses"][200]["content"]["application/json"]["benefit"]>;
+export type Benefit = NonNullable<components["schemas"]["benefit"]>;
 
 /** A BenefitCategory entity as returned by the Spacebring API. */
 export type BenefitCategory = NonNullable<operations["getBenefitCategory"]["responses"][200]["content"]["application/json"]["category"]>;

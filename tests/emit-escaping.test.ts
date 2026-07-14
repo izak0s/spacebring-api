@@ -26,6 +26,7 @@ function analyzedOp(overrides: Partial<AnalyzedOp>): AnalyzedOp {
     pagination: undefined,
     unwrapKey: undefined,
     unwrapIsArray: false,
+    unwrapSchemaRef: undefined,
     ...overrides,
   };
 }

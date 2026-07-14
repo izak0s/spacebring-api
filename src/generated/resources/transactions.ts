@@ -2,19 +2,19 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Balance entity as returned by the Spacebring API. */
-export type Balance = NonNullable<operations["getCreditsBalance"]["responses"][200]["content"]["application/json"]["balances"]>[number];
+export type Balance = NonNullable<components["schemas"]["balance"]>;
 
 /** A CreditTransaction entity as returned by the Spacebring API. */
-export type CreditTransaction = NonNullable<operations["getCreditsTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
 
 /** A DayPassTransaction entity as returned by the Spacebring API. */
 export type DayPassTransaction = NonNullable<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
 
 /** A MoneyTransaction entity as returned by the Spacebring API. */
-export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
+export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
 
 /** Query parameters for `sb.transactions.credits.list()`. */
 export interface GetCreditsTransactionsQuery {

@@ -31,7 +31,11 @@ export interface EntityCandidate {
   root: string;
   namespace: string[];
   base: string;
-  /** Type expression the alias points at (already `[number]`-indexed for arrays). */
+  /**
+   * Type expression the entity alias points at: `NonNullable<components[...]>`
+   * for the canonical component schema, else the operation-derived form
+   * (`NonNullable<operations[...]>`, `[number]`-indexed for a list item).
+   */
   expr: string;
   priority: number;
   opId: string;

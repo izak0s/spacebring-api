@@ -2,13 +2,13 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Company entity as returned by the Spacebring API. */
-export type Company = NonNullable<operations["getCompany"]["responses"][200]["content"]["application/json"]["company"]>;
+export type Company = NonNullable<components["schemas"]["company"]>;
 
 /** A Membership entity as returned by the Spacebring API. */
-export type Membership = NonNullable<operations["getMembership"]["responses"][200]["content"]["application/json"]["membership"]>;
+export type Membership = NonNullable<components["schemas"]["membership"]>;
 
 /** Query parameters for `sb.community.companies.list()`. */
 export interface GetCompaniesQuery {

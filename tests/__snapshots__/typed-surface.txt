@@ -1,5 +1,5 @@
 // altCurrencies.ts
-export type AltCurrency = NonNullable<operations["getAltCurrencies"]["responses"][200]["content"]["application/json"]["altCurrencies"]>[number];
+export type AltCurrency = NonNullable<components["schemas"]["altCurrency"]>;
 export interface GetAltCurrenciesQuery {
   locationRef: string;
   nextPageToken?: string;
@@ -16,8 +16,8 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
 }
 
 // benefits.ts
-export type Application = NonNullable<operations["getBenefitApplication"]["responses"][200]["content"]["application/json"]["application"]>;
-export type Benefit = NonNullable<operations["getBenefit"]["responses"][200]["content"]["application/json"]["benefit"]>;
+export type Application = NonNullable<components["schemas"]["benefitApplication"]>;
+export type Benefit = NonNullable<components["schemas"]["benefit"]>;
 export type BenefitCategory = NonNullable<operations["getBenefitCategory"]["responses"][200]["content"]["application/json"]["category"]>;
 export interface GetBenefitApplicationsQuery {
   benefitRef?: string;
@@ -65,9 +65,9 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
 }
 
 // billing.ts
-export type CreditNote = NonNullable<operations["getCreditNote"]["responses"][200]["content"]["application/json"]["creditNote"]>;
-export type Invoice = NonNullable<operations["getInvoice"]["responses"][200]["content"]["application/json"]["invoice"]>;
-export type InvoiceItem = NonNullable<operations["getInvoiceItem"]["responses"][200]["content"]["application/json"]["invoiceItem"]>;
+export type CreditNote = NonNullable<components["schemas"]["creditNote"]>;
+export type Invoice = NonNullable<components["schemas"]["invoice"]>;
+export type InvoiceItem = NonNullable<components["schemas"]["invoiceItem"]>;
 export interface GetCreditNotesQuery {
   "createDate[gte]"?: string;
   "createDate[lte]"?: string;
@@ -143,8 +143,8 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
 }
 
 // community.ts
-export type Company = NonNullable<operations["getCompany"]["responses"][200]["content"]["application/json"]["company"]>;
-export type Membership = NonNullable<operations["getMembership"]["responses"][200]["content"]["application/json"]["membership"]>;
+export type Company = NonNullable<components["schemas"]["company"]>;
+export type Membership = NonNullable<components["schemas"]["membership"]>;
 export interface GetCompaniesQuery {
   locationRef: string;
   limit?: number;
@@ -219,9 +219,9 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
 }
 
 // discounts.ts
-export type Coupon = NonNullable<operations["getCoupon"]["responses"][200]["content"]["application/json"]["coupon"]>;
-export type Promocode = NonNullable<operations["getPromocode"]["responses"][200]["content"]["application/json"]["promocode"]>;
-export type Redemption = NonNullable<operations["getDiscountRedemptions"]["responses"][200]["content"]["application/json"]["redemptions"]>[number];
+export type Coupon = NonNullable<components["schemas"]["coupon"]>;
+export type Promocode = NonNullable<components["schemas"]["promocode"]>;
+export type Redemption = NonNullable<components["schemas"]["discountRedemption"]>;
 export interface GetCouponsQuery {
   locationRef: string;
   type?: "creditPackages" | "desks" | "equipment" | "events" | "products" | "rooms" | "subscriptionItems";
@@ -262,8 +262,8 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
 }
 
 // events.ts
-export type Event = NonNullable<operations["getEvent"]["responses"][200]["content"]["application/json"]["event"]>;
-export type EventTicket = NonNullable<operations["getEventTicket"]["responses"][200]["content"]["application/json"]["ticket"]>;
+export type Event = NonNullable<components["schemas"]["event"]>;
+export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
 export interface GetEventsByOrganizationQuery {
   locationRef: string;
   limit?: number;
@@ -292,11 +292,11 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
 }
 
 // feed.ts
-export type CommentLike = NonNullable<operations["createLikeForPostComment"]["responses"][201]["content"]["application/json"]["like"]>;
-export type FeedComment = NonNullable<operations["createFeedPostComment"]["responses"][201]["content"]["application/json"]["comment"]>;
-export type Post = NonNullable<operations["getFeedPost"]["responses"][200]["content"]["application/json"]["post"]>;
-export type PostComment = NonNullable<operations["getPostComments"]["responses"][200]["content"]["application/json"]["comments"]>[number];
-export type PostLike = NonNullable<operations["getLikesForPost"]["responses"][200]["content"]["application/json"]["likes"]>[number];
+export type CommentLike = NonNullable<components["schemas"]["postLike"]>;
+export type FeedComment = NonNullable<components["schemas"]["postComment"]>;
+export type Post = NonNullable<components["schemas"]["post"]>;
+export type PostComment = NonNullable<components["schemas"]["postComment"]>;
+export type PostLike = NonNullable<components["schemas"]["postLike"]>;
 export interface GetFeedPostsQuery {
   locationRef: string;
   nextPageToken?: string;
@@ -339,7 +339,7 @@ export function createFloors(client: Client<paths>, defaults: SpacebringDefaults
 }
 
 // guides.ts
-export type Guide = NonNullable<operations["getGuide"]["responses"][200]["content"]["application/json"]["guide"]>;
+export type Guide = NonNullable<components["schemas"]["guide"]>;
 export interface GetGuidesQuery {
   limit?: number;
   locationRef: string;
@@ -357,7 +357,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
 }
 
 // locations.ts
-export type Location = NonNullable<operations["getLocation"]["responses"][200]["content"]["application/json"]["location"]>;
+export type Location = NonNullable<components["schemas"]["location"]>;
 export function createLocations(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(options?: SpacebringRequestOptions): Promise<Location[]>
@@ -366,7 +366,7 @@ export function createLocations(client: Client<paths>, defaults: SpacebringDefau
 }
 
 // networks.ts
-export type Network = NonNullable<operations["getNetworks"]["responses"][200]["content"]["application/json"]["networks"]>[number];
+export type Network = NonNullable<components["schemas"]["network"]>;
 export function createNetworks(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(options?: SpacebringRequestOptions): Promise<Network[]>
@@ -374,7 +374,7 @@ export function createNetworks(client: Client<paths>, defaults: SpacebringDefaul
 }
 
 // plans.ts
-export type Plan = NonNullable<operations["getPlan"]["responses"][200]["content"]["application/json"]["plan"]>;
+export type Plan = NonNullable<components["schemas"]["plan"]>;
 export interface GetPlansQuery {
   entire?: string;
   limit?: number;
@@ -394,7 +394,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
 }
 
 // registrations.ts
-export type Registration = NonNullable<operations["getRegistrations"]["responses"][200]["content"]["application/json"]["registrations"]>[number];
+export type Registration = NonNullable<components["schemas"]["registration"]>;
 export interface GetRegistrationsQuery {
   limit?: number;
   nextPageToken?: string;
@@ -407,8 +407,8 @@ export function createRegistrations(client: Client<paths>, defaults: SpacebringD
 }
 
 // resources.ts
-export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
-export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
+export type Booking = NonNullable<components["schemas"]["booking"]>;
+export type Resource = NonNullable<components["schemas"]["resource"]>;
 export interface GetBookingsQuery {
   resourceRef?: string;
   locationRef?: string;
@@ -445,7 +445,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
 
 // shop.ts
 export type Order = NonNullable<operations["getOrder"]["responses"][200]["content"]["application/json"]["order"]>;
-export type Product = NonNullable<operations["getProduct"]["responses"][200]["content"]["application/json"]["product"]>;
+export type Product = NonNullable<components["schemas"]["product"]>;
 export type ShopCategory = NonNullable<operations["getShopCategory"]["responses"][200]["content"]["application/json"]["category"]>;
 export interface GetOrdersQuery {
   categoryRef?: string;
@@ -500,7 +500,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
 }
 
 // subscriptions.ts
-export type Subscription = NonNullable<operations["getSubscription"]["responses"][200]["content"]["application/json"]["subscription"]>;
+export type Subscription = NonNullable<components["schemas"]["subscription"]>;
 export interface GetSubscriptionsQuery {
   "createDate[gte]"?: string;
   "createDate[lte]"?: string;
@@ -533,8 +533,8 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
 }
 
 // support.ts
-export type Activity = NonNullable<operations["createSupportTicketComment"]["responses"][201]["content"]["application/json"]["activity"]>;
-export type SupportTicket = NonNullable<operations["getSupportTickets"]["responses"][200]["content"]["application/json"]["tickets"]>[number];
+export type Activity = NonNullable<components["schemas"]["ticketActivity"]>;
+export type SupportTicket = NonNullable<components["schemas"]["ticket"]>;
 export interface GetSupportTicketsQuery {
   locationRef: string;
   limit?: number;
@@ -559,10 +559,10 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
 }
 
 // transactions.ts
-export type Balance = NonNullable<operations["getCreditsBalance"]["responses"][200]["content"]["application/json"]["balances"]>[number];
-export type CreditTransaction = NonNullable<operations["getCreditsTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+export type Balance = NonNullable<components["schemas"]["balance"]>;
+export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
 export type DayPassTransaction = NonNullable<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
-export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
+export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
 export interface GetCreditsTransactionsQuery {
   limit?: number;
   nextPageToken?: string;
@@ -615,10 +615,10 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
 }
 
 // visitors.ts
-export type Contact = NonNullable<operations["getContact"]["responses"][200]["content"]["application/json"]["contact"]>;
-export type Request = NonNullable<operations["getRequest"]["responses"][200]["content"]["application/json"]["request"]>;
-export type RequestVisit = NonNullable<operations["approveRequest"]["responses"][201]["content"]["application/json"]["visit"]>;
-export type VisitorVisit = NonNullable<operations["getVisit"]["responses"][200]["content"]["application/json"]["visit"]>;
+export type Contact = NonNullable<components["schemas"]["contact"]>;
+export type Request = NonNullable<components["schemas"]["visitRequest"]>;
+export type RequestVisit = NonNullable<components["schemas"]["visit"]>;
+export type VisitorVisit = NonNullable<components["schemas"]["visit"]>;
 export interface GetContactsQuery {
   limit?: number;
   nextPageToken?: string;
