@@ -56,6 +56,18 @@ export interface GetMembershipsQuery {
   types?: "member" | "nonmember";
 }
 
+/** Request body for `sb.community.companies.create()`. */
+export type CreateCompanyBody = NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.community.memberships.create()`. */
+export type CreateMembershipBody = NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.community.companies.update()`. */
+export type UpdateCompanyBody = NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.community.memberships.update()`. */
+export type UpdateMembershipBody = NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"];
+
 export function createCommunity(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     companies: {
@@ -88,7 +100,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
         return unwrapProp(await client.GET("/community/companies/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "company", "GET /community/companies/v1/{id}");
       },
       /** Create a company */
-      async create(body: NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Company> {
+      async create(body: CreateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
         return unwrapProp(await client.POST("/community/companies/v1", { body, signal: options?.signal }), "company", "POST /community/companies/v1");
       },
       /**
@@ -96,7 +108,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Update a certain company.
        */
-      async update(id: string, body: NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Company> {
+      async update(id: string, body: UpdateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
         return unwrapProp(await client.PUT("/community/companies/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "company", "PUT /community/companies/v1/{id}");
       },
     },
@@ -134,7 +146,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Create a membership and send an email invitation to join if type is member.
        */
-      async create(body: NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Membership> {
+      async create(body: CreateMembershipBody, options?: SpacebringRequestOptions): Promise<Membership> {
         return unwrapProp(await client.POST("/community/memberships/v1", { body, signal: options?.signal }), "membership", "POST /community/memberships/v1");
       },
       /**
@@ -142,7 +154,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        *
        * Update a certain membership.
        */
-      async update(id: number, body: NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Membership> {
+      async update(id: number, body: UpdateMembershipBody, options?: SpacebringRequestOptions): Promise<Membership> {
         return unwrapProp(await client.PUT("/community/memberships/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "membership", "PUT /community/memberships/v1/{id}");
       },
       /**

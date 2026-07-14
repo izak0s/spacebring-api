@@ -32,6 +32,9 @@ export interface GetEventTicketsQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.events.create()`. */
+export type CreateEventBody = NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"];
+
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve events */
@@ -43,7 +46,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
       return unwrapProp(await client.GET("/events/v1/{id}", { params: { header: { "spacebring-network-id": defaults.networkId as string }, path: { id } }, signal: options?.signal }), "event", "GET /events/v1/{id}");
     },
     /** Create an event */
-    async create(body: NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Event> {
+    async create(body: CreateEventBody, options?: SpacebringRequestOptions): Promise<Event> {
       return unwrapProp(await client.POST("/events/v1", { body, signal: options?.signal }), "event", "POST /events/v1");
     },
     /** Delete an event */

@@ -70,6 +70,12 @@ export interface GetMoneyTransactionsQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.transactions.credits.create()`. */
+export type CreateCreditsTransactionBody = NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.transactions.dayPasses.create()`. */
+export type CreateDayPassesTransactionBody = NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"];
+
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     balances: {
@@ -112,7 +118,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a credits transaction.
        */
-      async create(body: NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<CreditTransaction> {
+      async create(body: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction> {
         return unwrapProp(await client.POST("/transactions/credits/v1", { body, signal: options?.signal }), "transaction", "POST /transactions/credits/v1");
       },
     },
@@ -142,7 +148,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a day passes transaction.
        */
-      async create(body: NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
+      async create(body: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
         return unwrapProp(await client.POST("/transactions/day_passes/v1", { body, signal: options?.signal }), "transaction", "POST /transactions/day_passes/v1");
       },
     },

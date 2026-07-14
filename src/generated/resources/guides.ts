@@ -17,6 +17,12 @@ export interface GetGuidesQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.guides.create()`. */
+export type CreateGuideBody = NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.guides.update()`. */
+export type PatchGuideBody = NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"];
+
 export function createGuides(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -52,7 +58,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Create a guide in an organization.
      */
-    async create(body: NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Guide> {
+    async create(body: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
       return unwrapProp(await client.POST("/guides/v1", { body, signal: options?.signal }), "guide", "POST /guides/v1");
     },
     /**
@@ -60,7 +66,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Update a guide. At least one guide property must be provided.
      */
-    async update(guideId: string, body: NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Guide> {
+    async update(guideId: string, body: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
       return unwrapProp(await client.PATCH("/guides/v1/{guideId}", { params: { path: { guideId } }, body, signal: options?.signal }), "guide", "PATCH /guides/v1/{guideId}");
     },
     /** Delete a guide */

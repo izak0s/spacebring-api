@@ -226,3 +226,52 @@ export function buildQueryTypes(
 
   return { queryTypesByOp, queryTypesByRoot };
 }
+
+// ---------------------------------------------------------------------------
+// Named request-body types
+// ---------------------------------------------------------------------------
+
+export interface BodyType {
+  name: string;
+  decl: string;
+}
+
+/**
+ * One named alias per operation with a request body, so method signatures read
+ * `body: CreateSubscriptionBody` instead of the `operations[...]["requestBody"]`
+ * indexed-access soup. Unlike query interfaces this stays an alias (not a
+ * rebuilt interface): request bodies are arbitrarily nested, so re-deriving
+ * them would duplicate openapi-typescript — the alias just names the schema
+ * type, and the facade body assigns into it so fidelity is typecheck-enforced.
+ */
+export function buildBodyTypes(
+  records: { analyzed: AnalyzedOp; name: string }[],
+  reservedNames: Set<string>,
+): { bodyTypesByOp: Map<string, BodyType>; bodyTypesByRoot: Map<string, BodyType[]> } {
+  const bodyTypesByOp = new Map<string, BodyType>();
+  const bodyTypesByRoot = new Map<string, BodyType[]>();
+
+  for (const { analyzed, name } of records) {
+    if (!analyzed.body) continue;
+    const opId = analyzed.op.operationId;
+    const typeName = `${upperFirst(opId)}Body`;
+    if (reservedNames.has(typeName)) {
+      console.error(`Body type ${typeName} clashes with an existing exported type.`);
+      process.exit(1);
+    }
+    const methodPath = ["sb", ...analyzed.namespace, name].join(".");
+    const bodyType: BodyType = {
+      name: typeName,
+      decl:
+        `/** Request body for \`${methodPath}()\`. */\n` +
+        `export type ${typeName} = NonNullable<operations["${opId}"]["requestBody"]>["content"]["application/json"];\n`,
+    };
+    bodyTypesByOp.set(opId, bodyType);
+    const root = analyzed.namespace[0];
+    const group = bodyTypesByRoot.get(root) ?? [];
+    group.push(bodyType);
+    bodyTypesByRoot.set(root, group);
+  }
+
+  return { bodyTypesByOp, bodyTypesByRoot };
+}

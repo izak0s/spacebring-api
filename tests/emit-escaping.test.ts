@@ -33,7 +33,7 @@ function analyzedOp(overrides: Partial<AnalyzedOp>): AnalyzedOp {
 
 describe("emit escaping", () => {
   it("escapes a malicious unwrapKey in the runtime unwrapProp argument", () => {
-    const [method] = emitMethod(analyzedOp({ unwrapKey: MALICIOUS }), "get", undefined, undefined);
+    const [method] = emitMethod(analyzedOp({ unwrapKey: MALICIOUS }), "get", undefined, undefined, undefined);
     expect(method.code).toContain(JSON.stringify(MALICIOUS));
     // The naive `"${value}"` sink would let the `");` sequence break out.
     expect(method.code).not.toContain(`"${MALICIOUS}"`);
@@ -46,6 +46,7 @@ describe("emit escaping", () => {
       "get",
       undefined,
       undefined,
+      undefined,
     );
     expect(method.code).toContain(JSON.stringify(MALICIOUS));
     expect(method.code).not.toContain(`"${MALICIOUS}"`);
@@ -53,14 +54,14 @@ describe("emit escaping", () => {
 
   it("escapes a malicious path in the client call and error label", () => {
     const path = `/things/v1", evil(), ("`;
-    const [method] = emitMethod(analyzedOp({ path }), "get", undefined, undefined);
+    const [method] = emitMethod(analyzedOp({ path }), "get", undefined, undefined, undefined);
     expect(method.code).toContain(JSON.stringify(path));
     expect(method.code).not.toContain(`("${path}"`);
   });
 
   it("escapes a malicious pagination itemsKey in the runtime paginate argument", () => {
     const pagination = { itemsKey: MALICIOUS, props: [{ key: MALICIOUS, optional: true }] };
-    const methods = emitMethod(analyzedOp({ pagination, unwrapKey: undefined }), "list", undefined, undefined);
+    const methods = emitMethod(analyzedOp({ pagination, unwrapKey: undefined }), "list", undefined, undefined, undefined);
     const iterate = methods.find((m) => m.usesPaginate);
     expect(iterate?.code).toContain(JSON.stringify(MALICIOUS));
     expect(iterate?.code).not.toContain(`"${MALICIOUS}"`);
@@ -74,6 +75,7 @@ describe("emit escaping", () => {
       emitMethod(
         analyzedOp({ path: "/things/v1/{x}", pathParams: [{ name: MALICIOUS, in: "path" }] as never }),
         "get",
+        undefined,
         undefined,
         undefined,
       ),

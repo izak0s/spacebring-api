@@ -17,6 +17,12 @@ export interface GetAltCurrenciesQuery {
   limit?: number;
 }
 
+/** Request body for `sb.altCurrencies.create()`. */
+export type CreateAltCurrencyBody = NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.altCurrencies.update()`. */
+export type UpdateAltCurrencyBody = NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"];
+
 export function createAltcurrencies(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -40,11 +46,11 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
       );
     },
     /** Create an alternative currency */
-    async create(body: NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<AltCurrency> {
+    async create(body: CreateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<AltCurrency> {
       return unwrapProp(await client.POST("/alt_currencies/v1", { body, signal: options?.signal }), "altCurrency", "POST /alt_currencies/v1");
     },
     /** Update an alternative currency */
-    async update(id: string, body: NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+    async update(id: string, body: UpdateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/alt_currencies/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /alt_currencies/v1/{id}");
     },
     /** Delete an alternative currency */

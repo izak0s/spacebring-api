@@ -29,6 +29,15 @@ export interface GetFeedPostsQuery {
   limit?: number;
 }
 
+/** Request body for `sb.feed.posts.create()`. */
+export type CreateFeedPostBody = NonNullable<operations["createFeedPost"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.feed.comments.create()`. */
+export type CreateFeedPostCommentBody = NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.feed.posts.update()`. */
+export type UpdateFeedPostBody = NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"];
+
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     comments: {
@@ -37,7 +46,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a feed post comment.
        */
-      async create(body: NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<FeedComment> {
+      async create(body: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<FeedComment> {
         return unwrapProp(await client.POST("/feed/comments/v1", { body, signal: options?.signal }), "comment", "POST /feed/comments/v1");
       },
       /** Delete a post comment */
@@ -87,7 +96,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a feed post.
        */
-      async create(body: NonNullable<operations["createFeedPost"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Post> {
+      async create(body: CreateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
         return unwrapProp(await client.POST("/feed/posts/v1", { body, signal: options?.signal }), "post", "POST /feed/posts/v1");
       },
       /**
@@ -95,7 +104,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Update a feed post.
        */
-      async update(id: string, body: NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Post> {
+      async update(id: string, body: UpdateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
         return unwrapProp(await client.PUT("/feed/posts/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "post", "PUT /feed/posts/v1/{id}");
       },
       /**

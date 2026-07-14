@@ -21,6 +21,12 @@ export interface GetPlansQuery {
   resourceRef?: string;
 }
 
+/** Request body for `sb.plans.create()`. */
+export type CreatePlanBody = NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.plans.update()`. */
+export type UpdatePlanBody = NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"];
+
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -52,7 +58,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
       return unwrapProp(await client.GET("/plans/v1/{planId}", { params: { path: { planId } }, signal: options?.signal }), "plan", "GET /plans/v1/{planId}");
     },
     /** Create a plan */
-    async create(body: NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Plan> {
+    async create(body: CreatePlanBody, options?: SpacebringRequestOptions): Promise<Plan> {
       return unwrapProp(await client.POST("/plans/v1", { body, signal: options?.signal }), "plan", "POST /plans/v1");
     },
     /**
@@ -60,7 +66,7 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      *
      * Update a certain plan.
      */
-    async update(planId: string, body: NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+    async update(planId: string, body: UpdatePlanBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/plans/v1/{planId}", { params: { path: { planId } }, body, signal: options?.signal }), "PATCH /plans/v1/{planId}");
     },
     /**

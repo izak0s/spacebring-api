@@ -80,7 +80,7 @@ const { invoice, payment } = await sb.billing.invoices.pay(invoiceId, {
 });
 ```
 
-Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Query parameters get named interfaces too (`GetBookingsQuery`, `GetInvoicesQuery`), with per-field docs from the spec and enum filters as literal unions. Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
+Entity types are exported by name — `import type { Booking, Invoice, Membership } from "@izak0s/spacebring-api"` — matching what the methods return (`get`/`create`/`update` resolve to the entity, `iterate()` yields it). Query parameters get named interfaces too (`GetBookingsQuery`, `GetInvoicesQuery`), with per-field docs from the spec and enum filters as literal unions, and request bodies get named types (`CreateBookingBody`, `UpdateInvoiceBody`). Lower-level helpers too: `SpacebringConfig`, `SpacebringResources`, and the raw spec types `paths` / `components` / `operations`.
 
 ### Data formats
 

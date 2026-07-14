@@ -38,6 +38,7 @@ export function emitMethod(
   name: string,
   entities: Map<string, Entity> | undefined,
   queryTypeName: string | undefined,
+  bodyTypeName: string | undefined,
 ): EmittedMethod[] {
   const { op, method, path, pathParams, queryParams, requiredNetworkHeader, body, pagination, unwrapKey } = analyzed;
   // Path params become TS identifiers (`id: string`, `path: { id }`) — an
@@ -55,7 +56,7 @@ export function emitMethod(
   const queryRequired = queryParams.some((p) => p.required);
   const opId = JSON.stringify(op.operationId);
   const queryType = queryTypeName ?? `operations[${opId}]["parameters"]["query"]`;
-  const bodyType = `NonNullable<operations[${opId}]["requestBody"]>["content"]["application/json"]`;
+  const bodyType = bodyTypeName ?? `NonNullable<operations[${opId}]["requestBody"]>["content"]["application/json"]`;
 
   const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
   if (body) args.push(`body${body.required ? "" : "?"}: ${bodyType}`);

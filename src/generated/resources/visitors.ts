@@ -56,6 +56,24 @@ export interface GetVisitsQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.visitors.visits.checkIn()`. */
+export type CheckInVisitBody = NonNullable<operations["checkInVisit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.visitors.visits.checkOut()`. */
+export type CheckOutVisitBody = NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.visitors.contacts.create()`. */
+export type CreateContactBody = NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.visitors.requests.create()`. */
+export type CreateRequestBody = NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.visitors.visits.create()`. */
+export type CreateVisitBody = NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.visitors.visits.update()`. */
+export type UpdateVisitBody = NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"];
+
 export function createVisitors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     contacts: {
@@ -76,7 +94,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         return unwrapProp(await client.GET("/visitors/contacts/v1/{contactId}", { params: { path: { contactId } }, signal: options?.signal }), "contact", "GET /visitors/contacts/v1/{contactId}");
       },
       /** Create a contact */
-      async create(body: NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Contact> {
+      async create(body: CreateContactBody, options?: SpacebringRequestOptions): Promise<Contact> {
         return unwrapProp(await client.POST("/visitors/contacts/v1", { body, signal: options?.signal }), "contact", "POST /visitors/contacts/v1");
       },
     },
@@ -98,7 +116,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         return unwrapProp(await client.GET("/visitors/requests/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "request", "GET /visitors/requests/v1/{id}");
       },
       /** Create a request */
-      async create(body: NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Request> {
+      async create(body: CreateRequestBody, options?: SpacebringRequestOptions): Promise<Request> {
         return unwrapProp(await client.POST("/visitors/requests/v1", { body, signal: options?.signal }), "request", "POST /visitors/requests/v1");
       },
       /** Approve a request */
@@ -132,7 +150,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         return unwrapProp(await client.GET("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "visit", "GET /visitors/visits/v1/{id}");
       },
       /** Create a visit */
-      async create(body: NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async create(body: CreateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1");
       },
       /**
@@ -140,7 +158,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Update a visit by id.
        */
-      async update(id: string, body: NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async update(id: string, body: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
         return unwrapProp(await client.PUT("/visitors/visits/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "visit", "PUT /visitors/visits/v1/{id}");
       },
       /**
@@ -152,11 +170,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         return unwrap(await client.DELETE("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /visitors/visits/v1/{id}");
       },
       /** Check in a visit */
-      async checkIn(body: NonNullable<operations["checkInVisit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async checkIn(body: CheckInVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkin", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1/checkin");
       },
       /** Check out a visit */
-      async checkOut(body: NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async checkOut(body: CheckOutVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkout", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1/checkout");
       },
     },

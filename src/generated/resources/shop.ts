@@ -63,6 +63,18 @@ export interface GetShopCategoriesQuery {
   locationRef: string;
 }
 
+/** Request body for `sb.shop.products.create()`. */
+export type CreateProductBody = NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.shop.categories.create()`. */
+export type CreateShopCategoryBody = NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.shop.products.update()`. */
+export type UpdateProductBody = NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.shop.categories.update()`. */
+export type UpdateShopCategoryBody = NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"];
+
 export function createShop(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     categories: {
@@ -87,7 +99,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a shop category.
        */
-      async create(body: NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<ShopCategory> {
+      async create(body: CreateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
         return unwrapProp(await client.POST("/shop/categories/v1", { body, signal: options?.signal }), "category", "POST /shop/categories/v1");
       },
       /**
@@ -95,7 +107,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Update a shop category.
        */
-      async update(categoryId: string, body: NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<ShopCategory> {
+      async update(categoryId: string, body: UpdateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
         return unwrapProp(await client.PUT("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, body, signal: options?.signal }), "category", "PUT /shop/categories/v1/{categoryId}");
       },
       /**
@@ -171,7 +183,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a product in shop.
        */
-      async create(body: NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Product> {
+      async create(body: CreateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
         return unwrapProp(await client.POST("/shop/products/v1", { body, signal: options?.signal }), "product", "POST /shop/products/v1");
       },
       /**
@@ -179,7 +191,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Update a certain product.
        */
-      async update(productId: string, body: NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Product> {
+      async update(productId: string, body: UpdateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
         return unwrapProp(await client.PUT("/shop/products/v1/{productId}", { params: { path: { productId } }, body, signal: options?.signal }), "product", "PUT /shop/products/v1/{productId}");
       },
       /**

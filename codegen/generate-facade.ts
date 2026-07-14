@@ -23,6 +23,7 @@ import { join } from "node:path";
 import { type AnalyzedOp, analyze, methodName } from "./facade/analyze.js";
 import { emitMethod, successJsonType } from "./facade/emit.js";
 import {
+  buildBodyTypes,
   buildQueryTypes,
   type Entity,
   type EntityCandidate,
@@ -99,10 +100,19 @@ const allEntityNames = new Set(
   [...entitiesByNode.values()].flatMap((entities) => [...entities.values()].map((entity) => entity.name)),
 );
 const { queryTypesByOp, queryTypesByRoot } = buildQueryTypes(records, allEntityNames);
+const reservedNames = new Set([...allEntityNames, ...[...queryTypesByOp.values()].map((q) => q.name)]);
+const { bodyTypesByOp, bodyTypesByRoot } = buildBodyTypes(records, reservedNames);
 
 // Pass 2: emit methods with entity aliases resolved.
 for (const { analyzed, name, node } of records) {
-  for (const emitted of emitMethod(analyzed, name, entitiesByNode.get(node), queryTypesByOp.get(analyzed.op.operationId)?.name)) {
+  const opId = analyzed.op.operationId;
+  for (const emitted of emitMethod(
+    analyzed,
+    name,
+    entitiesByNode.get(node),
+    queryTypesByOp.get(opId)?.name,
+    bodyTypesByOp.get(opId)?.name,
+  )) {
     const clash = node.methods.find((m) => m.name === emitted.name);
     if (clash) {
       console.error(`Name clash in ${analyzed.namespace.join(".")}: ${emitted.name} (${analyzed.op.operationId})`);
@@ -147,9 +157,14 @@ for (const rootName of rootNames) {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((query) => query.decl)
     .join("\n");
+  const bodyDefs = (bodyTypesByRoot.get(rootName) ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((bodyType) => bodyType.decl)
+    .join("\n");
   const body =
     (entityDefs ? entityDefs + "\n" : "") +
     (queryDefs ? queryDefs + "\n" : "") +
+    (bodyDefs ? bodyDefs + "\n" : "") +
     `export function ${factory}(client: Client<paths>, defaults: SpacebringDefaults) {\n` +
     `  return {\n` +
     renderNode(node, "    ") +
@@ -183,8 +198,8 @@ const indexSource =
   `export type SpacebringResources = ReturnType<typeof createResources>;\n`;
 writeFileSync(join(OUT_DIR, "index.ts"), indexSource);
 
-// Named entity aliases and query interfaces re-exported for consumers
-// (import type { Booking, GetBookingsQuery } ...).
+// Named entity aliases, query interfaces, and request-body types re-exported
+// for consumers (import type { Booking, GetBookingsQuery, CreateBookingBody } ...).
 const entitiesSource =
   HEADER +
   rootNames
@@ -192,6 +207,7 @@ const entitiesSource =
       const names = [
         ...(entitiesByRoot.get(name) ?? []).map((entity) => entity.name),
         ...(queryTypesByRoot.get(name) ?? []).map((query) => query.name),
+        ...(bodyTypesByRoot.get(name) ?? []).map((bodyType) => bodyType.name),
       ]
         .sort()
         .join(", ");

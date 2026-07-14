@@ -30,6 +30,15 @@ export interface GetContractsQuery {
   status?: string;
 }
 
+/** Request body for `sb.contracts.create()`. */
+export type CreateContractBody = NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.contracts.issue()`. */
+export type IssueContractBody = NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.contracts.terminate()`. */
+export type TerminateContractBody = NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"];
+
 export function createContracts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -57,7 +66,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       return unwrapProp(await client.GET("/contracts/v1/{contractId}", { params: { path: { contractId } }, signal: options?.signal }), "contract", "GET /contracts/v1/{contractId}");
     },
     /** Create a contract */
-    async create(body: NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Contract> {
+    async create(body: CreateContractBody, options?: SpacebringRequestOptions): Promise<Contract> {
       return unwrapProp(await client.POST("/contracts/v1", { body, signal: options?.signal }), "contract", "POST /contracts/v1");
     },
     /** Delete a contract */
@@ -65,11 +74,11 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       return unwrap(await client.DELETE("/contracts/v1/{contractId}", { params: { path: { contractId } }, signal: options?.signal }), "DELETE /contracts/v1/{contractId}");
     },
     /** Issue a contract */
-    async issue(contractId: string, body: NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Contract> {
+    async issue(contractId: string, body: IssueContractBody, options?: SpacebringRequestOptions): Promise<Contract> {
       return unwrapProp(await client.POST("/contracts/v1/{contractId}/issue", { params: { path: { contractId } }, body, signal: options?.signal }), "contract", "POST /contracts/v1/{contractId}/issue");
     },
     /** Terminate a contract */
-    async terminate(contractId: string, body: NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+    async terminate(contractId: string, body: TerminateContractBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/contracts/v1/{contractId}/terminate", { params: { path: { contractId } }, body, signal: options?.signal }), "PATCH /contracts/v1/{contractId}/terminate");
     },
   };

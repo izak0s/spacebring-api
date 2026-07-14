@@ -44,6 +44,15 @@ export interface GetResourcesQuery {
   limit?: number;
 }
 
+/** Request body for `sb.resources.bookings.create()`. */
+export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.resources.create()`. */
+export type CreateResourceBody = NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.resources.update()`. */
+export type PatchResourceBody = NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"];
+
 export function createResources(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -79,7 +88,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Create a new resource in a location. The request body must match the schema exactly—unknown properties are rejected.
      */
-    async create(body: NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Resource> {
+    async create(body: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource> {
       return unwrapProp(await client.POST("/resources/v1", { body, signal: options?.signal }), "resource", "POST /resources/v1");
     },
     /**
@@ -87,7 +96,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Patch a certain resource.
      */
-    async update(id: string, body: NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+    async update(id: string, body: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /resources/v1/{id}");
     },
     bookings: {
@@ -116,7 +125,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
         return unwrapProp(await client.GET("/resources/bookings/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "booking", "GET /resources/bookings/v1/{id}");
       },
       /** Create a booking */
-      async create(body: NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Booking> {
+      async create(body: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
         return unwrapProp(await client.POST("/resources/bookings/v1", { body, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
       },
       /** Delete a booking */

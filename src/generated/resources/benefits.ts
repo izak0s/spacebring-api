@@ -55,6 +55,21 @@ export interface GetBenefitsQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.benefits.applications.create()`. */
+export type ApplyBenefitBody = NonNullable<operations["applyBenefit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.benefits.create()`. */
+export type CreateBenefitBody = NonNullable<operations["createBenefit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.benefits.categories.create()`. */
+export type CreateBenefitCategoryBody = NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.benefits.update()`. */
+export type UpdateBenefitBody = NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.benefits.categories.update()`. */
+export type UpdateBenefitCategoryBody = NonNullable<operations["updateBenefitCategory"]["requestBody"]>["content"]["application/json"];
+
 export function createBenefits(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -82,11 +97,11 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
       return unwrapProp(await client.GET("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, signal: options?.signal }), "benefit", "GET /benefits/v1/{benefitId}");
     },
     /** Create a benefit */
-    async create(body: NonNullable<operations["createBenefit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<operations["createBenefit"]["responses"][201]["content"]["application/json"]> {
+    async create(body: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<operations["createBenefit"]["responses"][201]["content"]["application/json"]> {
       return unwrap(await client.POST("/benefits/v1", { body, signal: options?.signal }), "POST /benefits/v1");
     },
     /** Update a benefit */
-    async update(benefitId: string, body: NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Benefit> {
+    async update(benefitId: string, body: UpdateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit> {
       return unwrapProp(await client.PUT("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, body, signal: options?.signal }), "benefit", "PUT /benefits/v1/{benefitId}");
     },
     /** Delete a benefit */
@@ -123,7 +138,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
         return unwrapProp(await client.GET("/benefits/applications/v1/{benefitApplicationId}", { params: { path: { benefitApplicationId } }, signal: options?.signal }), "application", "GET /benefits/applications/v1/{benefitApplicationId}");
       },
       /** Apply for a benefit */
-      async create(body: NonNullable<operations["applyBenefit"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Application> {
+      async create(body: ApplyBenefitBody, options?: SpacebringRequestOptions): Promise<Application> {
         return unwrapProp(await client.POST("/benefits/applications/v1", { body, signal: options?.signal }), "application", "POST /benefits/applications/v1");
       },
     },
@@ -149,7 +164,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Create a benefit category.
        */
-      async create(body: NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<BenefitCategory> {
+      async create(body: CreateBenefitCategoryBody, options?: SpacebringRequestOptions): Promise<BenefitCategory> {
         return unwrapProp(await client.POST("/benefits/categories/v1", { body, signal: options?.signal }), "category", "POST /benefits/categories/v1");
       },
       /**
@@ -157,7 +172,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Update a benefit category.
        */
-      async update(categoryId: string, body: NonNullable<operations["updateBenefitCategory"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<BenefitCategory> {
+      async update(categoryId: string, body: UpdateBenefitCategoryBody, options?: SpacebringRequestOptions): Promise<BenefitCategory> {
         return unwrapProp(await client.PUT("/benefits/categories/v1/{categoryId}", { params: { path: { categoryId } }, body, signal: options?.signal }), "category", "PUT /benefits/categories/v1/{categoryId}");
       },
       /**

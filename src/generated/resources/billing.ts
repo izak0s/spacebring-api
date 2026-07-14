@@ -83,6 +83,33 @@ export interface GetUpcomingInvoiceQuery {
   subscriptionRef?: string;
 }
 
+/** Request body for `sb.billing.creditNotes.create()`. */
+export type CreateCreditNoteBody = NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.create()`. */
+export type CreateInvoiceBody = NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.items.create()`. */
+export type CreateInvoiceItemBody = NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.issue()`. */
+export type IssueInvoiceBody = NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.pay()`. */
+export type PayInvoiceBody = NonNullable<operations["payInvoice"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.creditNotes.preview()`. */
+export type PreviewCreditNoteBody = NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.creditNotes.update()`. */
+export type UpdateCreditNoteBody = NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.update()`. */
+export type UpdateInvoiceBody = NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.billing.invoices.items.update()`. */
+export type UpdateInvoiceItemBody = NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"];
+
 export function createBilling(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     creditNotes: {
@@ -119,11 +146,11 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create a credit note for an invoice.
        */
-      async create(body: NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<CreditNote> {
+      async create(body: CreateCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
         return unwrapProp(await client.POST("/billing/credit_notes/v1", { body, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1");
       },
       /** Update a credit note */
-      async update(id: string, body: NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+      async update(id: string, body: UpdateCreditNoteBody, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/credit_notes/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /billing/credit_notes/v1/{id}");
       },
       /**
@@ -131,7 +158,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Preview a credit note for an invoice without creating it.
        */
-      async preview(body: NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<CreditNote> {
+      async preview(body: PreviewCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
         return unwrapProp(await client.POST("/billing/credit_notes/v1/preview", { body, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1/preview");
       },
     },
@@ -169,7 +196,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create an invoice for a member or a company.
        */
-      async create(body: NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<Invoice> {
+      async create(body: CreateInvoiceBody, options?: SpacebringRequestOptions): Promise<Invoice> {
         return unwrapProp(await client.POST("/billing/invoices/v1", { body, signal: options?.signal }), "invoice", "POST /billing/invoices/v1");
       },
       /**
@@ -177,7 +204,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Update a draft invoice.
        */
-      async update(invoiceId: string, body: NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+      async update(invoiceId: string, body: UpdateInvoiceBody, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, body, signal: options?.signal }), "PATCH /billing/invoices/v1/{invoiceId}");
       },
       /**
@@ -225,7 +252,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Issue (finalize) a draft invoice, making it ready for payment.
        */
-      async issue(invoiceId: string, body?: NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]> {
+      async issue(invoiceId: string, body?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/issue", { params: { path: { invoiceId } }, body, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/issue");
       },
       /**
@@ -233,7 +260,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Mark an invoice as paid by `External Payment`.
        */
-      async pay(invoiceId: string, body: NonNullable<operations["payInvoice"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<operations["payInvoice"]["responses"][200]["content"]["application/json"]> {
+      async pay(invoiceId: string, body: PayInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["payInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/pay", { params: { path: { invoiceId } }, body, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/pay");
       },
       /**
@@ -266,7 +293,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Create an item in an invoice.
          */
-        async create(body: NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<InvoiceItem> {
+        async create(body: CreateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<InvoiceItem> {
           return unwrapProp(await client.POST("/billing/invoices/v1/items", { body, signal: options?.signal }), "invoiceItem", "POST /billing/invoices/v1/items");
         },
         /**
@@ -274,7 +301,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Update an invoice item on a draft invoice.
          */
-        async update(id: string, body: NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"], options?: SpacebringRequestOptions): Promise<undefined> {
+        async update(id: string, body: UpdateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<undefined> {
           return unwrap(await client.PATCH("/billing/invoices/v1/items/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /billing/invoices/v1/items/{id}");
         },
         /**
