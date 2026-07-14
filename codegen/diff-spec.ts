@@ -11,6 +11,8 @@
  *   responses)
  * - Schemas: component schemas added/removed, and per-schema property-level
  *   additions/removals/changes
+ * - Components: other components ($ref'd requestBodies/parameters/responses/…)
+ *   added/removed/changed — catches shared-object edits an operation's $ref hides
  *
  * Output is capped per section so the PR body stays skimmable.
  */
@@ -268,9 +270,7 @@ if (schemaLines.length > 0) sections.push("### Schemas\n" + capped(schemaLines).
 // requestBody may be `{ $ref: "#/components/requestBodies/X" }`, so a change to
 // X's content is invisible in the Operations diff and must be caught here.
 
-const componentGroups = [
-  ...new Set([...Object.keys(oldSpec.components ?? {}), ...Object.keys(newSpec.components ?? {})]),
-]
+const componentGroups = [...new Set([...Object.keys(oldSpec.components ?? {}), ...Object.keys(newSpec.components ?? {})])]
   .filter((group) => group !== "schemas")
   .sort();
 const componentLines: string[] = [];
