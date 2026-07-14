@@ -24,15 +24,44 @@ if (!oldSpecPath || !newSpecPath) {
   process.exit(1);
 }
 
+interface Operation {
+  summary?: string;
+  description?: string;
+  deprecated?: boolean;
+  parameters?: unknown;
+  requestBody?: unknown;
+  responses?: unknown;
+}
+
 interface Spec {
-  paths?: Record<string, Record<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }>>;
-  components?: { schemas?: Record<string, unknown> };
+  paths?: Record<string, Record<string, Operation>>;
+  components?: Record<string, Record<string, unknown> | undefined>;
 }
 
 const oldSpec: Spec = JSON.parse(readFileSync(oldSpecPath, "utf8"));
 const newSpec: Spec = JSON.parse(readFileSync(newSpecPath, "utf8"));
 
-const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+/**
+ * Recursively sorts object keys (arrays keep their order) so equality ignores
+ * key ordering. Without this a spec that only reshuffled an object's keys reads
+ * as a change: JSON.stringify differs, yet every leaf is identical, so the
+ * per-property diff comes up empty and we'd emit a phantom "🟡 changed" line
+ * with no detail. Array order is preserved — it can be meaningful, and enum /
+ * required reordering is reported explicitly elsewhere.
+ */
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value !== null && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+      out[key] = canonical((value as Record<string, unknown>)[key]);
+    }
+    return out;
+  }
+  return value;
+}
+
+const same = (a: unknown, b: unknown): boolean => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 
 function capped(lines: string[]): string[] {
   if (lines.length <= MAX_LINES_PER_SECTION) return lines;
@@ -71,10 +100,8 @@ if (oldSnapPath && newSnapPath) {
 
 const HTTP_METHODS = ["get", "put", "post", "delete", "patch"];
 
-function operations(
-  spec: Spec,
-): Map<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }> {
-  const map = new Map<string, { summary?: string; parameters?: unknown; requestBody?: unknown; responses?: unknown }>();
+function operations(spec: Spec): Map<string, Operation> {
+  const map = new Map<string, Operation>();
   for (const [path, methods] of Object.entries(spec.paths ?? {})) {
     for (const method of HTTP_METHODS) {
       if (methods[method]) map.set(`${method.toUpperCase()} ${path}`, methods[method]);
@@ -129,11 +156,17 @@ for (const [key, op] of [...newOps].sort(([a], [b]) => a.localeCompare(b))) {
     opLines.push(`- 🟢 \`${key}\` added${op.summary ? ` — ${op.summary}` : ""}`);
   } else if (!same(before, op)) {
     const parts = [
+      !same(before.summary, op.summary) && "summary",
+      !same(before.description, op.description) && "description",
+      !same(before.deprecated, op.deprecated) && "deprecated",
       !same(before.parameters, op.parameters) && parameterDetail(before.parameters, op.parameters),
       !same(before.requestBody, op.requestBody) && "request body",
       !same(before.responses, op.responses) && "responses",
     ].filter(Boolean);
-    opLines.push(`- 🟡 \`${key}\` changed${parts.length ? ` (${parts.join("; ")})` : ""}`);
+    // Only unnamed metadata (operationId, tags, …) differs: skip rather than
+    // emit a reasonless "changed" line — mirrors the schema section's guard.
+    if (parts.length === 0) continue;
+    opLines.push(`- 🟡 \`${key}\` changed (${parts.join("; ")})`);
   }
 }
 if (opLines.length > 0) sections.push("### Operations\n" + capped(opLines).join("\n"));
@@ -184,34 +217,72 @@ function diffPaths(
   }
 }
 
-const oldSchemas = oldSpec.components?.schemas ?? {};
-const newSchemas = newSpec.components?.schemas ?? {};
-const schemaLines: string[] = [];
+/**
+ * Diff a group of named members (component schemas, requestBodies, parameters,
+ * …): a 🟢/🔴 line per added/removed member, and a 🟡 line with per-leaf
+ * +/−/~ detail per changed one. `label` prefixes each member name so a shared
+ * requestBody reads `requestBodies.createInvoice`.
+ */
+// Strips the JSON-Schema boilerplate that bloats a leaf path so the diff reads
+// as `transaction.description`, not `content.application/json.schema.properties
+// .transaction.description`. `.items` is kept (array nesting is meaningful).
+function tidyPath(path: string): string {
+  return path
+    .replace(/^content\.application\/json\.schema\./, "")
+    .replace(/(^|\.)properties\./g, "$1")
+    .replace(/^\.+|\.+$/g, "");
+}
 
-for (const name of Object.keys(oldSchemas).sort()) {
-  if (!(name in newSchemas)) schemaLines.push(`- 🔴 \`${name}\` removed`);
-}
-for (const name of Object.keys(newSchemas).sort()) {
-  if (!(name in oldSchemas)) {
-    schemaLines.push(`- 🟢 \`${name}\` added`);
-  } else if (!same(oldSchemas[name], newSchemas[name])) {
-    const out = { added: [] as string[], removed: [] as string[], changed: [] as string[] };
-    diffPaths(oldSchemas[name], newSchemas[name], "", out);
-    const parts = [
-      ...out.added.map((p) => `+\`${p}\``),
-      ...out.removed.map((p) => `−\`${p}\``),
-      ...out.changed.map((p) => `~\`${p}\``),
-    ];
-    const detail = parts.length > 8 ? [...parts.slice(0, 8), `…${parts.length - 8} more`] : parts;
-    schemaLines.push(`- 🟡 \`${name}\`: ${detail.join(" ")}`);
+function memberLines(before: Record<string, unknown>, after: Record<string, unknown>, label = ""): string[] {
+  const prefix = label ? `${label}.` : "";
+  const lines: string[] = [];
+  for (const name of Object.keys(before).sort()) {
+    if (!(name in after)) lines.push(`- 🔴 \`${prefix}${name}\` removed`);
   }
+  for (const name of Object.keys(after).sort()) {
+    if (!(name in before)) {
+      lines.push(`- 🟢 \`${prefix}${name}\` added`);
+    } else if (!same(before[name], after[name])) {
+      const out = { added: [] as string[], removed: [] as string[], changed: [] as string[] };
+      diffPaths(before[name], after[name], "", out);
+      const parts = [
+        ...out.added.map((p) => `+\`${tidyPath(p)}\``),
+        ...out.removed.map((p) => `−\`${tidyPath(p)}\``),
+        ...out.changed.map((p) => `~\`${tidyPath(p)}\``),
+      ];
+      // No leaf actually differs (only stringify-visible noise): don't emit a
+      // detail-less change line.
+      if (parts.length === 0) continue;
+      const detail = parts.length > 8 ? [...parts.slice(0, 8), `…${parts.length - 8} more`] : parts;
+      lines.push(`- 🟡 \`${prefix}${name}\`: ${detail.join(" ")}`);
+    }
+  }
+  return lines;
 }
+
+const schemaLines = memberLines(oldSpec.components?.schemas ?? {}, newSpec.components?.schemas ?? {});
 if (schemaLines.length > 0) sections.push("### Schemas\n" + capped(schemaLines).join("\n"));
+
+// --- Other components (requestBodies, parameters, responses, …) --------------
+// Shared component objects referenced by $ref from operations: an operation's
+// requestBody may be `{ $ref: "#/components/requestBodies/X" }`, so a change to
+// X's content is invisible in the Operations diff and must be caught here.
+
+const componentGroups = [
+  ...new Set([...Object.keys(oldSpec.components ?? {}), ...Object.keys(newSpec.components ?? {})]),
+]
+  .filter((group) => group !== "schemas")
+  .sort();
+const componentLines: string[] = [];
+for (const group of componentGroups) {
+  componentLines.push(...memberLines(oldSpec.components?.[group] ?? {}, newSpec.components?.[group] ?? {}, group));
+}
+if (componentLines.length > 0) sections.push("### Components\n" + capped(componentLines).join("\n"));
 
 // -----------------------------------------------------------------------------
 
 if (sections.length === 0) {
-  console.log("_Spec changed only in ways not covered by this summary (descriptions, metadata, or non-schema components)._");
+  console.log("_No operation, schema, component, or method changes — only key reordering or top-level metadata (info, tags)._");
 } else {
   console.log(sections.join("\n\n"));
 }
