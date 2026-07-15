@@ -83,6 +83,36 @@ export interface GetUpcomingInvoiceQuery {
   subscriptionRef?: string;
 }
 
+/** Query parameters for `sb.billing.invoices.items.list()`. */
+export interface ListInvoiceItemsQuery {
+  /** Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
+  /** UUID of the customer whose invoices to list. */
+  customerRef?: string;
+  /** Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
+  "issueDate[gte]"?: string;
+  /** Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range. */
+  "issueDate[lte]"?: string;
+  /** Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location whose invoices to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
+
+  Supported values:
+  - **draft** — created but not sent
+  - **issued** — sent to the customer but unpaid
+  - **paid** — fully paid
+  - **voided** — cancelled and no longer valid */
+  status?: string;
+  /** Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
+  type?: string;
+}
+
 /** Request body for `sb.billing.creditNotes.create()`. */
 export type CreateCreditNoteBody = NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"];
 
@@ -280,6 +310,26 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}/void", { params: { path: { invoiceId } }, signal: options?.signal }), "PATCH /billing/invoices/v1/{invoiceId}/void");
       },
       items: {
+        /**
+         * List invoice items
+         *
+         * List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice.
+         */
+        async list(query?: ListInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<{ invoiceItems: InvoiceItem[]; nextPageToken?: string; searchQueryNext?: string }> {
+          return unwrap(await client.GET("/billing/invoices/v1/items", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1/items");
+        },
+        /**
+         * List invoice items — iterates every item across all pages.
+         *
+         * List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice.
+         */
+        iterate(query?: Omit<ListInvoiceItemsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<InvoiceItem, void, undefined> {
+          return paginate(
+            async (nextPageToken: string | undefined) =>
+              unwrap(await client.GET("/billing/invoices/v1/items", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /billing/invoices/v1/items"),
+            "invoiceItems",
+          );
+        },
         /**
          * Retrieve an invoice item
          *
