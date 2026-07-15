@@ -2,7 +2,7 @@
 // Regenerate with `npm run generate:facade`.
 export type { AltCurrency, CreateAltCurrencyBody, GetAltCurrenciesQuery, UpdateAltCurrencyBody } from "./resources/altCurrencies.js";
 export type { Application, ApplyBenefitBody, Benefit, BenefitCategory, CreateBenefitBody, CreateBenefitCategoryBody, GetBenefitApplicationsQuery, GetBenefitCategoriesQuery, GetBenefitsQuery, UpdateBenefitBody, UpdateBenefitCategoryBody } from "./resources/benefits.js";
-export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, CreditNote, GetCreditNotesQuery, GetInvoicesQuery, GetUpcomingInvoiceItemsQuery, GetUpcomingInvoiceQuery, Invoice, InvoiceItem, IssueInvoiceBody, PayInvoiceBody, PreviewCreditNoteBody, UpdateCreditNoteBody, UpdateInvoiceBody, UpdateInvoiceItemBody } from "./resources/billing.js";
+export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, CreditNote, GetCreditNotesQuery, GetInvoicesQuery, GetUpcomingInvoiceItemsQuery, GetUpcomingInvoiceQuery, Invoice, InvoiceItem, IssueInvoiceBody, ListInvoiceItemsQuery, PayInvoiceBody, PreviewCreditNoteBody, UpdateCreditNoteBody, UpdateInvoiceBody, UpdateInvoiceItemBody } from "./resources/billing.js";
 export type { Company, CreateCompanyBody, CreateMembershipBody, GetCompaniesQuery, GetMembershipsDeletedQuery, GetMembershipsQuery, Membership, UpdateCompanyBody, UpdateMembershipBody } from "./resources/community.js";
 export type { Contract, CreateContractBody, GetContractsQuery, IssueContractBody, TerminateContractBody } from "./resources/contracts.js";
 export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, GetDiscountRedemptionsQuery, GetPromocodesQuery, Promocode, Redemption, UpdateCouponBody } from "./resources/discounts.js";

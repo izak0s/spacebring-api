@@ -2043,6 +2043,153 @@
       }
     },
     "/billing/invoices/v1/items": {
+      "get": {
+        "tags": [
+          "Billing"
+        ],
+        "summary": "List invoice items",
+        "description": "List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "operationId": "listInvoiceItems",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "customerRef",
+            "required": false,
+            "description": "UUID of the customer whose invoices to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "issueDate[gte]",
+            "required": false,
+            "description": "Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "issueDate[lte]",
+            "required": false,
+            "description": "Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": false,
+            "description": "UUID of the location whose invoices to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "description": "Filter by invoice status. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent to the customer but unpaid\n- **paid** — fully paid\n- **voided** — cancelled and no longer valid",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Filter by invoice item type. Comma-separated values, e.g. `custom,order`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices.readonly",
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getInvoiceItems"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Billing"
@@ -16429,6 +16576,472 @@
           "transactionRef"
         ]
       },
+      "getInvoiceItems": {
+        "type": "object",
+        "properties": {
+          "invoiceItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "deprecated": true,
+                  "description": "Deprecated. Use totalAmount instead."
+                },
+                "baseAmounts": {
+                  "type": "object",
+                  "properties": {
+                    "currencyCode": {
+                      "type": "string",
+                      "description": "ISO currency code."
+                    },
+                    "discountedAmount": {
+                      "type": "number",
+                      "description": "Discount deduction in major units."
+                    },
+                    "tax": {
+                      "description": "Tax details.",
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number",
+                          "description": "Tax amount in major units."
+                        },
+                        "inclusive": {
+                          "type": "boolean",
+                          "description": "Whether tax is included in the price."
+                        },
+                        "rate": {
+                          "type": "number",
+                          "description": "Tax rate as a decimal."
+                        },
+                        "taxableAmount": {
+                          "type": "number",
+                          "description": "Amount subject to tax in major units."
+                        }
+                      },
+                      "required": [
+                        "amount",
+                        "inclusive",
+                        "rate",
+                        "taxableAmount"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "totalAmount": {
+                      "type": "number",
+                      "description": "Total in major units."
+                    },
+                    "totalExcludingTaxAmount": {
+                      "type": "number",
+                      "description": "Total excluding tax in major units."
+                    },
+                    "unitAmount": {
+                      "type": "number",
+                      "description": "Unit price in major units."
+                    },
+                    "unitExcludingTaxAmount": {
+                      "type": "number",
+                      "description": "Unit price excluding tax in major units."
+                    }
+                  },
+                  "required": [
+                    "currencyCode",
+                    "discountedAmount",
+                    "totalAmount",
+                    "totalExcludingTaxAmount",
+                    "unitAmount",
+                    "unitExcludingTaxAmount"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Amounts in the original base currency, before any alt-currency conversion."
+                },
+                "booking": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use product.bookingRef instead.",
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": {}
+                },
+                "companyRef": {
+                  "description": "ID of the associated company.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the item was created."
+                },
+                "creditPackage": {
+                  "deprecated": true,
+                  "description": "Deprecated.",
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": {}
+                },
+                "currencyCode": {
+                  "type": "string",
+                  "description": "ISO currency code. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "deleteDate": {
+                  "description": "ISO timestamp of when the item was deleted.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "description": {
+                  "type": "string",
+                  "deprecated": true,
+                  "description": "Deprecated. Use product.title instead."
+                },
+                "discountedAmount": {
+                  "type": "number",
+                  "description": "Discount deduction in major units. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "discounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "coupon": {
+                        "type": "object",
+                        "properties": {
+                          "amountOff": {
+                            "description": "Fixed discount amount in major units.",
+                            "type": "number"
+                          },
+                          "currencyCode": {
+                            "description": "Currency code for amountOff.",
+                            "type": "string"
+                          },
+                          "duration": {
+                            "description": "Discount duration type.",
+                            "type": "string"
+                          },
+                          "durationInMonths": {
+                            "description": "Number of months the discount applies.",
+                            "type": "number"
+                          },
+                          "id": {
+                            "description": "Coupon ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "percentOff": {
+                            "description": "Percentage discount.",
+                            "type": "number"
+                          },
+                          "productTypes": {
+                            "description": "Product types this coupon applies to.",
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "type": {
+                            "description": "Coupon type.",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "description": "Coupon applied to this item."
+                      },
+                      "promocode": {
+                        "description": "Promocode applied to this item.",
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "description": "Promocode string."
+                          },
+                          "expiration": {
+                            "description": "Promocode expiration date.",
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Promocode ID."
+                          },
+                          "limitByFirstPurchase": {
+                            "description": "Whether limited to first purchase only.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "subscriptionId": {
+                        "description": "ID of the subscription this discount is associated with.",
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "required": [
+                      "coupon"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Applied discounts."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the invoice item."
+                },
+                "invoiceRef": {
+                  "description": "ID of the invoice this item belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the organization (location)."
+                },
+                "membershipRef": {
+                  "description": "ID of the associated membership.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "membershipRefCreatedBy": {
+                  "description": "ID of the membership that created this item.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "netAmount": {
+                  "type": "number",
+                  "deprecated": true,
+                  "description": "Deprecated. Use totalExcludingTaxAmount instead."
+                },
+                "netUnitAmount": {
+                  "type": "number",
+                  "deprecated": true,
+                  "description": "Deprecated. Use unitExcludingTaxAmount instead."
+                },
+                "orderItem": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use product.orderRef instead.",
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": {}
+                },
+                "period": {
+                  "description": "Billing period for subscription items.",
+                  "type": "object",
+                  "properties": {
+                    "endDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Subscription period end date."
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Subscription period start date."
+                    }
+                  },
+                  "required": [
+                    "endDate",
+                    "startDate"
+                  ],
+                  "additionalProperties": false
+                },
+                "plan": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use period instead.",
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": {}
+                },
+                "product": {
+                  "type": "object",
+                  "properties": {
+                    "bookingRef": {
+                      "description": "ID of the associated booking.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "eventTicketRef": {
+                      "description": "ID of the associated event ticket.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "optionRef": {
+                      "description": "ID of the product option.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "orderRef": {
+                      "description": "ID of the associated order.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Display title of the product."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "creditPackage",
+                        "custom",
+                        "booking",
+                        "eventTicket",
+                        "subscription",
+                        "order"
+                      ],
+                      "description": "Type of the invoice item."
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Product details."
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Quantity of units."
+                },
+                "subscriptionRef": {
+                  "description": "ID of the associated subscription.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "tax": {
+                  "description": "Tax details. Reflects the alt currency when present, otherwise the base currency.",
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "number",
+                      "description": "Tax amount in major units."
+                    },
+                    "inclusive": {
+                      "type": "boolean",
+                      "description": "Whether tax is included in the price."
+                    },
+                    "rate": {
+                      "type": "number",
+                      "description": "Tax rate as a decimal."
+                    },
+                    "taxableAmount": {
+                      "type": "number",
+                      "description": "Amount subject to tax in major units."
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "inclusive",
+                    "rate",
+                    "taxableAmount"
+                  ],
+                  "additionalProperties": false
+                },
+                "taxAmount": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use baseAmounts.tax.amount instead.",
+                  "type": "number"
+                },
+                "taxableAmount": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use baseAmounts.tax.taxableAmount instead.",
+                  "type": "number"
+                },
+                "ticket": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use product.eventTicketRef instead.",
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": {}
+                },
+                "totalAmount": {
+                  "type": "number",
+                  "description": "Total in major units. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "totalExcludingTaxAmount": {
+                  "type": "number",
+                  "description": "Total excluding tax in major units. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "type": {
+                  "type": "string",
+                  "deprecated": true,
+                  "description": "Deprecated. Use product.type instead."
+                },
+                "unitAmount": {
+                  "type": "number",
+                  "description": "Unit price in major units. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "unitExcludingTaxAmount": {
+                  "type": "number",
+                  "description": "Unit price excluding tax in major units. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "userCreatedBy": {
+                  "description": "User who created this item.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "surname": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "amount",
+                "baseAmounts",
+                "createDate",
+                "currencyCode",
+                "description",
+                "discountedAmount",
+                "discounts",
+                "id",
+                "locationRef",
+                "netAmount",
+                "netUnitAmount",
+                "product",
+                "quantity",
+                "totalAmount",
+                "totalExcludingTaxAmount",
+                "type",
+                "unitAmount",
+                "unitExcludingTaxAmount"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of invoice items."
+          },
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "invoiceItems"
+        ],
+        "additionalProperties": false
+      },
       "getCreditNotes": {
         "type": "object",
         "properties": {
@@ -16533,6 +17146,77 @@
                 "currencyCode": {
                   "type": "string",
                   "description": "ISO currency code (from base or alt currency)."
+                },
+                "customer": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the company or membership."
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": {
+                      "description": "Company name.",
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "company",
+                        "user"
+                      ],
+                      "description": "Whether the customer is a company or a user."
+                    },
+                    "user": {
+                      "description": "User details for membership customers.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Customer associated with this credit note."
                 },
                 "effectiveDate": {
                   "description": "Effective date in YYYY-MM-DD format.",
@@ -16999,6 +17683,7 @@
                 "baseAmounts",
                 "createDate",
                 "currencyCode",
+                "customer",
                 "grossAmount",
                 "id",
                 "invoiceRef",
@@ -17135,6 +17820,77 @@
           "currencyCode": {
             "type": "string",
             "description": "ISO currency code (from base or alt currency)."
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the company or membership."
+              },
+              "logo": {
+                "description": "Company logo.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "title": {
+                "description": "Company name.",
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "company",
+                  "user"
+                ],
+                "description": "Whether the customer is a company or a user."
+              },
+              "user": {
+                "description": "User details for membership customers.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "Customer associated with this credit note."
           },
           "effectiveDate": {
             "description": "Effective date in YYYY-MM-DD format.",
@@ -17601,6 +18357,7 @@
           "baseAmounts",
           "createDate",
           "currencyCode",
+          "customer",
           "grossAmount",
           "id",
           "invoiceRef",
@@ -18054,6 +18811,14 @@
                   "format": "uuid",
                   "description": "ID of the location this contract belongs to."
                 },
+                "signatureMethod": {
+                  "description": "How the contract will be signed.",
+                  "type": "string",
+                  "enum": [
+                    "eSignature",
+                    "manual"
+                  ]
+                },
                 "signedDocument": {
                   "description": "Signed document file, present after the contract is signed.",
                   "type": "object",
@@ -18445,6 +19210,14 @@
                 "type": "string",
                 "format": "uuid",
                 "description": "ID of the location this contract belongs to."
+              },
+              "signatureMethod": {
+                "description": "How the contract will be signed.",
+                "type": "string",
+                "enum": [
+                  "eSignature",
+                  "manual"
+                ]
               },
               "signedDocument": {
                 "description": "Signed document file, present after the contract is signed.",
@@ -22871,8 +23644,8 @@
                   "type": "object",
                   "properties": {
                     "endDate": {
-                      "type": "string",
-                      "description": "ISO timestamp when the assignment ends."
+                      "description": "ISO timestamp when the assignment ends.",
+                      "type": "string"
                     },
                     "id": {
                       "type": "string",
@@ -22885,7 +23658,6 @@
                     }
                   },
                   "required": [
-                    "endDate",
                     "id",
                     "startDate"
                   ],

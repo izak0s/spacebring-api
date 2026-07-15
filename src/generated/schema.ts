@@ -399,7 +399,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List invoice items
+         * @description List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["listInvoiceItems"];
         put?: never;
         /**
          * Create an invoice item
@@ -4297,6 +4301,275 @@ export interface components {
              */
             transactionRef: string;
         };
+        getInvoiceItems: {
+            /** @description List of invoice items. */
+            invoiceItems: {
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use totalAmount instead.
+                 */
+                amount: number;
+                /** @description Amounts in the original base currency, before any alt-currency conversion. */
+                baseAmounts: {
+                    /** @description ISO currency code. */
+                    currencyCode: string;
+                    /** @description Discount deduction in major units. */
+                    discountedAmount: number;
+                    /** @description Tax details. */
+                    tax?: {
+                        /** @description Tax amount in major units. */
+                        amount: number;
+                        /** @description Whether tax is included in the price. */
+                        inclusive: boolean;
+                        /** @description Tax rate as a decimal. */
+                        rate: number;
+                        /** @description Amount subject to tax in major units. */
+                        taxableAmount: number;
+                    };
+                    /** @description Total in major units. */
+                    totalAmount: number;
+                    /** @description Total excluding tax in major units. */
+                    totalExcludingTaxAmount: number;
+                    /** @description Unit price in major units. */
+                    unitAmount: number;
+                    /** @description Unit price excluding tax in major units. */
+                    unitExcludingTaxAmount: number;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product.bookingRef instead.
+                 */
+                booking?: {
+                    [key: string]: unknown;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the associated company.
+                 */
+                companyRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the item was created.
+                 */
+                createDate: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated.
+                 */
+                creditPackage?: {
+                    [key: string]: unknown;
+                };
+                /** @description ISO currency code. Reflects the alt currency when present, otherwise the base currency. */
+                currencyCode: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the item was deleted.
+                 */
+                deleteDate?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product.title instead.
+                 */
+                description: string;
+                /** @description Discount deduction in major units. Reflects the alt currency when present, otherwise the base currency. */
+                discountedAmount: number;
+                /** @description Applied discounts. */
+                discounts: {
+                    /** @description Coupon applied to this item. */
+                    coupon: {
+                        /** @description Fixed discount amount in major units. */
+                        amountOff?: number;
+                        /** @description Currency code for amountOff. */
+                        currencyCode?: string;
+                        /** @description Discount duration type. */
+                        duration?: string;
+                        /** @description Number of months the discount applies. */
+                        durationInMonths?: number;
+                        /**
+                         * Format: uuid
+                         * @description Coupon ID.
+                         */
+                        id?: string;
+                        /** @description Percentage discount. */
+                        percentOff?: number;
+                        /** @description Product types this coupon applies to. */
+                        productTypes?: string[];
+                        /** @description Coupon type. */
+                        type?: string;
+                    };
+                    /** @description Promocode applied to this item. */
+                    promocode?: {
+                        /** @description Promocode string. */
+                        code: string;
+                        /**
+                         * Format: date-time
+                         * @description Promocode expiration date.
+                         */
+                        expiration?: string;
+                        /**
+                         * Format: uuid
+                         * @description Promocode ID.
+                         */
+                        id: string;
+                        /** @description Whether limited to first purchase only. */
+                        limitByFirstPurchase?: boolean;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the subscription this discount is associated with.
+                     */
+                    subscriptionId?: string;
+                }[];
+                /** @description Unique identifier of the invoice item. */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the invoice this item belongs to.
+                 */
+                invoiceRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the associated membership.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the membership that created this item.
+                 */
+                membershipRefCreatedBy?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use totalExcludingTaxAmount instead.
+                 */
+                netAmount: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use unitExcludingTaxAmount instead.
+                 */
+                netUnitAmount: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product.orderRef instead.
+                 */
+                orderItem?: {
+                    [key: string]: unknown;
+                };
+                /** @description Billing period for subscription items. */
+                period?: {
+                    /**
+                     * Format: date-time
+                     * @description Subscription period end date.
+                     */
+                    endDate: string;
+                    /**
+                     * Format: date-time
+                     * @description Subscription period start date.
+                     */
+                    startDate: string;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use period instead.
+                 */
+                plan?: {
+                    [key: string]: unknown;
+                };
+                /** @description Product details. */
+                product: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated booking.
+                     */
+                    bookingRef?: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated event ticket.
+                     */
+                    eventTicketRef?: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the product option.
+                     */
+                    optionRef?: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated order.
+                     */
+                    orderRef?: string;
+                    /** @description Display title of the product. */
+                    title: string;
+                    /**
+                     * @description Type of the invoice item.
+                     * @enum {string}
+                     */
+                    type: "creditPackage" | "custom" | "booking" | "eventTicket" | "subscription" | "order";
+                };
+                /** @description Quantity of units. */
+                quantity: number;
+                /**
+                 * Format: uuid
+                 * @description ID of the associated subscription.
+                 */
+                subscriptionRef?: string;
+                /** @description Tax details. Reflects the alt currency when present, otherwise the base currency. */
+                tax?: {
+                    /** @description Tax amount in major units. */
+                    amount: number;
+                    /** @description Whether tax is included in the price. */
+                    inclusive: boolean;
+                    /** @description Tax rate as a decimal. */
+                    rate: number;
+                    /** @description Amount subject to tax in major units. */
+                    taxableAmount: number;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use baseAmounts.tax.amount instead.
+                 */
+                taxAmount?: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use baseAmounts.tax.taxableAmount instead.
+                 */
+                taxableAmount?: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product.eventTicketRef instead.
+                 */
+                ticket?: {
+                    [key: string]: unknown;
+                };
+                /** @description Total in major units. Reflects the alt currency when present, otherwise the base currency. */
+                totalAmount: number;
+                /** @description Total excluding tax in major units. Reflects the alt currency when present, otherwise the base currency. */
+                totalExcludingTaxAmount: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product.type instead.
+                 */
+                type: string;
+                /** @description Unit price in major units. Reflects the alt currency when present, otherwise the base currency. */
+                unitAmount: number;
+                /** @description Unit price excluding tax in major units. Reflects the alt currency when present, otherwise the base currency. */
+                unitExcludingTaxAmount: number;
+                /** @description User who created this item. */
+                userCreatedBy?: {
+                    /** Format: uuid */
+                    id: string;
+                    name?: string;
+                    surname?: string;
+                };
+            }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
         getCreditNotes: {
             /** @description List of credit notes. */
             creditNotes: {
@@ -4342,6 +4615,34 @@ export interface components {
                 creditAmount?: number;
                 /** @description ISO currency code (from base or alt currency). */
                 currencyCode: string;
+                /** @description Customer associated with this credit note. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        /** Format: uuid */
+                        id: string;
+                        name?: string | null;
+                        photoUrl?: string | null;
+                        surname?: string | null;
+                    };
+                };
                 /** @description Effective date in YYYY-MM-DD format. */
                 effectiveDate?: string;
                 /**
@@ -4629,6 +4930,34 @@ export interface components {
             creditAmount?: number;
             /** @description ISO currency code (from base or alt currency). */
             currencyCode: string;
+            /** @description Customer associated with this credit note. */
+            customer: {
+                /**
+                 * Format: uuid
+                 * @description ID of the company or membership.
+                 */
+                id: string;
+                /** @description Company logo. */
+                logo?: {
+                    key: string;
+                    url: string;
+                };
+                /** @description Company name. */
+                title?: string;
+                /**
+                 * @description Whether the customer is a company or a user.
+                 * @enum {string}
+                 */
+                type: "company" | "user";
+                /** @description User details for membership customers. */
+                user?: {
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+            };
             /** @description Effective date in YYYY-MM-DD format. */
             effectiveDate?: string;
             /**
@@ -5080,6 +5409,11 @@ export interface components {
                  * @description ID of the location this contract belongs to.
                  */
                 locationRef: string;
+                /**
+                 * @description How the contract will be signed.
+                 * @enum {string}
+                 */
+                signatureMethod?: "eSignature" | "manual";
                 /** @description Signed document file, present after the contract is signed. */
                 signedDocument?: {
                     key: string;
@@ -5290,6 +5624,11 @@ export interface components {
                  * @description ID of the location this contract belongs to.
                  */
                 locationRef: string;
+                /**
+                 * @description How the contract will be signed.
+                 * @enum {string}
+                 */
+                signatureMethod?: "eSignature" | "manual";
                 /** @description Signed document file, present after the contract is signed. */
                 signedDocument?: {
                     key: string;
@@ -7293,7 +7632,7 @@ export interface components {
                 /** @description Subscription backing this assignment. */
                 subscription: {
                     /** @description ISO timestamp when the assignment ends. */
-                    endDate: string;
+                    endDate?: string;
                     /**
                      * Format: uuid
                      * @description Subscription id.
@@ -16545,6 +16884,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    listInvoiceItems: {
+        parameters: {
+            query?: {
+                /** @description Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
+                /** @description UUID of the customer whose invoices to list. */
+                customerRef?: string;
+                /** @description Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
+                "issueDate[gte]"?: string;
+                /** @description Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range. */
+                "issueDate[lte]"?: string;
+                /** @description Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location whose invoices to list. */
+                locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /**
+                 * @description Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
+                 *
+                 *     Supported values:
+                 *     - **draft** — created but not sent
+                 *     - **issued** — sent to the customer but unpaid
+                 *     - **paid** — fully paid
+                 *     - **voided** — cancelled and no longer valid
+                 */
+                status?: string;
+                /** @description Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
+                type?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getInvoiceItems"];
+                };
             };
             /** @description Bad Request */
             400: {

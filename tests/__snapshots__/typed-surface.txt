@@ -113,6 +113,23 @@ export interface GetUpcomingInvoiceItemsQuery {
 export interface GetUpcomingInvoiceQuery {
   subscriptionRef?: string;
 }
+export interface ListInvoiceItemsQuery {
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
+  customerRef?: string;
+  "issueDate[gte]"?: string;
+  "issueDate[lte]"?: string;
+  limit?: number;
+  locationRef?: string;
+  nextPageToken?: string;
+  Supported values:
+  - **draft** — created but not sent
+  - **issued** — sent to the customer but unpaid
+  - **paid** — fully paid
+  - **voided** — cancelled and no longer valid */
+  status?: string;
+  type?: string;
+}
 export type CreateCreditNoteBody = NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"];
 export type CreateInvoiceBody = NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"];
 export type CreateInvoiceItemBody = NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"];
@@ -148,6 +165,8 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
       async resend(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async void(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       items: {
+        async list(query?: ListInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<{ invoiceItems: InvoiceItem[]; nextPageToken?: string; searchQueryNext?: string }>
+        iterate(query?: Omit<ListInvoiceItemsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<InvoiceItem, void, undefined>
         async get(id: string, options?: SpacebringRequestOptions): Promise<InvoiceItem>
         async create(body: CreateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<InvoiceItem>
         async update(id: string, body: UpdateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<undefined>
