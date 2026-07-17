@@ -19,8 +19,8 @@ A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com)
 - **Auto-generated** from the official OpenAPI spec — types and facade regenerate anytime the spec changes
 - **Nested, discoverable API** — `sb.billing.invoices.pay(id)`, `sb.visitors.visits.checkIn(body)`
 - **Auto-pagination** — every paginated list endpoint has an `iterate()` async generator that walks `nextPageToken` for you
-- **Ergonomic returns** — single-property response envelopes are unwrapped: entities and plain arrays come back directly
-- **Readable, named types** — entities (`Booking`, `Invoice`) and query parameters (`GetBookingsQuery`) are exported named types, so hovers show `Booking[]` instead of generated type soup, and enum filters are literal unions
+- **Ergonomic payloads** — single-property envelopes are unwrapped in both directions: responses hand you the entity or array directly, and create/update methods take the payload flat (`sb.plans.create({ title, price })` instead of `{ plan: { … } }`)
+- **Readable, named types** — entities (`Booking`, `Invoice`) and query parameters (`GetBookingsQuery`) are exported named types, so hovers show `Booking[]` or `{ invoice?: Invoice; payment?: Payment }` instead of generated type soup, and enum filters are literal unions
 - **Rich error handling** — non-2xx responses throw a typed `SpacebringError` carrying the status, parsed body, and the operation that failed; malformed 2xx bodies and stuck pagination tokens throw instead of failing silently
 - **Resilient by default** — automatic retries for rate limits, gateway errors, and network failures (never replaying non-idempotent requests); optional per-attempt timeouts and `AbortSignal` cancellation on every method
 - **Zero runtime dependencies** — Node ≥ 20, `fetch`-based; type declarations are fully self-contained (TypeScript ≥ 5.4)
@@ -72,7 +72,14 @@ try {
 }
 ```
 
-Writes read the same, and endpoints that return more than one payload keep the envelope intact:
+Writes take the payload directly — no `{ plan: { … } }` wrapper around request bodies:
+
+```ts
+const plan = await sb.plans.create({ locationRef, title: "Day pass bundle", price: 99, period: "month" });
+await sb.plans.update(plan.id, { price: 149 });
+```
+
+Endpoints that genuinely send or return more than one payload keep the envelope intact:
 
 ```ts
 const { invoice, payment } = await sb.billing.invoices.pay(invoiceId, {
