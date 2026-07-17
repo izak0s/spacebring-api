@@ -6538,7 +6538,7 @@ export interface components {
                  * @description Payment type.
                  * @enum {string}
                  */
-                type: "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                type: "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
             };
             /** @description Number of tickets included in this purchase. */
             quantity: number;
@@ -7644,16 +7644,16 @@ export interface components {
                 /** @description User assigned to the resource. */
                 user?: {
                     /** @description User email. */
-                    email: string;
+                    email?: string | null;
                     /**
                      * Format: uuid
                      * @description User id.
                      */
                     id: string;
                     /** @description User first name. */
-                    name: string;
+                    name?: string | null;
                     /** @description User last name. */
-                    surname: string;
+                    surname?: string | null;
                 };
             }[];
             /** @description Auto-release settings for no-show bookings. */
@@ -7667,7 +7667,7 @@ export interface components {
                 interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
             };
             /** @description Avigilon Alta access group reference. */
-            avigilonAltaGroupRef?: string;
+            avigilonAltaGroupRef?: number | null;
             /**
              * @description Who can create bookings on this resource.
              * @enum {string}
@@ -7676,7 +7676,7 @@ export interface components {
             /** @description Booking step size in minutes. */
             bookingStepMinutes?: number;
             /** @description Brivo access group reference. */
-            brivoGroupRef?: number;
+            brivoGroupRef?: number | null;
             /** @description Maximum capacity per booking. */
             capacity?: number | null;
             /** @description Check-in settings. */
@@ -7763,7 +7763,7 @@ export interface components {
             /** @description Public URL of the resource image. */
             imageUrl?: string;
             /** @description Kisi access group reference. */
-            kisiGroupRef?: number;
+            kisiGroupRef?: number | null;
             /** @description Auto-detected language of the description. */
             locale: string;
             /**
@@ -8019,7 +8019,7 @@ export interface components {
              * Format: uuid
              * @description Salto KS access group reference.
              */
-            saltoksAccessGroupRef?: string;
+            saltoksAccessGroupRef?: string | null;
             /** @description Availability schedule. */
             schedule?: {
                 /** @description Default availability schedule. */
@@ -8095,7 +8095,7 @@ export interface components {
              * Format: uuid
              * @description Tapkey access group reference.
              */
-            tapkeyGroupRef?: string;
+            tapkeyGroupRef?: string | null;
             /** @description Display name of the resource. */
             title: string;
             /**
@@ -8924,7 +8924,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -9392,7 +9392,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -12780,7 +12780,7 @@ export interface components {
                          * @description Payment gateway type.
                          * @enum {string}
                          */
-                        type: "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                        type: "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                     };
                     /** @description Whether the user has accepted the payment terms. */
                     termsConsent?: boolean;
@@ -13882,7 +13882,7 @@ export interface components {
                             interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
                         };
                         /** @description Avigilon Alta access group reference. */
-                        avigilonAltaGroupRef?: string;
+                        avigilonAltaGroupRef?: number | null;
                         /**
                          * @description Who can create bookings on this resource.
                          * @enum {string}
@@ -13891,7 +13891,7 @@ export interface components {
                         /** @description Booking step size in minutes. */
                         bookingStepMinutes?: number;
                         /** @description Brivo access group reference. */
-                        brivoGroupRef?: number;
+                        brivoGroupRef?: number | null;
                         /** @description Maximum capacity per booking. */
                         capacity?: number | null;
                         /** @description Check-in settings. */
@@ -13973,7 +13973,7 @@ export interface components {
                          */
                         id?: string;
                         /** @description Kisi access group reference. */
-                        kisiGroupRef?: number;
+                        kisiGroupRef?: number | null;
                         /**
                          * Format: uuid
                          * @description ID of the location.
@@ -14105,7 +14105,7 @@ export interface components {
                          * Format: uuid
                          * @description Salto KS access group reference.
                          */
-                        saltoksAccessGroupRef?: string;
+                        saltoksAccessGroupRef?: string | null;
                         /** @description Availability schedule. */
                         schedule?: {
                             /** @description Default availability schedule. */
@@ -14181,7 +14181,7 @@ export interface components {
                          * Format: uuid
                          * @description Tapkey access group reference.
                          */
-                        tapkeyGroupRef?: string;
+                        tapkeyGroupRef?: string | null;
                         /** @description Display name of the resource. */
                         title: string;
                         /**
@@ -14214,7 +14214,7 @@ export interface components {
                             interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
                         };
                         /** @description Avigilon Alta access group reference. */
-                        avigilonAltaGroupRef?: string;
+                        avigilonAltaGroupRef?: number | null;
                         /**
                          * @description Who can create bookings on this resource.
                          * @enum {string}
@@ -14223,7 +14223,7 @@ export interface components {
                         /** @description Booking step size in minutes. */
                         bookingStepMinutes?: number;
                         /** @description Brivo access group reference. */
-                        brivoGroupRef?: number;
+                        brivoGroupRef?: number | null;
                         /** @description Maximum capacity per booking. */
                         capacity?: number | null;
                         /** @description Check-in settings. */
@@ -14300,7 +14300,7 @@ export interface components {
                             twoWaySyncEnabled: boolean;
                         };
                         /** @description Kisi access group reference. */
-                        kisiGroupRef?: number;
+                        kisiGroupRef?: number | null;
                         /** @description Images to attach when creating the resource. */
                         media?: {
                             /** @description Storage key of the uploaded image. */
@@ -14427,7 +14427,7 @@ export interface components {
                          * Format: uuid
                          * @description Salto KS access group reference.
                          */
-                        saltoksAccessGroupRef?: string;
+                        saltoksAccessGroupRef?: string | null;
                         /** @description Availability schedule. */
                         schedule?: {
                             /** @description Default availability schedule. */
@@ -14503,7 +14503,7 @@ export interface components {
                          * Format: uuid
                          * @description Tapkey access group reference.
                          */
-                        tapkeyGroupRef?: string;
+                        tapkeyGroupRef?: string | null;
                         /** @description Display name of the resource. */
                         title?: string;
                         /**

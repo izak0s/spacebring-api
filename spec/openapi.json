@@ -21193,6 +21193,7 @@
                   "mollie",
                   "paypal",
                   "paystack",
+                  "payway",
                   "plata",
                   "stripe",
                   "tap",
@@ -23669,8 +23670,9 @@
                   "type": "object",
                   "properties": {
                     "email": {
-                      "type": "string",
-                      "description": "User email."
+                      "description": "User email.",
+                      "nullable": true,
+                      "type": "string"
                     },
                     "id": {
                       "type": "string",
@@ -23678,19 +23680,18 @@
                       "description": "User id."
                     },
                     "name": {
-                      "type": "string",
-                      "description": "User first name."
+                      "description": "User first name.",
+                      "nullable": true,
+                      "type": "string"
                     },
                     "surname": {
-                      "type": "string",
-                      "description": "User last name."
+                      "description": "User last name.",
+                      "nullable": true,
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "email",
-                    "id",
-                    "name",
-                    "surname"
+                    "id"
                   ],
                   "additionalProperties": false
                 }
@@ -23729,7 +23730,8 @@
           },
           "avigilonAltaGroupRef": {
             "description": "Avigilon Alta access group reference.",
-            "type": "string"
+            "nullable": true,
+            "type": "number"
           },
           "bookingPermission": {
             "type": "string",
@@ -23748,6 +23750,7 @@
           },
           "brivoGroupRef": {
             "description": "Brivo access group reference.",
+            "nullable": true,
             "type": "number"
           },
           "capacity": {
@@ -23962,6 +23965,7 @@
           },
           "kisiGroupRef": {
             "description": "Kisi access group reference.",
+            "nullable": true,
             "type": "number"
           },
           "locale": {
@@ -24611,6 +24615,7 @@
           },
           "saltoksAccessGroupRef": {
             "description": "Salto KS access group reference.",
+            "nullable": true,
             "type": "string",
             "format": "uuid"
           },
@@ -24827,6 +24832,7 @@
           },
           "tapkeyGroupRef": {
             "description": "Tapkey access group reference.",
+            "nullable": true,
             "type": "string",
             "format": "uuid"
           },
@@ -26628,6 +26634,7 @@
                                 "mercadopago",
                                 "paypal",
                                 "paystack",
+                                "payway",
                                 "plata",
                                 "stripe",
                                 "tap",
@@ -27678,6 +27685,7 @@
                               "mercadopago",
                               "paypal",
                               "paystack",
+                              "payway",
                               "plata",
                               "stripe",
                               "tap",
@@ -34714,6 +34722,7 @@
                         "mollie",
                         "paypal",
                         "paystack",
+                        "payway",
                         "plata",
                         "stripe",
                         "tap",
@@ -36618,7 +36627,6 @@
                       "description": "ID of the location this plan belongs to."
                     },
                     "period": {
-                      "description": "Billing period of the plan.",
                       "type": "string",
                       "enum": [
                         "day",
@@ -36627,7 +36635,8 @@
                         "threeMonths",
                         "sixMonths",
                         "year"
-                      ]
+                      ],
+                      "description": "Billing period of the plan."
                     },
                     "price": {
                       "type": "number",
@@ -37035,7 +37044,8 @@
                     },
                     "avigilonAltaGroupRef": {
                       "description": "Avigilon Alta access group reference.",
-                      "type": "string"
+                      "nullable": true,
+                      "type": "number"
                     },
                     "bookingPermission": {
                       "type": "string",
@@ -37054,6 +37064,7 @@
                     },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
+                      "nullable": true,
                       "type": "number"
                     },
                     "capacity": {
@@ -37255,6 +37266,7 @@
                     },
                     "kisiGroupRef": {
                       "description": "Kisi access group reference.",
+                      "nullable": true,
                       "type": "number"
                     },
                     "locationRef": {
@@ -37561,6 +37573,7 @@
                     },
                     "saltoksAccessGroupRef": {
                       "description": "Salto KS access group reference.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
@@ -37768,6 +37781,7 @@
                     },
                     "tapkeyGroupRef": {
                       "description": "Tapkey access group reference.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
@@ -37856,7 +37870,8 @@
                     },
                     "avigilonAltaGroupRef": {
                       "description": "Avigilon Alta access group reference.",
-                      "type": "string"
+                      "nullable": true,
+                      "type": "number"
                     },
                     "bookingPermission": {
                       "type": "string",
@@ -37875,6 +37890,7 @@
                     },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
+                      "nullable": true,
                       "type": "number"
                     },
                     "capacity": {
@@ -38071,6 +38087,7 @@
                     },
                     "kisiGroupRef": {
                       "description": "Kisi access group reference.",
+                      "nullable": true,
                       "type": "number"
                     },
                     "media": {
@@ -38372,6 +38389,7 @@
                     },
                     "saltoksAccessGroupRef": {
                       "description": "Salto KS access group reference.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
@@ -38579,6 +38597,7 @@
                     },
                     "tapkeyGroupRef": {
                       "description": "Tapkey access group reference.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
