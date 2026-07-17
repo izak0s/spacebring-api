@@ -14,6 +14,7 @@ import {
   TS_TYPES,
   warnings,
 } from "./spec.js";
+import { upperFirst } from "./text.js";
 
 export interface PaginationInfo {
   itemsKey: string;
@@ -69,16 +70,21 @@ function canonicalSchema(node: unknown): string {
  * type-identical to the inline shape — otherwise fall back to the operation
  * form, keeping the generated type faithful to the actual response.
  */
-function entityComponentRef(candidateName: string, entityNode: unknown): string | undefined {
+function entityComponentRef(candidateName: string, entityNode: unknown, namespace: string[]): string | undefined {
   const direct = schemaRefName(entityNode);
   if (direct) return direct;
   const schemas = spec.components?.schemas as Record<string, unknown> | undefined;
   if (!schemas) return undefined;
   const inline = canonicalSchema(resolveRef(entityNode));
   // Prefer a same-named component; the property key (e.g. "category") often
-  // differs from the component name (e.g. "shopCategory"), so also accept a
-  // uniquely-matching component by structure. Ambiguous matches are skipped.
-  if (schemas[candidateName] && canonicalSchema(schemas[candidateName]) === inline) return candidateName;
+  // differs from the component name (e.g. "shopCategory"), so also try the key
+  // qualified by each namespace segment (innermost first: "shop" + "category"
+  // -> "shopCategory"), then accept a uniquely-matching component by
+  // structure. Ambiguous matches are skipped.
+  const candidates = [candidateName, ...[...namespace].reverse().map((segment) => singular(segment) + upperFirst(candidateName))];
+  for (const name of candidates) {
+    if (schemas[name] && canonicalSchema(schemas[name]) === inline) return name;
+  }
   const matches = Object.keys(schemas).filter((name) => canonicalSchema(schemas[name]) === inline);
   return matches.length === 1 ? matches[0] : undefined;
 }
@@ -92,7 +98,12 @@ export interface AnalyzedOp {
   pathParams: SpecParameter[];
   queryParams: SpecParameter[];
   requiredNetworkHeader: boolean;
-  body: { required: boolean } | undefined;
+  /**
+   * `unwrapKey` mirrors the response-envelope unwrap on the request side: a
+   * single-property body ({ plan: {...} }) is taken as the inner value and the
+   * facade wraps it; multi-property bodies are passed through as-is.
+   */
+  body: { required: boolean; unwrapKey?: string } | undefined;
   pagination: PaginationInfo | undefined;
   unwrapKey: string | undefined;
   unwrapIsArray: boolean;
@@ -117,7 +128,9 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
   }
 
   const parameters = (op.parameters ?? []).map((p) => resolveRef<SpecParameter>(p));
-  const requestBody = op.requestBody ? resolveRef<{ required?: boolean }>(op.requestBody) : undefined;
+  const requestBody = op.requestBody
+    ? resolveRef<{ required?: boolean; content?: Record<string, { schema?: unknown }> }>(op.requestBody)
+    : undefined;
 
   for (const param of parameters) {
     if (param.in === "header" && param.required && param.name !== "spacebring-network-id") {
@@ -125,7 +138,7 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
     }
   }
 
-  const envelope = analyzeEnvelope(op);
+  const envelope = analyzeEnvelope(op, namespace);
 
   return {
     path,
@@ -136,7 +149,7 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
     pathParams: parameters.filter((p) => p.in === "path"),
     queryParams: parameters.filter((p) => p.in === "query"),
     requiredNetworkHeader: parameters.some((p) => p.in === "header" && p.required && p.name === "spacebring-network-id"),
-    body: requestBody ? { required: requestBody.required === true } : undefined,
+    body: requestBody ? { required: requestBody.required === true, unwrapKey: bodyUnwrapKey(requestBody) } : undefined,
     pagination: envelope.pagination,
     unwrapKey: envelope.unwrapKey,
     unwrapIsArray: envelope.unwrapIsArray === true,
@@ -148,7 +161,16 @@ function isParam(segment: string): boolean {
   return segment.startsWith("{");
 }
 
-function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
+/** The single property key of a request-body schema, if it has exactly one. */
+function bodyUnwrapKey(requestBody: { content?: Record<string, { schema?: unknown }> }): string | undefined {
+  const schema = requestBody.content?.["application/json"]?.schema;
+  if (!schema) return undefined;
+  const resolved = resolveRef<{ properties?: Record<string, unknown> }>(schema);
+  const keys = resolved.properties ? Object.keys(resolved.properties) : [];
+  return keys.length === 1 ? keys[0] : undefined;
+}
+
+function analyzeEnvelope(op: SpecOperation, namespace: string[]): EnvelopeInfo {
   const success = (op.responses["200"] ?? op.responses["201"]) as { content?: Record<string, { schema?: unknown }> } | undefined;
   const schema = success?.content?.["application/json"]?.schema;
   if (!schema) return {};
@@ -165,7 +187,9 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     const propSchema = resolveRef<{ type?: string }>(rawProp);
     const isArray = propSchema.type === "array";
     // The entity is the property itself (object) or its array item.
-    const unwrapSchemaRef = isArray ? entityComponentRef(singular(keys[0]), rawProp.items) : entityComponentRef(keys[0], rawProp);
+    const unwrapSchemaRef = isArray
+      ? entityComponentRef(singular(keys[0]), rawProp.items, namespace)
+      : entityComponentRef(keys[0], rawProp, namespace);
     return { unwrapKey: keys[0], unwrapIsArray: isArray, unwrapSchemaRef };
   }
 
@@ -179,7 +203,11 @@ function analyzeEnvelope(op: SpecOperation): EnvelopeInfo {
     const propSchema = resolveRef<{ type?: string }>(properties[key]);
     return { key, optional: !required.has(key), scalar: TS_TYPES[propSchema.type ?? ""] };
   });
-  const itemsSchemaRef = entityComponentRef(singular(arrayKeys[0]), (properties[arrayKeys[0]] as { items?: unknown }).items);
+  const itemsSchemaRef = entityComponentRef(
+    singular(arrayKeys[0]),
+    (properties[arrayKeys[0]] as { items?: unknown }).items,
+    namespace,
+  );
   return { pagination: { itemsKey: arrayKeys[0], itemsSchemaRef, props } };
 }
 

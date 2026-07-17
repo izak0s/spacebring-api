@@ -63,16 +63,16 @@ export type CheckInVisitBody = NonNullable<operations["checkInVisit"]["requestBo
 export type CheckOutVisitBody = NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.visitors.contacts.create()`. */
-export type CreateContactBody = NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"];
+export type CreateContactBody = NonNullable<NonNullable<operations["createContact"]["requestBody"]>["content"]["application/json"]["contact"]>;
 
 /** Request body for `sb.visitors.requests.create()`. */
-export type CreateRequestBody = NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"];
+export type CreateRequestBody = NonNullable<NonNullable<operations["createRequest"]["requestBody"]>["content"]["application/json"]["request"]>;
 
 /** Request body for `sb.visitors.visits.create()`. */
-export type CreateVisitBody = NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"];
+export type CreateVisitBody = NonNullable<NonNullable<operations["createVisit"]["requestBody"]>["content"]["application/json"]["visit"]>;
 
 /** Request body for `sb.visitors.visits.update()`. */
-export type UpdateVisitBody = NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"];
+export type UpdateVisitBody = NonNullable<NonNullable<operations["updateVisit"]["requestBody"]>["content"]["application/json"]["visit"]>;
 
 export function createVisitors(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -89,13 +89,18 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
           "contacts",
         );
       },
-      /** Get a contact */
+      /**
+       * Get a contact
+       *
+       * @param contactId The id of the contact.
+       * @param options Request options (abort signal).
+       */
       async get(contactId: string, options?: SpacebringRequestOptions): Promise<Contact> {
         return unwrapProp(await client.GET("/visitors/contacts/v1/{contactId}", { params: { path: { contactId } }, signal: options?.signal }), "contact", "GET /visitors/contacts/v1/{contactId}");
       },
       /** Create a contact */
-      async create(body: CreateContactBody, options?: SpacebringRequestOptions): Promise<Contact> {
-        return unwrapProp(await client.POST("/visitors/contacts/v1", { body, signal: options?.signal }), "contact", "POST /visitors/contacts/v1");
+      async create(contact: CreateContactBody, options?: SpacebringRequestOptions): Promise<Contact> {
+        return unwrapProp(await client.POST("/visitors/contacts/v1", { body: { contact }, signal: options?.signal }), "contact", "POST /visitors/contacts/v1");
       },
     },
     requests: {
@@ -111,19 +116,34 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
           "requests",
         );
       },
-      /** Retrieve a request */
+      /**
+       * Retrieve a request
+       *
+       * @param id The id of the request.
+       * @param options Request options (abort signal).
+       */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Request> {
         return unwrapProp(await client.GET("/visitors/requests/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "request", "GET /visitors/requests/v1/{id}");
       },
       /** Create a request */
-      async create(body: CreateRequestBody, options?: SpacebringRequestOptions): Promise<Request> {
-        return unwrapProp(await client.POST("/visitors/requests/v1", { body, signal: options?.signal }), "request", "POST /visitors/requests/v1");
+      async create(request: CreateRequestBody, options?: SpacebringRequestOptions): Promise<Request> {
+        return unwrapProp(await client.POST("/visitors/requests/v1", { body: { request }, signal: options?.signal }), "request", "POST /visitors/requests/v1");
       },
-      /** Approve a request */
+      /**
+       * Approve a request
+       *
+       * @param id The id of the request
+       * @param options Request options (abort signal).
+       */
       async approve(id: string, options?: SpacebringRequestOptions): Promise<RequestVisit> {
         return unwrapProp(await client.POST("/visitors/requests/v1/{id}/approve", { params: { path: { id } }, signal: options?.signal }), "visit", "POST /visitors/requests/v1/{id}/approve");
       },
-      /** Reject a request */
+      /**
+       * Reject a request
+       *
+       * @param id The id of the request
+       * @param options Request options (abort signal).
+       */
       async reject(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.POST("/visitors/requests/v1/{id}/reject", { params: { path: { id } }, signal: options?.signal }), "POST /visitors/requests/v1/{id}/reject");
       },
@@ -145,26 +165,36 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        * Retrieve a visit
        *
        * Retrieve a visit by id.
+       *
+       * @param id The id of the visit
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
         return unwrapProp(await client.GET("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "visit", "GET /visitors/visits/v1/{id}");
       },
       /** Create a visit */
-      async create(body: CreateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
-        return unwrapProp(await client.POST("/visitors/visits/v1", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1");
+      async create(visit: CreateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+        return unwrapProp(await client.POST("/visitors/visits/v1", { body: { visit }, signal: options?.signal }), "visit", "POST /visitors/visits/v1");
       },
       /**
        * Update a visit
        *
        * Update a visit by id.
+       *
+       * @param id The id of the visit
+       * @param visit The `visit` payload.
+       * @param options Request options (abort signal).
        */
-      async update(id: string, body: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
-        return unwrapProp(await client.PUT("/visitors/visits/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "visit", "PUT /visitors/visits/v1/{id}");
+      async update(id: string, visit: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+        return unwrapProp(await client.PUT("/visitors/visits/v1/{id}", { params: { path: { id } }, body: { visit }, signal: options?.signal }), "visit", "PUT /visitors/visits/v1/{id}");
       },
       /**
        * Delete a visit
        *
        * Delete a visit by id.
+       *
+       * @param id The id of the visit
+       * @param options Request options (abort signal).
        */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /visitors/visits/v1/{id}");

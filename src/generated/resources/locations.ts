@@ -13,7 +13,12 @@ export function createLocations(client: Client<paths>, defaults: SpacebringDefau
     async list(options?: SpacebringRequestOptions): Promise<Location[]> {
       return unwrapProp(await client.GET("/locations/v1", { signal: options?.signal }), "locations", "GET /locations/v1");
     },
-    /** Get a location */
+    /**
+     * Get a location
+     *
+     * @param locationId The id of the location.
+     * @param options Request options (abort signal).
+     */
     async get(locationId: string, options?: SpacebringRequestOptions): Promise<Location> {
       return unwrapProp(await client.GET("/locations/v1/{locationId}", { params: { path: { locationId } }, signal: options?.signal }), "location", "GET /locations/v1/{locationId}");
     },

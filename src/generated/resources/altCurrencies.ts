@@ -18,10 +18,10 @@ export interface GetAltCurrenciesQuery {
 }
 
 /** Request body for `sb.altCurrencies.create()`. */
-export type CreateAltCurrencyBody = NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"];
+export type CreateAltCurrencyBody = NonNullable<NonNullable<operations["createAltCurrency"]["requestBody"]>["content"]["application/json"]["altCurrency"]>;
 
 /** Request body for `sb.altCurrencies.update()`. */
-export type UpdateAltCurrencyBody = NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"];
+export type UpdateAltCurrencyBody = NonNullable<NonNullable<operations["updateAltCurrency"]["requestBody"]>["content"]["application/json"]["altCurrency"]>;
 
 export function createAltcurrencies(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -46,14 +46,25 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
       );
     },
     /** Create an alternative currency */
-    async create(body: CreateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<AltCurrency> {
-      return unwrapProp(await client.POST("/alt_currencies/v1", { body, signal: options?.signal }), "altCurrency", "POST /alt_currencies/v1");
+    async create(altCurrency: CreateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<AltCurrency> {
+      return unwrapProp(await client.POST("/alt_currencies/v1", { body: { altCurrency }, signal: options?.signal }), "altCurrency", "POST /alt_currencies/v1");
     },
-    /** Update an alternative currency */
-    async update(id: string, body: UpdateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/alt_currencies/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /alt_currencies/v1/{id}");
+    /**
+     * Update an alternative currency
+     *
+     * @param id The id of the alternative currency
+     * @param altCurrency The `altCurrency` payload.
+     * @param options Request options (abort signal).
+     */
+    async update(id: string, altCurrency: UpdateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/alt_currencies/v1/{id}", { params: { path: { id } }, body: { altCurrency }, signal: options?.signal }), "PATCH /alt_currencies/v1/{id}");
     },
-    /** Delete an alternative currency */
+    /**
+     * Delete an alternative currency
+     *
+     * @param id The id of the alternative currency
+     * @param options Request options (abort signal).
+     */
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/alt_currencies/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /alt_currencies/v1/{id}");
     },

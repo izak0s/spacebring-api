@@ -71,10 +71,10 @@ export interface GetMoneyTransactionsQuery {
 }
 
 /** Request body for `sb.transactions.credits.create()`. */
-export type CreateCreditsTransactionBody = NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"];
+export type CreateCreditsTransactionBody = NonNullable<NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
 
 /** Request body for `sb.transactions.dayPasses.create()`. */
-export type CreateDayPassesTransactionBody = NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"];
+export type CreateDayPassesTransactionBody = NonNullable<NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
 
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -83,11 +83,19 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        * Retrieve credit balance
        *
        * Retrieve credits balance.
+       *
+       * @param id The id of the customer
+       * @param options Request options (abort signal).
        */
       async getCredits(id: string, options?: SpacebringRequestOptions): Promise<Balance[]> {
         return unwrapProp(await client.GET("/transactions/v1/balances/{id}/credits", { params: { path: { id } }, signal: options?.signal }), "balances", "GET /transactions/v1/balances/{id}/credits");
       },
-      /** Retrieve day passes balance */
+      /**
+       * Retrieve day passes balance
+       *
+       * @param id The id of the customer
+       * @param options Request options (abort signal).
+       */
       async getDayPasses(id: string, options?: SpacebringRequestOptions): Promise<Balance[]> {
         return unwrapProp(await client.GET("/transactions/v1/balances/{id}/day_passes", { params: { path: { id } }, signal: options?.signal }), "balances", "GET /transactions/v1/balances/{id}/day_passes");
       },
@@ -118,8 +126,8 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a credits transaction.
        */
-      async create(body: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction> {
-        return unwrapProp(await client.POST("/transactions/credits/v1", { body, signal: options?.signal }), "transaction", "POST /transactions/credits/v1");
+      async create(transaction: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction> {
+        return unwrapProp(await client.POST("/transactions/credits/v1", { body: { transaction }, signal: options?.signal }), "transaction", "POST /transactions/credits/v1");
       },
     },
     dayPasses: {
@@ -148,8 +156,8 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Create a day passes transaction.
        */
-      async create(body: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
-        return unwrapProp(await client.POST("/transactions/day_passes/v1", { body, signal: options?.signal }), "transaction", "POST /transactions/day_passes/v1");
+      async create(transaction: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
+        return unwrapProp(await client.POST("/transactions/day_passes/v1", { body: { transaction }, signal: options?.signal }), "transaction", "POST /transactions/day_passes/v1");
       },
     },
     money: {
@@ -165,7 +173,12 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
           "transactions",
         );
       },
-      /** Retrieve a money transaction */
+      /**
+       * Retrieve a money transaction
+       *
+       * @param id The id of the transaction
+       * @param options Request options (abort signal).
+       */
       async get(id: string, options?: SpacebringRequestOptions): Promise<MoneyTransaction> {
         return unwrapProp(await client.GET("/transactions/money/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "transaction", "GET /transactions/money/v1/{id}");
       },

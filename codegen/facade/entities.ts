@@ -239,7 +239,9 @@ export interface BodyType {
 /**
  * One named alias per operation with a request body, so method signatures read
  * `body: CreateSubscriptionBody` instead of the `operations[...]["requestBody"]`
- * indexed-access soup. Unlike query interfaces this stays an alias (not a
+ * indexed-access soup. Single-property bodies are unwrapped (the alias names
+ * the inner value the method takes; the facade re-wraps it), mirroring the
+ * response-envelope unwrap. Unlike query interfaces this stays an alias (not a
  * rebuilt interface): request bodies are arbitrarily nested, so re-deriving
  * them would duplicate openapi-typescript — the alias just names the schema
  * type, and the facade body assigns into it so fidelity is typecheck-enforced.
@@ -260,11 +262,11 @@ export function buildBodyTypes(
       process.exit(1);
     }
     const methodPath = ["sb", ...analyzed.namespace, name].join(".");
+    const raw = `NonNullable<operations["${opId}"]["requestBody"]>["content"]["application/json"]`;
+    const expr = analyzed.body.unwrapKey ? `NonNullable<${raw}[${JSON.stringify(analyzed.body.unwrapKey)}]>` : raw;
     const bodyType: BodyType = {
       name: typeName,
-      decl:
-        `/** Request body for \`${methodPath}()\`. */\n` +
-        `export type ${typeName} = NonNullable<operations["${opId}"]["requestBody"]>["content"]["application/json"];\n`,
+      decl: `/** Request body for \`${methodPath}()\`. */\nexport type ${typeName} = ${expr};\n`,
     };
     bodyTypesByOp.set(opId, bodyType);
     const root = analyzed.namespace[0];

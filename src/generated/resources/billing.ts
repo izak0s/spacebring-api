@@ -114,31 +114,31 @@ export interface ListInvoiceItemsQuery {
 }
 
 /** Request body for `sb.billing.creditNotes.create()`. */
-export type CreateCreditNoteBody = NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"];
+export type CreateCreditNoteBody = NonNullable<NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"]["creditNote"]>;
 
 /** Request body for `sb.billing.invoices.create()`. */
 export type CreateInvoiceBody = NonNullable<operations["createInvoice"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.billing.invoices.items.create()`. */
-export type CreateInvoiceItemBody = NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"];
+export type CreateInvoiceItemBody = NonNullable<NonNullable<operations["createInvoiceItem"]["requestBody"]>["content"]["application/json"]["invoiceItem"]>;
 
 /** Request body for `sb.billing.invoices.issue()`. */
-export type IssueInvoiceBody = NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"];
+export type IssueInvoiceBody = NonNullable<NonNullable<operations["issueInvoice"]["requestBody"]>["content"]["application/json"]["skipAutoCharge"]>;
 
 /** Request body for `sb.billing.invoices.pay()`. */
 export type PayInvoiceBody = NonNullable<operations["payInvoice"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.billing.creditNotes.preview()`. */
-export type PreviewCreditNoteBody = NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"];
+export type PreviewCreditNoteBody = NonNullable<NonNullable<operations["previewCreditNote"]["requestBody"]>["content"]["application/json"]["creditNote"]>;
 
 /** Request body for `sb.billing.creditNotes.update()`. */
-export type UpdateCreditNoteBody = NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"];
+export type UpdateCreditNoteBody = NonNullable<NonNullable<operations["updateCreditNote"]["requestBody"]>["content"]["application/json"]["creditNote"]>;
 
 /** Request body for `sb.billing.invoices.update()`. */
-export type UpdateInvoiceBody = NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"];
+export type UpdateInvoiceBody = NonNullable<NonNullable<operations["updateInvoice"]["requestBody"]>["content"]["application/json"]["invoice"]>;
 
 /** Request body for `sb.billing.invoices.items.update()`. */
-export type UpdateInvoiceItemBody = NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"];
+export type UpdateInvoiceItemBody = NonNullable<NonNullable<operations["updateInvoiceItem"]["requestBody"]>["content"]["application/json"]["invoiceItem"]>;
 
 export function createBilling(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -167,6 +167,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Retrieve a credit note
        *
        * Retrieve a specific credit note.
+       *
+       * @param id The id of the credit note
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<CreditNote> {
         return unwrapProp(await client.GET("/billing/credit_notes/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "creditNote", "GET /billing/credit_notes/v1/{id}");
@@ -176,20 +179,26 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create a credit note for an invoice.
        */
-      async create(body: CreateCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
-        return unwrapProp(await client.POST("/billing/credit_notes/v1", { body, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1");
+      async create(creditNote: CreateCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
+        return unwrapProp(await client.POST("/billing/credit_notes/v1", { body: { creditNote }, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1");
       },
-      /** Update a credit note */
-      async update(id: string, body: UpdateCreditNoteBody, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.PATCH("/billing/credit_notes/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /billing/credit_notes/v1/{id}");
+      /**
+       * Update a credit note
+       *
+       * @param id The id of the credit note
+       * @param creditNote The `creditNote` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(id: string, creditNote: UpdateCreditNoteBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/billing/credit_notes/v1/{id}", { params: { path: { id } }, body: { creditNote }, signal: options?.signal }), "PATCH /billing/credit_notes/v1/{id}");
       },
       /**
        * Preview a credit note
        *
        * Preview a credit note for an invoice without creating it.
        */
-      async preview(body: PreviewCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
-        return unwrapProp(await client.POST("/billing/credit_notes/v1/preview", { body, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1/preview");
+      async preview(creditNote: PreviewCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
+        return unwrapProp(await client.POST("/billing/credit_notes/v1/preview", { body: { creditNote }, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1/preview");
       },
     },
     invoices: {
@@ -217,6 +226,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Retrieve an invoice
        *
        * Retrieve a certain invoice.
+       *
+       * @param invoiceId The id of the invoice.
+       * @param options Request options (abort signal).
        */
       async get(invoiceId: string, options?: SpacebringRequestOptions): Promise<Invoice> {
         return unwrapProp(await client.GET("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, signal: options?.signal }), "invoice", "GET /billing/invoices/v1/{invoiceId}");
@@ -233,14 +245,21 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Update an invoice
        *
        * Update a draft invoice.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param invoice The `invoice` payload.
+       * @param options Request options (abort signal).
        */
-      async update(invoiceId: string, body: UpdateInvoiceBody, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, body, signal: options?.signal }), "PATCH /billing/invoices/v1/{invoiceId}");
+      async update(invoiceId: string, invoice: UpdateInvoiceBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, body: { invoice }, signal: options?.signal }), "PATCH /billing/invoices/v1/{invoiceId}");
       },
       /**
        * Delete an invoice
        *
        * Delete a draft invoice.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async delete(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/billing/invoices/v1/{invoiceId}", { params: { path: { invoiceId } }, signal: options?.signal }), "DELETE /billing/invoices/v1/{invoiceId}");
@@ -249,6 +268,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Cancel a payment
        *
        * Cancel a payment on an invoice.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async cancelPayment(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/cancel_payment", { params: { path: { invoiceId } }, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/cancel_payment");
@@ -257,6 +279,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Duplicate an invoice
        *
        * Duplicate an invoice, creating a new draft invoice with the same items.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async duplicate(invoiceId: string, options?: SpacebringRequestOptions): Promise<Invoice> {
         return unwrapProp(await client.POST("/billing/invoices/v1/{invoiceId}/duplicate", { params: { path: { invoiceId } }, signal: options?.signal }), "invoice", "POST /billing/invoices/v1/{invoiceId}/duplicate");
@@ -265,6 +290,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * List invoice items
        *
        * List all items for a specific invoice.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async getItems(invoiceId: string, options?: SpacebringRequestOptions): Promise<operations["getInvoiceItems"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.GET("/billing/invoices/v1/{invoiceId}/items", { params: { path: { invoiceId } }, signal: options?.signal }), "GET /billing/invoices/v1/{invoiceId}/items");
@@ -281,14 +309,22 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Issue an invoice
        *
        * Issue (finalize) a draft invoice, making it ready for payment.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param skipAutoCharge The `skipAutoCharge` payload.
+       * @param options Request options (abort signal).
        */
-      async issue(invoiceId: string, body?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]> {
-        return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/issue", { params: { path: { invoiceId } }, body, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/issue");
+      async issue(invoiceId: string, skipAutoCharge?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]> {
+        return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/issue", { params: { path: { invoiceId } }, body: skipAutoCharge === undefined ? undefined : { skipAutoCharge }, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/issue");
       },
       /**
        * Pay an invoice
        *
        * Mark an invoice as paid by `External Payment`.
+       *
+       * @param invoiceId The id of an invoice
+       * @param body Request body.
+       * @param options Request options (abort signal).
        */
       async pay(invoiceId: string, body: PayInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["payInvoice"]["responses"][200]["content"]["application/json"]> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/pay", { params: { path: { invoiceId } }, body, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/pay");
@@ -297,6 +333,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Resend an invoice
        *
        * Resend an issued invoice notification to the customer.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async resend(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.POST("/billing/invoices/v1/{invoiceId}/resend", { params: { path: { invoiceId } }, signal: options?.signal }), "POST /billing/invoices/v1/{invoiceId}/resend");
@@ -305,6 +344,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
        * Void an invoice
        *
        * Void an issued invoice.
+       *
+       * @param invoiceId The id of an invoice.
+       * @param options Request options (abort signal).
        */
       async void(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.PATCH("/billing/invoices/v1/{invoiceId}/void", { params: { path: { invoiceId } }, signal: options?.signal }), "PATCH /billing/invoices/v1/{invoiceId}/void");
@@ -334,6 +376,9 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          * Retrieve an invoice item
          *
          * Retrieve a specific invoice item.
+         *
+         * @param id The id of an invoice item.
+         * @param options Request options (abort signal).
          */
         async get(id: string, options?: SpacebringRequestOptions): Promise<InvoiceItem> {
           return unwrapProp(await client.GET("/billing/invoices/v1/items/{id}", { params: { path: { id } }, signal: options?.signal }), "invoiceItem", "GET /billing/invoices/v1/items/{id}");
@@ -343,21 +388,28 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
          *
          * Create an item in an invoice.
          */
-        async create(body: CreateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<InvoiceItem> {
-          return unwrapProp(await client.POST("/billing/invoices/v1/items", { body, signal: options?.signal }), "invoiceItem", "POST /billing/invoices/v1/items");
+        async create(invoiceItem: CreateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<InvoiceItem> {
+          return unwrapProp(await client.POST("/billing/invoices/v1/items", { body: { invoiceItem }, signal: options?.signal }), "invoiceItem", "POST /billing/invoices/v1/items");
         },
         /**
          * Update an invoice item
          *
          * Update an invoice item on a draft invoice.
+         *
+         * @param id The id of an invoice item.
+         * @param invoiceItem The `invoiceItem` payload.
+         * @param options Request options (abort signal).
          */
-        async update(id: string, body: UpdateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<undefined> {
-          return unwrap(await client.PATCH("/billing/invoices/v1/items/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /billing/invoices/v1/items/{id}");
+        async update(id: string, invoiceItem: UpdateInvoiceItemBody, options?: SpacebringRequestOptions): Promise<undefined> {
+          return unwrap(await client.PATCH("/billing/invoices/v1/items/{id}", { params: { path: { id } }, body: { invoiceItem }, signal: options?.signal }), "PATCH /billing/invoices/v1/items/{id}");
         },
         /**
          * Delete an invoice item
          *
          * Delete an invoice item from a draft invoice.
+         *
+         * @param id The id of an invoice item.
+         * @param options Request options (abort signal).
          */
         async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
           return unwrap(await client.DELETE("/billing/invoices/v1/items/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /billing/invoices/v1/items/{id}");

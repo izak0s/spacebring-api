@@ -46,13 +46,13 @@ export interface GetPromocodesQuery {
 }
 
 /** Request body for `sb.discounts.coupons.create()`. */
-export type CreateCouponBody = NonNullable<operations["createCoupon"]["requestBody"]>["content"]["application/json"];
+export type CreateCouponBody = NonNullable<NonNullable<operations["createCoupon"]["requestBody"]>["content"]["application/json"]["coupon"]>;
 
 /** Request body for `sb.discounts.promocodes.create()`. */
-export type CreatePromocodeBody = NonNullable<operations["createPromocode"]["requestBody"]>["content"]["application/json"];
+export type CreatePromocodeBody = NonNullable<NonNullable<operations["createPromocode"]["requestBody"]>["content"]["application/json"]["promocode"]>;
 
 /** Request body for `sb.discounts.coupons.update()`. */
-export type UpdateCouponBody = NonNullable<operations["updateCoupon"]["requestBody"]>["content"]["application/json"];
+export type UpdateCouponBody = NonNullable<NonNullable<operations["updateCoupon"]["requestBody"]>["content"]["application/json"]["coupon"]>;
 
 export function createDiscounts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -77,19 +77,35 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
           "coupons",
         );
       },
-      /** Get a coupon */
+      /**
+       * Get a coupon
+       *
+       * @param id The id of the coupon
+       * @param options Request options (abort signal).
+       */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Coupon> {
         return unwrapProp(await client.GET("/discounts/coupons/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "coupon", "GET /discounts/coupons/v1/{id}");
       },
       /** Create a coupon */
-      async create(body: CreateCouponBody, options?: SpacebringRequestOptions): Promise<Coupon> {
-        return unwrapProp(await client.POST("/discounts/coupons/v1", { body, signal: options?.signal }), "coupon", "POST /discounts/coupons/v1");
+      async create(coupon: CreateCouponBody, options?: SpacebringRequestOptions): Promise<Coupon> {
+        return unwrapProp(await client.POST("/discounts/coupons/v1", { body: { coupon }, signal: options?.signal }), "coupon", "POST /discounts/coupons/v1");
       },
-      /** Update a coupon */
-      async update(id: string, body: UpdateCouponBody, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.PATCH("/discounts/coupons/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /discounts/coupons/v1/{id}");
+      /**
+       * Update a coupon
+       *
+       * @param id The id of the coupon
+       * @param coupon The `coupon` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(id: string, coupon: UpdateCouponBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/discounts/coupons/v1/{id}", { params: { path: { id } }, body: { coupon }, signal: options?.signal }), "PATCH /discounts/coupons/v1/{id}");
       },
-      /** Delete a coupon */
+      /**
+       * Delete a coupon
+       *
+       * @param id The id of the coupon
+       * @param options Request options (abort signal).
+       */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/discounts/coupons/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /discounts/coupons/v1/{id}");
       },
@@ -103,15 +119,25 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
       async list(query?: GetPromocodesQuery, options?: SpacebringRequestOptions): Promise<Promocode[]> {
         return unwrapProp(await client.GET("/discounts/promocodes/v1", { params: { query }, signal: options?.signal }), "promocodes", "GET /discounts/promocodes/v1");
       },
-      /** Get a promocode */
+      /**
+       * Get a promocode
+       *
+       * @param id The id of the promocode
+       * @param options Request options (abort signal).
+       */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Promocode> {
         return unwrapProp(await client.GET("/discounts/promocodes/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "promocode", "GET /discounts/promocodes/v1/{id}");
       },
       /** Create a promocode */
-      async create(body: CreatePromocodeBody, options?: SpacebringRequestOptions): Promise<Promocode> {
-        return unwrapProp(await client.POST("/discounts/promocodes/v1", { body, signal: options?.signal }), "promocode", "POST /discounts/promocodes/v1");
+      async create(promocode: CreatePromocodeBody, options?: SpacebringRequestOptions): Promise<Promocode> {
+        return unwrapProp(await client.POST("/discounts/promocodes/v1", { body: { promocode }, signal: options?.signal }), "promocode", "POST /discounts/promocodes/v1");
       },
-      /** Archive a promocode */
+      /**
+       * Archive a promocode
+       *
+       * @param id The id of the promocode
+       * @param options Request options (abort signal).
+       */
       async archive(id: string, options?: SpacebringRequestOptions): Promise<Promocode> {
         return unwrapProp(await client.PUT("/discounts/promocodes/v1/{id}/archive", { params: { path: { id } }, signal: options?.signal }), "promocode", "PUT /discounts/promocodes/v1/{id}/archive");
       },

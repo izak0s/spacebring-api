@@ -18,10 +18,10 @@ export interface GetGuidesQuery {
 }
 
 /** Request body for `sb.guides.create()`. */
-export type CreateGuideBody = NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"];
+export type CreateGuideBody = NonNullable<NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
 
 /** Request body for `sb.guides.update()`. */
-export type PatchGuideBody = NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"];
+export type PatchGuideBody = NonNullable<NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
 
 export function createGuides(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -49,6 +49,9 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      * Retrieve a guide
      *
      * Retrieve a guide by id.
+     *
+     * @param guideId The id of the guide.
+     * @param options Request options (abort signal).
      */
     async get(guideId: string, options?: SpacebringRequestOptions): Promise<Guide> {
       return unwrapProp(await client.GET("/guides/v1/{guideId}", { params: { path: { guideId } }, signal: options?.signal }), "guide", "GET /guides/v1/{guideId}");
@@ -58,18 +61,27 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Create a guide in an organization.
      */
-    async create(body: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
-      return unwrapProp(await client.POST("/guides/v1", { body, signal: options?.signal }), "guide", "POST /guides/v1");
+    async create(guide: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
+      return unwrapProp(await client.POST("/guides/v1", { body: { guide }, signal: options?.signal }), "guide", "POST /guides/v1");
     },
     /**
      * Update a guide
      *
      * Update a guide. At least one guide property must be provided.
+     *
+     * @param guideId The id of the guide
+     * @param guide The `guide` payload.
+     * @param options Request options (abort signal).
      */
-    async update(guideId: string, body: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
-      return unwrapProp(await client.PATCH("/guides/v1/{guideId}", { params: { path: { guideId } }, body, signal: options?.signal }), "guide", "PATCH /guides/v1/{guideId}");
+    async update(guideId: string, guide: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide> {
+      return unwrapProp(await client.PATCH("/guides/v1/{guideId}", { params: { path: { guideId } }, body: { guide }, signal: options?.signal }), "guide", "PATCH /guides/v1/{guideId}");
     },
-    /** Delete a guide */
+    /**
+     * Delete a guide
+     *
+     * @param guideId The id of the guide
+     * @param options Request options (abort signal).
+     */
     async delete(guideId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/guides/v1/{guideId}", { params: { path: { guideId } }, signal: options?.signal }), "DELETE /guides/v1/{guideId}");
     },

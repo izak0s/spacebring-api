@@ -98,6 +98,22 @@ describe("Spacebring client", () => {
     expect(JSON.parse(requests[0].body)).toEqual({ paymentMethod: { type: "stripe" } });
   });
 
+  it("re-wraps unwrapped single-property bodies on the wire", async () => {
+    const { sb, requests } = mockClient([{ status: 200, body: { plan: { id: "p1" } } }]);
+    await sb.plans.create({ locationRef: "loc-1", title: "Plan", price: 0, period: "month" });
+    expect(JSON.parse(requests[0].body)).toEqual({
+      plan: { locationRef: "loc-1", title: "Plan", price: 0, period: "month" },
+    });
+  });
+
+  it("sends no body when an unwrapped optional body is omitted", async () => {
+    const { sb, requests } = mockClient([{ status: 200, body: { invoice: {} } }]);
+    await sb.billing.invoices.issue("inv-1");
+    expect(requests[0].body).toBe("");
+    await sb.billing.invoices.issue("inv-1", true);
+    expect(JSON.parse(requests[1].body)).toEqual({ skipAutoCharge: true });
+  });
+
   it("throws SpacebringError with status, body, and the operation on API errors", async () => {
     const { sb } = mockClient([{ status: 400, body: { message: "locationRef is required", type: "invalid_request" } }]);
     const failure = sb.benefits.list();

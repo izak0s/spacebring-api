@@ -22,10 +22,10 @@ export interface GetPlansQuery {
 }
 
 /** Request body for `sb.plans.create()`. */
-export type CreatePlanBody = NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"];
+export type CreatePlanBody = NonNullable<NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 
 /** Request body for `sb.plans.update()`. */
-export type UpdatePlanBody = NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"];
+export type UpdatePlanBody = NonNullable<NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -53,26 +53,36 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      * Retrieve a plan
      *
      * Retrieve a certain plan.
+     *
+     * @param planId The id of the plan.
+     * @param options Request options (abort signal).
      */
     async get(planId: string, options?: SpacebringRequestOptions): Promise<Plan> {
       return unwrapProp(await client.GET("/plans/v1/{planId}", { params: { path: { planId } }, signal: options?.signal }), "plan", "GET /plans/v1/{planId}");
     },
     /** Create a plan */
-    async create(body: CreatePlanBody, options?: SpacebringRequestOptions): Promise<Plan> {
-      return unwrapProp(await client.POST("/plans/v1", { body, signal: options?.signal }), "plan", "POST /plans/v1");
+    async create(plan: CreatePlanBody, options?: SpacebringRequestOptions): Promise<Plan> {
+      return unwrapProp(await client.POST("/plans/v1", { body: { plan }, signal: options?.signal }), "plan", "POST /plans/v1");
     },
     /**
      * Update a plan
      *
      * Update a certain plan.
+     *
+     * @param planId The id of the plan.
+     * @param plan The `plan` payload.
+     * @param options Request options (abort signal).
      */
-    async update(planId: string, body: UpdatePlanBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/plans/v1/{planId}", { params: { path: { planId } }, body, signal: options?.signal }), "PATCH /plans/v1/{planId}");
+    async update(planId: string, plan: UpdatePlanBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/plans/v1/{planId}", { params: { path: { planId } }, body: { plan }, signal: options?.signal }), "PATCH /plans/v1/{planId}");
     },
     /**
      * Delete a plan
      *
      * Delete a certain plan.
+     *
+     * @param planId The id of the plan.
+     * @param options Request options (abort signal).
      */
     async delete(planId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/plans/v1/{planId}", { params: { path: { planId } }, signal: options?.signal }), "DELETE /plans/v1/{planId}");

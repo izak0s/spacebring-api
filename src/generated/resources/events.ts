@@ -33,7 +33,7 @@ export interface GetEventTicketsQuery {
 }
 
 /** Request body for `sb.events.create()`. */
-export type CreateEventBody = NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"];
+export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
 
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -46,8 +46,8 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
       return unwrapProp(await client.GET("/events/v1/{id}", { params: { header: { "spacebring-network-id": defaults.networkId as string }, path: { id } }, signal: options?.signal }), "event", "GET /events/v1/{id}");
     },
     /** Create an event */
-    async create(body: CreateEventBody, options?: SpacebringRequestOptions): Promise<Event> {
-      return unwrapProp(await client.POST("/events/v1", { body, signal: options?.signal }), "event", "POST /events/v1");
+    async create(event: CreateEventBody, options?: SpacebringRequestOptions): Promise<Event> {
+      return unwrapProp(await client.POST("/events/v1", { body: { event }, signal: options?.signal }), "event", "POST /events/v1");
     },
     /** Delete an event */
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
@@ -86,6 +86,9 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        * Retrieve a ticket
        *
        * Retrieve an event ticket.
+       *
+       * @param id The id of the event ticket.
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<EventTicket> {
         return unwrapProp(await client.GET("/events/tickets/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "ticket", "GET /events/tickets/v1/{id}");

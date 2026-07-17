@@ -30,13 +30,13 @@ export interface GetFeedPostsQuery {
 }
 
 /** Request body for `sb.feed.posts.create()`. */
-export type CreateFeedPostBody = NonNullable<operations["createFeedPost"]["requestBody"]>["content"]["application/json"];
+export type CreateFeedPostBody = NonNullable<NonNullable<operations["createFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 
 /** Request body for `sb.feed.comments.create()`. */
-export type CreateFeedPostCommentBody = NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"];
+export type CreateFeedPostCommentBody = NonNullable<NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"]["comment"]>;
 
 /** Request body for `sb.feed.posts.update()`. */
-export type UpdateFeedPostBody = NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"];
+export type UpdateFeedPostBody = NonNullable<NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -46,18 +46,33 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a feed post comment.
        */
-      async create(body: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<FeedComment> {
-        return unwrapProp(await client.POST("/feed/comments/v1", { body, signal: options?.signal }), "comment", "POST /feed/comments/v1");
+      async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<FeedComment> {
+        return unwrapProp(await client.POST("/feed/comments/v1", { body: { comment }, signal: options?.signal }), "comment", "POST /feed/comments/v1");
       },
-      /** Delete a post comment */
+      /**
+       * Delete a post comment
+       *
+       * @param id The id of the post comment.
+       * @param options Request options (abort signal).
+       */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/feed/comments/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /feed/comments/v1/{id}");
       },
-      /** Create a like for a post comment */
+      /**
+       * Create a like for a post comment
+       *
+       * @param id The id of the post comment.
+       * @param options Request options (abort signal).
+       */
       async createLike(id: string, options?: SpacebringRequestOptions): Promise<CommentLike> {
         return unwrapProp(await client.POST("/feed/comments/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "like", "POST /feed/comments/v1/{id}/likes");
       },
-      /** Delete a like for a post comment */
+      /**
+       * Delete a like for a post comment
+       *
+       * @param id The id of the post comment.
+       * @param options Request options (abort signal).
+       */
       async deleteLike(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/feed/comments/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "DELETE /feed/comments/v1/{id}/likes");
       },
@@ -87,6 +102,9 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        * Get a post
        *
        * Get a feed post.
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Post> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "post", "GET /feed/posts/v1/{id}");
@@ -96,38 +114,65 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a feed post.
        */
-      async create(body: CreateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
-        return unwrapProp(await client.POST("/feed/posts/v1", { body, signal: options?.signal }), "post", "POST /feed/posts/v1");
+      async create(post: CreateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
+        return unwrapProp(await client.POST("/feed/posts/v1", { body: { post }, signal: options?.signal }), "post", "POST /feed/posts/v1");
       },
       /**
        * Update a post
        *
        * Update a feed post.
+       *
+       * @param id The id of the post.
+       * @param post The `post` payload.
+       * @param options Request options (abort signal).
        */
-      async update(id: string, body: UpdateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
-        return unwrapProp(await client.PUT("/feed/posts/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "post", "PUT /feed/posts/v1/{id}");
+      async update(id: string, post: UpdateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post> {
+        return unwrapProp(await client.PUT("/feed/posts/v1/{id}", { params: { path: { id } }, body: { post }, signal: options?.signal }), "post", "PUT /feed/posts/v1/{id}");
       },
       /**
        * Delete a post
        *
        * Delete a feed post.
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
        */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/feed/posts/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /feed/posts/v1/{id}");
       },
-      /** Create a like for a post */
+      /**
+       * Create a like for a post
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
+       */
       async createLike(id: string, options?: SpacebringRequestOptions): Promise<PostLike> {
         return unwrapProp(await client.POST("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "like", "POST /feed/posts/v1/{id}/likes");
       },
-      /** Delete a like for a post */
+      /**
+       * Delete a like for a post
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
+       */
       async deleteLike(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "DELETE /feed/posts/v1/{id}/likes");
       },
-      /** Get comments for a post */
+      /**
+       * Get comments for a post
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
+       */
       async getComments(id: string, options?: SpacebringRequestOptions): Promise<PostComment[]> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}/comments", { params: { path: { id } }, signal: options?.signal }), "comments", "GET /feed/posts/v1/{id}/comments");
       },
-      /** Get likes for a post */
+      /**
+       * Get likes for a post
+       *
+       * @param id The id of the post.
+       * @param options Request options (abort signal).
+       */
       async getLikes(id: string, options?: SpacebringRequestOptions): Promise<PostLike[]> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "likes", "GET /feed/posts/v1/{id}/likes");
       },

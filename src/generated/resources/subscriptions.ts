@@ -40,13 +40,13 @@ export interface GetSubscriptionsQuery {
 export type CreateSubscriptionBody = NonNullable<operations["createSubscription"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.subscriptions.createItem()`. */
-export type CreateSubscriptionItemBody = NonNullable<operations["createSubscriptionItem"]["requestBody"]>["content"]["application/json"];
+export type CreateSubscriptionItemBody = NonNullable<NonNullable<operations["createSubscriptionItem"]["requestBody"]>["content"]["application/json"]["item"]>;
 
 /** Request body for `sb.subscriptions.update()`. */
-export type UpdateSubscriptionBody = NonNullable<operations["updateSubscription"]["requestBody"]>["content"]["application/json"];
+export type UpdateSubscriptionBody = NonNullable<NonNullable<operations["updateSubscription"]["requestBody"]>["content"]["application/json"]["subscription"]>;
 
 /** Request body for `sb.subscriptions.updateItem()`. */
-export type UpdateSubscriptionItemBody = NonNullable<operations["updateSubscriptionItem"]["requestBody"]>["content"]["application/json"];
+export type UpdateSubscriptionItemBody = NonNullable<NonNullable<operations["updateSubscriptionItem"]["requestBody"]>["content"]["application/json"]["item"]>;
 
 export function createSubscriptions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -66,6 +66,9 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
      * Retrieve a subscription
      *
      * Retrieve a certain subscription.
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param options Request options (abort signal).
      */
     async get(subscriptionId: string, options?: SpacebringRequestOptions): Promise<Subscription> {
       return unwrapProp(await client.GET("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } }, signal: options?.signal }), "subscription", "GET /subscriptions/v1/{subscriptionId}");
@@ -82,29 +85,55 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
      * Update a subscription
      *
      * Update a certain subscription.
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param subscription The `subscription` payload.
+     * @param options Request options (abort signal).
      */
-    async update(subscriptionId: string, body: UpdateSubscriptionBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } }, body, signal: options?.signal }), "PATCH /subscriptions/v1/{subscriptionId}");
+    async update(subscriptionId: string, subscription: UpdateSubscriptionBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } }, body: { subscription }, signal: options?.signal }), "PATCH /subscriptions/v1/{subscriptionId}");
     },
     /**
      * Delete a subscription
      *
      * Delete a certain subscription.
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param options Request options (abort signal).
      */
     async delete(subscriptionId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/subscriptions/v1/{subscriptionId}", { params: { path: { subscriptionId } }, signal: options?.signal }), "DELETE /subscriptions/v1/{subscriptionId}");
     },
-    /** Create a subscription item */
-    async createItem(subscriptionId: string, body: CreateSubscriptionItemBody, options?: SpacebringRequestOptions): Promise<Subscription> {
-      return unwrapProp(await client.POST("/subscriptions/v1/{subscriptionId}/items", { params: { path: { subscriptionId } }, body, signal: options?.signal }), "subscription", "POST /subscriptions/v1/{subscriptionId}/items");
+    /**
+     * Create a subscription item
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param item The `item` payload.
+     * @param options Request options (abort signal).
+     */
+    async createItem(subscriptionId: string, item: CreateSubscriptionItemBody, options?: SpacebringRequestOptions): Promise<Subscription> {
+      return unwrapProp(await client.POST("/subscriptions/v1/{subscriptionId}/items", { params: { path: { subscriptionId } }, body: { item }, signal: options?.signal }), "subscription", "POST /subscriptions/v1/{subscriptionId}/items");
     },
-    /** Delete a subscription item */
+    /**
+     * Delete a subscription item
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param itemId The id of the subscription item.
+     * @param options Request options (abort signal).
+     */
     async deleteItem(subscriptionId: string, itemId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/subscriptions/v1/{subscriptionId}/items/{itemId}", { params: { path: { subscriptionId, itemId } }, signal: options?.signal }), "DELETE /subscriptions/v1/{subscriptionId}/items/{itemId}");
     },
-    /** Update a subscription item */
-    async updateItem(subscriptionId: string, itemId: string, body: UpdateSubscriptionItemBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}/items/{itemId}", { params: { path: { subscriptionId, itemId } }, body, signal: options?.signal }), "PATCH /subscriptions/v1/{subscriptionId}/items/{itemId}");
+    /**
+     * Update a subscription item
+     *
+     * @param subscriptionId The id of the subscription.
+     * @param itemId The id of the subscription item.
+     * @param item The `item` payload.
+     * @param options Request options (abort signal).
+     */
+    async updateItem(subscriptionId: string, itemId: string, item: UpdateSubscriptionItemBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/subscriptions/v1/{subscriptionId}/items/{itemId}", { params: { path: { subscriptionId, itemId } }, body: { item }, signal: options?.signal }), "PATCH /subscriptions/v1/{subscriptionId}/items/{itemId}");
     },
   };
 }

@@ -11,7 +11,7 @@ export type Order = NonNullable<operations["getOrder"]["responses"][200]["conten
 export type Product = NonNullable<components["schemas"]["product"]>;
 
 /** A ShopCategory entity as returned by the Spacebring API. */
-export type ShopCategory = NonNullable<operations["getShopCategory"]["responses"][200]["content"]["application/json"]["category"]>;
+export type ShopCategory = NonNullable<components["schemas"]["shopCategory"]>;
 
 /** Query parameters for `sb.shop.orders.list()`. */
 export interface GetOrdersQuery {
@@ -64,16 +64,16 @@ export interface GetShopCategoriesQuery {
 }
 
 /** Request body for `sb.shop.products.create()`. */
-export type CreateProductBody = NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"];
+export type CreateProductBody = NonNullable<NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
 
 /** Request body for `sb.shop.categories.create()`. */
-export type CreateShopCategoryBody = NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"];
+export type CreateShopCategoryBody = NonNullable<NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
 
 /** Request body for `sb.shop.products.update()`. */
-export type UpdateProductBody = NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"];
+export type UpdateProductBody = NonNullable<NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
 
 /** Request body for `sb.shop.categories.update()`. */
-export type UpdateShopCategoryBody = NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"];
+export type UpdateShopCategoryBody = NonNullable<NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
 
 export function createShop(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -90,6 +90,9 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        * Get a category
        *
        * Get a shop category.
+       *
+       * @param categoryId The id of the shop category.
+       * @param options Request options (abort signal).
        */
       async get(categoryId: string, options?: SpacebringRequestOptions): Promise<ShopCategory> {
         return unwrapProp(await client.GET("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, signal: options?.signal }), "category", "GET /shop/categories/v1/{categoryId}");
@@ -99,21 +102,28 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a shop category.
        */
-      async create(body: CreateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
-        return unwrapProp(await client.POST("/shop/categories/v1", { body, signal: options?.signal }), "category", "POST /shop/categories/v1");
+      async create(category: CreateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
+        return unwrapProp(await client.POST("/shop/categories/v1", { body: { category }, signal: options?.signal }), "category", "POST /shop/categories/v1");
       },
       /**
        * Update a category
        *
        * Update a shop category.
+       *
+       * @param categoryId The id of the shop category
+       * @param category The `category` payload.
+       * @param options Request options (abort signal).
        */
-      async update(categoryId: string, body: UpdateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
-        return unwrapProp(await client.PUT("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, body, signal: options?.signal }), "category", "PUT /shop/categories/v1/{categoryId}");
+      async update(categoryId: string, category: UpdateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
+        return unwrapProp(await client.PUT("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, body: { category }, signal: options?.signal }), "category", "PUT /shop/categories/v1/{categoryId}");
       },
       /**
        * Delete a category
        *
        * Delete a shop category.
+       *
+       * @param categoryId The id of the shop category
+       * @param options Request options (abort signal).
        */
       async delete(categoryId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/shop/categories/v1/{categoryId}", { params: { path: { categoryId } }, signal: options?.signal }), "DELETE /shop/categories/v1/{categoryId}");
@@ -144,6 +154,9 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        * Get an order
        *
        * Get a certain order.
+       *
+       * @param orderId The id of the order.
+       * @param options Request options (abort signal).
        */
       async get(orderId: string, options?: SpacebringRequestOptions): Promise<Order> {
         return unwrapProp(await client.GET("/shop/orders/v1/{orderId}", { params: { path: { orderId } }, signal: options?.signal }), "order", "GET /shop/orders/v1/{orderId}");
@@ -174,6 +187,9 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        * Get a product
        *
        * Get a certain product.
+       *
+       * @param productId The id of the product.
+       * @param options Request options (abort signal).
        */
       async get(productId: string, options?: SpacebringRequestOptions): Promise<Product> {
         return unwrapProp(await client.GET("/shop/products/v1/{productId}", { params: { path: { productId } }, signal: options?.signal }), "product", "GET /shop/products/v1/{productId}");
@@ -183,21 +199,28 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a product in shop.
        */
-      async create(body: CreateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
-        return unwrapProp(await client.POST("/shop/products/v1", { body, signal: options?.signal }), "product", "POST /shop/products/v1");
+      async create(product: CreateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
+        return unwrapProp(await client.POST("/shop/products/v1", { body: { product }, signal: options?.signal }), "product", "POST /shop/products/v1");
       },
       /**
        * Update a product
        *
        * Update a certain product.
+       *
+       * @param productId The id of the product.
+       * @param product The `product` payload.
+       * @param options Request options (abort signal).
        */
-      async update(productId: string, body: UpdateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
-        return unwrapProp(await client.PUT("/shop/products/v1/{productId}", { params: { path: { productId } }, body, signal: options?.signal }), "product", "PUT /shop/products/v1/{productId}");
+      async update(productId: string, product: UpdateProductBody, options?: SpacebringRequestOptions): Promise<Product> {
+        return unwrapProp(await client.PUT("/shop/products/v1/{productId}", { params: { path: { productId } }, body: { product }, signal: options?.signal }), "product", "PUT /shop/products/v1/{productId}");
       },
       /**
        * Delete a product
        *
        * Delete a certain product.
+       *
+       * @param productId The id of the product.
+       * @param options Request options (abort signal).
        */
       async delete(productId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/shop/products/v1/{productId}", { params: { path: { productId } }, signal: options?.signal }), "DELETE /shop/products/v1/{productId}");

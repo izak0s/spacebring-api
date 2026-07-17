@@ -57,16 +57,16 @@ export interface GetMembershipsQuery {
 }
 
 /** Request body for `sb.community.companies.create()`. */
-export type CreateCompanyBody = NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"];
+export type CreateCompanyBody = NonNullable<NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"]["company"]>;
 
 /** Request body for `sb.community.memberships.create()`. */
 export type CreateMembershipBody = NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.community.companies.update()`. */
-export type UpdateCompanyBody = NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"];
+export type UpdateCompanyBody = NonNullable<NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"]["company"]>;
 
 /** Request body for `sb.community.memberships.update()`. */
-export type UpdateMembershipBody = NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"];
+export type UpdateMembershipBody = NonNullable<NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"]["membership"]>;
 
 export function createCommunity(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -95,21 +95,28 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        * Retrieve a company
        *
        * Retrieve a certain company.
+       *
+       * @param id The id of company.
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Company> {
         return unwrapProp(await client.GET("/community/companies/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "company", "GET /community/companies/v1/{id}");
       },
       /** Create a company */
-      async create(body: CreateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
-        return unwrapProp(await client.POST("/community/companies/v1", { body, signal: options?.signal }), "company", "POST /community/companies/v1");
+      async create(company: CreateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
+        return unwrapProp(await client.POST("/community/companies/v1", { body: { company }, signal: options?.signal }), "company", "POST /community/companies/v1");
       },
       /**
        * Update a company
        *
        * Update a certain company.
+       *
+       * @param id The id of the company.
+       * @param company The `company` payload.
+       * @param options Request options (abort signal).
        */
-      async update(id: string, body: UpdateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
-        return unwrapProp(await client.PUT("/community/companies/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "company", "PUT /community/companies/v1/{id}");
+      async update(id: string, company: UpdateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
+        return unwrapProp(await client.PUT("/community/companies/v1/{id}", { params: { path: { id } }, body: { company }, signal: options?.signal }), "company", "PUT /community/companies/v1/{id}");
       },
     },
     memberships: {
@@ -137,6 +144,9 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        * Retrieve a membership
        *
        * Retrieve a certain membership.
+       *
+       * @param id The id of membership.
+       * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Membership> {
         return unwrapProp(await client.GET("/community/memberships/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "membership", "GET /community/memberships/v1/{id}");
@@ -153,14 +163,21 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        * Update a membership
        *
        * Update a certain membership.
+       *
+       * @param id The id of the membership.
+       * @param membership The `membership` payload.
+       * @param options Request options (abort signal).
        */
-      async update(id: number, body: UpdateMembershipBody, options?: SpacebringRequestOptions): Promise<Membership> {
-        return unwrapProp(await client.PUT("/community/memberships/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "membership", "PUT /community/memberships/v1/{id}");
+      async update(id: number, membership: UpdateMembershipBody, options?: SpacebringRequestOptions): Promise<Membership> {
+        return unwrapProp(await client.PUT("/community/memberships/v1/{id}", { params: { path: { id } }, body: { membership }, signal: options?.signal }), "membership", "PUT /community/memberships/v1/{id}");
       },
       /**
        * Delete a membership
        *
        * Delete a certain membership.
+       *
+       * @param id The id of the membership.
+       * @param options Request options (abort signal).
        */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/community/memberships/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /community/memberships/v1/{id}");

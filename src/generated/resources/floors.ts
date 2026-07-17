@@ -20,7 +20,12 @@ export function createFloors(client: Client<paths>, defaults: SpacebringDefaults
     async list(query: GetFloorsQuery, options?: SpacebringRequestOptions): Promise<operations["getFloors"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/floors/v1", { params: { query }, signal: options?.signal }), "GET /floors/v1");
     },
-    /** Delete a floor */
+    /**
+     * Delete a floor
+     *
+     * @param id The id of the floor.
+     * @param options Request options (abort signal).
+     */
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/floors/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /floors/v1/{id}");
     },

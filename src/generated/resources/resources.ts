@@ -45,13 +45,13 @@ export interface GetResourcesQuery {
 }
 
 /** Request body for `sb.resources.bookings.create()`. */
-export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
+export type CreateBookingBody = NonNullable<NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]["booking"]>;
 
 /** Request body for `sb.resources.create()`. */
-export type CreateResourceBody = NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"];
+export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
 /** Request body for `sb.resources.update()`. */
-export type PatchResourceBody = NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"];
+export type PatchResourceBody = NonNullable<NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
 export function createResources(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -79,6 +79,9 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      * Get a resource
      *
      * Get a certain resource.
+     *
+     * @param id The id of the resource.
+     * @param options Request options (abort signal).
      */
     async get(id: string, options?: SpacebringRequestOptions): Promise<Resource> {
       return unwrapProp(await client.GET("/resources/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "resource", "GET /resources/v1/{id}");
@@ -88,16 +91,20 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Create a new resource in a location. The request body must match the schema exactly—unknown properties are rejected.
      */
-    async create(body: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource> {
-      return unwrapProp(await client.POST("/resources/v1", { body, signal: options?.signal }), "resource", "POST /resources/v1");
+    async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource> {
+      return unwrapProp(await client.POST("/resources/v1", { body: { resource }, signal: options?.signal }), "resource", "POST /resources/v1");
     },
     /**
      * Patch a resource
      *
      * Patch a certain resource.
+     *
+     * @param id The id of the resource.
+     * @param resource The `resource` payload.
+     * @param options Request options (abort signal).
      */
-    async update(id: string, body: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body, signal: options?.signal }), "PATCH /resources/v1/{id}");
+    async update(id: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{id}");
     },
     bookings: {
       /**
@@ -120,15 +127,25 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
           "bookings",
         );
       },
-      /** Get a booking */
+      /**
+       * Get a booking
+       *
+       * @param id The id of the booking.
+       * @param options Request options (abort signal).
+       */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Booking> {
         return unwrapProp(await client.GET("/resources/bookings/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "booking", "GET /resources/bookings/v1/{id}");
       },
       /** Create a booking */
-      async create(body: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
-        return unwrapProp(await client.POST("/resources/bookings/v1", { body, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
+      async create(booking: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
+        return unwrapProp(await client.POST("/resources/bookings/v1", { body: { booking }, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
       },
-      /** Delete a booking */
+      /**
+       * Delete a booking
+       *
+       * @param id The id of the booking.
+       * @param options Request options (abort signal).
+       */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/resources/bookings/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /resources/bookings/v1/{id}");
       },
