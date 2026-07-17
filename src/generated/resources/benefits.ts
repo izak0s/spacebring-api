@@ -102,7 +102,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
       return unwrapProp(await client.GET("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, signal: options?.signal }), "benefit", "GET /benefits/v1/{benefitId}");
     },
     /** Create a benefit */
-    async create(benefit: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<operations["createBenefit"]["responses"][201]["content"]["application/json"]> {
+    async create(benefit: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit> {
       return unwrap(await client.POST("/benefits/v1", { body: { benefit }, signal: options?.signal }), "POST /benefits/v1");
     },
     /**

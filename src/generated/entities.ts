@@ -2,12 +2,12 @@
 // Regenerate with `npm run generate:facade`.
 export type { AltCurrency, CreateAltCurrencyBody, GetAltCurrenciesQuery, UpdateAltCurrencyBody } from "./resources/altCurrencies.js";
 export type { Application, ApplyBenefitBody, Benefit, BenefitCategory, CreateBenefitBody, CreateBenefitCategoryBody, GetBenefitApplicationsQuery, GetBenefitCategoriesQuery, GetBenefitsQuery, UpdateBenefitBody, UpdateBenefitCategoryBody } from "./resources/benefits.js";
-export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, CreditNote, GetCreditNotesQuery, GetInvoicesQuery, GetUpcomingInvoiceItemsQuery, GetUpcomingInvoiceQuery, Invoice, InvoiceItem, IssueInvoiceBody, ListInvoiceItemsQuery, PayInvoiceBody, PreviewCreditNoteBody, UpdateCreditNoteBody, UpdateInvoiceBody, UpdateInvoiceItemBody } from "./resources/billing.js";
+export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, CreditNote, GetCreditNotesQuery, GetInvoicesQuery, GetUpcomingInvoiceItemsQuery, GetUpcomingInvoiceQuery, Invoice, InvoiceItem, IssueInvoiceBody, ListInvoiceItemsQuery, PayInvoiceBody, Payment, PreviewCreditNoteBody, UpcomingItem, UpdateCreditNoteBody, UpdateInvoiceBody, UpdateInvoiceItemBody } from "./resources/billing.js";
 export type { Company, CreateCompanyBody, CreateMembershipBody, GetCompaniesQuery, GetMembershipsDeletedQuery, GetMembershipsQuery, Membership, UpdateCompanyBody, UpdateMembershipBody } from "./resources/community.js";
 export type { Contract, CreateContractBody, GetContractsQuery, IssueContractBody, TerminateContractBody } from "./resources/contracts.js";
 export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, GetDiscountRedemptionsQuery, GetPromocodesQuery, Promocode, Redemption, UpdateCouponBody } from "./resources/discounts.js";
 export type { CreateEventBody, Event, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery } from "./resources/events.js";
-export type { CommentLike, CreateFeedPostBody, CreateFeedPostCommentBody, FeedComment, GetFeedPostsQuery, Post, PostComment, PostLike, UpdateFeedPostBody } from "./resources/feed.js";
+export type { Comment, CreateFeedPostBody, CreateFeedPostCommentBody, GetFeedPostsQuery, Like, Post, UpdateFeedPostBody } from "./resources/feed.js";
 export type { GetFloorsQuery } from "./resources/floors.js";
 export type { CreateGuideBody, GetGuidesQuery, Guide, PatchGuideBody } from "./resources/guides.js";
 export type { Location } from "./resources/locations.js";
@@ -19,4 +19,4 @@ export type { CreateProductBody, CreateShopCategoryBody, GetOrdersQuery, GetProd
 export type { CreateSubscriptionBody, CreateSubscriptionItemBody, GetSubscriptionsQuery, Subscription, UpdateSubscriptionBody, UpdateSubscriptionItemBody } from "./resources/subscriptions.js";
 export type { Activity, CreateSupportTicketBody, CreateSupportTicketCommentBody, GetSupportTicketsQuery, SupportTicket, UpdateSupportTicketAssigneeBody, UpdateSupportTicketStatusBody, UpdateSupportTicketTypeBody } from "./resources/support.js";
 export type { Balance, CreateCreditsTransactionBody, CreateDayPassesTransactionBody, CreditTransaction, DayPassTransaction, GetCreditsTransactionsQuery, GetDayPassesTransactionsQuery, GetMoneyTransactionsQuery, MoneyTransaction } from "./resources/transactions.js";
-export type { CheckInVisitBody, CheckOutVisitBody, Contact, CreateContactBody, CreateRequestBody, CreateVisitBody, GetContactsQuery, GetRequestsQuery, GetVisitsQuery, Request, RequestVisit, UpdateVisitBody, VisitorVisit } from "./resources/visitors.js";
+export type { CheckInVisitBody, CheckOutVisitBody, Contact, CreateContactBody, CreateRequestBody, CreateVisitBody, GetContactsQuery, GetRequestsQuery, GetVisitsQuery, Request, UpdateVisitBody, Visit } from "./resources/visitors.js";

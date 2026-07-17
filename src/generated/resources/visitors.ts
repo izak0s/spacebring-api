@@ -10,11 +10,8 @@ export type Contact = NonNullable<components["schemas"]["contact"]>;
 /** A Request entity as returned by the Spacebring API. */
 export type Request = NonNullable<components["schemas"]["visitRequest"]>;
 
-/** A RequestVisit entity as returned by the Spacebring API. */
-export type RequestVisit = NonNullable<components["schemas"]["visit"]>;
-
-/** A VisitorVisit entity as returned by the Spacebring API. */
-export type VisitorVisit = NonNullable<components["schemas"]["visit"]>;
+/** A Visit entity as returned by the Spacebring API. */
+export type Visit = NonNullable<components["schemas"]["visit"]>;
 
 /** Query parameters for `sb.visitors.contacts.list()`. */
 export interface GetContactsQuery {
@@ -135,7 +132,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        * @param id The id of the request
        * @param options Request options (abort signal).
        */
-      async approve(id: string, options?: SpacebringRequestOptions): Promise<RequestVisit> {
+      async approve(id: string, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.POST("/visitors/requests/v1/{id}/approve", { params: { path: { id } }, signal: options?.signal }), "visit", "POST /visitors/requests/v1/{id}/approve");
       },
       /**
@@ -150,11 +147,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
     },
     visits: {
       /** Retrieve visits */
-      async list(query: GetVisitsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; visits?: VisitorVisit[] }> {
+      async list(query: GetVisitsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; visits?: Visit[] }> {
         return unwrap(await client.GET("/visitors/visits/v1", { params: { query }, signal: options?.signal }), "GET /visitors/visits/v1");
       },
       /** Retrieve visits — iterates every item across all pages. */
-      iterate(query: Omit<GetVisitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<VisitorVisit, void, undefined> {
+      iterate(query: Omit<GetVisitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Visit, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/visitors/visits/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /visitors/visits/v1"),
@@ -169,11 +166,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        * @param id The id of the visit
        * @param options Request options (abort signal).
        */
-      async get(id: string, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async get(id: string, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.GET("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "visit", "GET /visitors/visits/v1/{id}");
       },
       /** Create a visit */
-      async create(visit: CreateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async create(visit: CreateVisitBody, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.POST("/visitors/visits/v1", { body: { visit }, signal: options?.signal }), "visit", "POST /visitors/visits/v1");
       },
       /**
@@ -185,7 +182,7 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
        * @param visit The `visit` payload.
        * @param options Request options (abort signal).
        */
-      async update(id: string, visit: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async update(id: string, visit: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.PUT("/visitors/visits/v1/{id}", { params: { path: { id } }, body: { visit }, signal: options?.signal }), "visit", "PUT /visitors/visits/v1/{id}");
       },
       /**
@@ -200,11 +197,11 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
         return unwrap(await client.DELETE("/visitors/visits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /visitors/visits/v1/{id}");
       },
       /** Check in a visit */
-      async checkIn(body: CheckInVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async checkIn(body: CheckInVisitBody, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkin", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1/checkin");
       },
       /** Check out a visit */
-      async checkOut(body: CheckOutVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit> {
+      async checkOut(body: CheckOutVisitBody, options?: SpacebringRequestOptions): Promise<Visit> {
         return unwrapProp(await client.POST("/visitors/visits/v1/checkout", { body, signal: options?.signal }), "visit", "POST /visitors/visits/v1/checkout");
       },
     },

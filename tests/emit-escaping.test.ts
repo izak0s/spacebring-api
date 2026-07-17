@@ -27,6 +27,8 @@ function analyzedOp(overrides: Partial<AnalyzedOp>): AnalyzedOp {
     unwrapKey: undefined,
     unwrapIsArray: false,
     unwrapSchemaRef: undefined,
+    multiProps: undefined,
+    bareSchemaRef: undefined,
     ...overrides,
   };
 }
@@ -65,6 +67,13 @@ describe("emit escaping", () => {
     const iterate = methods.find((m) => m.usesPaginate);
     expect(iterate?.code).toContain(JSON.stringify(MALICIOUS));
     expect(iterate?.code).not.toContain(`"${MALICIOUS}"`);
+  });
+
+  it("escapes a malicious multi-envelope property key in the literal return type", () => {
+    const multiProps = [{ key: MALICIOUS, optional: true, entity: { isArray: false } }];
+    const [method] = emitMethod(analyzedOp({ multiProps }), "get", undefined, undefined, undefined);
+    expect(method.code).toContain(JSON.stringify(MALICIOUS));
+    expect(method.code).not.toContain(`ion"]["${MALICIOUS}"`);
   });
 
   it("rejects a non-identifier path parameter name instead of emitting it", () => {

@@ -143,13 +143,32 @@ export function emitMethod(
           )
           .join("; ")} }`
       : undefined;
+  // Multi-property envelopes ({ activity, ticket }) are returned whole; like
+  // paginated envelopes they're re-stated as a readable literal type.
+  const multiType = analyzed.multiProps
+    ? `{ ${analyzed.multiProps
+        .map((p) => {
+          const alias = p.entity ? entities?.get(entityBase(p.key))?.name : undefined;
+          const type =
+            p.entity && alias
+              ? p.entity.isArray
+                ? `${alias}[]`
+                : alias
+              : (p.scalar ?? `${responseType}[${JSON.stringify(p.key)}]`);
+          return `${quoteKey(p.key)}${p.optional ? "?" : ""}: ${type}`;
+        })
+        .join("; ")} }`
+    : undefined;
+  // Bare entity response (createBenefit returns the benefit itself): the
+  // component alias IS the response type.
+  const bareAlias = analyzed.bareSchemaRef ? entities?.get(entityBase(analyzed.bareSchemaRef))?.name : undefined;
   const returnType = unwrapKey
     ? unwrapAlias
       ? analyzed.unwrapIsArray
         ? `${unwrapAlias}[]`
         : unwrapAlias
       : rawUnwrapType
-    : (paginatedType ?? responseType);
+    : (paginatedType ?? multiType ?? bareAlias ?? responseType);
   // Attached to thrown SpacebringErrors so failures identify their operation.
   const opLabel = `${method.toUpperCase()} ${path}`;
   const opLabelLit = JSON.stringify(opLabel);

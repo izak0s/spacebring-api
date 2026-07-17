@@ -66,7 +66,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        * @param id The id of the ticket.
        * @param options Request options (abort signal).
        */
-      async get(id: string, options?: SpacebringRequestOptions): Promise<operations["getSupportTicket"]["responses"][200]["content"]["application/json"]> {
+      async get(id: string, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }> {
         return unwrap(await client.GET("/support/tickets/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "GET /support/tickets/v1/{id}");
       },
       /**
@@ -74,7 +74,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        *
        * Create a support ticket.
        */
-      async create(ticket: CreateSupportTicketBody, options?: SpacebringRequestOptions): Promise<operations["createSupportTicket"]["responses"][201]["content"]["application/json"]> {
+      async create(ticket: CreateSupportTicketBody, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }> {
         return unwrap(await client.POST("/support/tickets/v1", { body: { ticket }, signal: options?.signal }), "POST /support/tickets/v1");
       },
       /**
@@ -86,7 +86,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        * @param ticket The `ticket` payload.
        * @param options Request options (abort signal).
        */
-      async updateAssignee(id: string, ticket: UpdateSupportTicketAssigneeBody, options?: SpacebringRequestOptions): Promise<operations["updateSupportTicketAssignee"]["responses"][200]["content"]["application/json"]> {
+      async updateAssignee(id: string, ticket: UpdateSupportTicketAssigneeBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }> {
         return unwrap(await client.PUT("/support/tickets/v1/{id}/assignee", { params: { path: { id } }, body: { ticket }, signal: options?.signal }), "PUT /support/tickets/v1/{id}/assignee");
       },
       /**
@@ -98,7 +98,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
        * @param ticket The `ticket` payload.
        * @param options Request options (abort signal).
        */
-      async updateStatus(id: string, ticket: UpdateSupportTicketStatusBody, options?: SpacebringRequestOptions): Promise<operations["updateSupportTicketStatus"]["responses"][200]["content"]["application/json"]> {
+      async updateStatus(id: string, ticket: UpdateSupportTicketStatusBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }> {
         return unwrap(await client.PUT("/support/tickets/v1/{id}/status", { params: { path: { id } }, body: { ticket }, signal: options?.signal }), "PUT /support/tickets/v1/{id}/status");
       },
       /**

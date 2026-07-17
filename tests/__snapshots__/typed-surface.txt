@@ -52,7 +52,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
     async list(query?: GetBenefitsQuery, options?: SpacebringRequestOptions): Promise<{ benefits: Benefit[]; nextPageToken?: string; searchQueryNext?: string }>
     iterate(query?: Omit<GetBenefitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Benefit, void, undefined>
     async get(benefitId: string, options?: SpacebringRequestOptions): Promise<Benefit>
-    async create(benefit: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<operations["createBenefit"]["responses"][201]["content"]["application/json"]>
+    async create(benefit: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit>
     async update(benefitId: string, benefit: UpdateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit>
     async delete(benefitId: string, options?: SpacebringRequestOptions): Promise<undefined>
     applications: {
@@ -75,6 +75,8 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
 export type CreditNote = NonNullable<components["schemas"]["creditNote"]>;
 export type Invoice = NonNullable<components["schemas"]["invoice"]>;
 export type InvoiceItem = NonNullable<components["schemas"]["invoiceItem"]>;
+export type Payment = NonNullable<components["schemas"]["invoicePayment"]>;
+export type UpcomingItem = NonNullable<components["schemas"]["invoiceItem"]>;
 export interface GetCreditNotesQuery {
   "createDate[gte]"?: string;
   "createDate[lte]"?: string;
@@ -158,10 +160,10 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
       async delete(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async cancelPayment(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async duplicate(invoiceId: string, options?: SpacebringRequestOptions): Promise<Invoice>
-      async getItems(invoiceId: string, options?: SpacebringRequestOptions): Promise<operations["getInvoiceItems"]["responses"][200]["content"]["application/json"]>
-      async getUpcoming(query?: GetUpcomingInvoiceQuery, options?: SpacebringRequestOptions): Promise<operations["getUpcomingInvoice"]["responses"][200]["content"]["application/json"]>
-      async issue(invoiceId: string, skipAutoCharge?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["issueInvoice"]["responses"][200]["content"]["application/json"]>
-      async pay(invoiceId: string, body: PayInvoiceBody, options?: SpacebringRequestOptions): Promise<operations["payInvoice"]["responses"][200]["content"]["application/json"]>
+      async getItems(invoiceId: string, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[] }>
+      async getUpcoming(query?: GetUpcomingInvoiceQuery, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[]; upcomingItems?: UpcomingItem[] }>
+      async issue(invoiceId: string, skipAutoCharge?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[] }>
+      async pay(invoiceId: string, body: PayInvoiceBody, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; payment?: Payment }>
       async resend(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async void(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       items: {
@@ -338,11 +340,9 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
 }
 
 // feed.ts
-export type CommentLike = NonNullable<components["schemas"]["postLike"]>;
-export type FeedComment = NonNullable<components["schemas"]["postComment"]>;
+export type Comment = NonNullable<components["schemas"]["postComment"]>;
+export type Like = NonNullable<components["schemas"]["postLike"]>;
 export type Post = NonNullable<components["schemas"]["post"]>;
-export type PostComment = NonNullable<components["schemas"]["postComment"]>;
-export type PostLike = NonNullable<components["schemas"]["postLike"]>;
 export interface GetFeedPostsQuery {
   locationRef: string;
   nextPageToken?: string;
@@ -354,9 +354,9 @@ export type UpdateFeedPostBody = NonNullable<NonNullable<operations["updateFeedP
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     comments: {
-      async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<FeedComment>
+      async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<Comment>
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
-      async createLike(id: string, options?: SpacebringRequestOptions): Promise<CommentLike>
+      async createLike(id: string, options?: SpacebringRequestOptions): Promise<Like>
       async deleteLike(id: string, options?: SpacebringRequestOptions): Promise<undefined>
     },
     posts: {
@@ -366,10 +366,10 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
       async create(post: CreateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post>
       async update(id: string, post: UpdateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post>
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
-      async createLike(id: string, options?: SpacebringRequestOptions): Promise<PostLike>
+      async createLike(id: string, options?: SpacebringRequestOptions): Promise<Like>
       async deleteLike(id: string, options?: SpacebringRequestOptions): Promise<undefined>
-      async getComments(id: string, options?: SpacebringRequestOptions): Promise<PostComment[]>
-      async getLikes(id: string, options?: SpacebringRequestOptions): Promise<PostLike[]>
+      async getComments(id: string, options?: SpacebringRequestOptions): Promise<Comment[]>
+      async getLikes(id: string, options?: SpacebringRequestOptions): Promise<Like[]>
     },
   };
 }
@@ -614,10 +614,10 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
     tickets: {
       async list(query: GetSupportTicketsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; tickets?: SupportTicket[] }>
       iterate(query: Omit<GetSupportTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<SupportTicket, void, undefined>
-      async get(id: string, options?: SpacebringRequestOptions): Promise<operations["getSupportTicket"]["responses"][200]["content"]["application/json"]>
-      async create(ticket: CreateSupportTicketBody, options?: SpacebringRequestOptions): Promise<operations["createSupportTicket"]["responses"][201]["content"]["application/json"]>
-      async updateAssignee(id: string, ticket: UpdateSupportTicketAssigneeBody, options?: SpacebringRequestOptions): Promise<operations["updateSupportTicketAssignee"]["responses"][200]["content"]["application/json"]>
-      async updateStatus(id: string, ticket: UpdateSupportTicketStatusBody, options?: SpacebringRequestOptions): Promise<operations["updateSupportTicketStatus"]["responses"][200]["content"]["application/json"]>
+      async get(id: string, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }>
+      async create(ticket: CreateSupportTicketBody, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }>
+      async updateAssignee(id: string, ticket: UpdateSupportTicketAssigneeBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }>
+      async updateStatus(id: string, ticket: UpdateSupportTicketStatusBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }>
       async updateType(id: string, ticket: UpdateSupportTicketTypeBody, options?: SpacebringRequestOptions): Promise<undefined>
       comment: {
         async create(activity: CreateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity>
@@ -688,8 +688,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
 // visitors.ts
 export type Contact = NonNullable<components["schemas"]["contact"]>;
 export type Request = NonNullable<components["schemas"]["visitRequest"]>;
-export type RequestVisit = NonNullable<components["schemas"]["visit"]>;
-export type VisitorVisit = NonNullable<components["schemas"]["visit"]>;
+export type Visit = NonNullable<components["schemas"]["visit"]>;
 export interface GetContactsQuery {
   limit?: number;
   nextPageToken?: string;
@@ -729,18 +728,18 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
       iterate(query: Omit<GetRequestsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Request, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<Request>
       async create(request: CreateRequestBody, options?: SpacebringRequestOptions): Promise<Request>
-      async approve(id: string, options?: SpacebringRequestOptions): Promise<RequestVisit>
+      async approve(id: string, options?: SpacebringRequestOptions): Promise<Visit>
       async reject(id: string, options?: SpacebringRequestOptions): Promise<undefined>
     },
     visits: {
-      async list(query: GetVisitsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; visits?: VisitorVisit[] }>
-      iterate(query: Omit<GetVisitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<VisitorVisit, void, undefined>
-      async get(id: string, options?: SpacebringRequestOptions): Promise<VisitorVisit>
-      async create(visit: CreateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit>
-      async update(id: string, visit: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit>
+      async list(query: GetVisitsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; visits?: Visit[] }>
+      iterate(query: Omit<GetVisitsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Visit, void, undefined>
+      async get(id: string, options?: SpacebringRequestOptions): Promise<Visit>
+      async create(visit: CreateVisitBody, options?: SpacebringRequestOptions): Promise<Visit>
+      async update(id: string, visit: UpdateVisitBody, options?: SpacebringRequestOptions): Promise<Visit>
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
-      async checkIn(body: CheckInVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit>
-      async checkOut(body: CheckOutVisitBody, options?: SpacebringRequestOptions): Promise<VisitorVisit>
+      async checkIn(body: CheckInVisitBody, options?: SpacebringRequestOptions): Promise<Visit>
+      async checkOut(body: CheckOutVisitBody, options?: SpacebringRequestOptions): Promise<Visit>
     },
   };
 }

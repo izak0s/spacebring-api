@@ -28,6 +28,16 @@ export interface PaginationInfo {
   props: { key: string; optional: boolean; scalar?: string }[];
 }
 
+/** One property of a multi-property success envelope ({ activity, ticket }). */
+export interface EnvelopeProp {
+  key: string;
+  optional: boolean;
+  /** TS scalar type ("string", "boolean[]") when the property isn't an entity. */
+  scalar?: string;
+  /** Set when the property is an object or array-of-object: it yields an entity alias. */
+  entity?: { isArray: boolean; schemaRef?: string };
+}
+
 interface EnvelopeInfo {
   pagination?: PaginationInfo;
   /** Set when the success envelope has a single property: the facade returns it directly. */
@@ -36,6 +46,14 @@ interface EnvelopeInfo {
   unwrapIsArray?: boolean;
   /** Component-schema name the unwrapped entity (or its array item) `$ref`s to, if any. */
   unwrapSchemaRef?: string;
+  /** Set for multi-property envelopes: returned whole, re-stated as a literal type. */
+  multiProps?: EnvelopeProp[];
+  /**
+   * Set when a multi-property response is a bare entity, not an envelope — the
+   * whole schema is type-identical to a same/namespace-named component
+   * (createBenefit returns the benefit itself). Return type becomes its alias.
+   */
+  bareSchemaRef?: string;
 }
 
 /** Component name if `node` is a `$ref` into components/schemas, else undefined. */
@@ -70,7 +88,12 @@ function canonicalSchema(node: unknown): string {
  * type-identical to the inline shape — otherwise fall back to the operation
  * form, keeping the generated type faithful to the actual response.
  */
-function entityComponentRef(candidateName: string, entityNode: unknown, namespace: string[]): string | undefined {
+function entityComponentRef(
+  candidateName: string,
+  entityNode: unknown,
+  namespace: string[],
+  byNameOnly = false,
+): string | undefined {
   const direct = schemaRefName(entityNode);
   if (direct) return direct;
   const schemas = spec.components?.schemas as Record<string, unknown> | undefined;
@@ -80,11 +103,14 @@ function entityComponentRef(candidateName: string, entityNode: unknown, namespac
   // differs from the component name (e.g. "shopCategory"), so also try the key
   // qualified by each namespace segment (innermost first: "shop" + "category"
   // -> "shopCategory"), then accept a uniquely-matching component by
-  // structure. Ambiguous matches are skipped.
+  // structure. Ambiguous matches are skipped. `byNameOnly` skips the
+  // structural try — used for whole-response matching, where it would pick up
+  // op-named envelope components ("getContract") with unusable names.
   const candidates = [candidateName, ...[...namespace].reverse().map((segment) => singular(segment) + upperFirst(candidateName))];
   for (const name of candidates) {
     if (schemas[name] && canonicalSchema(schemas[name]) === inline) return name;
   }
+  if (byNameOnly) return undefined;
   const matches = Object.keys(schemas).filter((name) => canonicalSchema(schemas[name]) === inline);
   return matches.length === 1 ? matches[0] : undefined;
 }
@@ -108,6 +134,8 @@ export interface AnalyzedOp {
   unwrapKey: string | undefined;
   unwrapIsArray: boolean;
   unwrapSchemaRef: string | undefined;
+  multiProps: EnvelopeProp[] | undefined;
+  bareSchemaRef: string | undefined;
 }
 
 export function analyze(path: string, method: HttpMethod, op: SpecOperation): AnalyzedOp {
@@ -154,11 +182,32 @@ export function analyze(path: string, method: HttpMethod, op: SpecOperation): An
     unwrapKey: envelope.unwrapKey,
     unwrapIsArray: envelope.unwrapIsArray === true,
     unwrapSchemaRef: envelope.unwrapSchemaRef,
+    multiProps: envelope.multiProps,
+    bareSchemaRef: envelope.bareSchemaRef,
   };
 }
 
 function isParam(segment: string): boolean {
   return segment.startsWith("{");
+}
+
+/** Classifies one property of a multi-property success envelope. */
+function envelopeProp(key: string, node: unknown, required: Set<string>, namespace: string[]): EnvelopeProp {
+  const rawProp = node as { items?: unknown };
+  const propSchema = resolveRef<{ type?: string }>(rawProp);
+  const prop: EnvelopeProp = { key, optional: !required.has(key), scalar: TS_TYPES[propSchema.type ?? ""] };
+  if (propSchema.type === "object") {
+    prop.entity = { isArray: false, schemaRef: entityComponentRef(key, rawProp, namespace) };
+  } else if (propSchema.type === "array" && rawProp.items) {
+    const itemSchema = resolveRef<{ type?: string }>(rawProp.items);
+    if (itemSchema.type === "object") {
+      prop.entity = { isArray: true, schemaRef: entityComponentRef(singular(key), rawProp.items, namespace) };
+    } else {
+      const item = TS_TYPES[itemSchema.type ?? ""];
+      prop.scalar = item ? `${item}[]` : undefined;
+    }
+  }
+  return prop;
 }
 
 /** The single property key of a request-body schema, if it has exactly one. */
@@ -179,18 +228,34 @@ function analyzeEnvelope(op: SpecOperation, namespace: string[]): EnvelopeInfo {
   if (!properties) return {};
 
   if (!properties.nextPageToken) {
-    // Single-property envelope ({ subscription: {...} }, { locations: [...] }):
-    // the facade returns the property directly.
     const keys = Object.keys(properties);
-    if (keys.length !== 1) return {};
-    const rawProp = properties[keys[0]] as { items?: unknown };
-    const propSchema = resolveRef<{ type?: string }>(rawProp);
-    const isArray = propSchema.type === "array";
-    // The entity is the property itself (object) or its array item.
-    const unwrapSchemaRef = isArray
-      ? entityComponentRef(singular(keys[0]), rawProp.items, namespace)
-      : entityComponentRef(keys[0], rawProp, namespace);
-    return { unwrapKey: keys[0], unwrapIsArray: isArray, unwrapSchemaRef };
+    if (keys.length === 0) return {};
+    if (keys.length === 1) {
+      // Single-property envelope ({ subscription: {...} }, { locations: [...] }):
+      // the facade returns the property directly.
+      const rawProp = properties[keys[0]] as { items?: unknown };
+      const propSchema = resolveRef<{ type?: string }>(rawProp);
+      const isArray = propSchema.type === "array";
+      // The entity is the property itself (object) or its array item.
+      const unwrapSchemaRef = isArray
+        ? entityComponentRef(singular(keys[0]), rawProp.items, namespace)
+        : entityComponentRef(keys[0], rawProp, namespace);
+      return { unwrapKey: keys[0], unwrapIsArray: isArray, unwrapSchemaRef };
+    }
+    // Bare entity response: the whole schema is a component (createBenefit
+    // returns the benefit itself, flat). Name-only match — see entityComponentRef.
+    const lastSegment = namespace[namespace.length - 1];
+    const bareSchemaRef = lastSegment ? entityComponentRef(singular(lastSegment), schema, namespace, true) : undefined;
+    if (bareSchemaRef) return { bareSchemaRef };
+    // Multi-property envelope ({ activity, ticket }): returned whole; each
+    // object/array-of-object property becomes an entity alias so the return
+    // type can be re-stated as a readable literal. Only pure envelopes (every
+    // property an object or array of objects) qualify — a response mixing
+    // scalars is an inline entity we can't name, left as the operation type.
+    const required = new Set(resolved.required ?? []);
+    const props = keys.map((key) => envelopeProp(key, properties[key], required, namespace));
+    if (props.every((prop) => prop.entity)) return { multiProps: props };
+    return {};
   }
 
   const arrayKeys = Object.keys(properties).filter((key) => resolveRef<{ type?: string }>(properties[key]).type === "array");

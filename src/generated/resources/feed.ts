@@ -4,20 +4,14 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
 import type { components, operations, paths } from "../schema.js";
 
-/** A CommentLike entity as returned by the Spacebring API. */
-export type CommentLike = NonNullable<components["schemas"]["postLike"]>;
+/** A Comment entity as returned by the Spacebring API. */
+export type Comment = NonNullable<components["schemas"]["postComment"]>;
 
-/** A FeedComment entity as returned by the Spacebring API. */
-export type FeedComment = NonNullable<components["schemas"]["postComment"]>;
+/** A Like entity as returned by the Spacebring API. */
+export type Like = NonNullable<components["schemas"]["postLike"]>;
 
 /** A Post entity as returned by the Spacebring API. */
 export type Post = NonNullable<components["schemas"]["post"]>;
-
-/** A PostComment entity as returned by the Spacebring API. */
-export type PostComment = NonNullable<components["schemas"]["postComment"]>;
-
-/** A PostLike entity as returned by the Spacebring API. */
-export type PostLike = NonNullable<components["schemas"]["postLike"]>;
 
 /** Query parameters for `sb.feed.posts.list()`. */
 export interface GetFeedPostsQuery {
@@ -46,7 +40,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Create a feed post comment.
        */
-      async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<FeedComment> {
+      async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<Comment> {
         return unwrapProp(await client.POST("/feed/comments/v1", { body: { comment }, signal: options?.signal }), "comment", "POST /feed/comments/v1");
       },
       /**
@@ -64,7 +58,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        * @param id The id of the post comment.
        * @param options Request options (abort signal).
        */
-      async createLike(id: string, options?: SpacebringRequestOptions): Promise<CommentLike> {
+      async createLike(id: string, options?: SpacebringRequestOptions): Promise<Like> {
         return unwrapProp(await client.POST("/feed/comments/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "like", "POST /feed/comments/v1/{id}/likes");
       },
       /**
@@ -146,7 +140,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        * @param id The id of the post.
        * @param options Request options (abort signal).
        */
-      async createLike(id: string, options?: SpacebringRequestOptions): Promise<PostLike> {
+      async createLike(id: string, options?: SpacebringRequestOptions): Promise<Like> {
         return unwrapProp(await client.POST("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "like", "POST /feed/posts/v1/{id}/likes");
       },
       /**
@@ -164,7 +158,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        * @param id The id of the post.
        * @param options Request options (abort signal).
        */
-      async getComments(id: string, options?: SpacebringRequestOptions): Promise<PostComment[]> {
+      async getComments(id: string, options?: SpacebringRequestOptions): Promise<Comment[]> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}/comments", { params: { path: { id } }, signal: options?.signal }), "comments", "GET /feed/posts/v1/{id}/comments");
       },
       /**
@@ -173,7 +167,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        * @param id The id of the post.
        * @param options Request options (abort signal).
        */
-      async getLikes(id: string, options?: SpacebringRequestOptions): Promise<PostLike[]> {
+      async getLikes(id: string, options?: SpacebringRequestOptions): Promise<Like[]> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "likes", "GET /feed/posts/v1/{id}/likes");
       },
     },
