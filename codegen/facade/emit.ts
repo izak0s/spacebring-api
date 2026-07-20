@@ -25,6 +25,61 @@ function pathDocParam(p: SpecParameter): DocParam {
 const QUERY_DOC: DocParam = { name: "query", description: "Query parameters.", fromSpec: false };
 const OPTIONS_DOC: DocParam = { name: "options", description: "Request options (abort signal).", fromSpec: false };
 
+// Reserved words that are legal object keys but illegal as binding identifiers
+// in a strict-mode module. A single-property body whose wrapper key is one of
+// these (e.g. `package`) can't name the method parameter verbatim, so we suffix
+// the identifier while keeping the real key on the wire.
+const RESERVED_WORDS = new Set([
+  "break",
+  "case",
+  "catch",
+  "class",
+  "const",
+  "continue",
+  "debugger",
+  "default",
+  "delete",
+  "do",
+  "else",
+  "enum",
+  "export",
+  "extends",
+  "false",
+  "finally",
+  "for",
+  "function",
+  "if",
+  "import",
+  "in",
+  "instanceof",
+  "new",
+  "null",
+  "return",
+  "super",
+  "switch",
+  "this",
+  "throw",
+  "true",
+  "try",
+  "typeof",
+  "var",
+  "void",
+  "while",
+  "with",
+  "implements",
+  "interface",
+  "let",
+  "package",
+  "private",
+  "protected",
+  "public",
+  "static",
+  "yield",
+  "await",
+  "arguments",
+  "eval",
+]);
+
 function opDoc(op: SpecOperation, params: DocParam[], suffix = ""): string {
   const summary = op.summary ? cleanDescription(op.summary) : "";
   const description = op.description ? cleanDescription(op.description) : "";
@@ -77,9 +132,12 @@ export function emitMethod(
   // named after the wrapper key, and the facade re-wraps it. The key becomes a
   // TS identifier, so it gets the same fail-loud guard as path params.
   const bodyKey = body?.unwrapKey;
+  // The wire key stays `bodyKey`; the method parameter is `bodyParam`, which
+  // differs only when the key is a strict-mode reserved word (suffixed `Body`).
+  const bodyParam = bodyKey && RESERVED_WORDS.has(bodyKey) ? `${bodyKey}Body` : bodyKey;
   if (bodyKey) {
     const reserved = ["query", "options", "body", ...pathParams.map((p) => p.name)];
-    if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(bodyKey) || reserved.includes(bodyKey)) {
+    if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(bodyKey) || reserved.includes(bodyParam as string)) {
       console.error(`${op.operationId}: body property "${bodyKey}" cannot be used as a parameter name.`);
       process.exit(1);
     }
@@ -94,7 +152,7 @@ export function emitMethod(
   const bodyType = bodyTypeName ?? (bodyKey ? `NonNullable<${rawBodyType}[${JSON.stringify(bodyKey)}]>` : rawBodyType);
 
   const args: string[] = pathParams.map((p) => `${p.name}: ${TS_TYPES[p.schema?.type ?? "string"] ?? "string"}`);
-  if (body) args.push(`${bodyKey ?? "body"}${body.required ? "" : "?"}: ${bodyType}`);
+  if (body) args.push(`${bodyParam ?? "body"}${body.required ? "" : "?"}: ${bodyType}`);
   if (hasQuery) args.push(`query${queryRequired ? "" : "?"}: ${queryType}`);
   args.push("options?: SpacebringRequestOptions");
 
@@ -107,7 +165,10 @@ export function emitMethod(
   // Re-wrap an unwrapped body; an omitted optional value must stay an absent
   // body (not `{}`), so the wrap is conditional there.
   if (body && bodyKey) {
-    requestParts.push(body.required ? `body: { ${bodyKey} }` : `body: ${bodyKey} === undefined ? undefined : { ${bodyKey} }`);
+    // Shorthand when key and param match; explicit `{ key: param }` when the
+    // param was renamed off a reserved word.
+    const wrap = bodyParam === bodyKey ? `{ ${bodyKey} }` : `{ ${quoteKey(bodyKey)}: ${bodyParam} }`;
+    requestParts.push(body.required ? `body: ${wrap}` : `body: ${bodyParam} === undefined ? undefined : ${wrap}`);
   } else if (body) {
     requestParts.push("body");
   }
@@ -117,7 +178,7 @@ export function emitMethod(
   const docParams = pathParams.map(pathDocParam);
   if (body) {
     docParams.push({
-      name: bodyKey ?? "body",
+      name: bodyParam ?? "body",
       description: bodyKey ? `The \`${bodyKey}\` payload.` : "Request body.",
       fromSpec: false,
     });

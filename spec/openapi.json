@@ -4195,6 +4195,61 @@
           }
         }
       },
+      "patch": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Update a contract",
+        "description": "Update a contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "updateContract",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "description": "The id of the contract.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/updateContract"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Contracts"
@@ -4318,6 +4373,191 @@
         }
       }
     },
+    "/contracts/v1/{contractId}/resend": {
+      "post": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Resend a contract",
+        "description": "Resend the signature request email to the next pending signer of an issued eSignature contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "resendContract",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "description": "The id of the contract.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/v1/{contractId}/signers/{signerId}/decline": {
+      "put": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Decline a contract",
+        "description": "Mark a contract signer as declined. Declining also declines the contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "declineContract",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "description": "The id of the contract.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "signerId",
+            "required": true,
+            "description": "The id of the contract signer.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/v1/{contractId}/signers/{signerId}/sign": {
+      "put": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Sign a contract",
+        "description": "Mark a contract signer as signed. When all signers have signed, the contract becomes signed. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "signContract",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "description": "The id of the contract.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "signerId",
+            "required": true,
+            "description": "The id of the contract signer.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/contracts/v1/{contractId}/terminate": {
       "patch": {
         "tags": [
@@ -4378,7 +4618,371 @@
         }
       }
     },
-    "/discounts/coupons/v1": {
+    "/contracts/templates/v1": {
+      "get": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Retrieve templates",
+        "description": "Retrieve all contract templates in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "operationId": "getTemplates",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of templates per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": true,
+            "description": "UUID of the location.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices",
+              "invoices.readonly"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTemplates"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Create a template",
+        "description": "Create a contract template from an uploaded file. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "createTemplate",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createTemplate"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTemplate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/templates/v1/{templateId}": {
+      "get": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Retrieve a template",
+        "description": "Retrieve a contract template. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "operationId": "getTemplate",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "templateId",
+            "required": true,
+            "description": "The id of the template.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices",
+              "invoices.readonly"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTemplate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Update a template",
+        "description": "Update a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "updateTemplate",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "templateId",
+            "required": true,
+            "description": "The id of the template.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/updateTemplate"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Delete a template",
+        "description": "Delete a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "deleteTemplate",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "templateId",
+            "required": true,
+            "description": "The id of the template.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/templates/v1/{templateId}/duplicate": {
+      "post": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Duplicate a template",
+        "description": "Duplicate a contract template, creating a copy with the same title and file. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "duplicateTemplate",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "templateId",
+            "required": true,
+            "description": "The id of the template.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTemplate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discounts/v1/coupons": {
       "get": {
         "tags": [
           "Discounts"
@@ -4554,7 +5158,7 @@
         }
       }
     },
-    "/discounts/coupons/v1/{id}": {
+    "/discounts/v1/coupons/{id}": {
       "get": {
         "tags": [
           "Discounts"
@@ -4737,7 +5341,7 @@
         }
       }
     },
-    "/discounts/promocodes/v1": {
+    "/discounts/v1/promocodes": {
       "get": {
         "tags": [
           "Discounts"
@@ -4880,7 +5484,7 @@
         }
       }
     },
-    "/discounts/promocodes/v1/{id}": {
+    "/discounts/v1/promocodes/{id}": {
       "get": {
         "tags": [
           "Discounts"
@@ -4950,7 +5554,7 @@
         }
       }
     },
-    "/discounts/promocodes/v1/{id}/archive": {
+    "/discounts/v1/promocodes/{id}/archive": {
       "put": {
         "tags": [
           "Discounts"
@@ -5019,7 +5623,7 @@
         }
       }
     },
-    "/discounts/redemptions/v1": {
+    "/discounts/v1/redemptions": {
       "get": {
         "tags": [
           "Discounts"
@@ -5327,6 +5931,75 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Update an event",
+        "description": "Update an event. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "updateEvent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/updateEvent"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "event": {
+                      "$ref": "#/components/schemas/event"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "Events"
@@ -5511,6 +6184,111 @@
         }
       }
     },
+    "/events/v1/{id}/hosts": {
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Add event hosts",
+        "description": "Add hosts to an event. Creates a free host ticket for each membership without one; existing attendee tickets are switched to the host role. Returns all tickets of the event. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "addEventHosts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The id of the event.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tickets": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Hosts to add to the event.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "membershipRef": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "The id of the membership to add as a host."
+                        }
+                      },
+                      "required": [
+                        "membershipRef"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "tickets"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tickets": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/eventTicket"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/events/tickets/v1": {
       "get": {
         "tags": [
@@ -5637,6 +6415,237 @@
           {
             "OAuth2": [
               "events.readonly",
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticket": {
+                      "$ref": "#/components/schemas/eventTicket"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Update a ticket",
+        "description": "Update an event ticket. Only the ticket role can be changed. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "updateEventTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the event ticket.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ticket": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "attendee",
+                          "host"
+                        ],
+                        "description": "Role of the ticket holder."
+                      }
+                    },
+                    "required": [
+                      "role"
+                    ]
+                  }
+                },
+                "required": [
+                  "ticket"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticket": {
+                      "$ref": "#/components/schemas/eventTicket"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete a ticket",
+        "description": "Delete an event ticket. Returns the deleted ticket. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "deleteEventTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the event ticket.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticket": {
+                      "$ref": "#/components/schemas/eventTicket"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/tickets/v1/{id}/checkin": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Check in a ticket",
+        "description": "Check in an event ticket. Fails if the ticket is already checked in. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "checkInEventTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the event ticket.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
               "events"
             ]
           }
@@ -7226,6 +8235,261 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages/v1": {
+      "get": {
+        "tags": [
+          "Packages"
+        ],
+        "summary": "Retrieve packages",
+        "description": "Retrieve all packages in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "operationId": "getPackages",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of packages per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": true,
+            "description": "UUID of the location.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices",
+              "invoices.readonly"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPackages"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Packages"
+        ],
+        "summary": "Create a package",
+        "description": "Create a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "createPackage",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createPackage"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPackage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages/v1/{packageId}": {
+      "patch": {
+        "tags": [
+          "Packages"
+        ],
+        "summary": "Update a package",
+        "description": "Update a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "patchPackage",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "packageId",
+            "required": true,
+            "description": "The id of the package.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchPackage"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Packages"
+        ],
+        "summary": "Delete a package",
+        "description": "Delete a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "deletePackage",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "packageId",
+            "required": true,
+            "description": "The id of the package.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -9811,6 +11075,15 @@
             "description": "Token to retrieve the next page of results.",
             "schema": {
               "$ref": "#/components/schemas/nextPageToken"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "description": "The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -19379,6 +20652,193 @@
         ],
         "additionalProperties": false
       },
+      "getTemplates": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the template was created."
+                },
+                "file": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Storage key of the template file."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Download URL of the template file."
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Template file reference."
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the template."
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the location this template belongs to."
+                },
+                "media": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Media files associated with the template."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Template title."
+                },
+                "updateDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the template was last updated."
+                }
+              },
+              "required": [
+                "createDate",
+                "file",
+                "id",
+                "locationRef",
+                "media",
+                "title",
+                "updateDate"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of templates."
+          }
+        },
+        "required": [
+          "templates"
+        ],
+        "additionalProperties": false
+      },
+      "getTemplate": {
+        "type": "object",
+        "properties": {
+          "template": {
+            "type": "object",
+            "properties": {
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the template was created."
+              },
+              "file": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "Storage key of the template file."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Download URL of the template file."
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "Template file reference."
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the template."
+              },
+              "locationRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the location this template belongs to."
+              },
+              "media": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Media files associated with the template."
+              },
+              "title": {
+                "type": "string",
+                "description": "Template title."
+              },
+              "updateDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the template was last updated."
+              }
+            },
+            "required": [
+              "createDate",
+              "file",
+              "id",
+              "locationRef",
+              "media",
+              "title",
+              "updateDate"
+            ],
+            "additionalProperties": false,
+            "description": "The template."
+          }
+        },
+        "required": [
+          "template"
+        ],
+        "additionalProperties": false
+      },
       "coupon": {
         "type": "object",
         "properties": {
@@ -22140,6 +23600,321 @@
             "type": "string"
           }
         }
+      },
+      "getPackages": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "deprecated": true,
+                  "description": "Total credits amount derived from grants. Deprecated: use grants instead."
+                },
+                "duration": {
+                  "deprecated": true,
+                  "description": "Maximum credit grant duration in days. Deprecated: use grants instead.",
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "enum": [
+                        30
+                      ]
+                    },
+                    {
+                      "type": "number",
+                      "enum": [
+                        90
+                      ]
+                    },
+                    {
+                      "type": "number",
+                      "enum": [
+                        180
+                      ]
+                    },
+                    {
+                      "type": "number",
+                      "enum": [
+                        365
+                      ]
+                    }
+                  ]
+                },
+                "grants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "number",
+                        "description": "Grant amount in major units for credits, or whole units for day passes."
+                      },
+                      "duration": {
+                        "description": "Expiration duration in days for credit grants.",
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "enum": [
+                              30
+                            ]
+                          },
+                          {
+                            "type": "number",
+                            "enum": [
+                              90
+                            ]
+                          },
+                          {
+                            "type": "number",
+                            "enum": [
+                              180
+                            ]
+                          },
+                          {
+                            "type": "number",
+                            "enum": [
+                              365
+                            ]
+                          }
+                        ]
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the grant."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "credits",
+                          "dayPasses"
+                        ],
+                        "description": "Type of balance this grant provides."
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "id",
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Grants included in the package."
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the package."
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the location this package belongs to."
+                },
+                "networkRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the network this package belongs to."
+                },
+                "organizationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "deprecated": true,
+                  "description": "ID of the location this package belongs to. Deprecated: use locationRef instead."
+                },
+                "price": {
+                  "type": "number",
+                  "description": "Package list price in major units."
+                },
+                "priceDiscounted": {
+                  "type": "number",
+                  "deprecated": true,
+                  "description": "Discounted price visible to members. Deprecated: equals price since 4.8.15."
+                }
+              },
+              "required": [
+                "amount",
+                "grants",
+                "id",
+                "locationRef",
+                "networkRef",
+                "organizationRef",
+                "price",
+                "priceDiscounted"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of packages."
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "packages"
+        ],
+        "additionalProperties": false
+      },
+      "getPackage": {
+        "type": "object",
+        "properties": {
+          "package": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "deprecated": true,
+                "description": "Total credits amount derived from grants. Deprecated: use grants instead."
+              },
+              "duration": {
+                "deprecated": true,
+                "description": "Maximum credit grant duration in days. Deprecated: use grants instead.",
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "enum": [
+                      30
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "enum": [
+                      90
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "enum": [
+                      180
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "enum": [
+                      365
+                    ]
+                  }
+                ]
+              },
+              "grants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "number",
+                      "description": "Grant amount in major units for credits, or whole units for day passes."
+                    },
+                    "duration": {
+                      "description": "Expiration duration in days for credit grants.",
+                      "anyOf": [
+                        {
+                          "type": "number",
+                          "enum": [
+                            30
+                          ]
+                        },
+                        {
+                          "type": "number",
+                          "enum": [
+                            90
+                          ]
+                        },
+                        {
+                          "type": "number",
+                          "enum": [
+                            180
+                          ]
+                        },
+                        {
+                          "type": "number",
+                          "enum": [
+                            365
+                          ]
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Unique identifier of the grant."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "credits",
+                        "dayPasses"
+                      ],
+                      "description": "Type of balance this grant provides."
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Grants included in the package."
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the package."
+              },
+              "locationRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the location this package belongs to."
+              },
+              "networkRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the network this package belongs to."
+              },
+              "organizationRef": {
+                "type": "string",
+                "format": "uuid",
+                "deprecated": true,
+                "description": "ID of the location this package belongs to. Deprecated: use locationRef instead."
+              },
+              "price": {
+                "type": "number",
+                "description": "Package list price in major units."
+              },
+              "priceDiscounted": {
+                "type": "number",
+                "deprecated": true,
+                "description": "Discounted price visible to members. Deprecated: equals price since 4.8.15."
+              }
+            },
+            "required": [
+              "amount",
+              "grants",
+              "id",
+              "locationRef",
+              "networkRef",
+              "organizationRef",
+              "price",
+              "priceDiscounted"
+            ],
+            "additionalProperties": false,
+            "description": "The package."
+          }
+        },
+        "required": [
+          "package"
+        ],
+        "additionalProperties": false
       },
       "getPlans": {
         "type": "object",
@@ -35495,6 +37270,162 @@
         },
         "required": true
       },
+      "updateContract": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contract": {
+                  "type": "object",
+                  "properties": {
+                    "actionable": {
+                      "description": "Whether the contract triggers a billing action when signed.",
+                      "type": "boolean"
+                    },
+                    "expirationDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date after which the contract can no longer be signed."
+                    },
+                    "items": {
+                      "description": "Line items included in this contract.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "couponRef": {
+                            "description": "Applied coupon ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "oneOff": {
+                            "description": "Whether this is a one-off item.",
+                            "type": "boolean"
+                          },
+                          "optionRef": {
+                            "description": "Shop product option ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "planRef": {
+                            "description": "Membership plan ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "price": {
+                            "description": "Item price override.",
+                            "type": "number"
+                          },
+                          "productRef": {
+                            "description": "Shop product ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "quantity": {
+                            "type": "number",
+                            "minimum": 1,
+                            "description": "Number of units."
+                          },
+                          "resourceRef": {
+                            "description": "Resource ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "tierRef": {
+                            "description": "Plan tier ID.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Display name of the item."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "plan",
+                              "resource",
+                              "oneOff"
+                            ],
+                            "description": "Item type."
+                          }
+                        },
+                        "required": [
+                          "quantity",
+                          "title",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "templateRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the template to use for this contract."
+                    },
+                    "endDate": {
+                      "description": "Contract end date.",
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "signers": {
+                      "description": "Updated signers list.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "email": {
+                            "description": "Signer email address.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "Signer ID (to identify existing signers).",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "description": "Signer first name.",
+                            "type": "string"
+                          },
+                          "phoneNumber": {
+                            "description": "Phone number.",
+                            "type": "string"
+                          },
+                          "surname": {
+                            "description": "Signer last name.",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "Whether this is a location or customer signer.",
+                            "type": "string",
+                            "enum": [
+                              "location",
+                              "customer"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "startDate": {
+                      "description": "Contract start date.",
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "description": "Contract fields to update."
+                }
+              },
+              "required": [
+                "contract"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "issueContract": {
         "content": {
           "application/json": {
@@ -35538,6 +37469,92 @@
               },
               "required": [
                 "reason"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createTemplate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "template": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the template file."
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "description": "Template file reference."
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the location this template belongs to."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Template title."
+                    }
+                  },
+                  "required": [
+                    "file",
+                    "locationRef",
+                    "title"
+                  ],
+                  "description": "Template to create."
+                }
+              },
+              "required": [
+                "template"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "updateTemplate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "template": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the template file."
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "description": "Template file reference."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Template title."
+                    }
+                  },
+                  "description": "Template fields to update."
+                }
+              },
+              "required": [
+                "template"
               ]
             }
           }
@@ -36071,6 +38088,218 @@
         },
         "required": true
       },
+      "updateEvent": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "event": {
+                  "type": "object",
+                  "properties": {
+                    "applicationType": {
+                      "description": "Event application type. purchase: paid signup (requires price). none: free/RSVP-style.",
+                      "type": "string",
+                      "enum": [
+                        "purchase",
+                        "none"
+                      ]
+                    },
+                    "confirmationEmail": {
+                      "description": "Confirmation email settings.",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether a confirmation email is sent after registration."
+                        },
+                        "template": {
+                          "description": "HTML template for the confirmation email.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "enabled"
+                      ]
+                    },
+                    "customTax": {
+                      "description": "Custom tax settings.",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether custom tax is enabled."
+                        },
+                        "rate": {
+                          "type": "number",
+                          "minimum": 0,
+                          "description": "Custom tax rate as a decimal."
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "rate"
+                      ]
+                    },
+                    "description": {
+                      "description": "Full description of the event.",
+                      "type": "string"
+                    },
+                    "endDate": {
+                      "description": "ISO timestamp of when the event ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "limitedAttendees": {
+                      "description": "Limited attendees settings.",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether attendee capacity is limited."
+                        },
+                        "limit": {
+                          "description": "Maximum number of attendees when limited.",
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "enabled"
+                      ]
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the location where the event is hosted."
+                    },
+                    "media": {
+                      "description": "Media files attached to the event.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "description": "Storage key of the media file.",
+                            "type": "string"
+                          },
+                          "url": {
+                            "description": "Public URL of the media file.",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "price": {
+                      "description": "Pricing options for the event. Can enable credits, money, or both.",
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Credits pricing.",
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "number",
+                              "minimum": 0,
+                              "description": "Ticket price in credits."
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Whether credits payment is enabled."
+                            }
+                          },
+                          "required": [
+                            "amount",
+                            "enabled"
+                          ]
+                        },
+                        "money": {
+                          "description": "Money pricing.",
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "number",
+                              "minimum": 0,
+                              "description": "Ticket price in money."
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Whether money payment is enabled."
+                            }
+                          },
+                          "required": [
+                            "amount",
+                            "enabled"
+                          ]
+                        }
+                      }
+                    },
+                    "refundThreshold": {
+                      "description": "How far in advance a refund can be requested.",
+                      "type": "string",
+                      "enum": [
+                        "noRefund",
+                        "zeroMinutes",
+                        "fifteenMinutes",
+                        "thirtyMinutes",
+                        "oneHour",
+                        "twoHours",
+                        "fourHours",
+                        "sixHours",
+                        "twelveHours",
+                        "oneDay",
+                        "twoDays",
+                        "oneWeek",
+                        "twoWeeks",
+                        "fourWeeks"
+                      ]
+                    },
+                    "showAttendees": {
+                      "description": "Whether the attendees list is publicly visible.",
+                      "type": "boolean"
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp of when the event starts.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Display name of the event."
+                    },
+                    "venue": {
+                      "description": "Venue name or address within the location.",
+                      "type": "string"
+                    },
+                    "visibility": {
+                      "description": "Who can see this event. public: all. admins: admins only. networkMembers: network members. members: location members.",
+                      "type": "string",
+                      "enum": [
+                        "public",
+                        "admins",
+                        "networkMembers",
+                        "members"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "endDate",
+                    "locationRef",
+                    "startDate",
+                    "title"
+                  ],
+                  "description": "Event to update."
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "createFeedPost": {
         "content": {
           "application/json": {
@@ -36371,6 +38600,188 @@
               },
               "required": [
                 "guide"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createPackage": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "package": {
+                  "type": "object",
+                  "properties": {
+                    "grants": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "maximum": 1000000000,
+                            "description": "Grant amount in major units for credits, or whole units for day passes."
+                          },
+                          "duration": {
+                            "description": "Expiration duration in days for credit grants.",
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "enum": [
+                                  30
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  90
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  180
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  365
+                                ]
+                              }
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "credits",
+                              "dayPasses"
+                            ],
+                            "description": "Type of balance this grant provides."
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "type"
+                        ]
+                      },
+                      "description": "Grants included in the package."
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the location where to create this package."
+                    },
+                    "price": {
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991,
+                      "description": "Package price in major units."
+                    }
+                  },
+                  "required": [
+                    "grants",
+                    "locationRef",
+                    "price"
+                  ],
+                  "description": "Package to create."
+                }
+              },
+              "required": [
+                "package"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchPackage": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "package": {
+                  "type": "object",
+                  "properties": {
+                    "grants": {
+                      "description": "Grants included in the package.",
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "maximum": 1000000000,
+                            "description": "Grant amount in major units for credits, or whole units for day passes."
+                          },
+                          "duration": {
+                            "description": "Expiration duration in days for credit grants.",
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "enum": [
+                                  30
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  90
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  180
+                                ]
+                              },
+                              {
+                                "type": "number",
+                                "enum": [
+                                  365
+                                ]
+                              }
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "credits",
+                              "dayPasses"
+                            ],
+                            "description": "Type of balance this grant provides."
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "type"
+                        ]
+                      }
+                    },
+                    "price": {
+                      "description": "Package price in major units.",
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "description": "Package fields to update."
+                }
+              },
+              "required": [
+                "package"
               ]
             }
           }
