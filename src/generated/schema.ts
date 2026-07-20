@@ -717,7 +717,11 @@ export interface paths {
         delete: operations["deleteContract"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update a contract
+         * @description Update a contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        patch: operations["updateContract"];
         trace?: never;
     };
     "/contracts/v1/{contractId}/issue": {
@@ -734,6 +738,66 @@ export interface paths {
          * @description Issue a contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         post: operations["issueContract"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contracts/v1/{contractId}/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resend a contract
+         * @description Resend the signature request email to the next pending signer of an issued eSignature contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        post: operations["resendContract"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contracts/v1/{contractId}/signers/{signerId}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Decline a contract
+         * @description Mark a contract signer as declined. Declining also declines the contract. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        put: operations["declineContract"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contracts/v1/{contractId}/signers/{signerId}/sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Sign a contract
+         * @description Mark a contract signer as signed. When all signers have signed, the contract becomes signed. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        put: operations["signContract"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -760,7 +824,79 @@ export interface paths {
         patch: operations["terminateContract"];
         trace?: never;
     };
-    "/discounts/coupons/v1": {
+    "/contracts/templates/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve templates
+         * @description Retrieve all contract templates in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["getTemplates"];
+        put?: never;
+        /**
+         * Create a template
+         * @description Create a contract template from an uploaded file. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        post: operations["createTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contracts/templates/v1/{templateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve a template
+         * @description Retrieve a contract template. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["getTemplate"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a template
+         * @description Delete a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        delete: operations["deleteTemplate"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a template
+         * @description Update a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        patch: operations["updateTemplate"];
+        trace?: never;
+    };
+    "/contracts/templates/v1/{templateId}/duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Duplicate a template
+         * @description Duplicate a contract template, creating a copy with the same title and file. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        post: operations["duplicateTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/discounts/v1/coupons": {
         parameters: {
             query?: never;
             header?: never;
@@ -784,7 +920,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/discounts/coupons/v1/{id}": {
+    "/discounts/v1/coupons/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -812,7 +948,7 @@ export interface paths {
         patch: operations["updateCoupon"];
         trace?: never;
     };
-    "/discounts/promocodes/v1": {
+    "/discounts/v1/promocodes": {
         parameters: {
             query?: never;
             header?: never;
@@ -836,7 +972,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/discounts/promocodes/v1/{id}": {
+    "/discounts/v1/promocodes/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -856,7 +992,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/discounts/promocodes/v1/{id}/archive": {
+    "/discounts/v1/promocodes/{id}/archive": {
         parameters: {
             query?: never;
             header?: never;
@@ -876,7 +1012,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/discounts/redemptions/v1": {
+    "/discounts/v1/redemptions": {
         parameters: {
             query?: never;
             header?: never;
@@ -932,7 +1068,11 @@ export interface paths {
          * @description Retrieve an event. <h3>OAuth</h3>Required scopes: <code>events</code>
          */
         get: operations["getEvent"];
-        put?: never;
+        /**
+         * Update an event
+         * @description Update an event. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        put: operations["updateEvent"];
         post?: never;
         /**
          * Delete an event
@@ -984,6 +1124,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/v1/{id}/hosts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Add event hosts
+         * @description Add hosts to an event. Creates a free host ticket for each membership without one; existing attendee tickets are switched to the host role. Returns all tickets of the event. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        put: operations["addEventHosts"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/tickets/v1": {
         parameters: {
             query?: never;
@@ -1016,8 +1176,36 @@ export interface paths {
          * @description Retrieve an event ticket. <h3>OAuth</h3>Required scopes: <code>events.readonly</code> or <code>events</code>
          */
         get: operations["getEventTicket"];
-        put?: never;
+        /**
+         * Update a ticket
+         * @description Update an event ticket. Only the ticket role can be changed. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        put: operations["updateEventTicket"];
         post?: never;
+        /**
+         * Delete a ticket
+         * @description Delete an event ticket. Returns the deleted ticket. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        delete: operations["deleteEventTicket"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/tickets/v1/{id}/checkin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check in a ticket
+         * @description Check in an event ticket. Fails if the ticket is already checked in. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        post: operations["checkInEventTicket"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1338,6 +1526,54 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/packages/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve packages
+         * @description Retrieve all packages in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["getPackages"];
+        put?: never;
+        /**
+         * Create a package
+         * @description Create a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        post: operations["createPackage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/packages/v1/{packageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a package
+         * @description Delete a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        delete: operations["deletePackage"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a package
+         * @description Update a package. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        patch: operations["patchPackage"];
         trace?: never;
     };
     "/plans/v1": {
@@ -5702,6 +5938,88 @@ export interface components {
                 };
             };
         };
+        getTemplates: {
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+            /** @description List of templates. */
+            templates: {
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the template was created.
+                 */
+                createDate: string;
+                /** @description Template file reference. */
+                file: {
+                    /** @description Storage key of the template file. */
+                    key: string;
+                    /** @description Download URL of the template file. */
+                    url: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the template.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this template belongs to.
+                 */
+                locationRef: string;
+                /** @description Media files associated with the template. */
+                media: {
+                    key: string;
+                    url: string;
+                }[];
+                /** @description Template title. */
+                title: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the template was last updated.
+                 */
+                updateDate: string;
+            }[];
+        };
+        getTemplate: {
+            /** @description The template. */
+            template: {
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the template was created.
+                 */
+                createDate: string;
+                /** @description Template file reference. */
+                file: {
+                    /** @description Storage key of the template file. */
+                    key: string;
+                    /** @description Download URL of the template file. */
+                    url: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the template.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this template belongs to.
+                 */
+                locationRef: string;
+                /** @description Media files associated with the template. */
+                media: {
+                    key: string;
+                    url: string;
+                }[];
+                /** @description Template title. */
+                title: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the template was last updated.
+                 */
+                updateDate: string;
+            };
+        };
         coupon: {
             /** @description Fixed discount amount. */
             amountOff?: number | null;
@@ -6990,6 +7308,130 @@ export interface components {
             /** Format: uuid */
             id?: string;
             title?: string;
+        };
+        getPackages: {
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description List of packages. */
+            packages: {
+                /**
+                 * @deprecated
+                 * @description Total credits amount derived from grants. Deprecated: use grants instead.
+                 */
+                amount: number;
+                /**
+                 * @deprecated
+                 * @description Maximum credit grant duration in days. Deprecated: use grants instead.
+                 */
+                duration?: 30 | 90 | 180 | 365;
+                /** @description Grants included in the package. */
+                grants: {
+                    /** @description Grant amount in major units for credits, or whole units for day passes. */
+                    amount: number;
+                    /** @description Expiration duration in days for credit grants. */
+                    duration?: 30 | 90 | 180 | 365;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the grant.
+                     */
+                    id: string;
+                    /**
+                     * @description Type of balance this grant provides.
+                     * @enum {string}
+                     */
+                    type: "credits" | "dayPasses";
+                }[];
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the package.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this package belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this package belongs to.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description ID of the location this package belongs to. Deprecated: use locationRef instead.
+                 */
+                organizationRef: string;
+                /** @description Package list price in major units. */
+                price: number;
+                /**
+                 * @deprecated
+                 * @description Discounted price visible to members. Deprecated: equals price since 4.8.15.
+                 */
+                priceDiscounted: number;
+            }[];
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getPackage: {
+            /** @description The package. */
+            package: {
+                /**
+                 * @deprecated
+                 * @description Total credits amount derived from grants. Deprecated: use grants instead.
+                 */
+                amount: number;
+                /**
+                 * @deprecated
+                 * @description Maximum credit grant duration in days. Deprecated: use grants instead.
+                 */
+                duration?: 30 | 90 | 180 | 365;
+                /** @description Grants included in the package. */
+                grants: {
+                    /** @description Grant amount in major units for credits, or whole units for day passes. */
+                    amount: number;
+                    /** @description Expiration duration in days for credit grants. */
+                    duration?: 30 | 90 | 180 | 365;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the grant.
+                     */
+                    id: string;
+                    /**
+                     * @description Type of balance this grant provides.
+                     * @enum {string}
+                     */
+                    type: "credits" | "dayPasses";
+                }[];
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the package.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this package belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this package belongs to.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description ID of the location this package belongs to. Deprecated: use locationRef instead.
+                 */
+                organizationRef: string;
+                /** @description Package list price in major units. */
+                price: number;
+                /**
+                 * @deprecated
+                 * @description Discounted price visible to members. Deprecated: equals price since 4.8.15.
+                 */
+                priceDiscounted: number;
+            };
         };
         getPlans: {
             /** @description Pagination token to fetch the next page of results. */
@@ -13169,6 +13611,104 @@ export interface components {
                 };
             };
         };
+        updateContract: {
+            content: {
+                "application/json": {
+                    /** @description Contract fields to update. */
+                    contract: {
+                        /** @description Whether the contract triggers a billing action when signed. */
+                        actionable?: boolean;
+                        /**
+                         * Format: date-time
+                         * @description Date after which the contract can no longer be signed.
+                         */
+                        expirationDate?: string;
+                        /** @description Line items included in this contract. */
+                        items?: {
+                            /**
+                             * Format: uuid
+                             * @description Applied coupon ID.
+                             */
+                            couponRef?: string;
+                            /** @description Whether this is a one-off item. */
+                            oneOff?: boolean;
+                            /**
+                             * Format: uuid
+                             * @description Shop product option ID.
+                             */
+                            optionRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Membership plan ID.
+                             */
+                            planRef?: string;
+                            /** @description Item price override. */
+                            price?: number;
+                            /**
+                             * Format: uuid
+                             * @description Shop product ID.
+                             */
+                            productRef?: string;
+                            /** @description Number of units. */
+                            quantity: number;
+                            /**
+                             * Format: uuid
+                             * @description Resource ID.
+                             */
+                            resourceRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Plan tier ID.
+                             */
+                            tierRef?: string;
+                            /** @description Display name of the item. */
+                            title: string;
+                            /**
+                             * @description Item type.
+                             * @enum {string}
+                             */
+                            type: "plan" | "resource" | "oneOff";
+                        }[];
+                        /**
+                         * Format: uuid
+                         * @description ID of the template to use for this contract.
+                         */
+                        templateRef?: string;
+                        /**
+                         * Format: date-time
+                         * @description Contract end date.
+                         */
+                        endDate?: string | null;
+                        /** @description Updated signers list. */
+                        signers?: {
+                            /** @description Signer email address. */
+                            email?: string;
+                            /**
+                             * Format: uuid
+                             * @description Signer ID (to identify existing signers).
+                             */
+                            id?: string;
+                            /** @description Signer first name. */
+                            name?: string;
+                            /** @description Phone number. */
+                            phoneNumber?: string;
+                            /** @description Signer last name. */
+                            surname?: string;
+                            /**
+                             * @description Whether this is a location or customer signer.
+                             * @enum {string}
+                             */
+                            type?: "location" | "customer";
+                        }[];
+                        /**
+                         * Format: date-time
+                         * @description Contract start date.
+                         */
+                        startDate?: string | null;
+                    };
+                };
+            };
+        };
         issueContract: {
             content: {
                 "application/json": {
@@ -13188,6 +13728,43 @@ export interface components {
                      * @enum {string}
                      */
                     reason: "forceMajeure" | "mutualAgreement" | "other" | "policyViolation" | "productUnsatisfactory";
+                };
+            };
+        };
+        createTemplate: {
+            content: {
+                "application/json": {
+                    /** @description Template to create. */
+                    template: {
+                        /** @description Template file reference. */
+                        file: {
+                            /** @description Storage key of the template file. */
+                            key: string;
+                        };
+                        /**
+                         * Format: uuid
+                         * @description ID of the location this template belongs to.
+                         */
+                        locationRef: string;
+                        /** @description Template title. */
+                        title: string;
+                    };
+                };
+            };
+        };
+        updateTemplate: {
+            content: {
+                "application/json": {
+                    /** @description Template fields to update. */
+                    template: {
+                        /** @description Template file reference. */
+                        file?: {
+                            /** @description Storage key of the template file. */
+                            key: string;
+                        };
+                        /** @description Template title. */
+                        title?: string;
+                    };
                 };
             };
         };
@@ -13397,6 +13974,98 @@ export interface components {
                 };
             };
         };
+        updateEvent: {
+            content: {
+                "application/json": {
+                    /** @description Event to update. */
+                    event: {
+                        /**
+                         * @description Event application type. purchase: paid signup (requires price). none: free/RSVP-style.
+                         * @enum {string}
+                         */
+                        applicationType?: "purchase" | "none";
+                        /** @description Confirmation email settings. */
+                        confirmationEmail?: {
+                            /** @description Whether a confirmation email is sent after registration. */
+                            enabled: boolean;
+                            /** @description HTML template for the confirmation email. */
+                            template?: string;
+                        };
+                        /** @description Custom tax settings. */
+                        customTax?: {
+                            /** @description Whether custom tax is enabled. */
+                            enabled: boolean;
+                            /** @description Custom tax rate as a decimal. */
+                            rate: number;
+                        };
+                        /** @description Full description of the event. */
+                        description?: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the event ends.
+                         */
+                        endDate: string;
+                        /** @description Limited attendees settings. */
+                        limitedAttendees?: {
+                            /** @description Whether attendee capacity is limited. */
+                            enabled: boolean;
+                            /** @description Maximum number of attendees when limited. */
+                            limit?: number;
+                        };
+                        /**
+                         * Format: uuid
+                         * @description ID of the location where the event is hosted.
+                         */
+                        locationRef: string;
+                        /** @description Media files attached to the event. */
+                        media?: {
+                            /** @description Storage key of the media file. */
+                            key?: string;
+                            /** @description Public URL of the media file. */
+                            url?: string;
+                        }[];
+                        /** @description Pricing options for the event. Can enable credits, money, or both. */
+                        price?: {
+                            /** @description Credits pricing. */
+                            credits?: {
+                                /** @description Ticket price in credits. */
+                                amount: number;
+                                /** @description Whether credits payment is enabled. */
+                                enabled: boolean;
+                            };
+                            /** @description Money pricing. */
+                            money?: {
+                                /** @description Ticket price in money. */
+                                amount: number;
+                                /** @description Whether money payment is enabled. */
+                                enabled: boolean;
+                            };
+                        };
+                        /**
+                         * @description How far in advance a refund can be requested.
+                         * @enum {string}
+                         */
+                        refundThreshold?: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        /** @description Whether the attendees list is publicly visible. */
+                        showAttendees?: boolean;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the event starts.
+                         */
+                        startDate: string;
+                        /** @description Display name of the event. */
+                        title: string;
+                        /** @description Venue name or address within the location. */
+                        venue?: string;
+                        /**
+                         * @description Who can see this event. public: all. admins: admins only. networkMembers: network members. members: location members.
+                         * @enum {string}
+                         */
+                        visibility?: "public" | "admins" | "networkMembers" | "members";
+                    };
+                };
+            };
+        };
         createFeedPost: {
             content: {
                 "application/json": {
@@ -13533,6 +14202,57 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "members" | "networkMembers";
+                    };
+                };
+            };
+        };
+        createPackage: {
+            content: {
+                "application/json": {
+                    /** @description Package to create. */
+                    package: {
+                        /** @description Grants included in the package. */
+                        grants: {
+                            /** @description Grant amount in major units for credits, or whole units for day passes. */
+                            amount: number;
+                            /** @description Expiration duration in days for credit grants. */
+                            duration?: 30 | 90 | 180 | 365;
+                            /**
+                             * @description Type of balance this grant provides.
+                             * @enum {string}
+                             */
+                            type: "credits" | "dayPasses";
+                        }[];
+                        /**
+                         * Format: uuid
+                         * @description ID of the location where to create this package.
+                         */
+                        locationRef: string;
+                        /** @description Package price in major units. */
+                        price: number;
+                    };
+                };
+            };
+        };
+        patchPackage: {
+            content: {
+                "application/json": {
+                    /** @description Package fields to update. */
+                    package: {
+                        /** @description Grants included in the package. */
+                        grants?: {
+                            /** @description Grant amount in major units for credits, or whole units for day passes. */
+                            amount: number;
+                            /** @description Expiration duration in days for credit grants. */
+                            duration?: 30 | 90 | 180 | 365;
+                            /**
+                             * @description Type of balance this grant provides.
+                             * @enum {string}
+                             */
+                            type: "credits" | "dayPasses";
+                        }[];
+                        /** @description Package price in major units. */
+                        price?: number;
                     };
                 };
             };
@@ -18021,6 +18741,39 @@ export interface operations {
             };
         };
     };
+    updateContract: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the contract. */
+                contractId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["updateContract"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     issueContract: {
         parameters: {
             query?: never;
@@ -18056,6 +18809,109 @@ export interface operations {
             };
         };
     };
+    resendContract: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the contract. */
+                contractId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    declineContract: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the contract. */
+                contractId: string;
+                /** @description The id of the contract signer. */
+                signerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    signContract: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the contract. */
+                contractId: string;
+                /** @description The id of the contract signer. */
+                signerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     terminateContract: {
         parameters: {
             query?: never;
@@ -18077,6 +18933,213 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getTemplates: {
+        parameters: {
+            query: {
+                /** @description Maximum number of templates per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location. */
+                locationRef: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getTemplates"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createTemplate"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getTemplate"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the template. */
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getTemplate"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the template. */
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    updateTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the template. */
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["updateTemplate"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    duplicateTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the template. */
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getTemplate"];
+                };
             };
             /** @description Bad Request */
             400: {
@@ -18574,6 +19637,42 @@ export interface operations {
             };
         };
     };
+    updateEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["updateEvent"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        event?: components["schemas"]["event"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     deleteEvent: {
         parameters: {
             query?: never;
@@ -18669,6 +19768,56 @@ export interface operations {
             };
         };
     };
+    addEventHosts: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the event. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Hosts to add to the event. */
+                    tickets: {
+                        /**
+                         * Format: uuid
+                         * @description The id of the membership to add as a host.
+                         */
+                        membershipRef: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        tickets?: components["schemas"]["eventTicket"][];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     getEventTickets: {
         parameters: {
             query: {
@@ -18716,6 +19865,129 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
+            path: {
+                /** @description The id of the event ticket. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ticket?: components["schemas"]["eventTicket"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    updateEventTicket: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the event ticket. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    ticket: {
+                        /**
+                         * @description Role of the ticket holder.
+                         * @enum {string}
+                         */
+                        role: "attendee" | "host";
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ticket?: components["schemas"]["eventTicket"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteEventTicket: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the event ticket. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ticket?: components["schemas"]["eventTicket"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    checkInEventTicket: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
             path: {
                 /** @description The id of the event ticket. */
                 id: string;
@@ -19618,6 +20890,143 @@ export interface operations {
                         networks?: components["schemas"]["network"][];
                     };
                 };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getPackages: {
+        parameters: {
+            query: {
+                /** @description Maximum number of packages per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location. */
+                locationRef: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getPackages"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createPackage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createPackage"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getPackage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deletePackage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the package. */
+                packageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchPackage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the package. */
+                packageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchPackage"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {
@@ -20959,6 +22368,8 @@ export interface operations {
                 limit?: number;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc */
+                order?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */

@@ -4,14 +4,15 @@ export type { AltCurrency, CreateAltCurrencyBody, GetAltCurrenciesQuery, UpdateA
 export type { Application, ApplyBenefitBody, Benefit, BenefitCategory, CreateBenefitBody, CreateBenefitCategoryBody, GetBenefitApplicationsQuery, GetBenefitCategoriesQuery, GetBenefitsQuery, UpdateBenefitBody, UpdateBenefitCategoryBody } from "./resources/benefits.js";
 export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, CreditNote, GetCreditNotesQuery, GetInvoicesQuery, GetUpcomingInvoiceItemsQuery, GetUpcomingInvoiceQuery, Invoice, InvoiceItem, IssueInvoiceBody, ListInvoiceItemsQuery, PayInvoiceBody, Payment, PreviewCreditNoteBody, UpcomingItem, UpdateCreditNoteBody, UpdateInvoiceBody, UpdateInvoiceItemBody } from "./resources/billing.js";
 export type { Company, CreateCompanyBody, CreateMembershipBody, GetCompaniesQuery, GetMembershipsDeletedQuery, GetMembershipsQuery, Membership, UpdateCompanyBody, UpdateMembershipBody } from "./resources/community.js";
-export type { Contract, CreateContractBody, GetContractsQuery, IssueContractBody, TerminateContractBody } from "./resources/contracts.js";
+export type { Contract, CreateContractBody, CreateTemplateBody, GetContractsQuery, GetTemplatesQuery, IssueContractBody, Template, TerminateContractBody, UpdateContractBody, UpdateTemplateBody } from "./resources/contracts.js";
 export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, GetDiscountRedemptionsQuery, GetPromocodesQuery, Promocode, Redemption, UpdateCouponBody } from "./resources/discounts.js";
-export type { CreateEventBody, Event, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery } from "./resources/events.js";
+export type { AddEventHostsBody, CreateEventBody, Event, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery, UpdateEventBody, UpdateEventTicketBody } from "./resources/events.js";
 export type { Comment, CreateFeedPostBody, CreateFeedPostCommentBody, GetFeedPostsQuery, Like, Post, UpdateFeedPostBody } from "./resources/feed.js";
 export type { GetFloorsQuery } from "./resources/floors.js";
 export type { CreateGuideBody, GetGuidesQuery, Guide, PatchGuideBody } from "./resources/guides.js";
 export type { Location } from "./resources/locations.js";
 export type { Network } from "./resources/networks.js";
+export type { CreatePackageBody, GetPackagesQuery, Package, PatchPackageBody } from "./resources/packages.js";
 export type { CreatePlanBody, GetPlansQuery, Plan, UpdatePlanBody } from "./resources/plans.js";
 export type { GetRegistrationsQuery, Registration } from "./resources/registrations.js";
 export type { Booking, CreateBookingBody, CreateResourceBody, GetBookingsQuery, GetResourcesQuery, PatchResourceBody, Resource } from "./resources/resources.js";

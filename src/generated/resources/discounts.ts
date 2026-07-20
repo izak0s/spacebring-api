@@ -25,7 +25,7 @@ export interface GetCouponsQuery {
   nextPageToken?: string;
 }
 
-/** Query parameters for `sb.discounts.redemptions.list()`. */
+/** Query parameters for `sb.discounts.listRedemptions()`. */
 export interface GetDiscountRedemptionsQuery {
   /** The id of the coupon. Either couponRef or promocodeRef is required */
   couponRef?: string;
@@ -56,6 +56,26 @@ export type UpdateCouponBody = NonNullable<NonNullable<operations["updateCoupon"
 
 export function createDiscounts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
+    /**
+     * Retrieve redemptions — iterates every item across all pages.
+     *
+     * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
+     */
+    iterateRedemptions(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined> {
+      return paginate(
+        async (nextPageToken: string | undefined) =>
+          unwrap(await client.GET("/discounts/v1/redemptions", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/v1/redemptions"),
+        "redemptions",
+      );
+    },
+    /**
+     * Retrieve redemptions
+     *
+     * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
+     */
+    async listRedemptions(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }> {
+      return unwrap(await client.GET("/discounts/v1/redemptions", { params: { query }, signal: options?.signal }), "GET /discounts/v1/redemptions");
+    },
     coupons: {
       /**
        * Retrieve coupons
@@ -63,7 +83,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * Retrieve all coupons in the location.
        */
       async list(query: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }> {
-        return unwrap(await client.GET("/discounts/coupons/v1", { params: { query }, signal: options?.signal }), "GET /discounts/coupons/v1");
+        return unwrap(await client.GET("/discounts/v1/coupons", { params: { query }, signal: options?.signal }), "GET /discounts/v1/coupons");
       },
       /**
        * Retrieve coupons — iterates every item across all pages.
@@ -73,7 +93,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
       iterate(query: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
-            unwrap(await client.GET("/discounts/coupons/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/coupons/v1"),
+            unwrap(await client.GET("/discounts/v1/coupons", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/v1/coupons"),
           "coupons",
         );
       },
@@ -84,11 +104,11 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Coupon> {
-        return unwrapProp(await client.GET("/discounts/coupons/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "coupon", "GET /discounts/coupons/v1/{id}");
+        return unwrapProp(await client.GET("/discounts/v1/coupons/{id}", { params: { path: { id } }, signal: options?.signal }), "coupon", "GET /discounts/v1/coupons/{id}");
       },
       /** Create a coupon */
       async create(coupon: CreateCouponBody, options?: SpacebringRequestOptions): Promise<Coupon> {
-        return unwrapProp(await client.POST("/discounts/coupons/v1", { body: { coupon }, signal: options?.signal }), "coupon", "POST /discounts/coupons/v1");
+        return unwrapProp(await client.POST("/discounts/v1/coupons", { body: { coupon }, signal: options?.signal }), "coupon", "POST /discounts/v1/coupons");
       },
       /**
        * Update a coupon
@@ -98,7 +118,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * @param options Request options (abort signal).
        */
       async update(id: string, coupon: UpdateCouponBody, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.PATCH("/discounts/coupons/v1/{id}", { params: { path: { id } }, body: { coupon }, signal: options?.signal }), "PATCH /discounts/coupons/v1/{id}");
+        return unwrap(await client.PATCH("/discounts/v1/coupons/{id}", { params: { path: { id } }, body: { coupon }, signal: options?.signal }), "PATCH /discounts/v1/coupons/{id}");
       },
       /**
        * Delete a coupon
@@ -107,7 +127,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * @param options Request options (abort signal).
        */
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.DELETE("/discounts/coupons/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /discounts/coupons/v1/{id}");
+        return unwrap(await client.DELETE("/discounts/v1/coupons/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /discounts/v1/coupons/{id}");
       },
     },
     promocodes: {
@@ -117,7 +137,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * Retrieve all promocodes.
        */
       async list(query?: GetPromocodesQuery, options?: SpacebringRequestOptions): Promise<Promocode[]> {
-        return unwrapProp(await client.GET("/discounts/promocodes/v1", { params: { query }, signal: options?.signal }), "promocodes", "GET /discounts/promocodes/v1");
+        return unwrapProp(await client.GET("/discounts/v1/promocodes", { params: { query }, signal: options?.signal }), "promocodes", "GET /discounts/v1/promocodes");
       },
       /**
        * Get a promocode
@@ -126,11 +146,11 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * @param options Request options (abort signal).
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Promocode> {
-        return unwrapProp(await client.GET("/discounts/promocodes/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "promocode", "GET /discounts/promocodes/v1/{id}");
+        return unwrapProp(await client.GET("/discounts/v1/promocodes/{id}", { params: { path: { id } }, signal: options?.signal }), "promocode", "GET /discounts/v1/promocodes/{id}");
       },
       /** Create a promocode */
       async create(promocode: CreatePromocodeBody, options?: SpacebringRequestOptions): Promise<Promocode> {
-        return unwrapProp(await client.POST("/discounts/promocodes/v1", { body: { promocode }, signal: options?.signal }), "promocode", "POST /discounts/promocodes/v1");
+        return unwrapProp(await client.POST("/discounts/v1/promocodes", { body: { promocode }, signal: options?.signal }), "promocode", "POST /discounts/v1/promocodes");
       },
       /**
        * Archive a promocode
@@ -139,29 +159,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
        * @param options Request options (abort signal).
        */
       async archive(id: string, options?: SpacebringRequestOptions): Promise<Promocode> {
-        return unwrapProp(await client.PUT("/discounts/promocodes/v1/{id}/archive", { params: { path: { id } }, signal: options?.signal }), "promocode", "PUT /discounts/promocodes/v1/{id}/archive");
-      },
-    },
-    redemptions: {
-      /**
-       * Retrieve redemptions
-       *
-       * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
-       */
-      async list(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }> {
-        return unwrap(await client.GET("/discounts/redemptions/v1", { params: { query }, signal: options?.signal }), "GET /discounts/redemptions/v1");
-      },
-      /**
-       * Retrieve redemptions — iterates every item across all pages.
-       *
-       * Retrieve all discount redemptions. Either couponRef or promocodeRef is required.
-       */
-      iterate(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined> {
-        return paginate(
-          async (nextPageToken: string | undefined) =>
-            unwrap(await client.GET("/discounts/redemptions/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/redemptions/v1"),
-          "redemptions",
-        );
+        return unwrapProp(await client.PUT("/discounts/v1/promocodes/{id}/archive", { params: { path: { id } }, signal: options?.signal }), "promocode", "PUT /discounts/v1/promocodes/{id}/archive");
       },
     },
   };

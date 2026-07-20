@@ -233,6 +233,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
 
 // contracts.ts
 export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
+export type Template = NonNullable<operations["getTemplate"]["responses"][200]["content"]["application/json"]["template"]>;
 export interface GetContractsQuery {
   customerRef?: string;
   limit?: number;
@@ -247,18 +248,39 @@ export interface GetContractsQuery {
   - **terminated** — cancelled after signing */
   status?: string;
 }
+export interface GetTemplatesQuery {
+  limit?: number;
+  locationRef: string;
+  nextPageToken?: string;
+}
 export type CreateContractBody = NonNullable<NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
+export type CreateTemplateBody = NonNullable<NonNullable<operations["createTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
 export type IssueContractBody = NonNullable<NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]["signatureMethod"]>;
 export type TerminateContractBody = NonNullable<NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"]["reason"]>;
+export type UpdateContractBody = NonNullable<NonNullable<operations["updateContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
+export type UpdateTemplateBody = NonNullable<NonNullable<operations["updateTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
 export function createContracts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(query?: GetContractsQuery, options?: SpacebringRequestOptions): Promise<{ contracts: Contract[]; nextPageToken?: string; searchQueryNext?: string }>
     iterate(query?: Omit<GetContractsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Contract, void, undefined>
     async get(contractId: string, options?: SpacebringRequestOptions): Promise<Contract>
     async create(contract: CreateContractBody, options?: SpacebringRequestOptions): Promise<Contract>
+    async update(contractId: string, contract: UpdateContractBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(contractId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async declineContract(contractId: string, signerId: string, options?: SpacebringRequestOptions): Promise<undefined>
     async issue(contractId: string, signatureMethod: IssueContractBody, options?: SpacebringRequestOptions): Promise<Contract>
+    async resend(contractId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async signContract(contractId: string, signerId: string, options?: SpacebringRequestOptions): Promise<undefined>
     async terminate(contractId: string, reason: TerminateContractBody, options?: SpacebringRequestOptions): Promise<undefined>
+    templates: {
+      async list(query: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }>
+      iterate(query: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined>
+      async get(templateId: string, options?: SpacebringRequestOptions): Promise<Template>
+      async create(template: CreateTemplateBody, options?: SpacebringRequestOptions): Promise<Template>
+      async update(templateId: string, template: UpdateTemplateBody, options?: SpacebringRequestOptions): Promise<undefined>
+      async delete(templateId: string, options?: SpacebringRequestOptions): Promise<undefined>
+      async duplicate(templateId: string, options?: SpacebringRequestOptions): Promise<Template>
+    },
   };
 }
 
@@ -287,6 +309,8 @@ export type CreatePromocodeBody = NonNullable<NonNullable<operations["createProm
 export type UpdateCouponBody = NonNullable<NonNullable<operations["updateCoupon"]["requestBody"]>["content"]["application/json"]["coupon"]>;
 export function createDiscounts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
+    iterateRedemptions(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined>
+    async listRedemptions(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }>
     coupons: {
       async list(query: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined>
@@ -300,10 +324,6 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
       async get(id: string, options?: SpacebringRequestOptions): Promise<Promocode>
       async create(promocode: CreatePromocodeBody, options?: SpacebringRequestOptions): Promise<Promocode>
       async archive(id: string, options?: SpacebringRequestOptions): Promise<Promocode>
-    },
-    redemptions: {
-      async list(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }>
-      iterate(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined>
     },
   };
 }
@@ -322,19 +342,27 @@ export interface GetEventTicketsQuery {
   limit?: number;
   nextPageToken?: string;
 }
+export type AddEventHostsBody = NonNullable<NonNullable<operations["addEventHosts"]["requestBody"]>["content"]["application/json"]["tickets"]>;
 export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+export type UpdateEventBody = NonNullable<NonNullable<operations["updateEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+export type UpdateEventTicketBody = NonNullable<NonNullable<operations["updateEventTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(query: GetEventsByOrganizationQuery, options?: SpacebringRequestOptions): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]>
     async get(id: string, options?: SpacebringRequestOptions): Promise<Event>
     async create(event: CreateEventBody, options?: SpacebringRequestOptions): Promise<Event>
+    async update(id: string, event: UpdateEventBody, options?: SpacebringRequestOptions): Promise<Event>
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async addEventHosts(id: string, tickets: AddEventHostsBody, options?: SpacebringRequestOptions): Promise<EventTicket[]>
     async cancel(id: string, options?: SpacebringRequestOptions): Promise<Event>
     async copy(id: string, options?: SpacebringRequestOptions): Promise<Event>
     tickets: {
       async list(query: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<EventTicket>
+      async update(id: string, ticket: UpdateEventTicketBody, options?: SpacebringRequestOptions): Promise<EventTicket>
+      async delete(id: string, options?: SpacebringRequestOptions): Promise<EventTicket>
+      async checkIn(id: string, options?: SpacebringRequestOptions): Promise<EventTicket>
     },
   };
 }
@@ -421,6 +449,25 @@ export type Network = NonNullable<components["schemas"]["network"]>;
 export function createNetworks(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(options?: SpacebringRequestOptions): Promise<Network[]>
+  };
+}
+
+// packages.ts
+export type Package = NonNullable<operations["getPackages"]["responses"][200]["content"]["application/json"]["packages"]>[number];
+export interface GetPackagesQuery {
+  limit?: number;
+  locationRef: string;
+  nextPageToken?: string;
+}
+export type CreatePackageBody = NonNullable<NonNullable<operations["createPackage"]["requestBody"]>["content"]["application/json"]["package"]>;
+export type PatchPackageBody = NonNullable<NonNullable<operations["patchPackage"]["requestBody"]>["content"]["application/json"]["package"]>;
+export function createPackages(client: Client<paths>, defaults: SpacebringDefaults) {
+  return {
+    async list(query: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }>
+    iterate(query: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined>
+    async create(packageBody: CreatePackageBody, options?: SpacebringRequestOptions): Promise<Package>
+    async update(packageId: string, packageBody: PatchPackageBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async delete(packageId: string, options?: SpacebringRequestOptions): Promise<undefined>
   };
 }
 
@@ -603,6 +650,7 @@ export interface GetSupportTicketsQuery {
   locationRef: string;
   limit?: number;
   nextPageToken?: string;
+  order?: string;
 }
 export type CreateSupportTicketBody = NonNullable<NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
