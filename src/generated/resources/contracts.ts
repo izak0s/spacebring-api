@@ -7,6 +7,9 @@ import type { operations, paths } from "../schema.js";
 /** A Contract entity as returned by the Spacebring API. */
 export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
 
+/** A Template entity as returned by the Spacebring API. */
+export type Template = NonNullable<operations["getTemplate"]["responses"][200]["content"]["application/json"]["template"]>;
+
 /** Query parameters for `sb.contracts.list()`. */
 export interface GetContractsQuery {
   /** UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
@@ -30,14 +33,33 @@ export interface GetContractsQuery {
   status?: string;
 }
 
+/** Query parameters for `sb.contracts.templates.list()`. */
+export interface GetTemplatesQuery {
+  /** Maximum number of templates per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** UUID of the location. */
+  locationRef: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+}
+
 /** Request body for `sb.contracts.create()`. */
 export type CreateContractBody = NonNullable<NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
+
+/** Request body for `sb.contracts.templates.create()`. */
+export type CreateTemplateBody = NonNullable<NonNullable<operations["createTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
 
 /** Request body for `sb.contracts.issue()`. */
 export type IssueContractBody = NonNullable<NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]["signatureMethod"]>;
 
 /** Request body for `sb.contracts.terminate()`. */
 export type TerminateContractBody = NonNullable<NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"]["reason"]>;
+
+/** Request body for `sb.contracts.update()`. */
+export type UpdateContractBody = NonNullable<NonNullable<operations["updateContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
+
+/** Request body for `sb.contracts.templates.update()`. */
+export type UpdateTemplateBody = NonNullable<NonNullable<operations["updateTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
 
 export function createContracts(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -75,6 +97,16 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       return unwrapProp(await client.POST("/contracts/v1", { body: { contract }, signal: options?.signal }), "contract", "POST /contracts/v1");
     },
     /**
+     * Update a contract
+     *
+     * @param contractId The id of the contract.
+     * @param contract The `contract` payload.
+     * @param options Request options (abort signal).
+     */
+    async update(contractId: string, contract: UpdateContractBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/contracts/v1/{contractId}", { params: { path: { contractId } }, body: { contract }, signal: options?.signal }), "PATCH /contracts/v1/{contractId}");
+    },
+    /**
      * Delete a contract
      *
      * @param contractId The id of the contract.
@@ -82,6 +114,18 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      */
     async delete(contractId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/contracts/v1/{contractId}", { params: { path: { contractId } }, signal: options?.signal }), "DELETE /contracts/v1/{contractId}");
+    },
+    /**
+     * Decline a contract
+     *
+     * Mark a contract signer as declined. Declining also declines the contract.
+     *
+     * @param contractId The id of the contract.
+     * @param signerId The id of the contract signer.
+     * @param options Request options (abort signal).
+     */
+    async declineContract(contractId: string, signerId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PUT("/contracts/v1/{contractId}/signers/{signerId}/decline", { params: { path: { contractId, signerId } }, signal: options?.signal }), "PUT /contracts/v1/{contractId}/signers/{signerId}/decline");
     },
     /**
      * Issue a contract
@@ -94,6 +138,29 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       return unwrapProp(await client.POST("/contracts/v1/{contractId}/issue", { params: { path: { contractId } }, body: { signatureMethod }, signal: options?.signal }), "contract", "POST /contracts/v1/{contractId}/issue");
     },
     /**
+     * Resend a contract
+     *
+     * Resend the signature request email to the next pending signer of an issued eSignature contract.
+     *
+     * @param contractId The id of the contract.
+     * @param options Request options (abort signal).
+     */
+    async resend(contractId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.POST("/contracts/v1/{contractId}/resend", { params: { path: { contractId } }, signal: options?.signal }), "POST /contracts/v1/{contractId}/resend");
+    },
+    /**
+     * Sign a contract
+     *
+     * Mark a contract signer as signed. When all signers have signed, the contract becomes signed.
+     *
+     * @param contractId The id of the contract.
+     * @param signerId The id of the contract signer.
+     * @param options Request options (abort signal).
+     */
+    async signContract(contractId: string, signerId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PUT("/contracts/v1/{contractId}/signers/{signerId}/sign", { params: { path: { contractId, signerId } }, signal: options?.signal }), "PUT /contracts/v1/{contractId}/signers/{signerId}/sign");
+    },
+    /**
      * Terminate a contract
      *
      * @param contractId The id of the contract.
@@ -102,6 +169,81 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
      */
     async terminate(contractId: string, reason: TerminateContractBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/contracts/v1/{contractId}/terminate", { params: { path: { contractId } }, body: { reason }, signal: options?.signal }), "PATCH /contracts/v1/{contractId}/terminate");
+    },
+    templates: {
+      /**
+       * Retrieve templates
+       *
+       * Retrieve all contract templates in the location.
+       */
+      async list(query: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }> {
+        return unwrap(await client.GET("/contracts/templates/v1", { params: { query }, signal: options?.signal }), "GET /contracts/templates/v1");
+      },
+      /**
+       * Retrieve templates — iterates every item across all pages.
+       *
+       * Retrieve all contract templates in the location.
+       */
+      iterate(query: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined> {
+        return paginate(
+          async (nextPageToken: string | undefined) =>
+            unwrap(await client.GET("/contracts/templates/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /contracts/templates/v1"),
+          "templates",
+        );
+      },
+      /**
+       * Retrieve a template
+       *
+       * Retrieve a contract template.
+       *
+       * @param templateId The id of the template.
+       * @param options Request options (abort signal).
+       */
+      async get(templateId: string, options?: SpacebringRequestOptions): Promise<Template> {
+        return unwrapProp(await client.GET("/contracts/templates/v1/{templateId}", { params: { path: { templateId } }, signal: options?.signal }), "template", "GET /contracts/templates/v1/{templateId}");
+      },
+      /**
+       * Create a template
+       *
+       * Create a contract template from an uploaded file.
+       */
+      async create(template: CreateTemplateBody, options?: SpacebringRequestOptions): Promise<Template> {
+        return unwrapProp(await client.POST("/contracts/templates/v1", { body: { template }, signal: options?.signal }), "template", "POST /contracts/templates/v1");
+      },
+      /**
+       * Update a template
+       *
+       * Update a contract template.
+       *
+       * @param templateId The id of the template.
+       * @param template The `template` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(templateId: string, template: UpdateTemplateBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/contracts/templates/v1/{templateId}", { params: { path: { templateId } }, body: { template }, signal: options?.signal }), "PATCH /contracts/templates/v1/{templateId}");
+      },
+      /**
+       * Delete a template
+       *
+       * Delete a contract template.
+       *
+       * @param templateId The id of the template.
+       * @param options Request options (abort signal).
+       */
+      async delete(templateId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.DELETE("/contracts/templates/v1/{templateId}", { params: { path: { templateId } }, signal: options?.signal }), "DELETE /contracts/templates/v1/{templateId}");
+      },
+      /**
+       * Duplicate a template
+       *
+       * Duplicate a contract template, creating a copy with the same title and file.
+       *
+       * @param templateId The id of the template.
+       * @param options Request options (abort signal).
+       */
+      async duplicate(templateId: string, options?: SpacebringRequestOptions): Promise<Template> {
+        return unwrapProp(await client.POST("/contracts/templates/v1/{templateId}/duplicate", { params: { path: { templateId } }, signal: options?.signal }), "template", "POST /contracts/templates/v1/{templateId}/duplicate");
+      },
     },
   };
 }

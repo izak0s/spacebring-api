@@ -15,6 +15,7 @@ import { createFloors as floorsGroup } from "./floors.js";
 import { createGuides as guidesGroup } from "./guides.js";
 import { createLocations as locationsGroup } from "./locations.js";
 import { createNetworks as networksGroup } from "./networks.js";
+import { createPackages as packagesGroup } from "./packages.js";
 import { createPlans as plansGroup } from "./plans.js";
 import { createRegistrations as registrationsGroup } from "./registrations.js";
 import { createResources as resourcesGroup } from "./resources.js";
@@ -38,6 +39,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     guides: guidesGroup(client, defaults),
     locations: locationsGroup(client, defaults),
     networks: networksGroup(client, defaults),
+    packages: packagesGroup(client, defaults),
     plans: plansGroup(client, defaults),
     registrations: registrationsGroup(client, defaults),
     resources: resourcesGroup(client, defaults),

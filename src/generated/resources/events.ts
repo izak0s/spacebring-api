@@ -32,8 +32,17 @@ export interface GetEventTicketsQuery {
   nextPageToken?: string;
 }
 
+/** Request body for `sb.events.addEventHosts()`. */
+export type AddEventHostsBody = NonNullable<NonNullable<operations["addEventHosts"]["requestBody"]>["content"]["application/json"]["tickets"]>;
+
 /** Request body for `sb.events.create()`. */
 export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+
+/** Request body for `sb.events.update()`. */
+export type UpdateEventBody = NonNullable<NonNullable<operations["updateEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+
+/** Request body for `sb.events.tickets.update()`. */
+export type UpdateEventTicketBody = NonNullable<NonNullable<operations["updateEventTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -49,9 +58,25 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
     async create(event: CreateEventBody, options?: SpacebringRequestOptions): Promise<Event> {
       return unwrapProp(await client.POST("/events/v1", { body: { event }, signal: options?.signal }), "event", "POST /events/v1");
     },
+    /** Update an event */
+    async update(id: string, event: UpdateEventBody, options?: SpacebringRequestOptions): Promise<Event> {
+      return unwrapProp(await client.PUT("/events/v1/{id}", { params: { path: { id } }, body: { event }, signal: options?.signal }), "event", "PUT /events/v1/{id}");
+    },
     /** Delete an event */
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/events/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /events/v1/{id}");
+    },
+    /**
+     * Add event hosts
+     *
+     * Add hosts to an event. Creates a free host ticket for each membership without one; existing attendee tickets are switched to the host role. Returns all tickets of the event.
+     *
+     * @param id The id of the event.
+     * @param tickets The `tickets` payload.
+     * @param options Request options (abort signal).
+     */
+    async addEventHosts(id: string, tickets: AddEventHostsBody, options?: SpacebringRequestOptions): Promise<EventTicket[]> {
+      return unwrapProp(await client.PUT("/events/v1/{id}/hosts", { params: { path: { id } }, body: { tickets }, signal: options?.signal }), "tickets", "PUT /events/v1/{id}/hosts");
     },
     /** Cancel an event */
     async cancel(id: string, options?: SpacebringRequestOptions): Promise<Event> {
@@ -92,6 +117,40 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<EventTicket> {
         return unwrapProp(await client.GET("/events/tickets/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "ticket", "GET /events/tickets/v1/{id}");
+      },
+      /**
+       * Update a ticket
+       *
+       * Update an event ticket. Only the ticket role can be changed.
+       *
+       * @param id The id of the event ticket.
+       * @param ticket The `ticket` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(id: string, ticket: UpdateEventTicketBody, options?: SpacebringRequestOptions): Promise<EventTicket> {
+        return unwrapProp(await client.PUT("/events/tickets/v1/{id}", { params: { path: { id } }, body: { ticket }, signal: options?.signal }), "ticket", "PUT /events/tickets/v1/{id}");
+      },
+      /**
+       * Delete a ticket
+       *
+       * Delete an event ticket. Returns the deleted ticket.
+       *
+       * @param id The id of the event ticket.
+       * @param options Request options (abort signal).
+       */
+      async delete(id: string, options?: SpacebringRequestOptions): Promise<EventTicket> {
+        return unwrapProp(await client.DELETE("/events/tickets/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "ticket", "DELETE /events/tickets/v1/{id}");
+      },
+      /**
+       * Check in a ticket
+       *
+       * Check in an event ticket. Fails if the ticket is already checked in.
+       *
+       * @param id The id of the event ticket.
+       * @param options Request options (abort signal).
+       */
+      async checkIn(id: string, options?: SpacebringRequestOptions): Promise<EventTicket> {
+        return unwrapProp(await client.POST("/events/tickets/v1/{id}/checkin", { params: { path: { id } }, signal: options?.signal }), "ticket", "POST /events/tickets/v1/{id}/checkin");
       },
     },
   };

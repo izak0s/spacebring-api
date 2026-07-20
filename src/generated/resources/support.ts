@@ -18,6 +18,8 @@ export interface GetSupportTicketsQuery {
   limit?: number;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+  /** The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc */
+  order?: string;
 }
 
 /** Request body for `sb.support.tickets.create()`. */
