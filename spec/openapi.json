@@ -3974,6 +3974,24 @@
         "parameters": [
           {
             "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter contracts created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter contracts created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "customerRef",
             "required": false,
             "description": "UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts.",
@@ -25281,10 +25299,6 @@
             ],
             "additionalProperties": false
           },
-          "privacyConsentDate": {
-            "description": "ISO timestamp or date when privacy consent was given.",
-            "type": "string"
-          },
           "role": {
             "description": "Role of the user in the network.",
             "type": "string",
@@ -36716,7 +36730,7 @@
                         "type": "object",
                         "properties": {
                           "amount": {
-                            "description": "Amount to credit in major units.",
+                            "description": "Share of the invoice item pre-discount total to credit in major units; discounts are prorated and exclusive tax is added on top.",
                             "type": "number",
                             "minimum": 0,
                             "exclusiveMinimum": true
@@ -36859,7 +36873,7 @@
                         "type": "object",
                         "properties": {
                           "amount": {
-                            "description": "Amount to credit in major units.",
+                            "description": "Share of the invoice item pre-discount total to credit in major units; discounts are prorated and exclusive tax is added on top.",
                             "type": "number",
                             "minimum": 0,
                             "exclusiveMinimum": true
