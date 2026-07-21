@@ -12,6 +12,10 @@ export type Template = NonNullable<operations["getTemplate"]["responses"][200]["
 
 /** Query parameters for `sb.contracts.list()`. */
 export interface GetContractsQuery {
+  /** Filter contracts created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter contracts created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
   /** UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
   customerRef?: string;
   /** Maximum number of contracts per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */

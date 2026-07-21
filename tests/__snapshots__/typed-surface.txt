@@ -235,6 +235,8 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
 export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
 export type Template = NonNullable<operations["getTemplate"]["responses"][200]["content"]["application/json"]["template"]>;
 export interface GetContractsQuery {
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
   customerRef?: string;
   limit?: number;
   locationRef?: string;

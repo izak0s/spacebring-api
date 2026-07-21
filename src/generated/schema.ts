@@ -8006,8 +8006,6 @@ export interface components {
                 /** @description Whether the admin can access support tools. */
                 support: boolean;
             };
-            /** @description ISO timestamp or date when privacy consent was given. */
-            privacyConsentDate?: string;
             /**
              * @description Role of the user in the network.
              * @enum {string}
@@ -13335,7 +13333,7 @@ export interface components {
                         invoiceRef: string;
                         /** @description Line items to credit. */
                         lines: {
-                            /** @description Amount to credit in major units. */
+                            /** @description Share of the invoice item pre-discount total to credit in major units; discounts are prorated and exclusive tax is added on top. */
                             amount?: number;
                             /**
                              * Format: uuid
@@ -13403,7 +13401,7 @@ export interface components {
                         invoiceRef: string;
                         /** @description Line items to credit. */
                         lines: {
-                            /** @description Amount to credit in major units. */
+                            /** @description Share of the invoice item pre-discount total to credit in major units; discounts are prorated and exclusive tax is added on top. */
                             amount?: number;
                             /**
                              * Format: uuid
@@ -18590,6 +18588,10 @@ export interface operations {
     getContracts: {
         parameters: {
             query?: {
+                /** @description Filter contracts created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter contracts created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
                 /** @description UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
                 customerRef?: string;
                 /** @description Maximum number of contracts per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
