@@ -12019,6 +12019,76 @@
         }
       }
     },
+    "/transactions/day_passes/v1/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Retrieve a day pass transaction",
+        "description": "Retrieve a day passes transaction. <h3>OAuth</h3>Required scopes: <code>transactions.readonly</code> or <code>transactions</code>",
+        "operationId": "getDayPassesTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the transaction",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "transactions.readonly",
+              "transactions"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transaction": {
+                      "$ref": "#/components/schemas/transactionDayPasses"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions/money/v1": {
       "get": {
         "tags": [
@@ -35132,6 +35202,530 @@
         ],
         "additionalProperties": false
       },
+      "transactionDayPasses": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Total day pass amount (absolute sum of expiring and permanent)."
+          },
+          "amounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "description": "Amount deducted from this balance bucket."
+                },
+                "expirationDate": {
+                  "description": "Expiration date for expiring balances.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "subscriptionRef": {
+                  "description": "Subscription associated with expiring balances.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "expiring",
+                    "permanent"
+                  ],
+                  "description": "Balance bucket type."
+                }
+              },
+              "required": [
+                "amount",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Per-bucket amounts for charge transactions."
+          },
+          "booking": {
+            "deprecated": true,
+            "description": "Deprecated. Use product instead.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Booking id."
+              },
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Resource id."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Resource title."
+                  }
+                },
+                "required": [
+                  "id",
+                  "title"
+                ],
+                "additionalProperties": false,
+                "description": "Booked resource."
+              }
+            },
+            "required": [
+              "id",
+              "resource"
+            ],
+            "additionalProperties": false
+          },
+          "company": {
+            "deprecated": true,
+            "description": "Deprecated. Use customer instead.",
+            "type": "object",
+            "properties": {
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of company creation."
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Company id."
+              },
+              "locationRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Location id."
+              },
+              "logo": {
+                "description": "Company logo.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "Storage key of the company logo."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Public URL of the company logo."
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "metadata": {
+                "description": "Company metadata.",
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "notes": {
+                "description": "Internal notes.",
+                "type": "string"
+              },
+              "publicLogoUrl": {
+                "description": "Public logo URL derived from the company website.",
+                "type": "string"
+              },
+              "subscriptionRef": {
+                "nullable": true,
+                "description": "Primary subscription id.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "title": {
+                "type": "string",
+                "description": "Company name."
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "locationRef",
+              "subscriptionRef",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "companyRef": {
+            "deprecated": true,
+            "description": "Deprecated. Use customer instead.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp of when the transaction was created."
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the company or membership."
+              },
+              "logo": {
+                "description": "Company logo.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "title": {
+                "description": "Company name.",
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "company",
+                  "user"
+                ],
+                "description": "Whether the customer is a company or a user."
+              },
+              "user": {
+                "description": "User details for membership customers.",
+                "type": "object",
+                "properties": {
+                  "about": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "email": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "Customer associated with this transaction."
+          },
+          "description": {
+            "description": "Transaction description.",
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier of the transaction."
+          },
+          "locationRef": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the organization (location)."
+          },
+          "membershipRef": {
+            "deprecated": true,
+            "description": "Deprecated. Use customer instead.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "membershipRefCreator": {
+            "deprecated": true,
+            "description": "Deprecated. Use userCreator instead.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "networkRef": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the network."
+          },
+          "product": {
+            "description": "Product details.",
+            "type": "object",
+            "properties": {
+              "bookingRef": {
+                "description": "ID of the associated booking.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "title": {
+                "type": "string",
+                "description": "Display title of the product."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "booking"
+                ],
+                "description": "Product type."
+              }
+            },
+            "required": [
+              "title",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "refund": {
+            "deprecated": true,
+            "description": "Deprecated.",
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "Refunded expiring amount."
+              },
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Refund creation timestamp."
+              }
+            },
+            "required": [
+              "amount",
+              "createDate"
+            ],
+            "additionalProperties": false
+          },
+          "status": {
+            "type": "string",
+            "description": "Transaction status."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "adminAllocation",
+              "adminCharge",
+              "booking",
+              "expiration",
+              "purchaseAllocation",
+              "refund",
+              "subscriptionAllocation",
+              "subscriptionExpiration"
+            ],
+            "description": "Day pass transaction type."
+          },
+          "user": {
+            "deprecated": true,
+            "description": "Deprecated. Use userOwner instead.",
+            "type": "object",
+            "properties": {
+              "about": {
+                "nullable": true,
+                "type": "string"
+              },
+              "email": {
+                "nullable": true,
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "nullable": true,
+                "type": "string"
+              },
+              "phoneNumber": {
+                "nullable": true,
+                "type": "string"
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": "string"
+              },
+              "surname": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "userCreatedBy": {
+            "description": "User who created the transaction.",
+            "type": "object",
+            "properties": {
+              "about": {
+                "nullable": true,
+                "type": "string"
+              },
+              "email": {
+                "nullable": true,
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "nullable": true,
+                "type": "string"
+              },
+              "phoneNumber": {
+                "nullable": true,
+                "type": "string"
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": "string"
+              },
+              "surname": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "userCreator": {
+            "deprecated": true,
+            "description": "Deprecated. Use userCreatedBy instead.",
+            "type": "object",
+            "properties": {
+              "about": {
+                "nullable": true,
+                "type": "string"
+              },
+              "email": {
+                "nullable": true,
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "nullable": true,
+                "type": "string"
+              },
+              "phoneNumber": {
+                "nullable": true,
+                "type": "string"
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": "string"
+              },
+              "surname": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "userOwner": {
+            "deprecated": true,
+            "description": "Deprecated. Use customer.user instead.",
+            "type": "object",
+            "properties": {
+              "about": {
+                "nullable": true,
+                "type": "string"
+              },
+              "email": {
+                "nullable": true,
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "nullable": true,
+                "type": "string"
+              },
+              "phoneNumber": {
+                "nullable": true,
+                "type": "string"
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": "string"
+              },
+              "surname": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "userRefCreator": {
+            "deprecated": true,
+            "description": "Deprecated. Use userCreatedBy instead.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "userRefOwner": {
+            "deprecated": true,
+            "description": "Deprecated. Use customer.user instead.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "amount",
+          "amounts",
+          "createDate",
+          "customer",
+          "id",
+          "locationRef",
+          "networkRef",
+          "status",
+          "type"
+        ],
+        "additionalProperties": false
+      },
       "transaction": {
         "type": "object",
         "properties": {
@@ -35376,25 +35970,20 @@
       "balance": {
         "type": "object",
         "properties": {
-          "application": {
-            "type": "object",
-            "properties": {
-              "allocation": {
-                "type": "number"
-              },
-              "amount": {
-                "type": "number"
-              },
-              "crossLocationUsage": {
-                "type": "number"
-              },
-              "expirationDate": {
-                "$ref": "#/components/schemas/dateSchema"
-              },
-              "subscriptionRef": {
-                "type": "string"
-              }
-            }
+          "allocation": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "crossLocationUsage": {
+            "type": "number"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/dateSchema"
+          },
+          "subscriptionRef": {
+            "type": "string"
           }
         }
       },

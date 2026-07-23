@@ -11,7 +11,7 @@ export type Balance = NonNullable<components["schemas"]["balance"]>;
 export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
 
 /** A DayPassTransaction entity as returned by the Spacebring API. */
-export type DayPassTransaction = NonNullable<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 
 /** A MoneyTransaction entity as returned by the Spacebring API. */
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
@@ -150,6 +150,17 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
             unwrap(await client.GET("/transactions/day_passes/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/day_passes/v1"),
           "transactions",
         );
+      },
+      /**
+       * Retrieve a day pass transaction
+       *
+       * Retrieve a day passes transaction.
+       *
+       * @param id The id of the transaction
+       * @param options Request options (abort signal).
+       */
+      async get(id: string, options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
+        return unwrapProp(await client.GET("/transactions/day_passes/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "transaction", "GET /transactions/day_passes/v1/{id}");
       },
       /**
        * Create a day pass transaction

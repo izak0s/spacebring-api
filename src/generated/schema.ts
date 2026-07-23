@@ -2176,6 +2176,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/transactions/day_passes/v1/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve a day pass transaction
+         * @description Retrieve a day passes transaction. <h3>OAuth</h3>Required scopes: <code>transactions.readonly</code> or <code>transactions</code>
+         */
+        get: operations["getDayPassesTransaction"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/transactions/money/v1": {
         parameters: {
             query?: never;
@@ -12516,6 +12536,265 @@ export interface components {
                 userRefOwner?: string;
             };
         };
+        transactionDayPasses: {
+            /** @description Total day pass amount (absolute sum of expiring and permanent). */
+            amount: number;
+            /** @description Per-bucket amounts for charge transactions. */
+            amounts: {
+                /** @description Amount deducted from this balance bucket. */
+                amount: number;
+                /**
+                 * Format: date-time
+                 * @description Expiration date for expiring balances.
+                 */
+                expirationDate?: string;
+                /**
+                 * Format: uuid
+                 * @description Subscription associated with expiring balances.
+                 */
+                subscriptionRef?: string;
+                /**
+                 * @description Balance bucket type.
+                 * @enum {string}
+                 */
+                type: "expiring" | "permanent";
+            }[];
+            /**
+             * @deprecated
+             * @description Deprecated. Use product instead.
+             */
+            booking?: {
+                /**
+                 * Format: uuid
+                 * @description Booking id.
+                 */
+                id: string;
+                /** @description Booked resource. */
+                resource: {
+                    /**
+                     * Format: uuid
+                     * @description Resource id.
+                     */
+                    id: string;
+                    /** @description Resource title. */
+                    title: string;
+                };
+            };
+            /**
+             * @deprecated
+             * @description Deprecated. Use customer instead.
+             */
+            company?: {
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of company creation.
+                 */
+                createDate: string;
+                /**
+                 * Format: uuid
+                 * @description Company id.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description Location id.
+                 */
+                locationRef: string;
+                /** @description Company logo. */
+                logo?: {
+                    /** @description Storage key of the company logo. */
+                    key: string;
+                    /** @description Public URL of the company logo. */
+                    url: string;
+                };
+                /** @description Company metadata. */
+                metadata?: {
+                    [key: string]: unknown;
+                };
+                /** @description Internal notes. */
+                notes?: string;
+                /** @description Public logo URL derived from the company website. */
+                publicLogoUrl?: string;
+                /**
+                 * Format: uuid
+                 * @description Primary subscription id.
+                 */
+                subscriptionRef: string | null;
+                /** @description Company name. */
+                title: string;
+            };
+            /**
+             * Format: uuid
+             * @deprecated
+             * @description Deprecated. Use customer instead.
+             */
+            companyRef?: string;
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the transaction was created.
+             */
+            createDate: string;
+            /** @description Customer associated with this transaction. */
+            customer: {
+                /**
+                 * Format: uuid
+                 * @description ID of the company or membership.
+                 */
+                id: string;
+                /** @description Company logo. */
+                logo?: {
+                    key: string;
+                    url: string;
+                };
+                /** @description Company name. */
+                title?: string;
+                /**
+                 * @description Whether the customer is a company or a user.
+                 * @enum {string}
+                 */
+                type: "company" | "user";
+                /** @description User details for membership customers. */
+                user?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+            };
+            /** @description Transaction description. */
+            description?: string;
+            /**
+             * Format: uuid
+             * @description Unique identifier of the transaction.
+             */
+            id: string;
+            /**
+             * Format: uuid
+             * @description ID of the organization (location).
+             */
+            locationRef: string;
+            /**
+             * Format: uuid
+             * @deprecated
+             * @description Deprecated. Use customer instead.
+             */
+            membershipRef?: string;
+            /**
+             * Format: uuid
+             * @deprecated
+             * @description Deprecated. Use userCreator instead.
+             */
+            membershipRefCreator?: string;
+            /**
+             * Format: uuid
+             * @description ID of the network.
+             */
+            networkRef: string;
+            /** @description Product details. */
+            product?: {
+                /**
+                 * Format: uuid
+                 * @description ID of the associated booking.
+                 */
+                bookingRef?: string;
+                /** @description Display title of the product. */
+                title: string;
+                /**
+                 * @description Product type.
+                 * @enum {string}
+                 */
+                type: "booking";
+            };
+            /**
+             * @deprecated
+             * @description Deprecated.
+             */
+            refund?: {
+                /** @description Refunded expiring amount. */
+                amount: number;
+                /**
+                 * Format: date-time
+                 * @description Refund creation timestamp.
+                 */
+                createDate: string;
+            };
+            /** @description Transaction status. */
+            status: string;
+            /**
+             * @description Day pass transaction type.
+             * @enum {string}
+             */
+            type: "adminAllocation" | "adminCharge" | "booking" | "expiration" | "purchaseAllocation" | "refund" | "subscriptionAllocation" | "subscriptionExpiration";
+            /**
+             * @deprecated
+             * @description Deprecated. Use userOwner instead.
+             */
+            user?: {
+                about?: string | null;
+                email?: string | null;
+                /** Format: uuid */
+                id: string;
+                name?: string | null;
+                phoneNumber?: string | null;
+                photoUrl?: string | null;
+                surname?: string | null;
+            };
+            /** @description User who created the transaction. */
+            userCreatedBy?: {
+                about?: string | null;
+                email?: string | null;
+                /** Format: uuid */
+                id: string;
+                name?: string | null;
+                phoneNumber?: string | null;
+                photoUrl?: string | null;
+                surname?: string | null;
+            };
+            /**
+             * @deprecated
+             * @description Deprecated. Use userCreatedBy instead.
+             */
+            userCreator?: {
+                about?: string | null;
+                email?: string | null;
+                /** Format: uuid */
+                id: string;
+                name?: string | null;
+                phoneNumber?: string | null;
+                photoUrl?: string | null;
+                surname?: string | null;
+            };
+            /**
+             * @deprecated
+             * @description Deprecated. Use customer.user instead.
+             */
+            userOwner?: {
+                about?: string | null;
+                email?: string | null;
+                /** Format: uuid */
+                id: string;
+                name?: string | null;
+                phoneNumber?: string | null;
+                photoUrl?: string | null;
+                surname?: string | null;
+            };
+            /**
+             * Format: uuid
+             * @deprecated
+             * @description Deprecated. Use userCreatedBy instead.
+             */
+            userRefCreator?: string;
+            /**
+             * Format: uuid
+             * @deprecated
+             * @description Deprecated. Use customer.user instead.
+             */
+            userRefOwner?: string;
+        };
         transaction: {
             amount?: number;
             booking?: {
@@ -12606,13 +12885,11 @@ export interface components {
             user?: components["schemas"]["user"];
         };
         balance: {
-            application?: {
-                allocation?: number;
-                amount?: number;
-                crossLocationUsage?: number;
-                expirationDate?: components["schemas"]["dateSchema"];
-                subscriptionRef?: string;
-            };
+            allocation?: number;
+            amount?: number;
+            crossLocationUsage?: number;
+            expirationDate?: components["schemas"]["dateSchema"];
+            subscriptionRef?: string;
         };
         contact: {
             /**
@@ -22818,6 +23095,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["createDayPassesTransaction"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getDayPassesTransaction: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the transaction */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        transaction?: components["schemas"]["transactionDayPasses"];
+                    };
                 };
             };
             /** @description Bad Request */
