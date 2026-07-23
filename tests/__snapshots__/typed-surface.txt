@@ -680,7 +680,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
 // transactions.ts
 export type Balance = NonNullable<components["schemas"]["balance"]>;
 export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
-export type DayPassTransaction = NonNullable<operations["getDayPassesTransactions"]["responses"][200]["content"]["application/json"]["transactions"]>[number];
+export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
 export interface GetCreditsTransactionsQuery {
   limit?: number;
@@ -725,6 +725,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
     dayPasses: {
       async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; transactions: DayPassTransaction[] }>
       iterate(query?: Omit<GetDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassTransaction, void, undefined>
+      async get(id: string, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
       async create(transaction: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
     },
     money: {

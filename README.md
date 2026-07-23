@@ -15,7 +15,7 @@ A fully-typed TypeScript client for the [Spacebring](https://www.spacebring.com)
 
 ## Features
 
-- **<!-- coverage -->182 operations across 21 resource groups<!-- /coverage -->** — the full Spacebring API surface
+- **<!-- coverage -->183 operations across 21 resource groups<!-- /coverage -->** — the full Spacebring API surface
 - **Auto-generated** from the official OpenAPI spec — types and facade regenerate anytime the spec changes
 - **Nested, discoverable API** — `sb.billing.invoices.pay(id)`, `sb.visitors.visits.checkIn(body)`
 - **Auto-pagination** — every paginated list endpoint has an `iterate()` async generator that walks `nextPageToken` for you
