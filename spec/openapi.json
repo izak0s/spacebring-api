@@ -11821,6 +11821,101 @@
         }
       }
     },
+    "/transactions/day_passes/scheduled/v1": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Retrieve scheduled day pass transactions",
+        "description": "Retrieve scheduled day passes transactions of a subscription or a customer. <h3>OAuth</h3>Required scopes: <code>transactions.readonly</code> or <code>transactions</code>",
+        "operationId": "getScheduledDayPassesTransactions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "customerRef",
+            "required": false,
+            "description": "UUID of the company or membership whose scheduled day pass transactions to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Token to retrieve the next page of results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subscriptionRef",
+            "required": false,
+            "description": "UUID of the subscription whose scheduled day pass transactions to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "transactions",
+              "transactions.readonly"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getScheduledDayPassesTransactions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions/day_passes/v1": {
       "get": {
         "tags": [
@@ -34127,6 +34222,498 @@
           }
         }
       },
+      "getScheduledDayPassesTransactions": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results. Returned when more results exist.",
+            "type": "string"
+          },
+          "scheduledTransactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "description": "Total day pass amount (absolute sum of expiring and permanent)."
+                },
+                "booking": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use product instead.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Booking id."
+                    },
+                    "resource": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Resource id."
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Resource title."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Booked resource."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "resource"
+                  ],
+                  "additionalProperties": false
+                },
+                "company": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use customer instead.",
+                  "type": "object",
+                  "properties": {
+                    "createDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO timestamp of company creation."
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Company id."
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Location id."
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the company logo."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Public URL of the company logo."
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "metadata": {
+                      "description": "Company metadata.",
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "notes": {
+                      "description": "Internal notes.",
+                      "type": "string"
+                    },
+                    "publicLogoUrl": {
+                      "description": "Public logo URL derived from the company website.",
+                      "type": "string"
+                    },
+                    "subscriptionRef": {
+                      "nullable": true,
+                      "description": "Primary subscription id.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Company name."
+                    }
+                  },
+                  "required": [
+                    "createDate",
+                    "id",
+                    "locationRef",
+                    "subscriptionRef",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                },
+                "companyRef": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use customer instead.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the scheduled transaction was created."
+                },
+                "customer": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the company or membership."
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": {
+                      "description": "Company name.",
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "company",
+                        "user"
+                      ],
+                      "description": "Whether the customer is a company or a user."
+                    },
+                    "user": {
+                      "description": "User details for membership customers.",
+                      "type": "object",
+                      "properties": {
+                        "about": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "email": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Customer associated with this scheduled transaction."
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the scheduled transaction."
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the organization (location)."
+                },
+                "membershipRef": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use customer instead.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "membershipRefCreator": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "networkRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the network."
+                },
+                "product": {
+                  "description": "Product details.",
+                  "type": "object",
+                  "properties": {
+                    "bookingRef": {
+                      "description": "ID of the associated booking.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Display title of the product."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "booking"
+                      ],
+                      "description": "Product type."
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
+                "resolveDate": {
+                  "description": "ISO timestamp of when the scheduled transaction was resolved into a day pass transaction.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "scheduleDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Transaction status."
+                },
+                "timezoneId": {
+                  "type": "string",
+                  "description": "Timezone of the subscription."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "booking"
+                  ],
+                  "description": "Scheduled day pass transaction type."
+                },
+                "user": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use userOwner instead.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userCreatedBy": {
+                  "description": "User who created the transaction.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userCreator": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userOwner": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use customer.user instead.",
+                  "type": "object",
+                  "properties": {
+                    "about": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "email": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "userRefCreator": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "userRefOwner": {
+                  "deprecated": true,
+                  "description": "Deprecated. Use customer.user instead.",
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "amount",
+                "createDate",
+                "customer",
+                "id",
+                "locationRef",
+                "networkRef",
+                "scheduleDate",
+                "status",
+                "timezoneId",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of scheduled day pass transactions."
+          },
+          "searchQueryNext": {
+            "description": "Query string with nextPageToken and the request filter to fetch the next page of results. Returned when more results exist.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scheduledTransactions"
+        ],
+        "additionalProperties": false
+      },
       "getDayPassesTransactions": {
         "type": "object",
         "properties": {
@@ -40350,6 +40937,7 @@
                     },
                     "parentRef": {
                       "description": "Parent resource id when creating a child resource.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
@@ -41166,6 +41754,7 @@
                     },
                     "parentRef": {
                       "description": "Parent resource id when creating a child resource.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
