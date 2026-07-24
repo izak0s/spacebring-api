@@ -2152,6 +2152,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/transactions/day_passes/scheduled/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve scheduled day pass transactions
+         * @description Retrieve scheduled day passes transactions of a subscription or a customer. <h3>OAuth</h3>Required scopes: <code>transactions.readonly</code> or <code>transactions</code>
+         */
+        get: operations["getScheduledDayPassesTransactions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/transactions/day_passes/v1": {
         parameters: {
             query?: never;
@@ -12010,6 +12030,249 @@ export interface components {
             /** Format: uuid */
             userRefCreator?: string;
         };
+        getScheduledDayPassesTransactions: {
+            /** @description Pagination token to fetch the next page of results. Returned when more results exist. */
+            nextPageToken?: string;
+            /** @description List of scheduled day pass transactions. */
+            scheduledTransactions: {
+                /** @description Total day pass amount (absolute sum of expiring and permanent). */
+                amount: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product instead.
+                 */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description Booking id.
+                     */
+                    id: string;
+                    /** @description Booked resource. */
+                    resource: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource title. */
+                        title: string;
+                    };
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of company creation.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description Location id.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Company metadata. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes. */
+                    notes?: string;
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description Primary subscription id.
+                     */
+                    subscriptionRef: string | null;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                companyRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the scheduled transaction was created.
+                 */
+                createDate: string;
+                /** @description Customer associated with this scheduled transaction. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        about?: string | null;
+                        email?: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        name?: string | null;
+                        phoneNumber?: string | null;
+                        photoUrl?: string | null;
+                        surname?: string | null;
+                    };
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the scheduled transaction.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                membershipRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /** @description Product details. */
+                product?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated booking.
+                     */
+                    bookingRef?: string;
+                    /** @description Display title of the product. */
+                    title: string;
+                    /**
+                     * @description Product type.
+                     * @enum {string}
+                     */
+                    type: "booking";
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the scheduled transaction was resolved into a day pass transaction.
+                 */
+                resolveDate?: string;
+                /**
+                 * Format: date-time
+                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into.
+                 */
+                scheduleDate: string;
+                /** @description Transaction status. */
+                status: string;
+                /** @description Timezone of the subscription. */
+                timezoneId: string;
+                /**
+                 * @description Scheduled day pass transaction type.
+                 * @enum {string}
+                 */
+                type: "booking";
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userOwner instead.
+                 */
+                user?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /** @description User who created the transaction. */
+                userCreatedBy?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userCreator?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userOwner?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userRefOwner?: string;
+            }[];
+            /** @description Query string with nextPageToken and the request filter to fetch the next page of results. Returned when more results exist. */
+            searchQueryNext?: string;
+        };
         getDayPassesTransactions: {
             /** @description Pagination token to fetch the next page of results. */
             nextPageToken?: string;
@@ -14999,7 +15262,7 @@ export interface components {
                          * Format: uuid
                          * @description Parent resource id when creating a child resource.
                          */
-                        parentRef?: string;
+                        parentRef?: string | null;
                         /** @description Membership plan tiers sold for this resource. */
                         plans?: {
                             /** @description Whether membership plans can be sold for this resource. */
@@ -15321,7 +15584,7 @@ export interface components {
                          * Format: uuid
                          * @description Parent resource id when creating a child resource.
                          */
-                        parentRef?: string;
+                        parentRef?: string | null;
                         /** @description Membership plan tiers sold for this resource. */
                         plans?: {
                             /** @description Whether membership plans can be sold for this resource. */
@@ -23012,6 +23275,47 @@ export interface operations {
                     "application/json": {
                         transaction?: components["schemas"]["transactionCredits"];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getScheduledDayPassesTransactions: {
+        parameters: {
+            query?: {
+                /** @description UUID of the company or membership whose scheduled day pass transactions to list. */
+                customerRef?: string;
+                /** @description Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description Token to retrieve the next page of results. */
+                nextPageToken?: string;
+                /** @description UUID of the subscription whose scheduled day pass transactions to list. */
+                subscriptionRef?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getScheduledDayPassesTransactions"];
                 };
             };
             /** @description Bad Request */

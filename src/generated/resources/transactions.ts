@@ -16,6 +16,9 @@ export type DayPassTransaction = NonNullable<components["schemas"]["transactionD
 /** A MoneyTransaction entity as returned by the Spacebring API. */
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
 
+/** A ScheduledTransaction entity as returned by the Spacebring API. */
+export type ScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
+
 /** Query parameters for `sb.transactions.credits.list()`. */
 export interface GetCreditsTransactionsQuery {
   /** The number of items to return */
@@ -68,6 +71,18 @@ export interface GetMoneyTransactionsQuery {
   createDate?: { lte?: string; gte?: string };
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+}
+
+/** Query parameters for `sb.transactions.dayPasses.scheduled.list()`. */
+export interface GetScheduledDayPassesTransactionsQuery {
+  /** UUID of the company or membership whose scheduled day pass transactions to list. */
+  customerRef?: string;
+  /** Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** UUID of the subscription whose scheduled day pass transactions to list. */
+  subscriptionRef?: string;
 }
 
 /** Request body for `sb.transactions.credits.create()`. */
@@ -169,6 +184,28 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        */
       async create(transaction: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction> {
         return unwrapProp(await client.POST("/transactions/day_passes/v1", { body: { transaction }, signal: options?.signal }), "transaction", "POST /transactions/day_passes/v1");
+      },
+      scheduled: {
+        /**
+         * Retrieve scheduled day pass transactions
+         *
+         * Retrieve scheduled day passes transactions of a subscription or a customer.
+         */
+        async list(query?: GetScheduledDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: ScheduledTransaction[]; searchQueryNext?: string }> {
+          return unwrap(await client.GET("/transactions/day_passes/scheduled/v1", { params: { query }, signal: options?.signal }), "GET /transactions/day_passes/scheduled/v1");
+        },
+        /**
+         * Retrieve scheduled day pass transactions — iterates every item across all pages.
+         *
+         * Retrieve scheduled day passes transactions of a subscription or a customer.
+         */
+        iterate(query?: Omit<GetScheduledDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<ScheduledTransaction, void, undefined> {
+          return paginate(
+            async (nextPageToken: string | undefined) =>
+              unwrap(await client.GET("/transactions/day_passes/scheduled/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/day_passes/scheduled/v1"),
+            "scheduledTransactions",
+          );
+        },
       },
     },
     money: {
