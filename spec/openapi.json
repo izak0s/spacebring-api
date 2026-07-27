@@ -25732,6 +25732,29 @@
             ],
             "additionalProperties": false
           },
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Id of the child resource."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title of the child resource."
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Child resources when this is a parent resource. Bookings on a child resource also block the parent."
+          },
           "confirmationEmail": {
             "type": "object",
             "properties": {
@@ -26827,6 +26850,7 @@
         "required": [
           "assignments",
           "bookingPermission",
+          "children",
           "confirmationEmail",
           "createDate",
           "credits",
@@ -39075,12 +39099,12 @@
                   "type": "object",
                   "properties": {
                     "applicationType": {
-                      "description": "Event application type. purchase: paid signup (requires price). none: free/RSVP-style.",
                       "type": "string",
                       "enum": [
                         "purchase",
                         "none"
-                      ]
+                      ],
+                      "description": "Event application type. purchase: paid signup (requires price). none: free/RSVP-style."
                     },
                     "confirmationEmail": {
                       "description": "Confirmation email settings.",
@@ -39262,6 +39286,7 @@
                     }
                   },
                   "required": [
+                    "applicationType",
                     "endDate",
                     "locationRef",
                     "startDate",
@@ -39288,12 +39313,12 @@
                   "type": "object",
                   "properties": {
                     "applicationType": {
-                      "description": "Event application type. purchase: paid signup (requires price). none: free/RSVP-style.",
                       "type": "string",
                       "enum": [
                         "purchase",
                         "none"
-                      ]
+                      ],
+                      "description": "Event application type. purchase: paid signup (requires price). none: free/RSVP-style."
                     },
                     "confirmationEmail": {
                       "description": "Confirmation email settings.",
@@ -39474,6 +39499,7 @@
                     }
                   },
                   "required": [
+                    "applicationType",
                     "endDate",
                     "locationRef",
                     "startDate",
@@ -40843,7 +40869,8 @@
                       ]
                     },
                     "googleCalendar": {
-                      "description": "Google Calendar integration settings.",
+                      "description": "Google Calendar integration settings. Pass null to disconnect the calendar from the resource.",
+                      "nullable": true,
                       "type": "object",
                       "properties": {
                         "id": {
@@ -41670,7 +41697,8 @@
                       ]
                     },
                     "googleCalendar": {
-                      "description": "Google Calendar integration settings.",
+                      "description": "Google Calendar integration settings. Pass null to disconnect the calendar from the resource.",
+                      "nullable": true,
                       "type": "object",
                       "properties": {
                         "id": {

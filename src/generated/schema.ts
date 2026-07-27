@@ -8167,6 +8167,16 @@ export interface components {
                  */
                 interval: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
             };
+            /** @description Child resources when this is a parent resource. Bookings on a child resource also block the parent. */
+            children: {
+                /**
+                 * Format: uuid
+                 * @description Id of the child resource.
+                 */
+                id: string;
+                /** @description Title of the child resource. */
+                title: string;
+            }[];
             /** @description Confirmation email settings. */
             confirmationEmail: {
                 /** @description Send confirmation when an admin creates a booking. */
@@ -14426,7 +14436,7 @@ export interface components {
                          * @description Event application type. purchase: paid signup (requires price). none: free/RSVP-style.
                          * @enum {string}
                          */
-                        applicationType?: "purchase" | "none";
+                        applicationType: "purchase" | "none";
                         /** @description Confirmation email settings. */
                         confirmationEmail?: {
                             /** @description Whether a confirmation email is sent after registration. */
@@ -14521,7 +14531,7 @@ export interface components {
                          * @description Event application type. purchase: paid signup (requires price). none: free/RSVP-style.
                          * @enum {string}
                          */
-                        applicationType?: "purchase" | "none";
+                        applicationType: "purchase" | "none";
                         /** @description Confirmation email settings. */
                         confirmationEmail?: {
                             /** @description Whether a confirmation email is sent after registration. */
@@ -15218,13 +15228,13 @@ export interface components {
                             /** @description Whether dynamic pricing is enabled. */
                             enabled: boolean;
                         };
-                        /** @description Google Calendar integration settings. */
+                        /** @description Google Calendar integration settings. Pass null to disconnect the calendar from the resource. */
                         googleCalendar?: {
                             /** @description Google Calendar id. */
                             id: string;
                             /** @description Whether two-way sync is enabled. */
                             twoWaySyncEnabled: boolean;
-                        };
+                        } | null;
                         /**
                          * Format: uuid
                          * @description Optional client-provided resource id.
@@ -15550,13 +15560,13 @@ export interface components {
                             /** @description Whether dynamic pricing is enabled. */
                             enabled: boolean;
                         };
-                        /** @description Google Calendar integration settings. */
+                        /** @description Google Calendar integration settings. Pass null to disconnect the calendar from the resource. */
                         googleCalendar?: {
                             /** @description Google Calendar id. */
                             id: string;
                             /** @description Whether two-way sync is enabled. */
                             twoWaySyncEnabled: boolean;
-                        };
+                        } | null;
                         /** @description Kisi access group reference. */
                         kisiGroupRef?: number | null;
                         /** @description Images to attach when creating the resource. */
