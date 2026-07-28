@@ -4,11 +4,20 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
 import type { components, operations, paths } from "../schema.js";
 
+/** A Assignment entity as returned by the Spacebring API. */
+export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
+
 /** A Booking entity as returned by the Spacebring API. */
 export type Booking = NonNullable<components["schemas"]["booking"]>;
 
 /** A Resource entity as returned by the Spacebring API. */
 export type Resource = NonNullable<components["schemas"]["resource"]>;
+
+/** Query parameters for `sb.resources.getAssignments()`. */
+export interface GetAssignmentsQuery {
+  /** UUID of the location whose resource assignments to list. */
+  locationRef: string;
+}
 
 /** Query parameters for `sb.resources.bookings.list()`. */
 export interface GetBookingsQuery {
@@ -105,6 +114,14 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      */
     async update(id: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{id}");
+    },
+    /**
+     * Retrieve resource assignments
+     *
+     * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
+     */
+    async getAssignments(query: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
+      return unwrapProp(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "assignments", "GET /resources/v1/assignments");
     },
     bookings: {
       /**

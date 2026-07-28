@@ -509,8 +509,12 @@ export function createRegistrations(client: Client<paths>, defaults: SpacebringD
 }
 
 // resources.ts
+export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
 export type Booking = NonNullable<components["schemas"]["booking"]>;
 export type Resource = NonNullable<components["schemas"]["resource"]>;
+export interface GetAssignmentsQuery {
+  locationRef: string;
+}
 export interface GetBookingsQuery {
   resourceRef?: string;
   locationRef?: string;
@@ -538,6 +542,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     async get(id: string, options?: SpacebringRequestOptions): Promise<Resource>
     async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource>
     async update(id: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async getAssignments(query: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]>
     bookings: {
       async list(query?: GetBookingsQuery, options?: SpacebringRequestOptions): Promise<{ bookings?: Booking[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetBookingsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Booking, void, undefined>
