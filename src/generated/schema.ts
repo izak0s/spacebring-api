@@ -1672,6 +1672,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/resources/v1/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve resource assignments
+         * @description Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>
+         */
+        get: operations["getAssignments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/resources/v1/{id}": {
         parameters: {
             query?: never;
@@ -8109,6 +8129,11 @@ export interface components {
                 };
                 /** @description Assigned quantity when the resource is partially assigned. */
                 quantity?: number;
+                /**
+                 * Format: uuid
+                 * @description UUID of the resource the assignment belongs to.
+                 */
+                resourceRef: string;
                 /** @description Subscription backing this assignment. */
                 subscription: {
                     /** @description ISO timestamp when the assignment ends. */
@@ -8598,6 +8623,69 @@ export interface components {
              * @enum {string}
              */
             visibility: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
+        };
+        getAssignments: {
+            /** @description List of resource assignments in the location. */
+            assignments: {
+                /** @description Company assigned to the resource. */
+                company?: {
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /** @description Whether the assignment grants access to the entire resource. */
+                entire: boolean;
+                /**
+                 * Format: uuid
+                 * @description Assignment id.
+                 */
+                id?: string;
+                /** @description Membership linked to the assignment. */
+                membership?: {
+                    /**
+                     * Format: uuid
+                     * @description Membership id.
+                     */
+                    id: string;
+                };
+                /** @description Assigned quantity when the resource is partially assigned. */
+                quantity?: number;
+                /**
+                 * Format: uuid
+                 * @description UUID of the resource the assignment belongs to.
+                 */
+                resourceRef: string;
+                /** @description Subscription backing this assignment. */
+                subscription: {
+                    /** @description ISO timestamp when the assignment ends. */
+                    endDate?: string;
+                    /**
+                     * Format: uuid
+                     * @description Subscription id.
+                     */
+                    id: string;
+                    /** @description ISO timestamp when the assignment starts. */
+                    startDate: string;
+                };
+                /** @description User assigned to the resource. */
+                user?: {
+                    /** @description User email. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User id.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+            }[];
         };
         payment: {
             /** @description The amount of the payment */
@@ -21873,6 +21961,59 @@ export interface operations {
                     "application/json": {
                         resource?: components["schemas"]["resource"];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getAssignments: {
+        parameters: {
+            query: {
+                /** @description UUID of the location whose resource assignments to list. */
+                locationRef: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getAssignments"];
                 };
             };
             /** @description Bad Request */

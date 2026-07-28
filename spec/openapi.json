@@ -9135,6 +9135,91 @@
         }
       }
     },
+    "/resources/v1/assignments": {
+      "get": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Retrieve resource assignments",
+        "description": "Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>",
+        "operationId": "getAssignments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": true,
+            "description": "UUID of the location whose resource assignments to list.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "resources.readonly",
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAssignments"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/resources/v1/{id}": {
       "get": {
         "tags": [
@@ -25595,6 +25680,11 @@
                   "description": "Assigned quantity when the resource is partially assigned.",
                   "type": "number"
                 },
+                "resourceRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUID of the resource the assignment belongs to."
+                },
                 "subscription": {
                   "type": "object",
                   "properties": {
@@ -25652,6 +25742,7 @@
               },
               "required": [
                 "entire",
+                "resourceRef",
                 "subscription"
               ],
               "additionalProperties": false
@@ -26868,6 +26959,137 @@
           "title",
           "type",
           "visibility"
+        ],
+        "additionalProperties": false
+      },
+      "getAssignments": {
+        "type": "object",
+        "properties": {
+          "assignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "company": {
+                  "description": "Company assigned to the resource.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Company id."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Company name."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                },
+                "entire": {
+                  "type": "boolean",
+                  "description": "Whether the assignment grants access to the entire resource."
+                },
+                "id": {
+                  "description": "Assignment id.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "membership": {
+                  "description": "Membership linked to the assignment.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Membership id."
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "quantity": {
+                  "description": "Assigned quantity when the resource is partially assigned.",
+                  "type": "number"
+                },
+                "resourceRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUID of the resource the assignment belongs to."
+                },
+                "subscription": {
+                  "type": "object",
+                  "properties": {
+                    "endDate": {
+                      "description": "ISO timestamp when the assignment ends.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Subscription id."
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "description": "ISO timestamp when the assignment starts."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "startDate"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Subscription backing this assignment."
+                },
+                "user": {
+                  "description": "User assigned to the resource.",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "description": "User email.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "User id."
+                    },
+                    "name": {
+                      "description": "User first name.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "description": "User last name.",
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "entire",
+                "resourceRef",
+                "subscription"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of resource assignments in the location."
+          }
+        },
+        "required": [
+          "assignments"
         ],
         "additionalProperties": false
       },
