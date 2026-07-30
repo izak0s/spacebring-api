@@ -33587,7 +33587,8 @@
             "description": "ID of the location."
           },
           "membershipAssignee": {
-            "description": "Assignee membership details.",
+            "deprecated": true,
+            "description": "Assignee membership details. Deprecated, use userAssignee instead.",
             "type": "object",
             "properties": {
               "id": {
@@ -33655,7 +33656,8 @@
             "additionalProperties": false
           },
           "membershipRefAssignee": {
-            "description": "ID of the assignee membership.",
+            "deprecated": true,
+            "description": "ID of the assignee membership. Deprecated, use userRefAssignee instead.",
             "type": "string",
             "format": "uuid"
           },
@@ -33822,6 +33824,11 @@
             ],
             "additionalProperties": false
           },
+          "userRefAssignee": {
+            "description": "ID of the assignee user.",
+            "type": "string",
+            "format": "uuid"
+          },
           "userRequester": {
             "description": "Requester user details.",
             "nullable": true,
@@ -33937,7 +33944,8 @@
                 }
               },
               "membershipAssignee": {
-                "description": "Assignee after the update.",
+                "deprecated": true,
+                "description": "Assignee after the update. Deprecated, use userAssignee instead.",
                 "type": "object",
                 "properties": {
                   "id": {
@@ -34009,7 +34017,8 @@
                 "type": "object",
                 "properties": {
                   "membershipAssignee": {
-                    "description": "Assignee before the update.",
+                    "deprecated": true,
+                    "description": "Assignee before the update. Deprecated, use userAssignee instead.",
                     "type": "object",
                     "properties": {
                       "id": {
@@ -34085,6 +34094,54 @@
                       "new",
                       "solved"
                     ]
+                  },
+                  "userAssignee": {
+                    "description": "Assignee user before the update.",
+                    "type": "object",
+                    "properties": {
+                      "blocked": {
+                        "description": "Whether the user is blocked.",
+                        "type": "boolean"
+                      },
+                      "email": {
+                        "description": "Email address when visible to the caller.",
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the user."
+                      },
+                      "name": {
+                        "description": "First name of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "phoneNumber": {
+                        "description": "Phone number when visible to the caller.",
+                        "type": "string"
+                      },
+                      "photoUrl": {
+                        "nullable": true,
+                        "description": "Profile photo URL.",
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "Surname of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "photoUrl"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "userRefAssignee": {
+                    "description": "ID of the assignee user before the update.",
+                    "type": "string",
+                    "format": "uuid"
                   }
                 },
                 "additionalProperties": false
@@ -34102,6 +34159,54 @@
               "text": {
                 "description": "Comment text.",
                 "type": "string"
+              },
+              "userAssignee": {
+                "description": "Assignee user after the update.",
+                "type": "object",
+                "properties": {
+                  "blocked": {
+                    "description": "Whether the user is blocked.",
+                    "type": "boolean"
+                  },
+                  "email": {
+                    "description": "Email address when visible to the caller.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the user."
+                  },
+                  "name": {
+                    "description": "First name of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "Phone number when visible to the caller.",
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "nullable": true,
+                    "description": "Profile photo URL.",
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "Surname of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "photoUrl"
+                ],
+                "additionalProperties": false
+              },
+              "userRefAssignee": {
+                "description": "ID of the assignee user after the update.",
+                "type": "string",
+                "format": "uuid"
               }
             },
             "additionalProperties": false
@@ -44530,15 +44635,19 @@
                   "type": "object",
                   "properties": {
                     "membershipRefAssignee": {
+                      "deprecated": true,
+                      "description": "ID of the membership to assign the ticket to, or null to unassign. Deprecated, use userRefAssignee instead.",
                       "nullable": true,
-                      "description": "ID of the membership to assign the ticket to, or null to unassign.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userRefAssignee": {
+                      "description": "ID of the user to assign the ticket to, or null to unassign.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     }
                   },
-                  "required": [
-                    "membershipRefAssignee"
-                  ],
                   "description": "Ticket assignee update."
                 }
               },
