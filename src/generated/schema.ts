@@ -11736,7 +11736,10 @@ export interface components {
              * @description ID of the location.
              */
             locationRef: string;
-            /** @description Assignee membership details. */
+            /**
+             * @deprecated
+             * @description Assignee membership details. Deprecated, use userAssignee instead.
+             */
             membershipAssignee?: {
                 /**
                  * Format: uuid
@@ -11770,7 +11773,8 @@ export interface components {
             };
             /**
              * Format: uuid
-             * @description ID of the assignee membership.
+             * @deprecated
+             * @description ID of the assignee membership. Deprecated, use userRefAssignee instead.
              */
             membershipRefAssignee?: string;
             /**
@@ -11852,6 +11856,11 @@ export interface components {
                 /** @description Surname of the user. */
                 surname?: string | null;
             } | null;
+            /**
+             * Format: uuid
+             * @description ID of the assignee user.
+             */
+            userRefAssignee?: string;
             /** @description Requester user details. */
             userRequester?: {
                 /** @description Whether the user is blocked. */
@@ -11898,7 +11907,10 @@ export interface components {
                     /** @description Image width in pixels. */
                     width?: number;
                 }[];
-                /** @description Assignee after the update. */
+                /**
+                 * @deprecated
+                 * @description Assignee after the update. Deprecated, use userAssignee instead.
+                 */
                 membershipAssignee?: {
                     /**
                      * Format: uuid
@@ -11932,7 +11944,10 @@ export interface components {
                 };
                 /** @description Previous attribute values before the update. */
                 previousAttributes?: {
-                    /** @description Assignee before the update. */
+                    /**
+                     * @deprecated
+                     * @description Assignee before the update. Deprecated, use userAssignee instead.
+                     */
                     membershipAssignee?: {
                         /**
                          * Format: uuid
@@ -11969,6 +11984,31 @@ export interface components {
                      * @enum {string}
                      */
                     status?: "closed" | "inProgress" | "new" | "solved";
+                    /** @description Assignee user before the update. */
+                    userAssignee?: {
+                        /** @description Whether the user is blocked. */
+                        blocked?: boolean;
+                        /** @description Email address when visible to the caller. */
+                        email?: string;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number when visible to the caller. */
+                        phoneNumber?: string;
+                        /** @description Profile photo URL. */
+                        photoUrl: string | null;
+                        /** @description Surname of the user. */
+                        surname?: string | null;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the assignee user before the update.
+                     */
+                    userRefAssignee?: string;
                 };
                 /**
                  * @description Status after the update.
@@ -11977,6 +12017,31 @@ export interface components {
                 status?: "closed" | "inProgress" | "new" | "solved";
                 /** @description Comment text. */
                 text?: string;
+                /** @description Assignee user after the update. */
+                userAssignee?: {
+                    /** @description Whether the user is blocked. */
+                    blocked?: boolean;
+                    /** @description Email address when visible to the caller. */
+                    email?: string;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description First name of the user. */
+                    name?: string | null;
+                    /** @description Phone number when visible to the caller. */
+                    phoneNumber?: string;
+                    /** @description Profile photo URL. */
+                    photoUrl: string | null;
+                    /** @description Surname of the user. */
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the assignee user after the update.
+                 */
+                userRefAssignee?: string;
             };
             /**
              * Format: uuid
@@ -16946,9 +17011,15 @@ export interface components {
                     ticket: {
                         /**
                          * Format: uuid
-                         * @description ID of the membership to assign the ticket to, or null to unassign.
+                         * @deprecated
+                         * @description ID of the membership to assign the ticket to, or null to unassign. Deprecated, use userRefAssignee instead.
                          */
-                        membershipRefAssignee: string | null;
+                        membershipRefAssignee?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description ID of the user to assign the ticket to, or null to unassign.
+                         */
+                        userRefAssignee?: string | null;
                     };
                 };
             };
