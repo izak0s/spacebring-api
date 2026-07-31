@@ -16,10 +16,14 @@ export interface GetSupportTicketsQuery {
   locationRef: string;
   /** The number of items to return */
   limit?: number;
+  /** Filter tickets by requester membership ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The memberships must exist in the location. Admins can filter by any requester; other users only by their own membership. */
+  membershipRefRequester?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
   /** The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc */
   order?: string;
+  /** Filter tickets by assignee user ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The users must exist. Only admins can filter by assignee. */
+  userRefAssignee?: string;
 }
 
 /** Request body for `sb.support.tickets.create()`. */

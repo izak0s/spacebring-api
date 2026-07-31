@@ -656,8 +656,10 @@ export type SupportTicket = NonNullable<components["schemas"]["ticket"]>;
 export interface GetSupportTicketsQuery {
   locationRef: string;
   limit?: number;
+  membershipRefRequester?: string;
   nextPageToken?: string;
   order?: string;
+  userRefAssignee?: string;
 }
 export type CreateSupportTicketBody = NonNullable<NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;

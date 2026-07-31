@@ -7201,6 +7201,10 @@ export interface components {
              * @description ID of the location this floor belongs to.
              */
             locationRef: string;
+            /** @description Resource IDs each mappable plan node is bookable as, keyed by the node's `nodeId`. */
+            mappings: {
+                [key: string]: string[];
+            };
             /** @description Parsed floor plan data. */
             plan: {
                 [key: string]: unknown;
@@ -23130,10 +23134,14 @@ export interface operations {
                 locationRef: string;
                 /** @description The number of items to return */
                 limit?: number;
+                /** @description Filter tickets by requester membership ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The memberships must exist in the location. Admins can filter by any requester; other users only by their own membership. */
+                membershipRefRequester?: string;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
                 /** @description The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc */
                 order?: string;
+                /** @description Filter tickets by assignee user ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The users must exist. Only admins can filter by assignee. */
+                userRefAssignee?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
