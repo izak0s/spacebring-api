@@ -11174,6 +11174,15 @@
           },
           {
             "in": "query",
+            "name": "membershipRefRequester",
+            "description": "Filter tickets by requester membership ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The memberships must exist in the location. Admins can filter by any requester; other users only by their own membership.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "nextPageToken",
             "description": "Token to retrieve the next page of results.",
             "schema": {
@@ -11184,6 +11193,15 @@
             "in": "query",
             "name": "order",
             "description": "The order of the tickets. createDate:asc, createDate:desc, updateDate:asc or updateDate:desc. Default: createDate:desc",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userRefAssignee",
+            "description": "Filter tickets by assignee user ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The users must exist. Only admins can filter by assignee.",
             "required": false,
             "schema": {
               "type": "string"
@@ -23489,6 +23507,17 @@
             "format": "uuid",
             "description": "ID of the location this floor belongs to."
           },
+          "mappings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "description": "Resource IDs each mappable plan node is bookable as, keyed by the node's `nodeId`."
+          },
           "plan": {
             "type": "object",
             "additionalProperties": {},
@@ -23513,6 +23542,7 @@
           "createDate",
           "id",
           "locationRef",
+          "mappings",
           "plan",
           "title",
           "visibility"
