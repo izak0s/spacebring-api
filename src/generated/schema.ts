@@ -7220,6 +7220,19 @@ export interface components {
         getGuides: {
             /** @description List of guides. */
             guides: {
+                /** @description Files attached to the guide. */
+                attachments: {
+                    /** @description Storage key of the file. */
+                    key: string;
+                    /** @description MIME type of the file. */
+                    mime: string;
+                    /** @description Display name of the file. */
+                    name: string;
+                    /** @description File size in bytes. */
+                    size?: number;
+                    /** @description Public URL of the file. */
+                    url: string;
+                }[];
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the guide was created.
@@ -7266,6 +7279,19 @@ export interface components {
             searchQueryNext?: string;
         };
         guide: {
+            /** @description Files attached to the guide. */
+            attachments: {
+                /** @description Storage key of the file. */
+                key: string;
+                /** @description MIME type of the file. */
+                mime: string;
+                /** @description Display name of the file. */
+                name: string;
+                /** @description File size in bytes. */
+                size?: number;
+                /** @description Public URL of the file. */
+                url: string;
+            }[];
             /**
              * Format: date-time
              * @description ISO timestamp of when the guide was created.
@@ -7309,6 +7335,19 @@ export interface components {
         getGuide: {
             /** @description The guide. */
             guide: {
+                /** @description Files attached to the guide. */
+                attachments: {
+                    /** @description Storage key of the file. */
+                    key: string;
+                    /** @description MIME type of the file. */
+                    mime: string;
+                    /** @description Display name of the file. */
+                    name: string;
+                    /** @description File size in bytes. */
+                    size?: number;
+                    /** @description Public URL of the file. */
+                    url: string;
+                }[];
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the guide was created.
@@ -14889,6 +14928,10 @@ export interface components {
                          * @enum {string}
                          */
                         visibility: "public" | "admins" | "members" | "networkMembers";
+                        /** @description Storage keys of uploaded files to attach to the guide. */
+                        attachments?: {
+                            key: string;
+                        }[];
                     };
                 };
             };
@@ -14907,6 +14950,10 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "members" | "networkMembers";
+                        /** @description Storage keys of uploaded files to attach to the guide. */
+                        attachments?: {
+                            key: string;
+                        }[];
                     };
                 };
             };
