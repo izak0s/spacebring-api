@@ -23557,6 +23557,42 @@
             "items": {
               "type": "object",
               "properties": {
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "Storage key of the file."
+                      },
+                      "mime": {
+                        "type": "string",
+                        "description": "MIME type of the file."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Display name of the file."
+                      },
+                      "size": {
+                        "description": "File size in bytes.",
+                        "type": "number"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Public URL of the file."
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "mime",
+                      "name",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Files attached to the guide."
+                },
                 "createDate": {
                   "type": "string",
                   "format": "date-time",
@@ -23631,6 +23667,7 @@
                 }
               },
               "required": [
+                "attachments",
                 "createDate",
                 "id",
                 "locationRef",
@@ -23659,6 +23696,42 @@
       "guide": {
         "type": "object",
         "properties": {
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Storage key of the file."
+                },
+                "mime": {
+                  "type": "string",
+                  "description": "MIME type of the file."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Display name of the file."
+                },
+                "size": {
+                  "description": "File size in bytes.",
+                  "type": "number"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Public URL of the file."
+                }
+              },
+              "required": [
+                "key",
+                "mime",
+                "name",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Files attached to the guide."
+          },
           "createDate": {
             "type": "string",
             "format": "date-time",
@@ -23733,6 +23806,7 @@
           }
         },
         "required": [
+          "attachments",
           "createDate",
           "id",
           "locationRef",
@@ -23748,6 +23822,42 @@
           "guide": {
             "type": "object",
             "properties": {
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Storage key of the file."
+                    },
+                    "mime": {
+                      "type": "string",
+                      "description": "MIME type of the file."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Display name of the file."
+                    },
+                    "size": {
+                      "description": "File size in bytes.",
+                      "type": "number"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Public URL of the file."
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "mime",
+                    "name",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Files attached to the guide."
+              },
               "createDate": {
                 "type": "string",
                 "format": "date-time",
@@ -23822,6 +23932,7 @@
               }
             },
             "required": [
+              "attachments",
               "createDate",
               "id",
               "locationRef",
@@ -40121,6 +40232,22 @@
                         "networkMembers"
                       ],
                       "description": "Who can see this guide."
+                    },
+                    "attachments": {
+                      "description": "Storage keys of uploaded files to attach to the guide.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      }
                     }
                   },
                   "required": [
@@ -40166,6 +40293,22 @@
                         "networkMembers"
                       ],
                       "description": "Who can see this guide."
+                    },
+                    "attachments": {
+                      "description": "Storage keys of uploaded files to attach to the guide.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      }
                     }
                   },
                   "description": "Guide fields to update."
