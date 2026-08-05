@@ -8,7 +8,7 @@ import type { components, operations, paths } from "../schema.js";
 export type Balance = NonNullable<components["schemas"]["balance"]>;
 
 /** A CreditTransaction entity as returned by the Spacebring API. */
-export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
+export type CreditTransaction = NonNullable<components["schemas"]["transactionCredits"]>;
 
 /** A DayPassTransaction entity as returned by the Spacebring API. */
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
@@ -21,18 +21,26 @@ export type ScheduledTransaction = NonNullable<operations["getScheduledDayPasses
 
 /** Query parameters for `sb.transactions.credits.list()`. */
 export interface GetCreditsTransactionsQuery {
-  /** The number of items to return */
+  /** @deprecated Use customerRef instead. The id of the company to get transactions for. */
+  companyRef?: string;
+  /** Get transactions with greater or equal createDate. Example: createDate[gte]=2021-05-21T10:00:00Z */
+  "createDate[gte]"?: string;
+  /** Get transactions with less or equal createDate. Example: createDate[lte]=2021-05-21T10:00:00Z */
+  "createDate[lte]"?: string;
+  /** UUID of the company or membership whose credits transactions to list. */
+  customerRef?: string;
+  /** Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
+  /** UUID of the location whose credits transactions to list. */
+  locationRef?: string;
+  /** @deprecated Use customerRef instead. The id of the membership to get transactions for. */
+  membershipRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
-  /** The date filter of items. */
-  createDate?: { lte?: string; gte?: string };
-  /** The id of the location to get transactions for */
-  locationRef?: string;
-  /** The id of the membership to get transactions for */
-  membershipRef?: string;
-  /** The id of the company to get transactions for */
-  companyRef?: string;
+  /** Filter by transaction status. Comma-separated status values, e.g. `status=succeeded,pending`. */
+  status?: string;
+  /** Filter by transaction type. Comma-separated storage type values, e.g. `type=refund,booking`. Matches analytics report type filters. */
+  type?: string;
 }
 
 /** Query parameters for `sb.transactions.dayPasses.list()`. */
@@ -121,7 +129,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve credits transactions.
        */
-      async list(query?: GetCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: CreditTransaction[]; nextPageToken?: string }> {
+      async list(query?: GetCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: CreditTransaction[] }> {
         return unwrap(await client.GET("/transactions/credits/v1", { params: { query }, signal: options?.signal }), "GET /transactions/credits/v1");
       },
       /**
@@ -135,6 +143,17 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
             unwrap(await client.GET("/transactions/credits/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/credits/v1"),
           "transactions",
         );
+      },
+      /**
+       * Retrieve a credit transaction
+       *
+       * Retrieve a credits transaction.
+       *
+       * @param id The id of the transaction
+       * @param options Request options (abort signal).
+       */
+      async get(id: string, options?: SpacebringRequestOptions): Promise<CreditTransaction> {
+        return unwrapProp(await client.GET("/transactions/credits/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "transaction", "GET /transactions/credits/v1/{id}");
       },
       /**
        * Create a credit transaction
@@ -151,7 +170,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
        *
        * Retrieve day passes transactions.
        */
-      async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; transactions: DayPassTransaction[] }> {
+      async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: DayPassTransaction[] }> {
         return unwrap(await client.GET("/transactions/day_passes/v1", { params: { query }, signal: options?.signal }), "GET /transactions/day_passes/v1");
       },
       /**
