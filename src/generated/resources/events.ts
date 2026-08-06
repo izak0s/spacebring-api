@@ -24,12 +24,26 @@ export interface GetEventsByOrganizationQuery {
 
 /** Query parameters for `sb.events.tickets.list()`. */
 export interface GetEventTicketsQuery {
-  /** The id of the location. */
-  locationRef: string;
-  /** The number of items to return */
+  /** UUID of the customer whose event tickets to list. */
+  customerRef?: string;
+  /** UUID of the event whose tickets to list. */
+  eventRef?: string;
+  /** @deprecated Use status "canceled" instead. Set to "true" to include deleted event tickets. */
+  includeDeleted?: string;
+  /** Maximum number of event tickets per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** Token to retrieve the next page of results. */
+  /** UUID of the location whose event tickets to list. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
+  /** Filter by event ticket status. Comma-separated values, e.g. `active,canceled`. Defaults to `active` when omitted.
+
+  Supported values:
+  - **active** — the ticket is valid
+  - **canceled** — the ticket was deleted */
+  status?: string;
+  /** UUID of the user whose event tickets to list. */
+  userRef?: string;
 }
 
 /** Request body for `sb.events.addEventHosts()`. */
@@ -92,7 +106,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      async list(query: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }> {
+      async list(query?: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/events/tickets/v1", { params: { query }, signal: options?.signal }), "GET /events/tickets/v1");
       },
       /**
@@ -100,7 +114,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
        *
        * Retrieve all event tickets.
        */
-      iterate(query: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined> {
+      iterate(query?: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/events/tickets/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /events/tickets/v1"),

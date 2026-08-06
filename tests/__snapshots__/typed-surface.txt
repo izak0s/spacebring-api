@@ -340,9 +340,17 @@ export interface GetEventsByOrganizationQuery {
   order?: string;
 }
 export interface GetEventTicketsQuery {
-  locationRef: string;
+  customerRef?: string;
+  eventRef?: string;
+  includeDeleted?: string;
   limit?: number;
+  locationRef?: string;
   nextPageToken?: string;
+  Supported values:
+  - **active** — the ticket is valid
+  - **canceled** — the ticket was deleted */
+  status?: string;
+  userRef?: string;
 }
 export type AddEventHostsBody = NonNullable<NonNullable<operations["addEventHosts"]["requestBody"]>["content"]["application/json"]["tickets"]>;
 export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
@@ -359,8 +367,8 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
     async cancel(id: string, options?: SpacebringRequestOptions): Promise<Event>
     async copy(id: string, options?: SpacebringRequestOptions): Promise<Event>
     tickets: {
-      async list(query: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }>
-      iterate(query: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined>
+      async list(query?: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }>
+      iterate(query?: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<EventTicket>
       async update(id: string, ticket: UpdateEventTicketBody, options?: SpacebringRequestOptions): Promise<EventTicket>
       async delete(id: string, options?: SpacebringRequestOptions): Promise<EventTicket>
@@ -686,17 +694,21 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
 
 // transactions.ts
 export type Balance = NonNullable<components["schemas"]["balance"]>;
-export type CreditTransaction = NonNullable<components["schemas"]["transactionCreditsExpanded"]>;
+export type CreditTransaction = NonNullable<components["schemas"]["transactionCredits"]>;
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
 export type ScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 export interface GetCreditsTransactionsQuery {
+  companyRef?: string;
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
+  customerRef?: string;
   limit?: number;
-  nextPageToken?: string;
-  createDate?: { lte?: string; gte?: string };
   locationRef?: string;
   membershipRef?: string;
-  companyRef?: string;
+  nextPageToken?: string;
+  status?: string;
+  type?: string;
 }
 export interface GetDayPassesTransactionsQuery {
   companyRef?: string;
@@ -732,12 +744,13 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       async getDayPasses(id: string, options?: SpacebringRequestOptions): Promise<Balance[]>
     },
     credits: {
-      async list(query?: GetCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: CreditTransaction[]; nextPageToken?: string }>
+      async list(query?: GetCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: CreditTransaction[] }>
       iterate(query?: Omit<GetCreditsTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditTransaction, void, undefined>
+      async get(id: string, options?: SpacebringRequestOptions): Promise<CreditTransaction>
       async create(transaction: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction>
     },
     dayPasses: {
-      async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; transactions: DayPassTransaction[] }>
+      async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: DayPassTransaction[] }>
       iterate(query?: Omit<GetDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassTransaction, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
       async create(transaction: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
