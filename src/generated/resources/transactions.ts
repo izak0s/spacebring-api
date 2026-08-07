@@ -7,17 +7,20 @@ import type { components, operations, paths } from "../schema.js";
 /** A Balance entity as returned by the Spacebring API. */
 export type Balance = NonNullable<components["schemas"]["balance"]>;
 
+/** A CreditScheduledTransaction entity as returned by the Spacebring API. */
+export type CreditScheduledTransaction = NonNullable<operations["getScheduledCreditsTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
+
 /** A CreditTransaction entity as returned by the Spacebring API. */
 export type CreditTransaction = NonNullable<components["schemas"]["transactionCredits"]>;
+
+/** A DayPassScheduledTransaction entity as returned by the Spacebring API. */
+export type DayPassScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 
 /** A DayPassTransaction entity as returned by the Spacebring API. */
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 
 /** A MoneyTransaction entity as returned by the Spacebring API. */
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
-
-/** A ScheduledTransaction entity as returned by the Spacebring API. */
-export type ScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 
 /** Query parameters for `sb.transactions.credits.list()`. */
 export interface GetCreditsTransactionsQuery {
@@ -79,6 +82,18 @@ export interface GetMoneyTransactionsQuery {
   createDate?: { lte?: string; gte?: string };
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+}
+
+/** Query parameters for `sb.transactions.credits.scheduled.list()`. */
+export interface GetScheduledCreditsTransactionsQuery {
+  /** UUID of the company or membership whose scheduled credits transactions to list. */
+  customerRef?: string;
+  /** Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  limit?: number;
+  /** Token to retrieve the next page of results. */
+  nextPageToken?: string;
+  /** UUID of the subscription whose scheduled credits transactions to list. */
+  subscriptionRef?: string;
 }
 
 /** Query parameters for `sb.transactions.dayPasses.scheduled.list()`. */
@@ -163,6 +178,28 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       async create(transaction: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction> {
         return unwrapProp(await client.POST("/transactions/credits/v1", { body: { transaction }, signal: options?.signal }), "transaction", "POST /transactions/credits/v1");
       },
+      scheduled: {
+        /**
+         * Retrieve scheduled credits transactions
+         *
+         * Retrieve scheduled credits transactions of a subscription or a customer.
+         */
+        async list(query?: GetScheduledCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: CreditScheduledTransaction[]; searchQueryNext?: string }> {
+          return unwrap(await client.GET("/transactions/credits/scheduled/v1", { params: { query }, signal: options?.signal }), "GET /transactions/credits/scheduled/v1");
+        },
+        /**
+         * Retrieve scheduled credits transactions — iterates every item across all pages.
+         *
+         * Retrieve scheduled credits transactions of a subscription or a customer.
+         */
+        iterate(query?: Omit<GetScheduledCreditsTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditScheduledTransaction, void, undefined> {
+          return paginate(
+            async (nextPageToken: string | undefined) =>
+              unwrap(await client.GET("/transactions/credits/scheduled/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/credits/scheduled/v1"),
+            "scheduledTransactions",
+          );
+        },
+      },
     },
     dayPasses: {
       /**
@@ -210,7 +247,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
          *
          * Retrieve scheduled day passes transactions of a subscription or a customer.
          */
-        async list(query?: GetScheduledDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: ScheduledTransaction[]; searchQueryNext?: string }> {
+        async list(query?: GetScheduledDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: DayPassScheduledTransaction[]; searchQueryNext?: string }> {
           return unwrap(await client.GET("/transactions/day_passes/scheduled/v1", { params: { query }, signal: options?.signal }), "GET /transactions/day_passes/scheduled/v1");
         },
         /**
@@ -218,7 +255,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
          *
          * Retrieve scheduled day passes transactions of a subscription or a customer.
          */
-        iterate(query?: Omit<GetScheduledDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<ScheduledTransaction, void, undefined> {
+        iterate(query?: Omit<GetScheduledDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassScheduledTransaction, void, undefined> {
           return paginate(
             async (nextPageToken: string | undefined) =>
               unwrap(await client.GET("/transactions/day_passes/scheduled/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/day_passes/scheduled/v1"),

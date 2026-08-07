@@ -2148,6 +2148,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/transactions/credits/scheduled/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve scheduled credits transactions
+         * @description Retrieve scheduled credits transactions of a subscription or a customer. <h3>OAuth</h3>Required scopes: <code>transactions.readonly</code> or <code>transactions</code>
+         */
+        get: operations["getScheduledCreditsTransactions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/transactions/credits/v1": {
         parameters: {
             query?: never;
@@ -3265,10 +3285,22 @@ export interface components {
                     type: "company" | "user";
                     /** @description User details for membership customers. */
                     user?: {
-                        /** Format: uuid */
+                        /** @description User bio. */
+                        about?: string | null;
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User ID.
+                         */
                         id: string;
+                        /** @description First name. */
                         name?: string | null;
+                        /** @description Phone number. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL. */
                         photoUrl?: string | null;
+                        /** @description Last name. */
                         surname?: string | null;
                     };
                 };
@@ -3632,10 +3664,22 @@ export interface components {
                 type: "company" | "user";
                 /** @description User details for membership customers. */
                 user?: {
-                    /** Format: uuid */
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User ID.
+                     */
                     id: string;
+                    /** @description First name. */
                     name?: string | null;
+                    /** @description Phone number. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL. */
                     photoUrl?: string | null;
+                    /** @description Last name. */
                     surname?: string | null;
                 };
             };
@@ -3996,10 +4040,22 @@ export interface components {
                     type: "company" | "user";
                     /** @description User details for membership customers. */
                     user?: {
-                        /** Format: uuid */
+                        /** @description User bio. */
+                        about?: string | null;
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User ID.
+                         */
                         id: string;
+                        /** @description First name. */
                         name?: string | null;
+                        /** @description Phone number. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL. */
                         photoUrl?: string | null;
+                        /** @description Last name. */
                         surname?: string | null;
                     };
                 };
@@ -4952,10 +5008,22 @@ export interface components {
                     type: "company" | "user";
                     /** @description User details for membership customers. */
                     user?: {
-                        /** Format: uuid */
+                        /** @description User bio. */
+                        about?: string | null;
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User ID.
+                         */
                         id: string;
+                        /** @description First name. */
                         name?: string | null;
+                        /** @description Phone number. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL. */
                         photoUrl?: string | null;
+                        /** @description Last name. */
                         surname?: string | null;
                     };
                 };
@@ -5267,10 +5335,22 @@ export interface components {
                 type: "company" | "user";
                 /** @description User details for membership customers. */
                 user?: {
-                    /** Format: uuid */
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User ID.
+                     */
                     id: string;
+                    /** @description First name. */
                     name?: string | null;
+                    /** @description Phone number. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL. */
                     photoUrl?: string | null;
+                    /** @description Last name. */
                     surname?: string | null;
                 };
             };
@@ -12161,6 +12241,286 @@ export interface components {
              */
             type: "assigneeUpdated" | "comment" | "statusUpdated" | "ticketCreated";
         };
+        getScheduledCreditsTransactions: {
+            /** @description Pagination token to fetch the next page of results. Returned when more results exist. */
+            nextPageToken?: string;
+            /** @description List of scheduled credits transactions. */
+            scheduledTransactions: {
+                /** @description Total credits amount (absolute sum of expiring and permanent). */
+                amount: number;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use product instead.
+                 */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description Booking id.
+                     */
+                    id: string;
+                    /** @description Booked resource. */
+                    resource: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource title. */
+                        title: string;
+                    };
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                company?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of company creation.
+                     */
+                    createDate: string;
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /**
+                     * Format: uuid
+                     * @description Location id.
+                     */
+                    locationRef: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Company metadata. */
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
+                    /** @description Internal notes. */
+                    notes?: string;
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description Primary subscription id.
+                     */
+                    subscriptionRef: string | null;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                companyRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the scheduled transaction was created.
+                 */
+                createDate: string;
+                /** @description Customer associated with this scheduled transaction. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        about?: string | null;
+                        email?: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        name?: string | null;
+                        phoneNumber?: string | null;
+                        photoUrl?: string | null;
+                        surname?: string | null;
+                    };
+                };
+                /** @description Discounts applied to the scheduled transaction. */
+                discounts?: {
+                    /** @description Applied coupon. */
+                    coupon: {
+                        /** @description Fixed amount discount. */
+                        amountOff?: number;
+                        /** @description Currency of the fixed amount discount. */
+                        currencyCode?: string;
+                        /** @description Coupon id. */
+                        id: string;
+                        /** @description Percentage discount. */
+                        percentOff?: number;
+                        /** @description Product types the coupon applies to. */
+                        productTypes?: string[];
+                        /** @description Coupon type. */
+                        type: string;
+                    };
+                    /** @description Promocode the coupon was applied with. */
+                    promocode?: {
+                        /** @description Promocode. */
+                        code: string;
+                        /** @description Promocode expiration date. */
+                        expiration?: string;
+                        /**
+                         * Format: uuid
+                         * @description Promocode id.
+                         */
+                        id: string;
+                        /** @description Whether the promocode is limited to the first purchase. */
+                        limitByFirstPurchase?: boolean;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the subscription this discount is associated with.
+                     */
+                    subscriptionId?: string;
+                }[];
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the scheduled transaction.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the organization (location).
+                 */
+                locationRef: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer instead.
+                 */
+                membershipRef?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                membershipRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /** @description Product details. */
+                product?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the associated booking.
+                     */
+                    bookingRef?: string;
+                    /** @description Display title of the product. */
+                    title: string;
+                    /**
+                     * @description Product type.
+                     * @enum {string}
+                     */
+                    type: "booking";
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the scheduled transaction was resolved into a credits transaction.
+                 */
+                resolveDate?: string;
+                /**
+                 * Format: date-time
+                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into.
+                 */
+                scheduleDate: string;
+                /** @description Transaction status. */
+                status: string;
+                /** @description Timezone of the subscription. */
+                timezoneId: string;
+                /**
+                 * @description Scheduled credits transaction type.
+                 * @enum {string}
+                 */
+                type: "booking";
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userOwner instead.
+                 */
+                user?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /** @description User who created the transaction. */
+                userCreatedBy?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userCreator?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userOwner?: {
+                    about?: string | null;
+                    email?: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    name?: string | null;
+                    phoneNumber?: string | null;
+                    photoUrl?: string | null;
+                    surname?: string | null;
+                };
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use userCreatedBy instead.
+                 */
+                userRefCreator?: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Use customer.user instead.
+                 */
+                userRefOwner?: string;
+            }[];
+            /** @description Query string with nextPageToken and the request filter to fetch the next page of results. Returned when more results exist. */
+            searchQueryNext?: string;
+        };
         getCreditsTransactions: {
             /** @description Pagination token to fetch the next page of results. */
             nextPageToken?: string;
@@ -17120,6 +17480,8 @@ export interface components {
                          * @description The id of membership owner.
                          */
                         membershipRefOwner?: string;
+                        /** @description Number of seats to reserve. Required for desk and office resources. */
+                        seats?: number;
                     };
                 };
             };
@@ -24600,6 +24962,47 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getScheduledCreditsTransactions: {
+        parameters: {
+            query?: {
+                /** @description UUID of the company or membership whose scheduled credits transactions to list. */
+                customerRef?: string;
+                /** @description Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description Token to retrieve the next page of results. */
+                nextPageToken?: string;
+                /** @description UUID of the subscription whose scheduled credits transactions to list. */
+                subscriptionRef?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getScheduledCreditsTransactions"];
+                };
             };
             /** @description Bad Request */
             400: {

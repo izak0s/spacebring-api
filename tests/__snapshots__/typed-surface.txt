@@ -694,10 +694,11 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
 
 // transactions.ts
 export type Balance = NonNullable<components["schemas"]["balance"]>;
+export type CreditScheduledTransaction = NonNullable<operations["getScheduledCreditsTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 export type CreditTransaction = NonNullable<components["schemas"]["transactionCredits"]>;
+export type DayPassScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
-export type ScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 export interface GetCreditsTransactionsQuery {
   companyRef?: string;
   "createDate[gte]"?: string;
@@ -729,6 +730,12 @@ export interface GetMoneyTransactionsQuery {
   createDate?: { lte?: string; gte?: string };
   nextPageToken?: string;
 }
+export interface GetScheduledCreditsTransactionsQuery {
+  customerRef?: string;
+  limit?: number;
+  nextPageToken?: string;
+  subscriptionRef?: string;
+}
 export interface GetScheduledDayPassesTransactionsQuery {
   customerRef?: string;
   limit?: number;
@@ -748,6 +755,10 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       iterate(query?: Omit<GetCreditsTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditTransaction, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<CreditTransaction>
       async create(transaction: CreateCreditsTransactionBody, options?: SpacebringRequestOptions): Promise<CreditTransaction>
+      scheduled: {
+        async list(query?: GetScheduledCreditsTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: CreditScheduledTransaction[]; searchQueryNext?: string }>
+        iterate(query?: Omit<GetScheduledCreditsTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CreditScheduledTransaction, void, undefined>
+      },
     },
     dayPasses: {
       async list(query?: GetDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: DayPassTransaction[] }>
@@ -755,8 +766,8 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       async get(id: string, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
       async create(transaction: CreateDayPassesTransactionBody, options?: SpacebringRequestOptions): Promise<DayPassTransaction>
       scheduled: {
-        async list(query?: GetScheduledDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: ScheduledTransaction[]; searchQueryNext?: string }>
-        iterate(query?: Omit<GetScheduledDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<ScheduledTransaction, void, undefined>
+        async list(query?: GetScheduledDayPassesTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; scheduledTransactions: DayPassScheduledTransaction[]; searchQueryNext?: string }>
+        iterate(query?: Omit<GetScheduledDayPassesTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<DayPassScheduledTransaction, void, undefined>
       },
     },
     money: {
