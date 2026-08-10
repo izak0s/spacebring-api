@@ -34079,6 +34079,7 @@
                   },
                   "email": {
                     "description": "Email address when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "id": {
@@ -34093,6 +34094,7 @@
                   },
                   "phoneNumber": {
                     "description": "Phone number when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "photoUrl": {
@@ -34158,6 +34160,7 @@
                   },
                   "email": {
                     "description": "Email address when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "id": {
@@ -34172,6 +34175,7 @@
                   },
                   "phoneNumber": {
                     "description": "Phone number when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "photoUrl": {
@@ -34256,6 +34260,7 @@
               },
               "email": {
                 "description": "Email address when visible to the caller.",
+                "nullable": true,
                 "type": "string"
               },
               "id": {
@@ -34270,6 +34275,7 @@
               },
               "phoneNumber": {
                 "description": "Phone number when visible to the caller.",
+                "nullable": true,
                 "type": "string"
               },
               "photoUrl": {
@@ -34305,6 +34311,7 @@
               },
               "email": {
                 "description": "Email address when visible to the caller.",
+                "nullable": true,
                 "type": "string"
               },
               "id": {
@@ -34319,6 +34326,7 @@
               },
               "phoneNumber": {
                 "description": "Phone number when visible to the caller.",
+                "nullable": true,
                 "type": "string"
               },
               "photoUrl": {
@@ -34436,6 +34444,7 @@
                       },
                       "email": {
                         "description": "Email address when visible to the caller.",
+                        "nullable": true,
                         "type": "string"
                       },
                       "id": {
@@ -34450,6 +34459,7 @@
                       },
                       "phoneNumber": {
                         "description": "Phone number when visible to the caller.",
+                        "nullable": true,
                         "type": "string"
                       },
                       "photoUrl": {
@@ -34509,6 +34519,7 @@
                           },
                           "email": {
                             "description": "Email address when visible to the caller.",
+                            "nullable": true,
                             "type": "string"
                           },
                           "id": {
@@ -34523,6 +34534,7 @@
                           },
                           "phoneNumber": {
                             "description": "Phone number when visible to the caller.",
+                            "nullable": true,
                             "type": "string"
                           },
                           "photoUrl": {
@@ -34570,6 +34582,7 @@
                       },
                       "email": {
                         "description": "Email address when visible to the caller.",
+                        "nullable": true,
                         "type": "string"
                       },
                       "id": {
@@ -34584,6 +34597,7 @@
                       },
                       "phoneNumber": {
                         "description": "Phone number when visible to the caller.",
+                        "nullable": true,
                         "type": "string"
                       },
                       "photoUrl": {
@@ -34635,6 +34649,7 @@
                   },
                   "email": {
                     "description": "Email address when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "id": {
@@ -34649,6 +34664,7 @@
                   },
                   "phoneNumber": {
                     "description": "Phone number when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "photoUrl": {
@@ -34727,6 +34743,7 @@
                   },
                   "email": {
                     "description": "Email address when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "id": {
@@ -34741,6 +34758,7 @@
                   },
                   "phoneNumber": {
                     "description": "Phone number when visible to the caller.",
+                    "nullable": true,
                     "type": "string"
                   },
                   "photoUrl": {
@@ -40138,6 +40156,11 @@
             "description": "ISO timestamp when the visitor checked in.",
             "type": "string",
             "format": "date-time"
+          },
+          "checkInRef": {
+            "description": "ID of the check-in created for the visit.",
+            "type": "string",
+            "format": "uuid"
           },
           "checkOutDate": {
             "description": "ISO timestamp when the visitor checked out.",

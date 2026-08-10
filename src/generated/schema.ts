@@ -11898,7 +11898,7 @@ export interface components {
                     /** @description Whether the user is blocked. */
                     blocked?: boolean;
                     /** @description Email address when visible to the caller. */
-                    email?: string;
+                    email?: string | null;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the user.
@@ -11907,7 +11907,7 @@ export interface components {
                     /** @description First name of the user. */
                     name?: string | null;
                     /** @description Phone number when visible to the caller. */
-                    phoneNumber?: string;
+                    phoneNumber?: string | null;
                     /** @description Profile photo URL. */
                     photoUrl: string | null;
                     /** @description Surname of the user. */
@@ -11941,7 +11941,7 @@ export interface components {
                     /** @description Whether the user is blocked. */
                     blocked?: boolean;
                     /** @description Email address when visible to the caller. */
-                    email?: string;
+                    email?: string | null;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the user.
@@ -11950,7 +11950,7 @@ export interface components {
                     /** @description First name of the user. */
                     name?: string | null;
                     /** @description Phone number when visible to the caller. */
-                    phoneNumber?: string;
+                    phoneNumber?: string | null;
                     /** @description Profile photo URL. */
                     photoUrl: string | null;
                     /** @description Surname of the user. */
@@ -11984,7 +11984,7 @@ export interface components {
                 /** @description Whether the user is blocked. */
                 blocked?: boolean;
                 /** @description Email address when visible to the caller. */
-                email?: string;
+                email?: string | null;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the user.
@@ -11993,7 +11993,7 @@ export interface components {
                 /** @description First name of the user. */
                 name?: string | null;
                 /** @description Phone number when visible to the caller. */
-                phoneNumber?: string;
+                phoneNumber?: string | null;
                 /** @description Profile photo URL. */
                 photoUrl: string | null;
                 /** @description Surname of the user. */
@@ -12009,7 +12009,7 @@ export interface components {
                 /** @description Whether the user is blocked. */
                 blocked?: boolean;
                 /** @description Email address when visible to the caller. */
-                email?: string;
+                email?: string | null;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the user.
@@ -12018,7 +12018,7 @@ export interface components {
                 /** @description First name of the user. */
                 name?: string | null;
                 /** @description Phone number when visible to the caller. */
-                phoneNumber?: string;
+                phoneNumber?: string | null;
                 /** @description Profile photo URL. */
                 photoUrl: string | null;
                 /** @description Surname of the user. */
@@ -12069,7 +12069,7 @@ export interface components {
                         /** @description Whether the user is blocked. */
                         blocked?: boolean;
                         /** @description Email address when visible to the caller. */
-                        email?: string;
+                        email?: string | null;
                         /**
                          * Format: uuid
                          * @description Unique identifier of the user.
@@ -12078,7 +12078,7 @@ export interface components {
                         /** @description First name of the user. */
                         name?: string | null;
                         /** @description Phone number when visible to the caller. */
-                        phoneNumber?: string;
+                        phoneNumber?: string | null;
                         /** @description Profile photo URL. */
                         photoUrl: string | null;
                         /** @description Surname of the user. */
@@ -12106,7 +12106,7 @@ export interface components {
                             /** @description Whether the user is blocked. */
                             blocked?: boolean;
                             /** @description Email address when visible to the caller. */
-                            email?: string;
+                            email?: string | null;
                             /**
                              * Format: uuid
                              * @description Unique identifier of the user.
@@ -12115,7 +12115,7 @@ export interface components {
                             /** @description First name of the user. */
                             name?: string | null;
                             /** @description Phone number when visible to the caller. */
-                            phoneNumber?: string;
+                            phoneNumber?: string | null;
                             /** @description Profile photo URL. */
                             photoUrl: string | null;
                             /** @description Surname of the user. */
@@ -12132,7 +12132,7 @@ export interface components {
                         /** @description Whether the user is blocked. */
                         blocked?: boolean;
                         /** @description Email address when visible to the caller. */
-                        email?: string;
+                        email?: string | null;
                         /**
                          * Format: uuid
                          * @description Unique identifier of the user.
@@ -12141,7 +12141,7 @@ export interface components {
                         /** @description First name of the user. */
                         name?: string | null;
                         /** @description Phone number when visible to the caller. */
-                        phoneNumber?: string;
+                        phoneNumber?: string | null;
                         /** @description Profile photo URL. */
                         photoUrl: string | null;
                         /** @description Surname of the user. */
@@ -12165,7 +12165,7 @@ export interface components {
                     /** @description Whether the user is blocked. */
                     blocked?: boolean;
                     /** @description Email address when visible to the caller. */
-                    email?: string;
+                    email?: string | null;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the user.
@@ -12174,7 +12174,7 @@ export interface components {
                     /** @description First name of the user. */
                     name?: string | null;
                     /** @description Phone number when visible to the caller. */
-                    phoneNumber?: string;
+                    phoneNumber?: string | null;
                     /** @description Profile photo URL. */
                     photoUrl: string | null;
                     /** @description Surname of the user. */
@@ -12214,7 +12214,7 @@ export interface components {
                     /** @description Whether the user is blocked. */
                     blocked?: boolean;
                     /** @description Email address when visible to the caller. */
-                    email?: string;
+                    email?: string | null;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the user.
@@ -12223,7 +12223,7 @@ export interface components {
                     /** @description First name of the user. */
                     name?: string | null;
                     /** @description Phone number when visible to the caller. */
-                    phoneNumber?: string;
+                    phoneNumber?: string | null;
                     /** @description Profile photo URL. */
                     photoUrl: string | null;
                     /** @description Surname of the user. */
@@ -14931,6 +14931,11 @@ export interface components {
              * @description ISO timestamp when the visitor checked in.
              */
             checkInDate?: string;
+            /**
+             * Format: uuid
+             * @description ID of the check-in created for the visit.
+             */
+            checkInRef?: string;
             /**
              * Format: date-time
              * @description ISO timestamp when the visitor checked out.
