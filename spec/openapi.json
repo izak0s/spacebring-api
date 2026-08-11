@@ -23251,6 +23251,7 @@
               "type": {
                 "type": "string",
                 "enum": [
+                  "authorizenet",
                   "credits",
                   "external",
                   "flow",
@@ -29291,6 +29292,7 @@
                               "description": "Payment gateway type.",
                               "type": "string",
                               "enum": [
+                                "authorizenet",
                                 "flow",
                                 "fondy",
                                 "freedompay",
@@ -30342,6 +30344,7 @@
                             "description": "Payment gateway type.",
                             "type": "string",
                             "enum": [
+                              "authorizenet",
                               "flow",
                               "fondy",
                               "freedompay",
@@ -41080,7 +41083,75 @@
                   "minimum": 0,
                   "exclusiveMinimum": true
                 },
+                "payment": {
+                  "description": "Payment details. Takes precedence over the deprecated paymentMethod field.",
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "object",
+                      "properties": {
+                        "external": {
+                          "description": "External payment method, recorded outside the platform.",
+                          "type": "object",
+                          "properties": {}
+                        },
+                        "paymentGateway": {
+                          "description": "Payment gateway (card) payment method.",
+                          "type": "object",
+                          "properties": {
+                            "gateway": {
+                              "type": "string",
+                              "enum": [
+                                "authorizenet",
+                                "freedompay",
+                                "kakaopay",
+                                "maya",
+                                "mercadopago",
+                                "mollie",
+                                "paypal",
+                                "paystack",
+                                "payway",
+                                "plata",
+                                "stripe",
+                                "tap",
+                                "wayforpay",
+                                "xendit"
+                              ],
+                              "description": "Payment gateway provider."
+                            },
+                            "id": {
+                              "description": "ID of the saved payment method.",
+                              "nullable": true,
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          },
+                          "required": [
+                            "gateway"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "external",
+                            "paymentGateway"
+                          ],
+                          "description": "Selected payment method type."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "description": "Payment method details."
+                    }
+                  },
+                  "required": [
+                    "method"
+                  ]
+                },
                 "paymentMethod": {
+                  "description": "Payment method to use. Use payment.method instead.",
+                  "deprecated": true,
                   "type": "object",
                   "properties": {
                     "id": {
@@ -41091,6 +41162,7 @@
                     "type": {
                       "type": "string",
                       "enum": [
+                        "authorizenet",
                         "external",
                         "freedompay",
                         "kakaopay",
@@ -41111,17 +41183,13 @@
                   },
                   "required": [
                     "type"
-                  ],
-                  "description": "Payment method to use."
+                  ]
                 },
                 "termsConsent": {
                   "description": "Whether the user has accepted the payment terms.",
                   "type": "boolean"
                 }
-              },
-              "required": [
-                "paymentMethod"
-              ]
+              }
             }
           }
         },

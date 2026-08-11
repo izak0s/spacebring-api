@@ -7016,7 +7016,7 @@ export interface components {
                  * @description Payment type.
                  * @enum {string}
                  */
-                type: "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                type: "authorizenet" | "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
             };
             /** @description Number of tickets included in this purchase. */
             quantity: number;
@@ -9645,7 +9645,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -10113,7 +10113,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -15430,8 +15430,37 @@ export interface components {
                 "application/json": {
                     /** @description Partial payment amount in major units. */
                     amount?: number;
-                    /** @description Payment method to use. */
-                    paymentMethod: {
+                    /** @description Payment details. Takes precedence over the deprecated paymentMethod field. */
+                    payment?: {
+                        /** @description Payment method details. */
+                        method: {
+                            /** @description External payment method, recorded outside the platform. */
+                            external?: Record<string, never>;
+                            /** @description Payment gateway (card) payment method. */
+                            paymentGateway?: {
+                                /**
+                                 * @description Payment gateway provider.
+                                 * @enum {string}
+                                 */
+                                gateway: "authorizenet" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                                /**
+                                 * Format: uuid
+                                 * @description ID of the saved payment method.
+                                 */
+                                id?: string | null;
+                            };
+                            /**
+                             * @description Selected payment method type.
+                             * @enum {string}
+                             */
+                            type: "external" | "paymentGateway";
+                        };
+                    };
+                    /**
+                     * @deprecated
+                     * @description Payment method to use. Use payment.method instead.
+                     */
+                    paymentMethod?: {
                         /**
                          * Format: uuid
                          * @description ID of the saved payment method.
@@ -15441,7 +15470,7 @@ export interface components {
                          * @description Payment gateway type.
                          * @enum {string}
                          */
-                        type: "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                        type: "authorizenet" | "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                     };
                     /** @description Whether the user has accepted the payment terms. */
                     termsConsent?: boolean;
