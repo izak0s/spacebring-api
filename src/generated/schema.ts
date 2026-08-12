@@ -3319,6 +3319,11 @@ export interface components {
                 customerTaxId?: string;
                 /**
                  * Format: date-time
+                 * @description ISO timestamp of when the invoice was deleted.
+                 */
+                deleteDate?: string;
+                /**
+                 * Format: date-time
                  * @description Payment due date.
                  */
                 dueDate?: string;
@@ -3698,6 +3703,11 @@ export interface components {
             customerTaxId?: string;
             /**
              * Format: date-time
+             * @description ISO timestamp of when the invoice was deleted.
+             */
+            deleteDate?: string;
+            /**
+             * Format: date-time
              * @description Payment due date.
              */
             dueDate?: string;
@@ -4072,6 +4082,11 @@ export interface components {
                 customerName?: string;
                 /** @description Customer tax ID. */
                 customerTaxId?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the invoice was deleted.
+                 */
+                deleteDate?: string;
                 /**
                  * Format: date-time
                  * @description Payment due date.
@@ -7054,6 +7069,11 @@ export interface components {
              * @description ISO timestamp of when the post was created.
              */
             createDate: string;
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the post was deleted.
+             */
+            deleteDate?: string;
             /**
              * Format: uuid
              * @description Unique identifier of the post.
@@ -10615,6 +10635,11 @@ export interface components {
                          * @description Unique identifier of the resource.
                          */
                         id: string;
+                        /**
+                         * @deprecated
+                         * @description Cover image URL of the resource.
+                         */
+                        coverUrl?: string;
                         /** @description Cover image URL of the resource. */
                         imageUrl?: string;
                         /** @description Display name of the resource. */
@@ -11137,6 +11162,11 @@ export interface components {
                      * @description Unique identifier of the resource.
                      */
                     id: string;
+                    /**
+                     * @deprecated
+                     * @description Cover image URL of the resource.
+                     */
+                    coverUrl?: string;
                     /** @description Cover image URL of the resource. */
                     imageUrl?: string;
                     /** @description Display name of the resource. */
@@ -11660,6 +11690,11 @@ export interface components {
                          * @description Unique identifier of the resource.
                          */
                         id: string;
+                        /**
+                         * @deprecated
+                         * @description Cover image URL of the resource.
+                         */
+                        coverUrl?: string;
                         /** @description Cover image URL of the resource. */
                         imageUrl?: string;
                         /** @description Display name of the resource. */
@@ -14955,6 +14990,11 @@ export interface components {
              * @description ISO timestamp of the scheduled visit date.
              */
             date: string;
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the visit was canceled.
+             */
+            deleteDate?: string;
             /**
              * Format: uuid
              * @description Unique identifier of the visit.
