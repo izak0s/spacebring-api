@@ -15504,6 +15504,11 @@
                   "description": "Customer tax ID.",
                   "type": "string"
                 },
+                "deleteDate": {
+                  "description": "ISO timestamp of when the invoice was deleted.",
+                  "type": "string",
+                  "format": "date-time"
+                },
                 "dueDate": {
                   "description": "Payment due date.",
                   "type": "string",
@@ -16350,6 +16355,11 @@
             "description": "Customer tax ID.",
             "type": "string"
           },
+          "deleteDate": {
+            "description": "ISO timestamp of when the invoice was deleted.",
+            "type": "string",
+            "format": "date-time"
+          },
           "dueDate": {
             "description": "Payment due date.",
             "type": "string",
@@ -17183,6 +17193,11 @@
               "customerTaxId": {
                 "description": "Customer tax ID.",
                 "type": "string"
+              },
+              "deleteDate": {
+                "description": "ISO timestamp of when the invoice was deleted.",
+                "type": "string",
+                "format": "date-time"
               },
               "dueDate": {
                 "description": "Payment due date.",
@@ -23366,6 +23381,11 @@
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp of when the post was created."
+          },
+          "deleteDate": {
+            "description": "ISO timestamp of when the post was deleted.",
+            "type": "string",
+            "format": "date-time"
           },
           "id": {
             "type": "string",
@@ -31447,6 +31467,11 @@
                             "format": "uuid",
                             "description": "Unique identifier of the resource."
                           },
+                          "coverUrl": {
+                            "deprecated": true,
+                            "description": "Cover image URL of the resource.",
+                            "type": "string"
+                          },
                           "imageUrl": {
                             "description": "Cover image URL of the resource.",
                             "type": "string"
@@ -32528,6 +32553,11 @@
                       "format": "uuid",
                       "description": "Unique identifier of the resource."
                     },
+                    "coverUrl": {
+                      "deprecated": true,
+                      "description": "Cover image URL of the resource.",
+                      "type": "string"
+                    },
                     "imageUrl": {
                       "description": "Cover image URL of the resource.",
                       "type": "string"
@@ -33603,6 +33633,11 @@
                           "type": "string",
                           "format": "uuid",
                           "description": "Unique identifier of the resource."
+                        },
+                        "coverUrl": {
+                          "deprecated": true,
+                          "description": "Cover image URL of the resource.",
+                          "type": "string"
                         },
                         "imageUrl": {
                           "description": "Cover image URL of the resource.",
@@ -40187,6 +40222,11 @@
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp of the scheduled visit date."
+          },
+          "deleteDate": {
+            "description": "ISO timestamp of when the visit was canceled.",
+            "type": "string",
+            "format": "date-time"
           },
           "id": {
             "type": "string",
