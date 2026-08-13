@@ -10357,7 +10357,10 @@ export interface components {
                  * @enum {string}
                  */
                 billingCycleAnchor: "any" | "day";
-                /** @description Company associated with this subscription. */
+                /**
+                 * @deprecated
+                 * @description Company associated with this subscription. Deprecated — use customer instead.
+                 */
                 company?: {
                     /**
                      * Format: date-time
@@ -10428,6 +10431,46 @@ export interface components {
                      * @description ISO timestamp when the interval starts.
                      */
                     startDate: string;
+                };
+                /** @description Customer billed for this subscription. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the customer.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Logo URL resolved from the company website. */
+                    publicLogoUrl?: string;
+                    /** @description Display name of the company customer. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User associated with the customer. */
+                    user?: {
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
                 };
                 /**
                  * Format: uuid
@@ -10794,7 +10837,10 @@ export interface components {
                 subscriptionType: "company" | "user";
                 /** @description Timezone identifier for billing dates. */
                 timezoneId: string;
-                /** @description User associated with this subscription. */
+                /**
+                 * @deprecated
+                 * @description User associated with this subscription. Deprecated — use customer instead.
+                 */
                 user?: {
                     /** @description User bio. */
                     about?: string | null;
@@ -10884,7 +10930,10 @@ export interface components {
              * @enum {string}
              */
             billingCycleAnchor: "any" | "day";
-            /** @description Company associated with this subscription. */
+            /**
+             * @deprecated
+             * @description Company associated with this subscription. Deprecated — use customer instead.
+             */
             company?: {
                 /**
                  * Format: date-time
@@ -10955,6 +11004,46 @@ export interface components {
                  * @description ISO timestamp when the interval starts.
                  */
                 startDate: string;
+            };
+            /** @description Customer billed for this subscription. */
+            customer: {
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the customer.
+                 */
+                id: string;
+                /** @description Company logo. */
+                logo?: {
+                    /** @description Storage key of the company logo. */
+                    key: string;
+                    /** @description Public URL of the company logo. */
+                    url: string;
+                };
+                /** @description Logo URL resolved from the company website. */
+                publicLogoUrl?: string;
+                /** @description Display name of the company customer. */
+                title?: string;
+                /**
+                 * @description Whether the customer is a company or user.
+                 * @enum {string}
+                 */
+                type: "company" | "user";
+                /** @description User associated with the customer. */
+                user?: {
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
             };
             /**
              * Format: uuid
@@ -11321,7 +11410,10 @@ export interface components {
             subscriptionType: "company" | "user";
             /** @description Timezone identifier for billing dates. */
             timezoneId: string;
-            /** @description User associated with this subscription. */
+            /**
+             * @deprecated
+             * @description User associated with this subscription. Deprecated — use customer instead.
+             */
             user?: {
                 /** @description User bio. */
                 about?: string | null;
@@ -11412,7 +11504,10 @@ export interface components {
                  * @enum {string}
                  */
                 billingCycleAnchor: "any" | "day";
-                /** @description Company associated with this subscription. */
+                /**
+                 * @deprecated
+                 * @description Company associated with this subscription. Deprecated — use customer instead.
+                 */
                 company?: {
                     /**
                      * Format: date-time
@@ -11483,6 +11578,46 @@ export interface components {
                      * @description ISO timestamp when the interval starts.
                      */
                     startDate: string;
+                };
+                /** @description Customer billed for this subscription. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the customer.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        /** @description Storage key of the company logo. */
+                        key: string;
+                        /** @description Public URL of the company logo. */
+                        url: string;
+                    };
+                    /** @description Logo URL resolved from the company website. */
+                    publicLogoUrl?: string;
+                    /** @description Display name of the company customer. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User associated with the customer. */
+                    user?: {
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
                 };
                 /**
                  * Format: uuid
@@ -11849,7 +11984,10 @@ export interface components {
                 subscriptionType: "company" | "user";
                 /** @description Timezone identifier for billing dates. */
                 timezoneId: string;
-                /** @description User associated with this subscription. */
+                /**
+                 * @deprecated
+                 * @description User associated with this subscription. Deprecated — use customer instead.
+                 */
                 user?: {
                     /** @description User bio. */
                     about?: string | null;
