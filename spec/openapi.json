@@ -30914,7 +30914,8 @@
                   "description": "Billing cycle anchor mode."
                 },
                 "company": {
-                  "description": "Company associated with this subscription.",
+                  "deprecated": true,
+                  "description": "Company associated with this subscription. Deprecated — use customer instead.",
                   "type": "object",
                   "properties": {
                     "createDate": {
@@ -31036,6 +31037,92 @@
                     "startDate"
                   ],
                   "additionalProperties": false
+                },
+                "customer": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Unique identifier of the customer."
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the company logo."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Public URL of the company logo."
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "publicLogoUrl": {
+                      "description": "Logo URL resolved from the company website.",
+                      "type": "string"
+                    },
+                    "title": {
+                      "description": "Display name of the company customer.",
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "company",
+                        "user"
+                      ],
+                      "description": "Whether the customer is a company or user."
+                    },
+                    "user": {
+                      "description": "User associated with the customer.",
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "description": "User email address.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the user."
+                        },
+                        "name": {
+                          "description": "User first name.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "description": "User profile photo URL.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "description": "User last name.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Customer billed for this subscription."
                 },
                 "customerRef": {
                   "type": "string",
@@ -31774,7 +31861,8 @@
                   "description": "Timezone identifier for billing dates."
                 },
                 "user": {
-                  "description": "User associated with this subscription.",
+                  "deprecated": true,
+                  "description": "User associated with this subscription. Deprecated — use customer instead.",
                   "type": "object",
                   "properties": {
                     "about": {
@@ -31876,6 +31964,7 @@
                 "billingCycleAnchor",
                 "createDate",
                 "credits",
+                "customer",
                 "customerRef",
                 "dayPasses",
                 "id",
@@ -32000,7 +32089,8 @@
             "description": "Billing cycle anchor mode."
           },
           "company": {
-            "description": "Company associated with this subscription.",
+            "deprecated": true,
+            "description": "Company associated with this subscription. Deprecated — use customer instead.",
             "type": "object",
             "properties": {
               "createDate": {
@@ -32122,6 +32212,92 @@
               "startDate"
             ],
             "additionalProperties": false
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the customer."
+              },
+              "logo": {
+                "description": "Company logo.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "Storage key of the company logo."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Public URL of the company logo."
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "publicLogoUrl": {
+                "description": "Logo URL resolved from the company website.",
+                "type": "string"
+              },
+              "title": {
+                "description": "Display name of the company customer.",
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "company",
+                  "user"
+                ],
+                "description": "Whether the customer is a company or user."
+              },
+              "user": {
+                "description": "User associated with the customer.",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "description": "User email address.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the user."
+                  },
+                  "name": {
+                    "description": "User first name.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "User profile photo URL.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "User last name.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "Customer billed for this subscription."
           },
           "customerRef": {
             "type": "string",
@@ -32860,7 +33036,8 @@
             "description": "Timezone identifier for billing dates."
           },
           "user": {
-            "description": "User associated with this subscription.",
+            "deprecated": true,
+            "description": "User associated with this subscription. Deprecated — use customer instead.",
             "type": "object",
             "properties": {
               "about": {
@@ -32962,6 +33139,7 @@
           "billingCycleAnchor",
           "createDate",
           "credits",
+          "customer",
           "customerRef",
           "dayPasses",
           "id",
@@ -33081,7 +33259,8 @@
                 "description": "Billing cycle anchor mode."
               },
               "company": {
-                "description": "Company associated with this subscription.",
+                "deprecated": true,
+                "description": "Company associated with this subscription. Deprecated — use customer instead.",
                 "type": "object",
                 "properties": {
                   "createDate": {
@@ -33203,6 +33382,92 @@
                   "startDate"
                 ],
                 "additionalProperties": false
+              },
+              "customer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the customer."
+                  },
+                  "logo": {
+                    "description": "Company logo.",
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "Storage key of the company logo."
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Public URL of the company logo."
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "publicLogoUrl": {
+                    "description": "Logo URL resolved from the company website.",
+                    "type": "string"
+                  },
+                  "title": {
+                    "description": "Display name of the company customer.",
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "company",
+                      "user"
+                    ],
+                    "description": "Whether the customer is a company or user."
+                  },
+                  "user": {
+                    "description": "User associated with the customer.",
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "description": "User email address.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the user."
+                      },
+                      "name": {
+                        "description": "User first name.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "photoUrl": {
+                        "description": "User profile photo URL.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "User last name.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "additionalProperties": false,
+                "description": "Customer billed for this subscription."
               },
               "customerRef": {
                 "type": "string",
@@ -33941,7 +34206,8 @@
                 "description": "Timezone identifier for billing dates."
               },
               "user": {
-                "description": "User associated with this subscription.",
+                "deprecated": true,
+                "description": "User associated with this subscription. Deprecated — use customer instead.",
                 "type": "object",
                 "properties": {
                   "about": {
@@ -34043,6 +34309,7 @@
               "billingCycleAnchor",
               "createDate",
               "credits",
+              "customer",
               "customerRef",
               "dayPasses",
               "id",
