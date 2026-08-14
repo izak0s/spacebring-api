@@ -3327,6 +3327,19 @@ export interface components {
                  * @description Payment due date.
                  */
                 dueDate?: string;
+                /** @description Location billing address. */
+                locationAddress?: {
+                    city: string;
+                    countryCode: string | null;
+                    line1: string;
+                    line2: string;
+                    postalCode: string;
+                    state: string;
+                };
+                /** @description Location legal name. */
+                locationName?: string;
+                /** @description Location tax ID. */
+                locationTaxId?: string;
                 /** @description Number of days until payment is due. */
                 dueDays?: number;
                 /**
@@ -3334,6 +3347,8 @@ export interface components {
                  * @enum {string}
                  */
                 dueType?: "date" | "days" | "default";
+                /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
+                hostedInvoiceUrl?: string;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the invoice.
@@ -3711,6 +3726,19 @@ export interface components {
              * @description Payment due date.
              */
             dueDate?: string;
+            /** @description Location billing address. */
+            locationAddress?: {
+                city: string;
+                countryCode: string | null;
+                line1: string;
+                line2: string;
+                postalCode: string;
+                state: string;
+            };
+            /** @description Location legal name. */
+            locationName?: string;
+            /** @description Location tax ID. */
+            locationTaxId?: string;
             /** @description Number of days until payment is due. */
             dueDays?: number;
             /**
@@ -3718,6 +3746,8 @@ export interface components {
              * @enum {string}
              */
             dueType?: "date" | "days" | "default";
+            /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
+            hostedInvoiceUrl?: string;
             /**
              * Format: uuid
              * @description Unique identifier of the invoice.
@@ -4092,6 +4122,19 @@ export interface components {
                  * @description Payment due date.
                  */
                 dueDate?: string;
+                /** @description Location billing address. */
+                locationAddress?: {
+                    city: string;
+                    countryCode: string | null;
+                    line1: string;
+                    line2: string;
+                    postalCode: string;
+                    state: string;
+                };
+                /** @description Location legal name. */
+                locationName?: string;
+                /** @description Location tax ID. */
+                locationTaxId?: string;
                 /** @description Number of days until payment is due. */
                 dueDays?: number;
                 /**
@@ -4099,6 +4142,8 @@ export interface components {
                  * @enum {string}
                  */
                 dueType?: "date" | "days" | "default";
+                /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
+                hostedInvoiceUrl?: string;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the invoice.
@@ -8675,7 +8720,17 @@ export interface components {
                     };
                     /** @description Price of the tier. */
                     price: number;
-                    /** @description Self sign-up flow type for the tier. */
+                    /** @description Self sign-up settings of the tier. */
+                    selfSignup: {
+                        /** @description Whether members may self-enroll into the tier. */
+                        enabled: boolean;
+                        /** @description Self sign-up flow type for the tier. */
+                        type: string;
+                    };
+                    /**
+                     * @deprecated
+                     * @description Deprecated. Use selfSignup.type instead. Self sign-up flow type for the tier.
+                     */
                     selfSignupType?: string;
                     /** @description One-time setup fee for the tier. */
                     setupFee: number;
@@ -17237,7 +17292,17 @@ export interface components {
                                 period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
                                 /** @description Recurring price for this tier in the location currency. */
                                 price: number;
-                                /** @description How members may self-enroll, if applicable. */
+                                /** @description Self sign-up settings of the tier. */
+                                selfSignup?: {
+                                    /** @description Whether members may self-enroll into the tier. */
+                                    enabled: boolean;
+                                    /** @description Self sign-up flow type. */
+                                    type: string;
+                                };
+                                /**
+                                 * @deprecated
+                                 * @description Deprecated. Use selfSignup.type instead. How members may self-enroll, if applicable.
+                                 */
                                 selfSignupType?: string;
                                 /** @description One-time fee charged when subscribing to this tier. */
                                 setupFee?: number;
@@ -17559,7 +17624,17 @@ export interface components {
                                 period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
                                 /** @description Recurring price for this tier in the location currency. */
                                 price: number;
-                                /** @description How members may self-enroll, if applicable. */
+                                /** @description Self sign-up settings of the tier. */
+                                selfSignup?: {
+                                    /** @description Whether members may self-enroll into the tier. */
+                                    enabled: boolean;
+                                    /** @description Self sign-up flow type. */
+                                    type: string;
+                                };
+                                /**
+                                 * @deprecated
+                                 * @description Deprecated. Use selfSignup.type instead. How members may self-enroll, if applicable.
+                                 */
                                 selfSignupType?: string;
                                 /** @description One-time fee charged when subscribing to this tier. */
                                 setupFee?: number;
@@ -23518,7 +23593,7 @@ export interface operations {
     getPlans: {
         parameters: {
             query?: {
-                /** @description When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
+                /** @description Deprecated. Only applies together with resourceRef. Filter the plans.tiers of `GET /resources/v1/{resourceId}` by their entire field instead. When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
                 entire?: string;
                 /** @description Maximum number of plans per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
@@ -23526,7 +23601,7 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description UUID of the resource whose tier plans to list. */
+                /** @description Deprecated. Read plans.tiers from `GET /resources/v1/{resourceId}` instead. UUID of the resource whose tier plans to list. */
                 resourceRef?: string;
             };
             header?: {
