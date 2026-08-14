@@ -9,7 +9,7 @@ export type Plan = NonNullable<components["schemas"]["plan"]>;
 
 /** Query parameters for `sb.plans.list()`. */
 export interface GetPlansQuery {
-  /** When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
+  /** @deprecated Only applies together with resourceRef. Filter the plans.tiers of `GET /resources/v1/{resourceId}` by their entire field instead. When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
   entire?: string;
   /** Maximum number of plans per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
@@ -17,7 +17,7 @@ export interface GetPlansQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** UUID of the resource whose tier plans to list. */
+  /** @deprecated Read plans.tiers from `GET /resources/v1/{resourceId}` instead. UUID of the resource whose tier plans to list. */
   resourceRef?: string;
 }
 

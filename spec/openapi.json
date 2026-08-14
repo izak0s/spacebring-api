@@ -8584,8 +8584,9 @@
             "in": "query",
             "name": "entire",
             "required": false,
-            "description": "When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false.",
+            "description": "Deprecated. Only applies together with resourceRef. Filter the plans.tiers of `GET /resources/v1/{resourceId}` by their entire field instead. When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false.",
             "schema": {
+              "deprecated": true,
               "type": "string"
             }
           },
@@ -8623,8 +8624,9 @@
             "in": "query",
             "name": "resourceRef",
             "required": false,
-            "description": "UUID of the resource whose tier plans to list.",
+            "description": "Deprecated. Read plans.tiers from `GET /resources/v1/{resourceId}` instead. UUID of the resource whose tier plans to list.",
             "schema": {
+              "deprecated": true,
               "type": "string",
               "format": "uuid"
             }
@@ -15514,6 +15516,48 @@
                   "type": "string",
                   "format": "date-time"
                 },
+                "locationAddress": {
+                  "description": "Location billing address.",
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "countryCode": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "line1": {
+                      "type": "string"
+                    },
+                    "line2": {
+                      "type": "string"
+                    },
+                    "postalCode": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "countryCode",
+                    "line1",
+                    "line2",
+                    "postalCode",
+                    "state"
+                  ],
+                  "additionalProperties": false
+                },
+                "locationName": {
+                  "description": "Location legal name.",
+                  "type": "string"
+                },
+                "locationTaxId": {
+                  "description": "Location tax ID.",
+                  "type": "string"
+                },
                 "dueDays": {
                   "description": "Number of days until payment is due.",
                   "type": "integer",
@@ -15528,6 +15572,10 @@
                     "days",
                     "default"
                   ]
+                },
+                "hostedInvoiceUrl": {
+                  "description": "URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only).",
+                  "type": "string"
                 },
                 "id": {
                   "description": "Unique identifier of the invoice.",
@@ -16365,6 +16413,48 @@
             "type": "string",
             "format": "date-time"
           },
+          "locationAddress": {
+            "description": "Location billing address.",
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "countryCode": {
+                "nullable": true,
+                "type": "string"
+              },
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city",
+              "countryCode",
+              "line1",
+              "line2",
+              "postalCode",
+              "state"
+            ],
+            "additionalProperties": false
+          },
+          "locationName": {
+            "description": "Location legal name.",
+            "type": "string"
+          },
+          "locationTaxId": {
+            "description": "Location tax ID.",
+            "type": "string"
+          },
           "dueDays": {
             "description": "Number of days until payment is due.",
             "type": "integer",
@@ -16379,6 +16469,10 @@
               "days",
               "default"
             ]
+          },
+          "hostedInvoiceUrl": {
+            "description": "URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only).",
+            "type": "string"
           },
           "id": {
             "description": "Unique identifier of the invoice.",
@@ -17204,6 +17298,48 @@
                 "type": "string",
                 "format": "date-time"
               },
+              "locationAddress": {
+                "description": "Location billing address.",
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city",
+                  "countryCode",
+                  "line1",
+                  "line2",
+                  "postalCode",
+                  "state"
+                ],
+                "additionalProperties": false
+              },
+              "locationName": {
+                "description": "Location legal name.",
+                "type": "string"
+              },
+              "locationTaxId": {
+                "description": "Location tax ID.",
+                "type": "string"
+              },
               "dueDays": {
                 "description": "Number of days until payment is due.",
                 "type": "integer",
@@ -17218,6 +17354,10 @@
                   "days",
                   "default"
                 ]
+              },
+              "hostedInvoiceUrl": {
+                "description": "URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only).",
+                "type": "string"
               },
               "id": {
                 "description": "Unique identifier of the invoice.",
@@ -27098,8 +27238,28 @@
                       "type": "number",
                       "description": "Price of the tier."
                     },
+                    "selfSignup": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether members may self-enroll into the tier."
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Self sign-up flow type for the tier."
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Self sign-up settings of the tier."
+                    },
                     "selfSignupType": {
-                      "description": "Self sign-up flow type for the tier.",
+                      "deprecated": true,
+                      "description": "Deprecated. Use selfSignup.type instead. Self sign-up flow type for the tier.",
                       "type": "string"
                     },
                     "setupFee": {
@@ -27121,6 +27281,7 @@
                     "period",
                     "plan",
                     "price",
+                    "selfSignup",
                     "setupFee",
                     "title"
                   ],
@@ -44932,8 +45093,27 @@
                                 "type": "number",
                                 "description": "Recurring price for this tier in the location currency."
                               },
+                              "selfSignup": {
+                                "description": "Self sign-up settings of the tier.",
+                                "type": "object",
+                                "properties": {
+                                  "enabled": {
+                                    "type": "boolean",
+                                    "description": "Whether members may self-enroll into the tier."
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "description": "Self sign-up flow type."
+                                  }
+                                },
+                                "required": [
+                                  "enabled",
+                                  "type"
+                                ]
+                              },
                               "selfSignupType": {
-                                "description": "How members may self-enroll, if applicable.",
+                                "deprecated": true,
+                                "description": "Deprecated. Use selfSignup.type instead. How members may self-enroll, if applicable.",
                                 "type": "string"
                               },
                               "setupFee": {
@@ -45750,8 +45930,27 @@
                                 "type": "number",
                                 "description": "Recurring price for this tier in the location currency."
                               },
+                              "selfSignup": {
+                                "description": "Self sign-up settings of the tier.",
+                                "type": "object",
+                                "properties": {
+                                  "enabled": {
+                                    "type": "boolean",
+                                    "description": "Whether members may self-enroll into the tier."
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "description": "Self sign-up flow type."
+                                  }
+                                },
+                                "required": [
+                                  "enabled",
+                                  "type"
+                                ]
+                              },
                               "selfSignupType": {
-                                "description": "How members may self-enroll, if applicable.",
+                                "deprecated": true,
+                                "description": "Deprecated. Use selfSignup.type instead. How members may self-enroll, if applicable.",
                                 "type": "string"
                               },
                               "setupFee": {
