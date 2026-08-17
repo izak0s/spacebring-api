@@ -2764,10 +2764,10 @@ export interface components {
                  */
                 updateDate?: string;
                 /**
-                 * @description Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.
+                 * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
                  * @enum {string}
                  */
-                visibility: "public" | "admins" | "members" | "networkMembers";
+                visibility: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
             }[];
             /** @description Pagination token to fetch the next page of results. */
             nextPageToken?: string;
@@ -2844,10 +2844,10 @@ export interface components {
              */
             updateDate?: string;
             /**
-             * @description Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.
+             * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
              * @enum {string}
              */
-            visibility: "public" | "admins" | "members" | "networkMembers";
+            visibility: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
         };
         getBenefit: {
             /** @description The benefit. */
@@ -2921,10 +2921,10 @@ export interface components {
                  */
                 updateDate?: string;
                 /**
-                 * @description Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.
+                 * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
                  * @enum {string}
                  */
-                visibility: "public" | "admins" | "members" | "networkMembers";
+                visibility: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
             };
         };
         getBenefitApplications: {
@@ -7774,8 +7774,10 @@ export interface components {
                     /** @description Discount percentage for shop products. */
                     shop: number;
                 };
-                /** @description Resources exclusively available to members on this plan. */
+                /** @description Resources and benefits exclusively available to members on this plan. */
                 exclusiveAccess: {
+                    /** @description Benefit IDs with exclusive access for this plan. */
+                    benefitRefs: string[];
                     /** @description Resource IDs with exclusive access for this plan. */
                     resourceRefs: string[];
                 };
@@ -7943,8 +7945,10 @@ export interface components {
                 /** @description Discount percentage for shop products. */
                 shop: number;
             };
-            /** @description Resources exclusively available to members on this plan. */
+            /** @description Resources and benefits exclusively available to members on this plan. */
             exclusiveAccess: {
+                /** @description Benefit IDs with exclusive access for this plan. */
+                benefitRefs: string[];
                 /** @description Resource IDs with exclusive access for this plan. */
                 resourceRefs: string[];
             };
@@ -8111,8 +8115,10 @@ export interface components {
                     /** @description Discount percentage for shop products. */
                     shop: number;
                 };
-                /** @description Resources exclusively available to members on this plan. */
+                /** @description Resources and benefits exclusively available to members on this plan. */
                 exclusiveAccess: {
+                    /** @description Benefit IDs with exclusive access for this plan. */
+                    benefitRefs: string[];
                     /** @description Resource IDs with exclusive access for this plan. */
                     resourceRefs: string[];
                 };
@@ -10631,8 +10637,10 @@ export interface components {
                     endFixed: boolean;
                     /** @description Whether the item grants access to the entire resource. */
                     entire?: boolean;
-                    /** @description Resources with exclusive access. */
+                    /** @description Resources and benefits with exclusive access. */
                     exclusiveAccess?: {
+                        /** @description Benefit IDs with exclusive access. */
+                        benefitRefs: string[];
                         /** @description Resource IDs with exclusive access. */
                         resourceRefs: string[];
                     };
@@ -11204,8 +11212,10 @@ export interface components {
                 endFixed: boolean;
                 /** @description Whether the item grants access to the entire resource. */
                 entire?: boolean;
-                /** @description Resources with exclusive access. */
+                /** @description Resources and benefits with exclusive access. */
                 exclusiveAccess?: {
+                    /** @description Benefit IDs with exclusive access. */
+                    benefitRefs: string[];
                     /** @description Resource IDs with exclusive access. */
                     resourceRefs: string[];
                 };
@@ -11778,8 +11788,10 @@ export interface components {
                     endFixed: boolean;
                     /** @description Whether the item grants access to the entire resource. */
                     entire?: boolean;
-                    /** @description Resources with exclusive access. */
+                    /** @description Resources and benefits with exclusive access. */
                     exclusiveAccess?: {
+                        /** @description Benefit IDs with exclusive access. */
+                        benefitRefs: string[];
                         /** @description Resource IDs with exclusive access. */
                         resourceRefs: string[];
                     };
@@ -15413,11 +15425,11 @@ export interface components {
                         /** @description Display name of the benefit. */
                         title: string;
                         /**
-                         * @description Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.
+                         * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
                          * @default public
                          * @enum {string}
                          */
-                        visibility?: "public" | "admins" | "members" | "networkMembers";
+                        visibility?: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
                     };
                 };
             };
@@ -15498,11 +15510,11 @@ export interface components {
                         /** @description Display name of the benefit. */
                         title: string;
                         /**
-                         * @description Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.
+                         * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
                          * @default public
                          * @enum {string}
                          */
-                        visibility?: "public" | "admins" | "members" | "networkMembers";
+                        visibility?: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
                     };
                 };
             };
@@ -16862,12 +16874,14 @@ export interface components {
                             shop?: number;
                         };
                         /**
-                         * @description Resources exclusively available to members on this plan.
+                         * @description Resources and benefits exclusively available to members on this plan.
                          * @default {
                          *       "resourceRefs": []
                          *     }
                          */
                         exclusiveAccess?: {
+                            /** @description Benefit IDs with exclusive access for this plan. */
+                            benefitRefs?: string[];
                             /** @description Resource IDs with exclusive access for this plan. */
                             resourceRefs: string[];
                         };
@@ -17016,12 +17030,14 @@ export interface components {
                             shop: number;
                         };
                         /**
-                         * @description Resources exclusively available to members on this plan.
+                         * @description Resources and benefits exclusively available to members on this plan.
                          * @default {
                          *       "resourceRefs": []
                          *     }
                          */
                         exclusiveAccess?: {
+                            /** @description Benefit IDs with exclusive access for this plan. */
+                            benefitRefs?: string[];
                             /** @description Resource IDs with exclusive access for this plan. */
                             resourceRefs: string[];
                         };
@@ -18173,8 +18189,10 @@ export interface components {
                             endDate?: string;
                             /** @description Whether the item grants access to the entire resource. */
                             entire?: boolean;
-                            /** @description Resources with exclusive access. */
+                            /** @description Resources and benefits with exclusive access. */
                             exclusiveAccess?: {
+                                /** @description Benefit IDs with exclusive access. */
+                                benefitRefs?: string[];
                                 /** @description Resource IDs with exclusive access. */
                                 resourceRefs?: string[];
                             };
@@ -18363,8 +18381,10 @@ export interface components {
                             endDate?: string;
                             /** @description Whether the item grants access to the entire resource. */
                             entire?: boolean;
-                            /** @description Resources with exclusive access. */
+                            /** @description Resources and benefits with exclusive access. */
                             exclusiveAccess?: {
+                                /** @description Benefit IDs with exclusive access. */
+                                benefitRefs?: string[];
                                 /** @description Resource IDs with exclusive access. */
                                 resourceRefs?: string[];
                             };
@@ -18552,8 +18572,10 @@ export interface components {
                         endDate?: string;
                         /** @description Whether the item grants access to the entire resource. */
                         entire?: boolean;
-                        /** @description Resources with exclusive access. */
+                        /** @description Resources and benefits with exclusive access. */
                         exclusiveAccess?: {
+                            /** @description Benefit IDs with exclusive access. */
+                            benefitRefs?: string[];
                             /** @description Resource IDs with exclusive access. */
                             resourceRefs?: string[];
                         };
@@ -18700,8 +18722,10 @@ export interface components {
                         endDate?: string;
                         /** @description Whether the item grants access to the entire resource. */
                         entire?: boolean;
-                        /** @description Resources with exclusive access. */
+                        /** @description Resources and benefits with exclusive access. */
                         exclusiveAccess?: {
+                            /** @description Benefit IDs with exclusive access. */
+                            benefitRefs?: string[];
                             /** @description Resource IDs with exclusive access. */
                             resourceRefs?: string[];
                         };
