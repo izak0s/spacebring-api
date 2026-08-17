@@ -14398,10 +14398,11 @@
                   "enum": [
                     "public",
                     "admins",
+                    "exclusiveMembers",
                     "members",
                     "networkMembers"
                   ],
-                  "description": "Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'."
+                  "description": "Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'."
                 }
               },
               "required": [
@@ -14571,10 +14572,11 @@
             "enum": [
               "public",
               "admins",
+              "exclusiveMembers",
               "members",
               "networkMembers"
             ],
-            "description": "Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'."
+            "description": "Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'."
           }
         },
         "required": [
@@ -14731,10 +14733,11 @@
                 "enum": [
                   "public",
                   "admins",
+                  "exclusiveMembers",
                   "members",
                   "networkMembers"
                 ],
-                "description": "Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'."
+                "description": "Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'."
               }
             },
             "required": [
@@ -24953,6 +24956,14 @@
                 "exclusiveAccess": {
                   "type": "object",
                   "properties": {
+                    "benefitRefs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "description": "Benefit IDs with exclusive access for this plan."
+                    },
                     "resourceRefs": {
                       "type": "array",
                       "items": {
@@ -24963,10 +24974,11 @@
                     }
                   },
                   "required": [
+                    "benefitRefs",
                     "resourceRefs"
                   ],
                   "additionalProperties": false,
-                  "description": "Resources exclusively available to members on this plan."
+                  "description": "Resources and benefits exclusively available to members on this plan."
                 },
                 "grantedDiscounts": {
                   "type": "array",
@@ -25365,6 +25377,14 @@
           "exclusiveAccess": {
             "type": "object",
             "properties": {
+              "benefitRefs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Benefit IDs with exclusive access for this plan."
+              },
               "resourceRefs": {
                 "type": "array",
                 "items": {
@@ -25375,10 +25395,11 @@
               }
             },
             "required": [
+              "benefitRefs",
               "resourceRefs"
             ],
             "additionalProperties": false,
-            "description": "Resources exclusively available to members on this plan."
+            "description": "Resources and benefits exclusively available to members on this plan."
           },
           "grantedDiscounts": {
             "type": "array",
@@ -25768,6 +25789,14 @@
               "exclusiveAccess": {
                 "type": "object",
                 "properties": {
+                  "benefitRefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "Benefit IDs with exclusive access for this plan."
+                  },
                   "resourceRefs": {
                     "type": "array",
                     "items": {
@@ -25778,10 +25807,11 @@
                   }
                 },
                 "required": [
+                  "benefitRefs",
                   "resourceRefs"
                 ],
                 "additionalProperties": false,
-                "description": "Resources exclusively available to members on this plan."
+                "description": "Resources and benefits exclusively available to members on this plan."
               },
               "grantedDiscounts": {
                 "type": "array",
@@ -31475,9 +31505,17 @@
                         "type": "boolean"
                       },
                       "exclusiveAccess": {
-                        "description": "Resources with exclusive access.",
+                        "description": "Resources and benefits with exclusive access.",
                         "type": "object",
                         "properties": {
+                          "benefitRefs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "description": "Benefit IDs with exclusive access."
+                          },
                           "resourceRefs": {
                             "type": "array",
                             "items": {
@@ -31488,6 +31526,7 @@
                           }
                         },
                         "required": [
+                          "benefitRefs",
                           "resourceRefs"
                         ],
                         "additionalProperties": false
@@ -32650,9 +32689,17 @@
                   "type": "boolean"
                 },
                 "exclusiveAccess": {
-                  "description": "Resources with exclusive access.",
+                  "description": "Resources and benefits with exclusive access.",
                   "type": "object",
                   "properties": {
+                    "benefitRefs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "description": "Benefit IDs with exclusive access."
+                    },
                     "resourceRefs": {
                       "type": "array",
                       "items": {
@@ -32663,6 +32710,7 @@
                     }
                   },
                   "required": [
+                    "benefitRefs",
                     "resourceRefs"
                   ],
                   "additionalProperties": false
@@ -33820,9 +33868,17 @@
                       "type": "boolean"
                     },
                     "exclusiveAccess": {
-                      "description": "Resources with exclusive access.",
+                      "description": "Resources and benefits with exclusive access.",
                       "type": "object",
                       "properties": {
+                        "benefitRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "description": "Benefit IDs with exclusive access."
+                        },
                         "resourceRefs": {
                           "type": "array",
                           "items": {
@@ -33833,6 +33889,7 @@
                         }
                       },
                       "required": [
+                        "benefitRefs",
                         "resourceRefs"
                       ],
                       "additionalProperties": false
@@ -41119,11 +41176,12 @@
                     },
                     "visibility": {
                       "default": "public",
-                      "description": "Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.",
+                      "description": "Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.",
                       "type": "string",
                       "enum": [
                         "public",
                         "admins",
+                        "exclusiveMembers",
                         "members",
                         "networkMembers"
                       ]
@@ -41256,11 +41314,12 @@
                     },
                     "visibility": {
                       "default": "public",
-                      "description": "Who can see this benefit: 'public' (everyone), 'admins', 'members', or 'networkMembers'.",
+                      "description": "Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.",
                       "type": "string",
                       "enum": [
                         "public",
                         "admins",
+                        "exclusiveMembers",
                         "members",
                         "networkMembers"
                       ]
@@ -44125,9 +44184,18 @@
                       "default": {
                         "resourceRefs": []
                       },
-                      "description": "Resources exclusively available to members on this plan.",
+                      "description": "Resources and benefits exclusively available to members on this plan.",
                       "type": "object",
                       "properties": {
+                        "benefitRefs": {
+                          "description": "Benefit IDs with exclusive access for this plan.",
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "ID of a benefit with exclusive access."
+                          }
+                        },
                         "resourceRefs": {
                           "type": "array",
                           "items": {
@@ -44451,9 +44519,18 @@
                       "default": {
                         "resourceRefs": []
                       },
-                      "description": "Resources exclusively available to members on this plan.",
+                      "description": "Resources and benefits exclusively available to members on this plan.",
                       "type": "object",
                       "properties": {
+                        "benefitRefs": {
+                          "description": "Benefit IDs with exclusive access for this plan.",
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "ID of a benefit with exclusive access."
+                          }
+                        },
                         "resourceRefs": {
                           "type": "array",
                           "items": {
@@ -46982,9 +47059,17 @@
                                 "type": "boolean"
                               },
                               "exclusiveAccess": {
-                                "description": "Resources with exclusive access.",
+                                "description": "Resources and benefits with exclusive access.",
                                 "type": "object",
                                 "properties": {
+                                  "benefitRefs": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "description": "Benefit IDs with exclusive access."
+                                  },
                                   "resourceRefs": {
                                     "type": "array",
                                     "items": {
@@ -47376,9 +47461,17 @@
                             "type": "boolean"
                           },
                           "exclusiveAccess": {
-                            "description": "Resources with exclusive access.",
+                            "description": "Resources and benefits with exclusive access.",
                             "type": "object",
                             "properties": {
+                              "benefitRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "Benefit IDs with exclusive access."
+                              },
                               "resourceRefs": {
                                 "type": "array",
                                 "items": {
@@ -47745,9 +47838,17 @@
                       "type": "boolean"
                     },
                     "exclusiveAccess": {
-                      "description": "Resources with exclusive access.",
+                      "description": "Resources and benefits with exclusive access.",
                       "type": "object",
                       "properties": {
+                        "benefitRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "description": "Benefit IDs with exclusive access."
+                        },
                         "resourceRefs": {
                           "type": "array",
                           "items": {
@@ -48044,9 +48145,17 @@
                       "type": "boolean"
                     },
                     "exclusiveAccess": {
-                      "description": "Resources with exclusive access.",
+                      "description": "Resources and benefits with exclusive access.",
                       "type": "object",
                       "properties": {
+                        "benefitRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "description": "Benefit IDs with exclusive access."
+                        },
                         "resourceRefs": {
                           "type": "array",
                           "items": {
