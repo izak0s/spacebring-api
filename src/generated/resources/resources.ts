@@ -2,16 +2,16 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { components, operations, paths } from "../schema.js";
+import type { operations, paths } from "../schema.js";
 
 /** A Assignment entity as returned by the Spacebring API. */
 export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
 
 /** A Booking entity as returned by the Spacebring API. */
-export type Booking = NonNullable<components["schemas"]["booking"]>;
+export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
 
 /** A Resource entity as returned by the Spacebring API. */
-export type Resource = NonNullable<components["schemas"]["resource"]>;
+export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 
 /** Query parameters for `sb.resources.getAssignments()`. */
 export interface GetAssignmentsQuery {
@@ -21,36 +21,62 @@ export interface GetAssignmentsQuery {
 
 /** Query parameters for `sb.resources.bookings.list()`. */
 export interface GetBookingsQuery {
-  /** The id of the resource. Required if `locationRef` is not passed. */
-  resourceRef?: string;
-  /** The id of the location. Required if `resourceRef` is not passed. */
-  locationRef?: string;
-  /** The id of the membership owner. */
-  membershipRefOwner?: string;
-  /** The date filter of items. */
-  endDate?: { lte?: string; gte?: string; lt?: string; gt?: string };
-  /** The date filter of items. */
-  startDate?: { lte?: string; gte?: string; lt?: string; gt?: string };
-  /** The number of items to return */
+  /** Matches bookings with endDate strictly after this date (ISO 8601). */
+  "endDate[gt]"?: string;
+  /** Matches bookings with endDate on or after this date (ISO 8601). */
+  "endDate[gte]"?: string;
+  /** Matches bookings with endDate strictly before this date (ISO 8601). */
+  "endDate[lt]"?: string;
+  /** Matches bookings with endDate on or before this date (ISO 8601). */
+  "endDate[lte]"?: string;
+  /** Matches bookings with startDate strictly after this date (ISO 8601). */
+  "startDate[gt]"?: string;
+  /** Matches bookings with startDate on or after this date (ISO 8601). */
+  "startDate[gte]"?: string;
+  /** Matches bookings with startDate strictly before this date (ISO 8601). */
+  "startDate[lt]"?: string;
+  /** Matches bookings with startDate on or before this date (ISO 8601). */
+  "startDate[lte]"?: string;
+  /** UUID of the customer whose bookings to list. */
+  customerRef?: string;
+  /** @deprecated Use bracket-notation fields endDate[gt], endDate[gte], endDate[lt], endDate[lte] instead. */
+  endDate?: string;
+  /** @deprecated Use status "canceled" instead. Set to "true" to include deleted bookings. */
+  includeDeleted?: string;
+  /** Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** The order of filtered items. Format - `field:order`. Possible field values are `createDate`, `endDate`, `startDate`, `id`. Order values - `asc`, `desc`. */
-  order?: string;
-  /** Token to retrieve the next page of results. */
+  /** UUID of the location whose bookings to list. Required when resourceRef is omitted. */
+  locationRef?: string;
+  /** @deprecated Use customerRef instead. UUID of the customer whose bookings to list. */
+  membershipRefOwner?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** The types of resources to retrieve bookings for. Pass them as comma separated values. */
-  types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
+  /** Sort order as `:`, where field is startDate, endDate or createDate and direction is asc or desc. */
+  order?: string;
+  /** UUID of the resource whose bookings to list. Required when locationRef is omitted. */
+  resourceRef?: string;
+  /** Set to "true" to expand repeating bookings into single occurrences. */
+  singleBookings?: string;
+  /** @deprecated Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
+  startDate?: string;
+  /** Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed. */
+  status?: string;
+  /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
+  type?: string;
+  /** @deprecated Use type instead. */
+  types?: string;
 }
 
 /** Query parameters for `sb.resources.list()`. */
 export interface GetResourcesQuery {
-  /** The id of the location. */
-  locationRef: string;
-  /** The types of resources to retrieve. Pass them as comma separated values. */
-  types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
-  /** Token to retrieve the next page of results. */
-  nextPageToken?: string;
-  /** The number of items to return. */
+  /** Maximum number of resources per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
+  /** UUID of the location whose resources to list. */
+  locationRef: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+  nextPageToken?: string;
+  /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+  types?: string;
 }
 
 /** Request body for `sb.resources.bookings.create()`. */
@@ -69,7 +95,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    async list(query: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources?: Resource[]; searchQueryNext?: string }> {
+    async list(query: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources: Resource[]; searchQueryNext?: string }> {
       return unwrap(await client.GET("/resources/v1", { params: { query }, signal: options?.signal }), "GET /resources/v1");
     },
     /**
@@ -89,11 +115,11 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Get a certain resource.
      *
-     * @param id The id of the resource.
+     * @param resourceId The id of the resource.
      * @param options Request options (abort signal).
      */
-    async get(id: string, options?: SpacebringRequestOptions): Promise<Resource> {
-      return unwrapProp(await client.GET("/resources/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "resource", "GET /resources/v1/{id}");
+    async get(resourceId: string, options?: SpacebringRequestOptions): Promise<Resource> {
+      return unwrapProp(await client.GET("/resources/v1/{resourceId}", { params: { path: { resourceId } }, signal: options?.signal }), "resource", "GET /resources/v1/{resourceId}");
     },
     /**
      * Create a resource
@@ -108,12 +134,12 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Patch a certain resource.
      *
-     * @param id The id of the resource.
+     * @param resourceId The id of the resource.
      * @param resource The `resource` payload.
      * @param options Request options (abort signal).
      */
-    async update(id: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
-      return unwrap(await client.PATCH("/resources/v1/{id}", { params: { path: { id } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{id}");
+    async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/resources/v1/{resourceId}", { params: { path: { resourceId } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{resourceId}");
     },
     /**
      * Retrieve resource assignments
@@ -129,7 +155,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all bookings of resources.
        */
-      async list(query?: GetBookingsQuery, options?: SpacebringRequestOptions): Promise<{ bookings?: Booking[]; nextPageToken?: string; searchQueryNext?: string }> {
+      async list(query?: GetBookingsQuery, options?: SpacebringRequestOptions): Promise<{ bookings: Booking[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/resources/bookings/v1", { params: { query }, signal: options?.signal }), "GET /resources/bookings/v1");
       },
       /**
@@ -147,11 +173,11 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
       /**
        * Get a booking
        *
-       * @param id The id of the booking.
+       * @param bookingId ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `_`.
        * @param options Request options (abort signal).
        */
-      async get(id: string, options?: SpacebringRequestOptions): Promise<Booking> {
-        return unwrapProp(await client.GET("/resources/bookings/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "booking", "GET /resources/bookings/v1/{id}");
+      async get(bookingId: string, options?: SpacebringRequestOptions): Promise<Booking> {
+        return unwrapProp(await client.GET("/resources/bookings/v1/{bookingId}", { params: { path: { bookingId } }, signal: options?.signal }), "booking", "GET /resources/bookings/v1/{bookingId}");
       },
       /** Create a booking */
       async create(booking: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
@@ -160,11 +186,11 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
       /**
        * Delete a booking
        *
-       * @param id The id of the booking.
+       * @param bookingId ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `_`.
        * @param options Request options (abort signal).
        */
-      async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
-        return unwrap(await client.DELETE("/resources/bookings/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /resources/bookings/v1/{id}");
+      async delete(bookingId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.DELETE("/resources/bookings/v1/{bookingId}", { params: { path: { bookingId } }, signal: options?.signal }), "DELETE /resources/bookings/v1/{bookingId}");
       },
     },
   };

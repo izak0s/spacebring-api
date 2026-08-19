@@ -1692,7 +1692,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/resources/v1/{id}": {
+    "/resources/v1/{resourceId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1740,7 +1740,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/resources/bookings/v1/{id}": {
+    "/resources/bookings/v1/{bookingId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -3347,8 +3347,6 @@ export interface components {
                  * @enum {string}
                  */
                 dueType?: "date" | "days" | "default";
-                /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
-                hostedInvoiceUrl?: string;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the invoice.
@@ -3746,8 +3744,6 @@ export interface components {
              * @enum {string}
              */
             dueType?: "date" | "days" | "default";
-            /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
-            hostedInvoiceUrl?: string;
             /**
              * Format: uuid
              * @description Unique identifier of the invoice.
@@ -4142,8 +4138,6 @@ export interface components {
                  * @enum {string}
                  */
                 dueType?: "date" | "days" | "default";
-                /** @description URL of the public invoice page, where the invoice can be viewed, downloaded and paid without signing in (issued invoices only). */
-                hostedInvoiceUrl?: string;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the invoice.
@@ -8313,334 +8307,293 @@ export interface components {
                 surname?: string | null;
             };
         };
-        resource: {
-            /** @description Active resource assignments. */
-            assignments: {
-                /** @description Company assigned to the resource. */
-                company?: {
-                    /**
-                     * Format: uuid
-                     * @description Company id.
-                     */
-                    id: string;
-                    /** @description Company name. */
-                    title: string;
-                };
-                /** @description Whether the assignment grants access to the entire resource. */
-                entire: boolean;
-                /**
-                 * Format: uuid
-                 * @description Assignment id.
-                 */
-                id?: string;
-                /** @description Membership linked to the assignment. */
-                membership?: {
-                    /**
-                     * Format: uuid
-                     * @description Membership id.
-                     */
-                    id: string;
-                };
-                /** @description Assigned quantity when the resource is partially assigned. */
-                quantity?: number;
-                /**
-                 * Format: uuid
-                 * @description UUID of the resource the assignment belongs to.
-                 */
-                resourceRef: string;
-                /** @description Subscription backing this assignment. */
-                subscription: {
-                    /** @description ISO timestamp when the assignment ends. */
-                    endDate?: string;
-                    /**
-                     * Format: uuid
-                     * @description Subscription id.
-                     */
-                    id: string;
-                    /** @description ISO timestamp when the assignment starts. */
-                    startDate: string;
-                };
-                /** @description User assigned to the resource. */
-                user?: {
-                    /** @description User email. */
-                    email?: string | null;
-                    /**
-                     * Format: uuid
-                     * @description User id.
-                     */
-                    id: string;
-                    /** @description User first name. */
-                    name?: string | null;
-                    /** @description User last name. */
-                    surname?: string | null;
-                };
-            }[];
-            /** @description Auto-release settings for no-show bookings. */
-            autoRelease?: {
-                /** @description Whether auto-release is enabled. */
-                enabled: boolean;
-                /**
-                 * @description Minutes after start or creation before the slot is released.
-                 * @enum {string}
-                 */
-                interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
-            };
-            /** @description Avigilon Alta access group reference. */
-            avigilonAltaGroupRef?: number | null;
-            /**
-             * @description Who can create bookings on this resource.
-             * @enum {string}
-             */
-            bookingPermission: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
-            /** @description Booking step size in minutes. */
-            bookingStepMinutes?: number;
-            /** @description Brivo access group reference. */
-            brivoGroupRef?: number | null;
-            /** @description Maximum capacity per booking. */
-            capacity?: number | null;
-            /** @description Check-in settings. */
-            checkIn?: {
-                /**
-                 * @description How early before start the guest must check in.
-                 * @enum {string}
-                 */
-                interval: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
-            };
-            /** @description Child resources when this is a parent resource. Bookings on a child resource also block the parent. */
-            children: {
-                /**
-                 * Format: uuid
-                 * @description Id of the child resource.
-                 */
-                id: string;
-                /** @description Title of the child resource. */
-                title: string;
-            }[];
-            /** @description Confirmation email settings. */
-            confirmationEmail: {
-                /** @description Send confirmation when an admin creates a booking. */
-                bookingCreatedByAdmin: boolean;
-                /** @description Send confirmation when a member creates a booking. */
-                bookingCreatedByMember: boolean;
-                /** @description Send confirmation when a network member creates a booking. */
-                bookingCreatedByNetworkMember: boolean;
-                /** @description Send confirmation when a public user creates a booking. */
-                bookingCreatedByPublic: boolean;
-                /** @description Email template id for confirmation emails. */
-                template: string;
-            };
-            /**
-             * Format: date-time
-             * @description ISO timestamp of when the resource was created.
-             */
-            createDate: string;
-            /** @description Credit pricing settings. */
-            credits: {
-                /** @description Whether customers can pay with location credits. */
-                enabled: boolean;
-                /** @description Stepped credit pricing tiers. */
-                tiers: {
-                    /** @description Fixed fee added for this tier. */
-                    flatAmount: number;
-                    /** @description Start of this price tier in booking minutes. */
-                    from: number;
-                    /** @description Variable price per unit within this tier. */
-                    unitAmount: number;
-                }[];
-            };
-            /** @description Whether day passes are enabled. */
-            dayPassesEnabled?: boolean;
-            /** @description Description of the resource. */
-            description: string;
-            /** @description Booking duration bounds. */
-            duration: {
-                /** @description Maximum booking duration in minutes. */
-                max: number;
-                /** @description Minimum booking duration in minutes. */
-                min: number;
-                /** @description Duration limits for public bookers. */
-                public: {
-                    /** @description Whether public bookers have separate duration limits. */
-                    enabled: boolean;
-                    /** @description Maximum booking duration in minutes for public bookers. */
-                    max: number;
-                    /** @description Minimum booking duration in minutes for public bookers. */
-                    min: number;
-                };
-            };
-            /** @description Dynamic pricing settings. */
-            dynamicPricing: {
-                /** @description Maximum price increase percentage when demand is high. */
-                deltaAbove: number;
-                /** @description Maximum price decrease percentage when demand is low. */
-                deltaBelow: number;
-                /** @description Whether dynamic pricing is enabled. */
-                enabled: boolean;
-            };
-            /** @description Google Calendar integration settings. */
-            googleCalendar?: {
-                /** @description Google Calendar id. */
-                id: string;
-                /** @description Whether two-way sync is enabled. */
-                twoWaySyncEnabled: boolean;
-            };
-            /**
-             * Format: uuid
-             * @description Unique identifier of the resource.
-             */
-            id: string;
-            /** @description Public URL of the resource image. */
-            imageUrl?: string;
-            /** @description Kisi access group reference. */
-            kisiGroupRef?: number | null;
-            /** @description Auto-detected language of the description. */
-            locale: string;
-            /**
-             * Format: uuid
-             * @description ID of the location.
-             */
-            locationRef: string;
-            /** @description Images attached to the resource. */
-            media: {
-                /** @description Storage key of the image. */
-                key: string;
-                /** @description Public URL of the image. */
-                url?: string;
-            }[];
-            /** @description Money pricing settings. */
-            money: {
-                /** @description Whether customers can pay with money. */
-                enabled: boolean;
-                /** @description Stepped money pricing tiers. */
-                tiers: {
-                    /** @description Fixed fee added for this tier. */
-                    flatAmount: number;
-                    /** @description Start of this price tier in booking minutes. */
-                    from: number;
-                    /** @description Variable price per unit within this tier. */
-                    unitAmount: number;
-                }[];
-            };
-            /**
-             * Format: uuid
-             * @description ID of the network.
-             */
-            networkRef: string;
-            /**
-             * Format: uuid
-             * @description Parent resource id when this is a child resource.
-             */
-            parentRef?: string;
-            /** @description Plan tiers configured on the resource. */
-            plans?: {
-                /** @description Whether plan-based access is enabled. */
-                enabled: boolean;
-                /** @description Plan tiers configured on the resource. */
-                tiers: {
-                    /** @description Addons included in the tier. */
-                    addons: {
-                        /**
-                         * Format: uuid
-                         * @description Addon id.
-                         */
-                        id: string;
-                    }[];
-                    /** @description Number of billing cycles in the tier. */
-                    commitmentCycles: number;
-                    /** @description Credits included in the tier. */
-                    credits: number;
-                    /** @description Day passes included in the tier. */
-                    dayPasses?: number;
-                    /** @description Description of the tier. */
-                    description?: string;
+        getResources: {
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description List of resources. */
+            resources: {
+                /** @description Active resource assignments. */
+                assignments: {
                     /**
                      * @deprecated
-                     * @description Synthetic discount percentages by product type.
+                     * @description Deprecated. Use customer instead. Company assigned to the resource.
                      */
-                    discounts?: {
-                        /** @description Discount percentage for credit packages. */
-                        creditPackages?: number;
-                        /** @description Discount percentage for desk bookings. */
-                        desks?: number;
-                        /** @description Discount percentage for equipment bookings. */
-                        equipment?: number;
-                        /** @description Discount percentage for events. */
-                        events?: number;
-                        /** @description Discount percentage for room bookings. */
-                        rooms?: number;
-                        /** @description Discount percentage for shop products. */
-                        shop?: number;
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Company id.
+                         */
+                        id: string;
+                        /** @description Company name. */
+                        title: string;
                     };
-                    /** @description Whether the tier grants access to the entire resource. */
-                    entire: boolean;
-                    /** @description Coupons granted to members on this tier. */
-                    grantedDiscounts: {
-                        /** @description Granted coupon details. */
-                        coupon: {
-                            /** @description Fixed discount amount. */
-                            amountOff?: number;
-                            /** @description Currency code for amountOff. */
-                            currencyCode?: string;
-                            /** @description Whether the coupon applies to credit purchases. */
-                            enabledForCredits?: boolean;
+                    /** @description Customer the resource is assigned to. */
+                    customer?: {
+                        /**
+                         * Format: uuid
+                         * @description Customer id.
+                         */
+                        id: string;
+                        /** @description Company name when the customer is a company. */
+                        title?: string;
+                        /**
+                         * @description Whether the customer is a user or company.
+                         * @enum {string}
+                         */
+                        type: "user" | "company";
+                        /** @description User details when the customer is a user. */
+                        user?: {
+                            /** @description User email. */
+                            email?: string | null;
                             /**
                              * Format: uuid
-                             * @description Unique identifier of the coupon.
+                             * @description User id.
                              */
                             id: string;
-                            /** @description Item-level redemption limits. */
-                            limitedItems?: {
-                                /** @description Whether item-level limits are enabled. */
-                                enabled: boolean;
-                                /** @description Items the coupon applies to when limits are enabled. */
-                                values: {
-                                    /**
-                                     * Format: uuid
-                                     * @description Unique identifier of the limited item.
-                                     */
-                                    id: string;
-                                    /** @description Display name of the limited item. */
-                                    title?: string;
-                                    /**
-                                     * @description Product type of the limited item.
-                                     * @enum {string}
-                                     */
-                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
-                                }[];
-                            };
-                            /** @description Redemption limits for the coupon. */
-                            limitedRedemption?: {
-                                /** @description Whether redemption limits are enabled. */
-                                enabled: boolean;
-                                /** @description Current redemption count. */
-                                usage: number;
-                                /** @description Maximum redemption count. */
-                                value: number;
-                            };
-                            /** @description Percentage discount. */
-                            percentOff?: number;
-                            /** @description Product types the coupon applies to. */
-                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                            /** @description User first name. */
+                            name?: string | null;
+                            /** @description User last name. */
+                            surname?: string | null;
                         };
-                    }[];
+                    };
+                    /** @description Whether the assignment grants access to the entire resource. */
+                    entire: boolean;
                     /**
                      * Format: uuid
-                     * @description Unique identifier of the tier.
+                     * @description Assignment id.
                      */
-                    id: string;
+                    id?: string;
                     /**
-                     * @description Billing period of the tier.
+                     * @deprecated
+                     * @description Deprecated. Use customer instead. Membership linked to the assignment.
+                     */
+                    membership?: {
+                        /**
+                         * Format: uuid
+                         * @description Membership id.
+                         */
+                        id: string;
+                    };
+                    /** @description Assigned quantity when the resource is partially assigned. */
+                    quantity?: number;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the resource the assignment belongs to.
+                     */
+                    resourceRef: string;
+                    /** @description Subscription backing this assignment. */
+                    subscription: {
+                        /** @description ISO timestamp when the assignment ends. */
+                        endDate?: string;
+                        /**
+                         * Format: uuid
+                         * @description Subscription id.
+                         */
+                        id: string;
+                        /** @description ISO timestamp when the assignment starts. */
+                        startDate: string;
+                    };
+                    /**
+                     * @deprecated
+                     * @description Deprecated. Use customer instead. User assigned to the resource.
+                     */
+                    user?: {
+                        /** @description User email. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User id.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
+                }[];
+                /** @description Auto-release settings for no-show bookings. */
+                autoRelease?: {
+                    /** @description Whether auto-release is enabled. */
+                    enabled: boolean;
+                    /**
+                     * @description Minutes after start or creation before the slot is released.
                      * @enum {string}
                      */
-                    period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
-                    /** @description Nested plan details on responses. */
-                    plan: {
+                    interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
+                };
+                /** @description Avigilon Alta access group reference. */
+                avigilonAltaGroupRef?: number | null;
+                /**
+                 * @description Who can create bookings on this resource.
+                 * @enum {string}
+                 */
+                bookingPermission: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
+                /** @description Booking step size in minutes. */
+                bookingStepMinutes?: number;
+                /** @description Brivo access group reference. */
+                brivoGroupRef?: number | null;
+                /**
+                 * @description Buffer time blocked before each booking.
+                 * @enum {string}
+                 */
+                bufferTime: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /** @description Maximum capacity per booking. */
+                capacity?: number | null;
+                /** @description Check-in settings. */
+                checkIn?: {
+                    /**
+                     * @description How early before start the guest must check in.
+                     * @enum {string}
+                     */
+                    interval: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
+                };
+                /** @description Child resources when this is a parent resource. Bookings on a child resource also block the parent. */
+                children: {
+                    /**
+                     * Format: uuid
+                     * @description Id of the child resource.
+                     */
+                    id: string;
+                    /** @description Title of the child resource. */
+                    title: string;
+                }[];
+                /** @description Confirmation email settings. */
+                confirmationEmail: {
+                    /** @description Send confirmation when an admin creates a booking. */
+                    bookingCreatedByAdmin: boolean;
+                    /** @description Send confirmation when a member creates a booking. */
+                    bookingCreatedByMember: boolean;
+                    /** @description Send confirmation when a network member creates a booking. */
+                    bookingCreatedByNetworkMember: boolean;
+                    /** @description Send confirmation when a public user creates a booking. */
+                    bookingCreatedByPublic: boolean;
+                    /** @description Email template id for confirmation emails. */
+                    template: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the resource was created.
+                 */
+                createDate: string;
+                /** @description Credit pricing settings. */
+                credits: {
+                    /** @description Whether customers can pay with location credits. */
+                    enabled: boolean;
+                    /** @description Stepped credit pricing tiers. */
+                    tiers: {
+                        /** @description Fixed fee added for this tier. */
+                        flatAmount: number;
+                        /** @description Start of this price tier in booking minutes. */
+                        from: number;
+                        /** @description Variable price per unit within this tier. */
+                        unitAmount: number;
+                    }[];
+                };
+                /** @description Whether day passes are enabled. */
+                dayPassesEnabled?: boolean;
+                /** @description Description of the resource. */
+                description: string;
+                /** @description Booking duration bounds. */
+                duration: {
+                    /** @description Maximum booking duration in minutes. */
+                    max: number;
+                    /** @description Minimum booking duration in minutes. */
+                    min: number;
+                    /** @description Duration limits for public bookers. */
+                    public: {
+                        /** @description Whether public bookers have separate duration limits. */
+                        enabled: boolean;
+                        /** @description Maximum booking duration in minutes for public bookers. */
+                        max: number;
+                        /** @description Minimum booking duration in minutes for public bookers. */
+                        min: number;
+                    };
+                };
+                /** @description Dynamic pricing settings. */
+                dynamicPricing: {
+                    /** @description Maximum price increase percentage when demand is high. */
+                    deltaAbove: number;
+                    /** @description Maximum price decrease percentage when demand is low. */
+                    deltaBelow: number;
+                    /** @description Whether dynamic pricing is enabled. */
+                    enabled: boolean;
+                };
+                /** @description Google Calendar integration settings. */
+                googleCalendar?: {
+                    /** @description Google Calendar id. */
+                    id: string;
+                    /** @description Whether two-way sync is enabled. */
+                    twoWaySyncEnabled: boolean;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the resource.
+                 */
+                id: string;
+                /** @description Public URL of the resource image. */
+                imageUrl?: string;
+                /** @description Kisi access group reference. */
+                kisiGroupRef?: number | null;
+                /** @description Auto-detected language of the description. */
+                locale: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location.
+                 */
+                locationRef: string;
+                /** @description Images attached to the resource. */
+                media: {
+                    /** @description Storage key of the image. */
+                    key: string;
+                    /** @description Public URL of the image. */
+                    url?: string;
+                }[];
+                /** @description Money pricing settings. */
+                money: {
+                    /** @description Whether customers can pay with money. */
+                    enabled: boolean;
+                    /** @description Stepped money pricing tiers. */
+                    tiers: {
+                        /** @description Fixed fee added for this tier. */
+                        flatAmount: number;
+                        /** @description Start of this price tier in booking minutes. */
+                        from: number;
+                        /** @description Variable price per unit within this tier. */
+                        unitAmount: number;
+                    }[];
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @description Parent resource id when this is a child resource.
+                 */
+                parentRef?: string;
+                /** @description Plan tiers configured on the resource. */
+                plans?: {
+                    /** @description Whether plan-based access is enabled. */
+                    enabled: boolean;
+                    /** @description Plan tiers configured on the resource. */
+                    tiers: {
+                        /** @description Addons included in the tier. */
+                        addons: {
+                            /**
+                             * Format: uuid
+                             * @description Addon id.
+                             */
+                            id: string;
+                        }[];
                         /** @description Number of billing cycles in the tier. */
                         commitmentCycles: number;
                         /** @description Credits included in the tier. */
                         credits: number;
                         /** @description Day passes included in the tier. */
-                        dayPasses: number;
+                        dayPasses?: number;
+                        /** @description Description of the tier. */
+                        description?: string;
                         /**
                          * @deprecated
                          * @description Synthetic discount percentages by product type.
@@ -8659,6 +8612,8 @@ export interface components {
                             /** @description Discount percentage for shop products. */
                             shop?: number;
                         };
+                        /** @description Whether the tier grants access to the entire resource. */
+                        entire: boolean;
                         /** @description Coupons granted to members on this tier. */
                         grantedDiscounts: {
                             /** @description Granted coupon details. */
@@ -8719,139 +8674,814 @@ export interface components {
                          * @enum {string}
                          */
                         period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                        /** @description Nested plan details on responses. */
+                        plan: {
+                            /** @description Number of billing cycles in the tier. */
+                            commitmentCycles: number;
+                            /** @description Credits included in the tier. */
+                            credits: number;
+                            /** @description Day passes included in the tier. */
+                            dayPasses: number;
+                            /**
+                             * @deprecated
+                             * @description Synthetic discount percentages by product type.
+                             */
+                            discounts?: {
+                                /** @description Discount percentage for credit packages. */
+                                creditPackages?: number;
+                                /** @description Discount percentage for desk bookings. */
+                                desks?: number;
+                                /** @description Discount percentage for equipment bookings. */
+                                equipment?: number;
+                                /** @description Discount percentage for events. */
+                                events?: number;
+                                /** @description Discount percentage for room bookings. */
+                                rooms?: number;
+                                /** @description Discount percentage for shop products. */
+                                shop?: number;
+                            };
+                            /** @description Coupons granted to members on this tier. */
+                            grantedDiscounts: {
+                                /** @description Granted coupon details. */
+                                coupon: {
+                                    /** @description Fixed discount amount. */
+                                    amountOff?: number;
+                                    /** @description Currency code for amountOff. */
+                                    currencyCode?: string;
+                                    /** @description Whether the coupon applies to credit purchases. */
+                                    enabledForCredits?: boolean;
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the coupon.
+                                     */
+                                    id: string;
+                                    /** @description Item-level redemption limits. */
+                                    limitedItems?: {
+                                        /** @description Whether item-level limits are enabled. */
+                                        enabled: boolean;
+                                        /** @description Items the coupon applies to when limits are enabled. */
+                                        values: {
+                                            /**
+                                             * Format: uuid
+                                             * @description Unique identifier of the limited item.
+                                             */
+                                            id: string;
+                                            /** @description Display name of the limited item. */
+                                            title?: string;
+                                            /**
+                                             * @description Product type of the limited item.
+                                             * @enum {string}
+                                             */
+                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                        }[];
+                                    };
+                                    /** @description Redemption limits for the coupon. */
+                                    limitedRedemption?: {
+                                        /** @description Whether redemption limits are enabled. */
+                                        enabled: boolean;
+                                        /** @description Current redemption count. */
+                                        usage: number;
+                                        /** @description Maximum redemption count. */
+                                        value: number;
+                                    };
+                                    /** @description Percentage discount. */
+                                    percentOff?: number;
+                                    /** @description Product types the coupon applies to. */
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                };
+                            }[];
+                            /**
+                             * Format: uuid
+                             * @description Unique identifier of the tier.
+                             */
+                            id: string;
+                            /**
+                             * @description Billing period of the tier.
+                             * @enum {string}
+                             */
+                            period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                            /** @description Price of the tier. */
+                            price: number;
+                            /** @description Title of the tier. */
+                            title: string;
+                        };
                         /** @description Price of the tier. */
                         price: number;
+                        /** @description Self sign-up settings of the tier. */
+                        selfSignup: {
+                            /** @description Whether members may self-enroll into the tier. */
+                            enabled: boolean;
+                            /** @description Self sign-up flow type for the tier. */
+                            type: string;
+                        };
+                        /**
+                         * @deprecated
+                         * @description Deprecated. Use selfSignup.type instead. Self sign-up flow type for the tier.
+                         */
+                        selfSignupType?: string;
+                        /** @description One-time setup fee for the tier. */
+                        setupFee: number;
                         /** @description Title of the tier. */
                         title: string;
+                    }[];
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use bufferTime instead.
+                 * @enum {string}
+                 */
+                preparationMinutes: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /**
+                 * @description Refund threshold for cancellations.
+                 * @enum {string}
+                 */
+                refundThreshold: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                /**
+                 * Format: uuid
+                 * @description Salto KS access group reference.
+                 */
+                saltoksAccessGroupRef?: string | null;
+                /** @description Availability schedule. */
+                schedule?: {
+                    /** @description Default availability schedule. */
+                    default: {
+                        /** @description Dates in MM-DD format when the resource is closed. */
+                        closedDays: string[];
+                        /** @description Weekly availability windows for members. */
+                        items: {
+                            /** @description Weekdays this time window applies to. */
+                            days: {
+                                /** @description Whether Friday is included in this schedule window. */
+                                friday: boolean;
+                                /** @description Whether Monday is included in this schedule window. */
+                                monday: boolean;
+                                /** @description Whether Saturday is included in this schedule window. */
+                                saturday: boolean;
+                                /** @description Whether Sunday is included in this schedule window. */
+                                sunday: boolean;
+                                /** @description Whether Thursday is included in this schedule window. */
+                                thursday: boolean;
+                                /** @description Whether Tuesday is included in this schedule window. */
+                                tuesday: boolean;
+                                /** @description Whether Wednesday is included in this schedule window. */
+                                wednesday: boolean;
+                            };
+                            /** @description Open hours for the selected weekdays. */
+                            hours: {
+                                /** @description Opening time in 24-hour "HH:mm" format. */
+                                from: string;
+                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                to: string;
+                            };
+                        }[];
                     };
-                    /** @description Price of the tier. */
-                    price: number;
-                    /** @description Self sign-up settings of the tier. */
-                    selfSignup: {
-                        /** @description Whether members may self-enroll into the tier. */
+                    /** @description Whether scheduling is enabled. */
+                    enabled: boolean;
+                    /** @description Public availability schedule. */
+                    public: {
+                        /** @description Dates in MM-DD format when the resource is closed for public bookers. */
+                        closedDays: string[];
+                        /** @description Whether the public schedule is enabled. */
                         enabled: boolean;
-                        /** @description Self sign-up flow type for the tier. */
-                        type: string;
+                        /** @description Weekly availability windows for public bookers. */
+                        items: {
+                            /** @description Weekdays this time window applies to. */
+                            days: {
+                                /** @description Whether Friday is included in this schedule window. */
+                                friday: boolean;
+                                /** @description Whether Monday is included in this schedule window. */
+                                monday: boolean;
+                                /** @description Whether Saturday is included in this schedule window. */
+                                saturday: boolean;
+                                /** @description Whether Sunday is included in this schedule window. */
+                                sunday: boolean;
+                                /** @description Whether Thursday is included in this schedule window. */
+                                thursday: boolean;
+                                /** @description Whether Tuesday is included in this schedule window. */
+                                tuesday: boolean;
+                                /** @description Whether Wednesday is included in this schedule window. */
+                                wednesday: boolean;
+                            };
+                            /** @description Open hours for the selected weekdays. */
+                            hours: {
+                                /** @description Opening time in 24-hour "HH:mm" format. */
+                                from: string;
+                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                to: string;
+                            };
+                        }[];
+                    };
+                };
+                /**
+                 * Format: uuid
+                 * @description Tapkey access group reference.
+                 */
+                tapkeyGroupRef?: string | null;
+                /** @description Display name of the resource. */
+                title: string;
+                /**
+                 * @description Type of the resource.
+                 * @enum {string}
+                 */
+                type: "dedicatedDesk" | "equipment" | "hotDesk" | "office" | "parkingLot" | "room" | "station" | "conferenceRoom" | "eventSpace" | "meetingRoom" | "phoneBooth" | "studio";
+                /**
+                 * @description Visibility of the resource.
+                 * @enum {string}
+                 */
+                visibility: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
+            }[];
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getResource: {
+            /** @description The resource. */
+            resource: {
+                /** @description Active resource assignments. */
+                assignments: {
+                    /**
+                     * @deprecated
+                     * @description Deprecated. Use customer instead. Company assigned to the resource.
+                     */
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Company id.
+                         */
+                        id: string;
+                        /** @description Company name. */
+                        title: string;
+                    };
+                    /** @description Customer the resource is assigned to. */
+                    customer?: {
+                        /**
+                         * Format: uuid
+                         * @description Customer id.
+                         */
+                        id: string;
+                        /** @description Company name when the customer is a company. */
+                        title?: string;
+                        /**
+                         * @description Whether the customer is a user or company.
+                         * @enum {string}
+                         */
+                        type: "user" | "company";
+                        /** @description User details when the customer is a user. */
+                        user?: {
+                            /** @description User email. */
+                            email?: string | null;
+                            /**
+                             * Format: uuid
+                             * @description User id.
+                             */
+                            id: string;
+                            /** @description User first name. */
+                            name?: string | null;
+                            /** @description User last name. */
+                            surname?: string | null;
+                        };
+                    };
+                    /** @description Whether the assignment grants access to the entire resource. */
+                    entire: boolean;
+                    /**
+                     * Format: uuid
+                     * @description Assignment id.
+                     */
+                    id?: string;
+                    /**
+                     * @deprecated
+                     * @description Deprecated. Use customer instead. Membership linked to the assignment.
+                     */
+                    membership?: {
+                        /**
+                         * Format: uuid
+                         * @description Membership id.
+                         */
+                        id: string;
+                    };
+                    /** @description Assigned quantity when the resource is partially assigned. */
+                    quantity?: number;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the resource the assignment belongs to.
+                     */
+                    resourceRef: string;
+                    /** @description Subscription backing this assignment. */
+                    subscription: {
+                        /** @description ISO timestamp when the assignment ends. */
+                        endDate?: string;
+                        /**
+                         * Format: uuid
+                         * @description Subscription id.
+                         */
+                        id: string;
+                        /** @description ISO timestamp when the assignment starts. */
+                        startDate: string;
                     };
                     /**
                      * @deprecated
-                     * @description Deprecated. Use selfSignup.type instead. Self sign-up flow type for the tier.
+                     * @description Deprecated. Use customer instead. User assigned to the resource.
                      */
-                    selfSignupType?: string;
-                    /** @description One-time setup fee for the tier. */
-                    setupFee: number;
-                    /** @description Title of the tier. */
+                    user?: {
+                        /** @description User email. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User id.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
+                }[];
+                /** @description Auto-release settings for no-show bookings. */
+                autoRelease?: {
+                    /** @description Whether auto-release is enabled. */
+                    enabled: boolean;
+                    /**
+                     * @description Minutes after start or creation before the slot is released.
+                     * @enum {string}
+                     */
+                    interval: "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
+                };
+                /** @description Avigilon Alta access group reference. */
+                avigilonAltaGroupRef?: number | null;
+                /**
+                 * @description Who can create bookings on this resource.
+                 * @enum {string}
+                 */
+                bookingPermission: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
+                /** @description Booking step size in minutes. */
+                bookingStepMinutes?: number;
+                /** @description Brivo access group reference. */
+                brivoGroupRef?: number | null;
+                /**
+                 * @description Buffer time blocked before each booking.
+                 * @enum {string}
+                 */
+                bufferTime: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /** @description Maximum capacity per booking. */
+                capacity?: number | null;
+                /** @description Check-in settings. */
+                checkIn?: {
+                    /**
+                     * @description How early before start the guest must check in.
+                     * @enum {string}
+                     */
+                    interval: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes";
+                };
+                /** @description Child resources when this is a parent resource. Bookings on a child resource also block the parent. */
+                children: {
+                    /**
+                     * Format: uuid
+                     * @description Id of the child resource.
+                     */
+                    id: string;
+                    /** @description Title of the child resource. */
                     title: string;
                 }[];
-            };
-            /**
-             * @description Preparation time before bookings.
-             * @enum {string}
-             */
-            preparationMinutes: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
-            /**
-             * @description Refund threshold for cancellations.
-             * @enum {string}
-             */
-            refundThreshold: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
-            /**
-             * Format: uuid
-             * @description Salto KS access group reference.
-             */
-            saltoksAccessGroupRef?: string | null;
-            /** @description Availability schedule. */
-            schedule?: {
-                /** @description Default availability schedule. */
-                default: {
-                    /** @description Dates in MM-DD format when the resource is closed. */
-                    closedDays: string[];
-                    /** @description Weekly availability windows for members. */
-                    items: {
-                        /** @description Weekdays this time window applies to. */
-                        days: {
-                            /** @description Whether Friday is included in this schedule window. */
-                            friday: boolean;
-                            /** @description Whether Monday is included in this schedule window. */
-                            monday: boolean;
-                            /** @description Whether Saturday is included in this schedule window. */
-                            saturday: boolean;
-                            /** @description Whether Sunday is included in this schedule window. */
-                            sunday: boolean;
-                            /** @description Whether Thursday is included in this schedule window. */
-                            thursday: boolean;
-                            /** @description Whether Tuesday is included in this schedule window. */
-                            tuesday: boolean;
-                            /** @description Whether Wednesday is included in this schedule window. */
-                            wednesday: boolean;
-                        };
-                        /** @description Open hours for the selected weekdays. */
-                        hours: {
-                            /** @description Opening time in 24-hour "HH:mm" format. */
-                            from: string;
-                            /** @description Closing time in 24-hour "HH:mm" format. */
-                            to: string;
-                        };
-                    }[];
+                /** @description Confirmation email settings. */
+                confirmationEmail: {
+                    /** @description Send confirmation when an admin creates a booking. */
+                    bookingCreatedByAdmin: boolean;
+                    /** @description Send confirmation when a member creates a booking. */
+                    bookingCreatedByMember: boolean;
+                    /** @description Send confirmation when a network member creates a booking. */
+                    bookingCreatedByNetworkMember: boolean;
+                    /** @description Send confirmation when a public user creates a booking. */
+                    bookingCreatedByPublic: boolean;
+                    /** @description Email template id for confirmation emails. */
+                    template: string;
                 };
-                /** @description Whether scheduling is enabled. */
-                enabled: boolean;
-                /** @description Public availability schedule. */
-                public: {
-                    /** @description Dates in MM-DD format when the resource is closed for public bookers. */
-                    closedDays: string[];
-                    /** @description Whether the public schedule is enabled. */
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the resource was created.
+                 */
+                createDate: string;
+                /** @description Credit pricing settings. */
+                credits: {
+                    /** @description Whether customers can pay with location credits. */
                     enabled: boolean;
-                    /** @description Weekly availability windows for public bookers. */
-                    items: {
-                        /** @description Weekdays this time window applies to. */
-                        days: {
-                            /** @description Whether Friday is included in this schedule window. */
-                            friday: boolean;
-                            /** @description Whether Monday is included in this schedule window. */
-                            monday: boolean;
-                            /** @description Whether Saturday is included in this schedule window. */
-                            saturday: boolean;
-                            /** @description Whether Sunday is included in this schedule window. */
-                            sunday: boolean;
-                            /** @description Whether Thursday is included in this schedule window. */
-                            thursday: boolean;
-                            /** @description Whether Tuesday is included in this schedule window. */
-                            tuesday: boolean;
-                            /** @description Whether Wednesday is included in this schedule window. */
-                            wednesday: boolean;
-                        };
-                        /** @description Open hours for the selected weekdays. */
-                        hours: {
-                            /** @description Opening time in 24-hour "HH:mm" format. */
-                            from: string;
-                            /** @description Closing time in 24-hour "HH:mm" format. */
-                            to: string;
-                        };
+                    /** @description Stepped credit pricing tiers. */
+                    tiers: {
+                        /** @description Fixed fee added for this tier. */
+                        flatAmount: number;
+                        /** @description Start of this price tier in booking minutes. */
+                        from: number;
+                        /** @description Variable price per unit within this tier. */
+                        unitAmount: number;
                     }[];
                 };
+                /** @description Whether day passes are enabled. */
+                dayPassesEnabled?: boolean;
+                /** @description Description of the resource. */
+                description: string;
+                /** @description Booking duration bounds. */
+                duration: {
+                    /** @description Maximum booking duration in minutes. */
+                    max: number;
+                    /** @description Minimum booking duration in minutes. */
+                    min: number;
+                    /** @description Duration limits for public bookers. */
+                    public: {
+                        /** @description Whether public bookers have separate duration limits. */
+                        enabled: boolean;
+                        /** @description Maximum booking duration in minutes for public bookers. */
+                        max: number;
+                        /** @description Minimum booking duration in minutes for public bookers. */
+                        min: number;
+                    };
+                };
+                /** @description Dynamic pricing settings. */
+                dynamicPricing: {
+                    /** @description Maximum price increase percentage when demand is high. */
+                    deltaAbove: number;
+                    /** @description Maximum price decrease percentage when demand is low. */
+                    deltaBelow: number;
+                    /** @description Whether dynamic pricing is enabled. */
+                    enabled: boolean;
+                };
+                /** @description Google Calendar integration settings. */
+                googleCalendar?: {
+                    /** @description Google Calendar id. */
+                    id: string;
+                    /** @description Whether two-way sync is enabled. */
+                    twoWaySyncEnabled: boolean;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the resource.
+                 */
+                id: string;
+                /** @description Public URL of the resource image. */
+                imageUrl?: string;
+                /** @description Kisi access group reference. */
+                kisiGroupRef?: number | null;
+                /** @description Auto-detected language of the description. */
+                locale: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location.
+                 */
+                locationRef: string;
+                /** @description Images attached to the resource. */
+                media: {
+                    /** @description Storage key of the image. */
+                    key: string;
+                    /** @description Public URL of the image. */
+                    url?: string;
+                }[];
+                /** @description Money pricing settings. */
+                money: {
+                    /** @description Whether customers can pay with money. */
+                    enabled: boolean;
+                    /** @description Stepped money pricing tiers. */
+                    tiers: {
+                        /** @description Fixed fee added for this tier. */
+                        flatAmount: number;
+                        /** @description Start of this price tier in booking minutes. */
+                        from: number;
+                        /** @description Variable price per unit within this tier. */
+                        unitAmount: number;
+                    }[];
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the network.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @description Parent resource id when this is a child resource.
+                 */
+                parentRef?: string;
+                /** @description Plan tiers configured on the resource. */
+                plans?: {
+                    /** @description Whether plan-based access is enabled. */
+                    enabled: boolean;
+                    /** @description Plan tiers configured on the resource. */
+                    tiers: {
+                        /** @description Addons included in the tier. */
+                        addons: {
+                            /**
+                             * Format: uuid
+                             * @description Addon id.
+                             */
+                            id: string;
+                        }[];
+                        /** @description Number of billing cycles in the tier. */
+                        commitmentCycles: number;
+                        /** @description Credits included in the tier. */
+                        credits: number;
+                        /** @description Day passes included in the tier. */
+                        dayPasses?: number;
+                        /** @description Description of the tier. */
+                        description?: string;
+                        /**
+                         * @deprecated
+                         * @description Synthetic discount percentages by product type.
+                         */
+                        discounts?: {
+                            /** @description Discount percentage for credit packages. */
+                            creditPackages?: number;
+                            /** @description Discount percentage for desk bookings. */
+                            desks?: number;
+                            /** @description Discount percentage for equipment bookings. */
+                            equipment?: number;
+                            /** @description Discount percentage for events. */
+                            events?: number;
+                            /** @description Discount percentage for room bookings. */
+                            rooms?: number;
+                            /** @description Discount percentage for shop products. */
+                            shop?: number;
+                        };
+                        /** @description Whether the tier grants access to the entire resource. */
+                        entire: boolean;
+                        /** @description Coupons granted to members on this tier. */
+                        grantedDiscounts: {
+                            /** @description Granted coupon details. */
+                            coupon: {
+                                /** @description Fixed discount amount. */
+                                amountOff?: number;
+                                /** @description Currency code for amountOff. */
+                                currencyCode?: string;
+                                /** @description Whether the coupon applies to credit purchases. */
+                                enabledForCredits?: boolean;
+                                /**
+                                 * Format: uuid
+                                 * @description Unique identifier of the coupon.
+                                 */
+                                id: string;
+                                /** @description Item-level redemption limits. */
+                                limitedItems?: {
+                                    /** @description Whether item-level limits are enabled. */
+                                    enabled: boolean;
+                                    /** @description Items the coupon applies to when limits are enabled. */
+                                    values: {
+                                        /**
+                                         * Format: uuid
+                                         * @description Unique identifier of the limited item.
+                                         */
+                                        id: string;
+                                        /** @description Display name of the limited item. */
+                                        title?: string;
+                                        /**
+                                         * @description Product type of the limited item.
+                                         * @enum {string}
+                                         */
+                                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                    }[];
+                                };
+                                /** @description Redemption limits for the coupon. */
+                                limitedRedemption?: {
+                                    /** @description Whether redemption limits are enabled. */
+                                    enabled: boolean;
+                                    /** @description Current redemption count. */
+                                    usage: number;
+                                    /** @description Maximum redemption count. */
+                                    value: number;
+                                };
+                                /** @description Percentage discount. */
+                                percentOff?: number;
+                                /** @description Product types the coupon applies to. */
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                            };
+                        }[];
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the tier.
+                         */
+                        id: string;
+                        /**
+                         * @description Billing period of the tier.
+                         * @enum {string}
+                         */
+                        period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                        /** @description Nested plan details on responses. */
+                        plan: {
+                            /** @description Number of billing cycles in the tier. */
+                            commitmentCycles: number;
+                            /** @description Credits included in the tier. */
+                            credits: number;
+                            /** @description Day passes included in the tier. */
+                            dayPasses: number;
+                            /**
+                             * @deprecated
+                             * @description Synthetic discount percentages by product type.
+                             */
+                            discounts?: {
+                                /** @description Discount percentage for credit packages. */
+                                creditPackages?: number;
+                                /** @description Discount percentage for desk bookings. */
+                                desks?: number;
+                                /** @description Discount percentage for equipment bookings. */
+                                equipment?: number;
+                                /** @description Discount percentage for events. */
+                                events?: number;
+                                /** @description Discount percentage for room bookings. */
+                                rooms?: number;
+                                /** @description Discount percentage for shop products. */
+                                shop?: number;
+                            };
+                            /** @description Coupons granted to members on this tier. */
+                            grantedDiscounts: {
+                                /** @description Granted coupon details. */
+                                coupon: {
+                                    /** @description Fixed discount amount. */
+                                    amountOff?: number;
+                                    /** @description Currency code for amountOff. */
+                                    currencyCode?: string;
+                                    /** @description Whether the coupon applies to credit purchases. */
+                                    enabledForCredits?: boolean;
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the coupon.
+                                     */
+                                    id: string;
+                                    /** @description Item-level redemption limits. */
+                                    limitedItems?: {
+                                        /** @description Whether item-level limits are enabled. */
+                                        enabled: boolean;
+                                        /** @description Items the coupon applies to when limits are enabled. */
+                                        values: {
+                                            /**
+                                             * Format: uuid
+                                             * @description Unique identifier of the limited item.
+                                             */
+                                            id: string;
+                                            /** @description Display name of the limited item. */
+                                            title?: string;
+                                            /**
+                                             * @description Product type of the limited item.
+                                             * @enum {string}
+                                             */
+                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                        }[];
+                                    };
+                                    /** @description Redemption limits for the coupon. */
+                                    limitedRedemption?: {
+                                        /** @description Whether redemption limits are enabled. */
+                                        enabled: boolean;
+                                        /** @description Current redemption count. */
+                                        usage: number;
+                                        /** @description Maximum redemption count. */
+                                        value: number;
+                                    };
+                                    /** @description Percentage discount. */
+                                    percentOff?: number;
+                                    /** @description Product types the coupon applies to. */
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                };
+                            }[];
+                            /**
+                             * Format: uuid
+                             * @description Unique identifier of the tier.
+                             */
+                            id: string;
+                            /**
+                             * @description Billing period of the tier.
+                             * @enum {string}
+                             */
+                            period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
+                            /** @description Price of the tier. */
+                            price: number;
+                            /** @description Title of the tier. */
+                            title: string;
+                        };
+                        /** @description Price of the tier. */
+                        price: number;
+                        /** @description Self sign-up settings of the tier. */
+                        selfSignup: {
+                            /** @description Whether members may self-enroll into the tier. */
+                            enabled: boolean;
+                            /** @description Self sign-up flow type for the tier. */
+                            type: string;
+                        };
+                        /**
+                         * @deprecated
+                         * @description Deprecated. Use selfSignup.type instead. Self sign-up flow type for the tier.
+                         */
+                        selfSignupType?: string;
+                        /** @description One-time setup fee for the tier. */
+                        setupFee: number;
+                        /** @description Title of the tier. */
+                        title: string;
+                    }[];
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use bufferTime instead.
+                 * @enum {string}
+                 */
+                preparationMinutes: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /**
+                 * @description Refund threshold for cancellations.
+                 * @enum {string}
+                 */
+                refundThreshold: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                /**
+                 * Format: uuid
+                 * @description Salto KS access group reference.
+                 */
+                saltoksAccessGroupRef?: string | null;
+                /** @description Availability schedule. */
+                schedule?: {
+                    /** @description Default availability schedule. */
+                    default: {
+                        /** @description Dates in MM-DD format when the resource is closed. */
+                        closedDays: string[];
+                        /** @description Weekly availability windows for members. */
+                        items: {
+                            /** @description Weekdays this time window applies to. */
+                            days: {
+                                /** @description Whether Friday is included in this schedule window. */
+                                friday: boolean;
+                                /** @description Whether Monday is included in this schedule window. */
+                                monday: boolean;
+                                /** @description Whether Saturday is included in this schedule window. */
+                                saturday: boolean;
+                                /** @description Whether Sunday is included in this schedule window. */
+                                sunday: boolean;
+                                /** @description Whether Thursday is included in this schedule window. */
+                                thursday: boolean;
+                                /** @description Whether Tuesday is included in this schedule window. */
+                                tuesday: boolean;
+                                /** @description Whether Wednesday is included in this schedule window. */
+                                wednesday: boolean;
+                            };
+                            /** @description Open hours for the selected weekdays. */
+                            hours: {
+                                /** @description Opening time in 24-hour "HH:mm" format. */
+                                from: string;
+                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                to: string;
+                            };
+                        }[];
+                    };
+                    /** @description Whether scheduling is enabled. */
+                    enabled: boolean;
+                    /** @description Public availability schedule. */
+                    public: {
+                        /** @description Dates in MM-DD format when the resource is closed for public bookers. */
+                        closedDays: string[];
+                        /** @description Whether the public schedule is enabled. */
+                        enabled: boolean;
+                        /** @description Weekly availability windows for public bookers. */
+                        items: {
+                            /** @description Weekdays this time window applies to. */
+                            days: {
+                                /** @description Whether Friday is included in this schedule window. */
+                                friday: boolean;
+                                /** @description Whether Monday is included in this schedule window. */
+                                monday: boolean;
+                                /** @description Whether Saturday is included in this schedule window. */
+                                saturday: boolean;
+                                /** @description Whether Sunday is included in this schedule window. */
+                                sunday: boolean;
+                                /** @description Whether Thursday is included in this schedule window. */
+                                thursday: boolean;
+                                /** @description Whether Tuesday is included in this schedule window. */
+                                tuesday: boolean;
+                                /** @description Whether Wednesday is included in this schedule window. */
+                                wednesday: boolean;
+                            };
+                            /** @description Open hours for the selected weekdays. */
+                            hours: {
+                                /** @description Opening time in 24-hour "HH:mm" format. */
+                                from: string;
+                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                to: string;
+                            };
+                        }[];
+                    };
+                };
+                /**
+                 * Format: uuid
+                 * @description Tapkey access group reference.
+                 */
+                tapkeyGroupRef?: string | null;
+                /** @description Display name of the resource. */
+                title: string;
+                /**
+                 * @description Type of the resource.
+                 * @enum {string}
+                 */
+                type: "dedicatedDesk" | "equipment" | "hotDesk" | "office" | "parkingLot" | "room" | "station" | "conferenceRoom" | "eventSpace" | "meetingRoom" | "phoneBooth" | "studio";
+                /**
+                 * @description Visibility of the resource.
+                 * @enum {string}
+                 */
+                visibility: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
             };
-            /**
-             * Format: uuid
-             * @description Tapkey access group reference.
-             */
-            tapkeyGroupRef?: string | null;
-            /** @description Display name of the resource. */
-            title: string;
-            /**
-             * @description Type of the resource.
-             * @enum {string}
-             */
-            type: "dedicatedDesk" | "equipment" | "hotDesk" | "office" | "parkingLot" | "room" | "station" | "conferenceRoom" | "eventSpace" | "meetingRoom" | "phoneBooth" | "studio";
-            /**
-             * @description Visibility of the resource.
-             * @enum {string}
-             */
-            visibility: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
         };
         getAssignments: {
             /** @description List of resource assignments in the location. */
             assignments: {
-                /** @description Company assigned to the resource. */
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Company assigned to the resource.
+                 */
                 company?: {
                     /**
                      * Format: uuid
@@ -8861,6 +9491,35 @@ export interface components {
                     /** @description Company name. */
                     title: string;
                 };
+                /** @description Customer the resource is assigned to. */
+                customer?: {
+                    /**
+                     * Format: uuid
+                     * @description Customer id.
+                     */
+                    id: string;
+                    /** @description Company name when the customer is a company. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a user or company.
+                     * @enum {string}
+                     */
+                    type: "user" | "company";
+                    /** @description User details when the customer is a user. */
+                    user?: {
+                        /** @description User email. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User id.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
+                };
                 /** @description Whether the assignment grants access to the entire resource. */
                 entire: boolean;
                 /**
@@ -8868,7 +9527,10 @@ export interface components {
                  * @description Assignment id.
                  */
                 id?: string;
-                /** @description Membership linked to the assignment. */
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Membership linked to the assignment.
+                 */
                 membership?: {
                     /**
                      * Format: uuid
@@ -8895,7 +9557,10 @@ export interface components {
                     /** @description ISO timestamp when the assignment starts. */
                     startDate: string;
                 };
-                /** @description User assigned to the resource. */
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. User assigned to the resource.
+                 */
                 user?: {
                     /** @description User email. */
                     email?: string | null;
@@ -8911,52 +9576,389 @@ export interface components {
                 };
             }[];
         };
-        payment: {
-            /** @description The amount of the payment */
-            amount?: number;
-            /** @description The currency code of the payment */
-            currencyCode?: string;
-            /** @description The reference ID of the invoice item */
-            invoiceItemRef?: string;
-            /** @enum {string} */
-            status?: "succeeded" | "pending" | "processing" | "canceled" | "failed";
-            tax?: {
-                inclusive?: boolean;
-                rate?: number;
-            };
-            /** @description The reference ID of the transaction */
-            transactionRef?: string;
-            /** @enum {string} */
-            type?: "credits" | "dayPasses" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay";
-        };
-        booking: {
-            attendees?: {
-                /** Format: uuid */
-                membershipRef?: string;
-                user?: components["schemas"]["user"];
+        getBookings: {
+            /** @description List of bookings. */
+            bookings: {
+                /** @description Attendees of the booking. Empty when the caller has no access to booking details. */
+                attendees: {
+                    /**
+                     * Format: uuid
+                     * @description Membership id of the attendee.
+                     */
+                    membershipRef?: string;
+                    /** @description User profile of the attendee. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Company the user belongs to, if any. */
+                        company?: {
+                            /** @description Company display name. */
+                            title: string;
+                        } | null;
+                        /**
+                         * Format: email
+                         * @description Email address of the user.
+                         */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                }[];
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was created.
+                 */
+                createDate: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was cancelled.
+                 */
+                deleteDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking ends.
+                 */
+                endDate: string;
+                /** @description Whether the booking reserves the entire resource rather than individual seats. */
+                entire?: boolean;
+                /** @description Unique identifier of the booking. For recurring occurrences, formatted as `{bookingId}_{isoDate}`. */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
+                 */
+                membershipRefOwner?: string;
+                /** @description Internal note. Visible to admins only. */
+                memo?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use `payments` instead.
+                 */
+                payment?: {
+                    /** @description Payment amount in the location currency. */
+                    amount?: number;
+                    /** @description ISO 4217 currency code. */
+                    currencyCode?: string;
+                    /** @description ID of the associated invoice item. */
+                    invoiceItemRef?: string;
+                    /**
+                     * @description Payment status.
+                     * @enum {string}
+                     */
+                    status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
+                    /** @description Surcharge applied to the payment, if any. */
+                    surcharge?: {
+                        money: {
+                            /** @description Surcharge amount. */
+                            amount?: number;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Surcharge percentage applied. */
+                            percentage?: number;
+                            /** @description Surcharge rate. */
+                            rate?: number;
+                        };
+                        /**
+                         * @description Surcharge type.
+                         * @enum {string}
+                         */
+                        type: "money";
+                    };
+                    /** @description ID of the associated transaction. */
+                    transactionRef?: string;
+                    /** @description Payment method type. */
+                    type?: string;
+                };
+                /** @description Payment details. Omitted when caller has no access. */
+                payments?: {
+                    /** @description Payment amount in the location currency. */
+                    amount?: number;
+                    /** @description ISO 4217 currency code. */
+                    currencyCode?: string;
+                    /** @description ID of the associated invoice item. */
+                    invoiceItemRef?: string;
+                    /**
+                     * @description Payment status.
+                     * @enum {string}
+                     */
+                    status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
+                    /** @description Surcharge applied to the payment, if any. */
+                    surcharge?: {
+                        money: {
+                            /** @description Surcharge amount. */
+                            amount?: number;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Surcharge percentage applied. */
+                            percentage?: number;
+                            /** @description Surcharge rate. */
+                            rate?: number;
+                        };
+                        /**
+                         * @description Surcharge type.
+                         * @enum {string}
+                         */
+                        type: "money";
+                    };
+                    /** @description ID of the associated transaction. */
+                    transactionRef?: string;
+                    /** @description Payment method type. */
+                    type?: string;
+                }[];
+                /**
+                 * Format: uuid
+                 * @description ID of the booked resource.
+                 */
+                resourceRef: string;
+                /** @description Number of seats reserved. */
+                seats?: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking starts.
+                 */
+                startDate: string;
+                /** @description Custom booking title. Omitted when the owner has restricted title visibility. */
+                title?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was last updated.
+                 */
+                updateDate?: string;
+                /** @description Profile of the booking owner. Omitted when the owner has restricted visibility. */
+                userOwner?: {
+                    /** @description Short bio of the user. */
+                    about?: string | null;
+                    /** @description Company the user belongs to, if any. */
+                    company?: {
+                        /** @description Company display name. */
+                        title: string;
+                    } | null;
+                    /**
+                     * Format: email
+                     * @description Email address of the user.
+                     */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description First name of the user. */
+                    name?: string | null;
+                    /** @description Phone number of the user. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL of the user. */
+                    photoUrl?: string | null;
+                    /** @description Last name of the user. */
+                    surname?: string | null;
+                };
             }[];
-            createDate?: components["schemas"]["dateSchema"];
-            deleteDate?: components["schemas"]["dateSchema"];
-            endDate?: components["schemas"]["dateSchema"];
-            /** Format: uuid */
-            id?: string;
-            memo?: string;
-            /** Format: uuid */
-            membershipRefOwner?: string;
-            /**
-             * @deprecated
-             * @description Deprecated. Use `payments` instead.
-             */
-            payment?: components["schemas"]["payment"];
-            /** @description Booking payments. Multiple entries when the booking has several ledger transactions. */
-            payments?: components["schemas"]["payment"][];
-            /** Format: uuid */
-            resourceRef?: string;
-            seats?: number;
-            startDate?: components["schemas"]["dateSchema"];
-            title?: string;
-            updateDate?: components["schemas"]["dateSchema"];
-            userOwner?: components["schemas"]["user"];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getBooking: {
+            /** @description The booking. */
+            booking: {
+                /** @description Attendees of the booking. Empty when the caller has no access to booking details. */
+                attendees: {
+                    /**
+                     * Format: uuid
+                     * @description Membership id of the attendee.
+                     */
+                    membershipRef?: string;
+                    /** @description User profile of the attendee. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Company the user belongs to, if any. */
+                        company?: {
+                            /** @description Company display name. */
+                            title: string;
+                        } | null;
+                        /**
+                         * Format: email
+                         * @description Email address of the user.
+                         */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                }[];
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was created.
+                 */
+                createDate: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was cancelled.
+                 */
+                deleteDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking ends.
+                 */
+                endDate: string;
+                /** @description Whether the booking reserves the entire resource rather than individual seats. */
+                entire?: boolean;
+                /** @description Unique identifier of the booking. For recurring occurrences, formatted as `{bookingId}_{isoDate}`. */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @deprecated
+                 * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
+                 */
+                membershipRefOwner?: string;
+                /** @description Internal note. Visible to admins only. */
+                memo?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use `payments` instead.
+                 */
+                payment?: {
+                    /** @description Payment amount in the location currency. */
+                    amount?: number;
+                    /** @description ISO 4217 currency code. */
+                    currencyCode?: string;
+                    /** @description ID of the associated invoice item. */
+                    invoiceItemRef?: string;
+                    /**
+                     * @description Payment status.
+                     * @enum {string}
+                     */
+                    status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
+                    /** @description Surcharge applied to the payment, if any. */
+                    surcharge?: {
+                        money: {
+                            /** @description Surcharge amount. */
+                            amount?: number;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Surcharge percentage applied. */
+                            percentage?: number;
+                            /** @description Surcharge rate. */
+                            rate?: number;
+                        };
+                        /**
+                         * @description Surcharge type.
+                         * @enum {string}
+                         */
+                        type: "money";
+                    };
+                    /** @description ID of the associated transaction. */
+                    transactionRef?: string;
+                    /** @description Payment method type. */
+                    type?: string;
+                };
+                /** @description Payment details. Omitted when caller has no access. */
+                payments?: {
+                    /** @description Payment amount in the location currency. */
+                    amount?: number;
+                    /** @description ISO 4217 currency code. */
+                    currencyCode?: string;
+                    /** @description ID of the associated invoice item. */
+                    invoiceItemRef?: string;
+                    /**
+                     * @description Payment status.
+                     * @enum {string}
+                     */
+                    status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
+                    /** @description Surcharge applied to the payment, if any. */
+                    surcharge?: {
+                        money: {
+                            /** @description Surcharge amount. */
+                            amount?: number;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Surcharge percentage applied. */
+                            percentage?: number;
+                            /** @description Surcharge rate. */
+                            rate?: number;
+                        };
+                        /**
+                         * @description Surcharge type.
+                         * @enum {string}
+                         */
+                        type: "money";
+                    };
+                    /** @description ID of the associated transaction. */
+                    transactionRef?: string;
+                    /** @description Payment method type. */
+                    type?: string;
+                }[];
+                /**
+                 * Format: uuid
+                 * @description ID of the booked resource.
+                 */
+                resourceRef: string;
+                /** @description Number of seats reserved. */
+                seats?: number;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking starts.
+                 */
+                startDate: string;
+                /** @description Custom booking title. Omitted when the owner has restricted title visibility. */
+                title?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp when the booking was last updated.
+                 */
+                updateDate?: string;
+                /** @description Profile of the booking owner. Omitted when the owner has restricted visibility. */
+                userOwner?: {
+                    /** @description Short bio of the user. */
+                    about?: string | null;
+                    /** @description Company the user belongs to, if any. */
+                    company?: {
+                        /** @description Company display name. */
+                        title: string;
+                    } | null;
+                    /**
+                     * Format: email
+                     * @description Email address of the user.
+                     */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description First name of the user. */
+                    name?: string | null;
+                    /** @description Phone number of the user. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL of the user. */
+                    photoUrl?: string | null;
+                    /** @description Last name of the user. */
+                    surname?: string | null;
+                };
+            };
         };
         getShopCategories: {
             /** @description List of shop categories. */
@@ -15190,6 +16192,44 @@ export interface components {
              * @description ISO timestamp of when the visit was created.
              */
             createDate: string;
+            /** @description Host customer. */
+            customer: {
+                /** @description Company of the host, present when the host membership is a member of a company. */
+                company?: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the company.
+                     */
+                    id: string;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the host customer.
+                 */
+                id: string;
+                /** @description Host user details. */
+                user: {
+                    /** @description About text of the host user. */
+                    about?: string | null;
+                    /** @description Email of the host user. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the host user.
+                     */
+                    id: string;
+                    /** @description First name of the host user. */
+                    name?: string | null;
+                    /** @description Phone number of the host user. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL of the host user. */
+                    photoUrl?: string | null;
+                    /** @description Surname of the host user. */
+                    surname?: string | null;
+                };
+            };
             /**
              * Format: date-time
              * @description ISO timestamp of the scheduled visit date.
@@ -15226,10 +16266,14 @@ export interface components {
             locationRef: string;
             /**
              * Format: uuid
-             * @description ID of the host membership.
+             * @deprecated
+             * @description Deprecated. Use customer.id instead.
              */
             membershipRefHost: string;
-            /** @description Host user details. */
+            /**
+             * @deprecated
+             * @description Deprecated. Use customer.user instead.
+             */
             userHost: {
                 /** @description About text of the host user. */
                 about?: string | null;
@@ -17117,6 +18161,11 @@ export interface components {
                         bookingStepMinutes?: number;
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
+                        /**
+                         * @description Buffer time blocked before each booking.
+                         * @enum {string}
+                         */
+                        bufferTime?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
                         /** @description Maximum capacity per booking. */
                         capacity?: number | null;
                         /** @description Check-in settings. */
@@ -17327,7 +18376,8 @@ export interface components {
                             }[];
                         };
                         /**
-                         * @description Buffer time blocked before each booking.
+                         * @deprecated
+                         * @description Deprecated. Use bufferTime instead.
                          * @enum {string}
                          */
                         preparationMinutes?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -17459,6 +18509,11 @@ export interface components {
                         bookingStepMinutes?: number;
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
+                        /**
+                         * @description Buffer time blocked before each booking.
+                         * @enum {string}
+                         */
+                        bufferTime?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
                         /** @description Maximum capacity per booking. */
                         capacity?: number | null;
                         /** @description Check-in settings. */
@@ -17659,7 +18714,8 @@ export interface components {
                             }[];
                         };
                         /**
-                         * @description Buffer time blocked before each booking.
+                         * @deprecated
+                         * @description Deprecated. Use bufferTime instead.
                          * @enum {string}
                          */
                         preparationMinutes?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -17769,22 +18825,35 @@ export interface components {
             content: {
                 "application/json": {
                     booking: {
-                        endDate: components["schemas"]["dateSchema"];
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the booking ends.
+                         */
+                        endDate: string;
+                        /** @description Set to true to book the entire resource instead of individual seats. Supported for office resources. */
+                        entire?: boolean;
+                        /**
+                         * Format: uuid
+                         * @deprecated
+                         * @description Membership id to book on behalf of. Defaults to the authenticated user's membership.
+                         */
+                        membershipRefOwner?: string;
+                        /** @description Internal note attached to the booking. */
                         memo?: string;
                         /**
                          * Format: uuid
-                         * @description The Resource id where to create a booking.
+                         * @description ID of the resource to book.
                          */
                         resourceRef: string;
-                        startDate: components["schemas"]["dateSchema"];
-                        title?: string;
-                        /**
-                         * Format: uuid
-                         * @description The id of membership owner.
-                         */
-                        membershipRefOwner?: string;
                         /** @description Number of seats to reserve. Required for desk and office resources. */
                         seats?: number;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the booking starts.
+                         */
+                        startDate: string;
+                        /** @description Custom title for the booking. */
+                        title?: string;
                     };
                 };
             };
@@ -23833,14 +24902,14 @@ export interface operations {
     getResources: {
         parameters: {
             query: {
-                /** @description The id of the location. */
-                locationRef: string;
-                /** @description The types of resources to retrieve. Pass them as comma separated values. */
-                types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
-                /** @description The number of items to return. */
+                /** @description Maximum number of resources per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
+                /** @description UUID of the location whose resources to list. */
+                locationRef: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+                types?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -23857,11 +24926,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        nextPageToken?: components["schemas"]["nextPageToken"];
-                        resources?: components["schemas"]["resource"][];
-                        searchQueryNext?: components["schemas"]["searchQueryNext"];
-                    };
+                    "application/json": components["schemas"]["getResources"];
                 };
             };
             /** @description Bad Request */
@@ -23893,9 +24958,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        resource?: components["schemas"]["resource"];
-                    };
+                    "application/json": components["schemas"]["getResource"];
                 };
             };
             /** @description Bad Request */
@@ -23983,10 +25046,13 @@ export interface operations {
     getResource: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
             path: {
                 /** @description The id of the resource. */
-                id: string;
+                resourceId: string;
             };
             cookie?: never;
         };
@@ -23998,9 +25064,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        resource?: components["schemas"]["resource"];
-                    };
+                    "application/json": components["schemas"]["getResource"];
                 };
             };
             /** @description Bad Request */
@@ -24017,10 +25081,13 @@ export interface operations {
     patchResource: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
             path: {
                 /** @description The id of the resource. */
-                id: string;
+                resourceId: string;
             };
             cookie?: never;
         };
@@ -24047,66 +25114,50 @@ export interface operations {
     getBookings: {
         parameters: {
             query?: {
-                /** @description The id of the resource. Required if `locationRef` is not passed. */
-                resourceRef?: string;
-                /** @description The id of the location. Required if `resourceRef` is not passed. */
-                locationRef?: string;
-                /** @description The id of the membership owner. */
-                membershipRefOwner?: string;
-                /** @description The date filter of items. */
-                endDate?: {
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with less or equal end date. Example: endDate[lte]=2021-05-21T10:00:00Z
-                     */
-                    lte?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with greater or equal end date. Example: endDate[gte]=2021-05-21T10:00:00Z
-                     */
-                    gte?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with less end date. Example: endDate[lt]=2021-05-21T10:00:00Z
-                     */
-                    lt?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with greater end date. Example: endDate[gt]=2021-05-21T10:00:00Z
-                     */
-                    gt?: string;
-                };
-                /** @description The date filter of items. */
-                startDate?: {
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with less or equal start date. Example: startDate[lte]=2021-05-21T10:00:00Z
-                     */
-                    lte?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with greater or equal start date. Example: startDate[gte]=2021-05-21T10:00:00Z
-                     */
-                    gte?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with less start date. Example: startDate[lt]=2021-05-21T10:00:00Z
-                     */
-                    lt?: string;
-                    /**
-                     * Format: date-time
-                     * @description Get bookings with greater start date. Example: startDate[gt]=2021-05-21T10:00:00Z
-                     */
-                    gt?: string;
-                };
-                /** @description The number of items to return */
+                /** @description Matches bookings with endDate strictly after this date (ISO 8601). */
+                "endDate[gt]"?: string;
+                /** @description Matches bookings with endDate on or after this date (ISO 8601). */
+                "endDate[gte]"?: string;
+                /** @description Matches bookings with endDate strictly before this date (ISO 8601). */
+                "endDate[lt]"?: string;
+                /** @description Matches bookings with endDate on or before this date (ISO 8601). */
+                "endDate[lte]"?: string;
+                /** @description Matches bookings with startDate strictly after this date (ISO 8601). */
+                "startDate[gt]"?: string;
+                /** @description Matches bookings with startDate on or after this date (ISO 8601). */
+                "startDate[gte]"?: string;
+                /** @description Matches bookings with startDate strictly before this date (ISO 8601). */
+                "startDate[lt]"?: string;
+                /** @description Matches bookings with startDate on or before this date (ISO 8601). */
+                "startDate[lte]"?: string;
+                /** @description UUID of the customer whose bookings to list. */
+                customerRef?: string;
+                /** @description Deprecated. Use bracket-notation fields endDate[gt], endDate[gte], endDate[lt], endDate[lte] instead. */
+                endDate?: string;
+                /** @description Deprecated. Use status "canceled" instead. Set to "true" to include deleted bookings. */
+                includeDeleted?: string;
+                /** @description Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description The order of filtered items. Format - `field:order`. Possible field values are `createDate`, `endDate`, `startDate`, `id`. Order values - `asc`, `desc`. */
+                /** @description UUID of the location whose bookings to list. Required when resourceRef is omitted. */
+                locationRef?: string;
+                /** @description Deprecated. Use customerRef instead. UUID of the customer whose bookings to list. */
+                membershipRefOwner?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc. */
                 order?: string;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
-                /** @description The types of resources to retrieve bookings for. Pass them as comma separated values. */
-                types?: "hotDesk" | "dedicatedDesk" | "office" | "parkingLot" | "room";
+                /** @description UUID of the resource whose bookings to list. Required when locationRef is omitted. */
+                resourceRef?: string;
+                /** @description Set to "true" to expand repeating bookings into single occurrences. */
+                singleBookings?: string;
+                /** @description Deprecated. Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
+                startDate?: string;
+                /** @description Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed. */
+                status?: string;
+                /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
+                type?: string;
+                /** @description Deprecated. Use type instead. */
+                types?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -24123,11 +25174,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        bookings?: components["schemas"]["booking"][];
-                        nextPageToken?: components["schemas"]["nextPageToken"];
-                        searchQueryNext?: components["schemas"]["searchQueryNext"];
-                    };
+                    "application/json": components["schemas"]["getBookings"];
                 };
             };
             /** @description Bad Request */
@@ -24159,9 +25206,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        booking?: components["schemas"]["booking"];
-                    };
+                    "application/json": components["schemas"]["getBooking"];
                 };
             };
             /** @description Bad Request */
@@ -24183,8 +25228,8 @@ export interface operations {
                 "spacebring-network-id"?: string;
             };
             path: {
-                /** @description The id of the booking. */
-                id: string;
+                /** @description ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `<bookingId>_<ISO date>`. */
+                bookingId: string;
             };
             cookie?: never;
         };
@@ -24196,9 +25241,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        booking?: components["schemas"]["booking"];
-                    };
+                    "application/json": components["schemas"]["getBooking"];
                 };
             };
             /** @description Bad Request */
@@ -24220,8 +25263,8 @@ export interface operations {
                 "spacebring-network-id"?: string;
             };
             path: {
-                /** @description The id of the booking. */
-                id: string;
+                /** @description ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `<bookingId>_<ISO date>`. */
+                bookingId: string;
             };
             cookie?: never;
         };
