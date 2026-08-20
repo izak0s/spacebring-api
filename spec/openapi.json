@@ -24878,6 +24878,10 @@
                       "type": "string",
                       "format": "uuid",
                       "description": "Tapkey access group reference."
+                    },
+                    "unifiAccessGroupRef": {
+                      "type": "string",
+                      "description": "UniFi Access policy reference."
                     }
                   },
                   "additionalProperties": false
@@ -25299,6 +25303,10 @@
                 "type": "string",
                 "format": "uuid",
                 "description": "Tapkey access group reference."
+              },
+              "unifiAccessGroupRef": {
+                "type": "string",
+                "description": "UniFi Access policy reference."
               }
             },
             "additionalProperties": false
@@ -25711,6 +25719,10 @@
                     "type": "string",
                     "format": "uuid",
                     "description": "Tapkey access group reference."
+                  },
+                  "unifiAccessGroupRef": {
+                    "type": "string",
+                    "description": "UniFi Access policy reference."
                   }
                 },
                 "additionalProperties": false
@@ -27714,6 +27726,11 @@
                   ],
                   "description": "Type of the resource."
                 },
+                "unifiAccessGroupRef": {
+                  "description": "UniFi Access policy reference.",
+                  "nullable": true,
+                  "type": "string"
+                },
                 "visibility": {
                   "type": "string",
                   "enum": [
@@ -29162,6 +29179,11 @@
                   "studio"
                 ],
                 "description": "Type of the resource."
+              },
+              "unifiAccessGroupRef": {
+                "description": "UniFi Access policy reference.",
+                "nullable": true,
+                "type": "string"
               },
               "visibility": {
                 "type": "string",
@@ -34105,6 +34127,11 @@
                           "recurring"
                         ],
                         "description": "Billing type of the item."
+                      },
+                      "unifiAccessGroupRef": {
+                        "description": "UniFi Access policy reference.",
+                        "nullable": true,
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -35289,6 +35316,11 @@
                     "recurring"
                   ],
                   "description": "Billing type of the item."
+                },
+                "unifiAccessGroupRef": {
+                  "description": "UniFi Access policy reference.",
+                  "nullable": true,
+                  "type": "string"
                 }
               },
               "required": [
@@ -36468,6 +36500,11 @@
                         "recurring"
                       ],
                       "description": "Billing type of the item."
+                    },
+                    "unifiAccessGroupRef": {
+                      "description": "UniFi Access policy reference.",
+                      "nullable": true,
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -46398,6 +46435,10 @@
                           "description": "Tapkey access group reference.",
                           "type": "string",
                           "format": "uuid"
+                        },
+                        "unifiAccessGroupRef": {
+                          "description": "UniFi Access policy reference.",
+                          "type": "string"
                         }
                       }
                     },
@@ -46743,6 +46784,11 @@
                           "nullable": true,
                           "type": "string",
                           "format": "uuid"
+                        },
+                        "unifiAccessGroupRef": {
+                          "description": "UniFi Access policy reference.",
+                          "nullable": true,
+                          "type": "string"
                         }
                       }
                     },
@@ -47824,6 +47870,11 @@
                       "type": "string",
                       "format": "uuid"
                     },
+                    "unifiAccessGroupRef": {
+                      "description": "UniFi Access policy reference.",
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "title": {
                       "type": "string",
                       "minLength": 1,
@@ -48673,6 +48724,11 @@
                       "nullable": true,
                       "type": "string",
                       "format": "uuid"
+                    },
+                    "unifiAccessGroupRef": {
+                      "description": "UniFi Access policy reference.",
+                      "nullable": true,
+                      "type": "string"
                     },
                     "title": {
                       "type": "string",
@@ -49629,6 +49685,11 @@
                                   "oneOff",
                                   "recurring"
                                 ]
+                              },
+                              "unifiAccessGroupRef": {
+                                "description": "UniFi Access policy reference.",
+                                "nullable": true,
+                                "type": "string"
                               }
                             }
                           }
@@ -50032,6 +50093,11 @@
                               "recurring"
                             ]
                           },
+                          "unifiAccessGroupRef": {
+                            "description": "UniFi Access policy reference.",
+                            "nullable": true,
+                            "type": "string"
+                          },
                           "id": {
                             "description": "Unique identifier of the subscription item when updating via subscription patch.",
                             "type": "string",
@@ -50408,6 +50474,11 @@
                         "oneOff",
                         "recurring"
                       ]
+                    },
+                    "unifiAccessGroupRef": {
+                      "description": "UniFi Access policy reference.",
+                      "nullable": true,
+                      "type": "string"
                     }
                   },
                   "description": "Subscription item to create."
@@ -50715,6 +50786,11 @@
                         "oneOff",
                         "recurring"
                       ]
+                    },
+                    "unifiAccessGroupRef": {
+                      "description": "UniFi Access policy reference.",
+                      "nullable": true,
+                      "type": "string"
                     }
                   },
                   "description": "Subscription item fields to update."
