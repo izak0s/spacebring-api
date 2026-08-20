@@ -7718,6 +7718,8 @@ export interface components {
                      * @description Tapkey access group reference.
                      */
                     tapkeyGroupRef?: string;
+                    /** @description UniFi Access policy reference. */
+                    unifiAccessGroupRef?: string;
                 };
                 /**
                  * @description Addons included in the plan.
@@ -7889,6 +7891,8 @@ export interface components {
                  * @description Tapkey access group reference.
                  */
                 tapkeyGroupRef?: string;
+                /** @description UniFi Access policy reference. */
+                unifiAccessGroupRef?: string;
             };
             /**
              * @description Addons included in the plan.
@@ -8059,6 +8063,8 @@ export interface components {
                      * @description Tapkey access group reference.
                      */
                     tapkeyGroupRef?: string;
+                    /** @description UniFi Access policy reference. */
+                    unifiAccessGroupRef?: string;
                 };
                 /**
                  * @description Addons included in the plan.
@@ -8884,6 +8890,8 @@ export interface components {
                  * @enum {string}
                  */
                 type: "dedicatedDesk" | "equipment" | "hotDesk" | "office" | "parkingLot" | "room" | "station" | "conferenceRoom" | "eventSpace" | "meetingRoom" | "phoneBooth" | "studio";
+                /** @description UniFi Access policy reference. */
+                unifiAccessGroupRef?: string | null;
                 /**
                  * @description Visibility of the resource.
                  * @enum {string}
@@ -9468,6 +9476,8 @@ export interface components {
                  * @enum {string}
                  */
                 type: "dedicatedDesk" | "equipment" | "hotDesk" | "office" | "parkingLot" | "room" | "station" | "conferenceRoom" | "eventSpace" | "meetingRoom" | "phoneBooth" | "studio";
+                /** @description UniFi Access policy reference. */
+                unifiAccessGroupRef?: string | null;
                 /**
                  * @description Visibility of the resource.
                  * @enum {string}
@@ -11792,6 +11802,8 @@ export interface components {
                      * @enum {string}
                      */
                     type: "oneOff" | "recurring";
+                    /** @description UniFi Access policy reference. */
+                    unifiAccessGroupRef?: string | null;
                 }[];
                 /**
                  * Format: uuid
@@ -12367,6 +12379,8 @@ export interface components {
                  * @enum {string}
                  */
                 type: "oneOff" | "recurring";
+                /** @description UniFi Access policy reference. */
+                unifiAccessGroupRef?: string | null;
             }[];
             /**
              * Format: uuid
@@ -12943,6 +12957,8 @@ export interface components {
                      * @enum {string}
                      */
                     type: "oneOff" | "recurring";
+                    /** @description UniFi Access policy reference. */
+                    unifiAccessGroupRef?: string | null;
                 }[];
                 /**
                  * Format: uuid
@@ -17825,6 +17841,8 @@ export interface components {
                              * @description Tapkey access group reference.
                              */
                             tapkeyGroupRef?: string;
+                            /** @description UniFi Access policy reference. */
+                            unifiAccessGroupRef?: string;
                         };
                         /**
                          * @description Addons included in the plan.
@@ -18022,6 +18040,8 @@ export interface components {
                              * @description Tapkey access group reference.
                              */
                             tapkeyGroupRef?: string | null;
+                            /** @description UniFi Access policy reference. */
+                            unifiAccessGroupRef?: string | null;
                         };
                         /** @description Addons included in the plan. */
                         addons?: {
@@ -18467,6 +18487,8 @@ export interface components {
                          * @description Tapkey access group reference.
                          */
                         tapkeyGroupRef?: string | null;
+                        /** @description UniFi Access policy reference. */
+                        unifiAccessGroupRef?: string | null;
                         /** @description Display name of the resource. */
                         title: string;
                         /**
@@ -18805,6 +18827,8 @@ export interface components {
                          * @description Tapkey access group reference.
                          */
                         tapkeyGroupRef?: string | null;
+                        /** @description UniFi Access policy reference. */
+                        unifiAccessGroupRef?: string | null;
                         /** @description Display name of the resource. */
                         title?: string;
                         /**
@@ -19344,6 +19368,8 @@ export interface components {
                              * @enum {string}
                              */
                             type?: "oneOff" | "recurring";
+                            /** @description UniFi Access policy reference. */
+                            unifiAccessGroupRef?: string | null;
                         }[];
                         /**
                          * @description Billing period.
@@ -19536,6 +19562,8 @@ export interface components {
                              * @enum {string}
                              */
                             type?: "oneOff" | "recurring";
+                            /** @description UniFi Access policy reference. */
+                            unifiAccessGroupRef?: string | null;
                             /**
                              * Format: uuid
                              * @description Unique identifier of the subscription item when updating via subscription patch.
@@ -19727,6 +19755,8 @@ export interface components {
                          * @enum {string}
                          */
                         type?: "oneOff" | "recurring";
+                        /** @description UniFi Access policy reference. */
+                        unifiAccessGroupRef?: string | null;
                     };
                 };
             };
@@ -19877,6 +19907,8 @@ export interface components {
                          * @enum {string}
                          */
                         type?: "oneOff" | "recurring";
+                        /** @description UniFi Access policy reference. */
+                        unifiAccessGroupRef?: string | null;
                     };
                 };
             };
