@@ -2606,7 +2606,7 @@ export interface components {
              * @description Exchange rate provider when auto-update is enabled.
              * @enum {string}
              */
-            provider?: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+            provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
         };
         /** @description Pre-built query string for the next page of results. Contains all active filter parameters combined with the next page token, ready to append to the endpoint URL. */
         searchQueryNext: string;
@@ -16352,7 +16352,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                        provider: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
@@ -16369,7 +16369,7 @@ export interface components {
                          * @description Exchange rate provider when auto-update is enabled.
                          * @enum {string}
                          */
-                        provider: "fastForex" | "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                        provider: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
                     } | {
                         /** @description Exchange rate relative to the location main currency. */
                         exchangeRate: number;
