@@ -14132,7 +14132,6 @@
             "description": "Exchange rate provider when auto-update is enabled.",
             "type": "string",
             "enum": [
-              "fastForex",
               "nbu",
               "bcra",
               "nbg",
@@ -43274,7 +43273,6 @@
                             "provider": {
                               "type": "string",
                               "enum": [
-                                "fastForex",
                                 "nbu",
                                 "bcra",
                                 "nbg",
@@ -43336,7 +43334,6 @@
                             "provider": {
                               "type": "string",
                               "enum": [
-                                "fastForex",
                                 "nbu",
                                 "bcra",
                                 "nbg",
