@@ -5695,6 +5695,14 @@ export interface components {
             surname?: string;
         };
         membership: {
+            businessAddress?: {
+                city?: string;
+                countryCode?: string;
+                line1?: string;
+                line2?: string;
+                postalCode?: string;
+                state?: string;
+            };
             /** Format: uuid */
             companyRef?: string;
             /** @enum {string} */
@@ -5711,6 +5719,7 @@ export interface components {
             /** Format: uuid */
             id?: string;
             invitationDate?: components["schemas"]["dateSchema"];
+            legalName?: string;
             locationRef?: string;
             metadata?: components["schemas"]["metadata"];
             notes?: string;
@@ -5720,6 +5729,7 @@ export interface components {
             status?: "requested" | "approved";
             /** Format: uuid */
             subscriptionRef?: string;
+            taxId?: string;
             /** @enum {string} */
             type?: "member" | "nonmember";
             user?: components["schemas"]["user"];
@@ -17029,10 +17039,28 @@ export interface components {
             content: {
                 "application/json": {
                     membership: {
+                        businessAddress?: {
+                            /** @description The city of the membership to create. */
+                            city?: string;
+                            /** @description The country code of the membership to create. */
+                            countryCode?: string;
+                            /** @description The line 1 of the membership to create. */
+                            line1?: string;
+                            /** @description The line 2 of the membership to create. */
+                            line2?: string;
+                            /** @description The postal code of the membership to create. */
+                            postalCode?: string;
+                            /** @description The state of the membership to create. */
+                            state?: string;
+                        };
                         /** Format: uuid */
                         companyRef?: string;
                         /** @enum {string} */
                         companyRole?: "manager" | "member";
+                        /** @description The legal name of the membership to create. */
+                        legalName?: string;
+                        /** @description The tax id of the membership to create. */
+                        taxId?: string;
                         /** @enum {string} */
                         role: "admin" | "member";
                         metadata?: components["schemas"]["metadata"];
@@ -22136,9 +22164,19 @@ export interface operations {
             content: {
                 "application/json": {
                     membership: {
-                        metadata: components["schemas"]["metadata"];
+                        businessAddress?: {
+                            city?: string;
+                            countryCode?: string;
+                            line1?: string;
+                            line2?: string;
+                            postalCode?: string;
+                            state?: string;
+                        };
+                        legalName?: string;
+                        metadata?: components["schemas"]["metadata"];
                         /** @enum {string} */
-                        role: "admin" | "member";
+                        role?: "admin" | "member";
+                        taxId?: string;
                     };
                 };
             };

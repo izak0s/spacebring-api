@@ -3795,6 +3795,32 @@
                   "membership": {
                     "type": "object",
                     "properties": {
+                      "businessAddress": {
+                        "type": "object",
+                        "properties": {
+                          "city": {
+                            "type": "string"
+                          },
+                          "countryCode": {
+                            "type": "string"
+                          },
+                          "line1": {
+                            "type": "string"
+                          },
+                          "line2": {
+                            "type": "string"
+                          },
+                          "postalCode": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "legalName": {
+                        "type": "string"
+                      },
                       "metadata": {
                         "$ref": "#/components/schemas/metadata"
                       },
@@ -3804,12 +3830,11 @@
                           "admin",
                           "member"
                         ]
+                      },
+                      "taxId": {
+                        "type": "string"
                       }
-                    },
-                    "required": [
-                      "metadata",
-                      "role"
-                    ]
+                    }
                   }
                 },
                 "required": [
@@ -20568,6 +20593,29 @@
       "membership": {
         "type": "object",
         "properties": {
+          "businessAddress": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "countryCode": {
+                "type": "string"
+              },
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          },
           "companyRef": {
             "format": "uuid",
             "type": "string"
@@ -20611,6 +20659,9 @@
           "invitationDate": {
             "$ref": "#/components/schemas/dateSchema"
           },
+          "legalName": {
+            "type": "string"
+          },
           "locationRef": {
             "type": "string"
           },
@@ -20636,6 +20687,9 @@
           },
           "subscriptionRef": {
             "format": "uuid",
+            "type": "string"
+          },
+          "taxId": {
             "type": "string"
           },
           "type": {
@@ -44599,6 +44653,35 @@
                 "membership": {
                   "type": "object",
                   "properties": {
+                    "businessAddress": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string",
+                          "description": "The city of the membership to create."
+                        },
+                        "countryCode": {
+                          "type": "string",
+                          "description": "The country code of the membership to create."
+                        },
+                        "line1": {
+                          "type": "string",
+                          "description": "The line 1 of the membership to create."
+                        },
+                        "line2": {
+                          "type": "string",
+                          "description": "The line 2 of the membership to create."
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "description": "The postal code of the membership to create."
+                        },
+                        "state": {
+                          "type": "string",
+                          "description": "The state of the membership to create."
+                        }
+                      }
+                    },
                     "companyRef": {
                       "type": "string",
                       "format": "uuid"
@@ -44609,6 +44692,14 @@
                         "manager",
                         "member"
                       ]
+                    },
+                    "legalName": {
+                      "type": "string",
+                      "description": "The legal name of the membership to create."
+                    },
+                    "taxId": {
+                      "type": "string",
+                      "description": "The tax id of the membership to create."
                     },
                     "role": {
                       "type": "string",
