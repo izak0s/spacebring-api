@@ -1761,7 +1761,11 @@ export interface paths {
         delete: operations["deleteBooking"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update a booking
+         * @description Update a booking. Fields left out of the request keep their current value. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        patch: operations["patchBooking"];
         trace?: never;
     };
     "/shop/categories/v1": {
@@ -8372,6 +8376,8 @@ export interface components {
                             surname?: string | null;
                         };
                     };
+                    /** @description ISO timestamp when the assignment ends. */
+                    endDate?: string;
                     /** @description Whether the assignment grants access to the entire resource. */
                     entire: boolean;
                     /**
@@ -8392,20 +8398,41 @@ export interface components {
                     };
                     /** @description Assigned quantity when the resource is partially assigned. */
                     quantity?: number;
+                    /** @description Resource the assignment belongs to. Present when assignments are listed on their own. */
+                    resource?: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource image URL. */
+                        imageUrl?: string;
+                        /**
+                         * Format: uuid
+                         * @description UUID of the location the resource belongs to.
+                         */
+                        locationRef: string;
+                        /** @description Resource title. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
                     /**
                      * Format: uuid
                      * @description UUID of the resource the assignment belongs to.
                      */
                     resourceRef: string;
-                    /** @description Subscription backing this assignment. */
+                    /** @description ISO timestamp when the assignment starts. */
+                    startDate: string;
+                    /** @description Deprecated. Use startDate and endDate instead. Subscription backing this assignment. */
                     subscription: {
                         /** @description ISO timestamp when the assignment ends. */
                         endDate?: string;
                         /**
                          * Format: uuid
-                         * @description Subscription id.
+                         * @description Subscription id. Absent for assignments created directly by an admin.
                          */
-                        id: string;
+                        id?: string;
                         /** @description ISO timestamp when the assignment starts. */
                         startDate: string;
                     };
@@ -8958,6 +8985,8 @@ export interface components {
                             surname?: string | null;
                         };
                     };
+                    /** @description ISO timestamp when the assignment ends. */
+                    endDate?: string;
                     /** @description Whether the assignment grants access to the entire resource. */
                     entire: boolean;
                     /**
@@ -8978,20 +9007,41 @@ export interface components {
                     };
                     /** @description Assigned quantity when the resource is partially assigned. */
                     quantity?: number;
+                    /** @description Resource the assignment belongs to. Present when assignments are listed on their own. */
+                    resource?: {
+                        /**
+                         * Format: uuid
+                         * @description Resource id.
+                         */
+                        id: string;
+                        /** @description Resource image URL. */
+                        imageUrl?: string;
+                        /**
+                         * Format: uuid
+                         * @description UUID of the location the resource belongs to.
+                         */
+                        locationRef: string;
+                        /** @description Resource title. */
+                        title: string;
+                        /** @description Resource type. */
+                        type: string;
+                    };
                     /**
                      * Format: uuid
                      * @description UUID of the resource the assignment belongs to.
                      */
                     resourceRef: string;
-                    /** @description Subscription backing this assignment. */
+                    /** @description ISO timestamp when the assignment starts. */
+                    startDate: string;
+                    /** @description Deprecated. Use startDate and endDate instead. Subscription backing this assignment. */
                     subscription: {
                         /** @description ISO timestamp when the assignment ends. */
                         endDate?: string;
                         /**
                          * Format: uuid
-                         * @description Subscription id.
+                         * @description Subscription id. Absent for assignments created directly by an admin.
                          */
-                        id: string;
+                        id?: string;
                         /** @description ISO timestamp when the assignment starts. */
                         startDate: string;
                     };
@@ -9540,6 +9590,8 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /** @description ISO timestamp when the assignment ends. */
+                endDate?: string;
                 /** @description Whether the assignment grants access to the entire resource. */
                 entire: boolean;
                 /**
@@ -9560,20 +9612,41 @@ export interface components {
                 };
                 /** @description Assigned quantity when the resource is partially assigned. */
                 quantity?: number;
+                /** @description Resource the assignment belongs to. Present when assignments are listed on their own. */
+                resource?: {
+                    /**
+                     * Format: uuid
+                     * @description Resource id.
+                     */
+                    id: string;
+                    /** @description Resource image URL. */
+                    imageUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the location the resource belongs to.
+                     */
+                    locationRef: string;
+                    /** @description Resource title. */
+                    title: string;
+                    /** @description Resource type. */
+                    type: string;
+                };
                 /**
                  * Format: uuid
                  * @description UUID of the resource the assignment belongs to.
                  */
                 resourceRef: string;
-                /** @description Subscription backing this assignment. */
+                /** @description ISO timestamp when the assignment starts. */
+                startDate: string;
+                /** @description Deprecated. Use startDate and endDate instead. Subscription backing this assignment. */
                 subscription: {
                     /** @description ISO timestamp when the assignment ends. */
                     endDate?: string;
                     /**
                      * Format: uuid
-                     * @description Subscription id.
+                     * @description Subscription id. Absent for assignments created directly by an admin.
                      */
-                    id: string;
+                    id?: string;
                     /** @description ISO timestamp when the assignment starts. */
                     startDate: string;
                 };
@@ -9667,18 +9740,407 @@ export interface components {
                  * @description Deprecated. Use `payments` instead.
                  */
                 payment?: {
-                    /** @description Payment amount in the location currency. */
-                    amount?: number;
-                    /** @description ISO 4217 currency code. */
-                    currencyCode?: string;
-                    /** @description ID of the associated invoice item. */
-                    invoiceItemRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the payment was made.
+                     */
+                    createDate?: string;
+                    /** @description Discounts applied to the price. Omitted when none applied. */
+                    discounts?: {
+                        /** @description Applied coupon. */
+                        coupon: {
+                            /** @description Fixed discount amount, in the coupon's currency. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Coupon id. */
+                            id?: string;
+                            /** @description Percentage discount amount. */
+                            percentOff?: number;
+                            /** @description Product types this coupon applies to. */
+                            productTypes?: string[];
+                            /** @description Coupon type. */
+                            type?: string;
+                        };
+                        /** @description Applied promocode. */
+                        promocode?: {
+                            /** @description Promocode string, the way a purchase references the promocode back. */
+                            code: string;
+                            /** @description Promocode expiration. */
+                            expiration?: {
+                                /** @description ISO timestamp of when the promocode expires. */
+                                date?: string;
+                                /** @description Whether the promocode expires. */
+                                enabled: boolean;
+                            };
+                            /** @description Promocode id. */
+                            id: string;
+                            /** @description Whether the promocode is limited to a first purchase. */
+                            limitByFirstPurchase?: boolean;
+                        };
+                        /** @description Subscription the discount was granted by. */
+                        subscriptionId?: string;
+                    }[];
+                    /** @description Chargeback dispute raised against the payment, if any. */
+                    dispute?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the dispute was opened.
+                         */
+                        createDate?: string;
+                    };
+                    /** @description How the booking was paid for, and by whom. */
+                    method: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Customer whose credits were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Customer whose day passes were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `external`. */
+                        external?: {
+                            /** @description Customer who paid outside of Spacebring. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `invoice`. */
+                        invoice?: {
+                            /** @description Customer the booking was invoiced to. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /** @description ID of the invoice item the booking was billed on. */
+                            invoiceItemRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Subscription the invoice item belongs to.
+                             */
+                            subscriptionRef?: string;
+                        };
+                        /** @description Set when `type` is `paymentGateway`. */
+                        paymentGateway?: {
+                            /** @description Customer who was charged. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /**
+                             * @description Payment gateway that processed the charge.
+                             * @enum {string}
+                             */
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
+                            label?: string;
+                            /** @description Masked payment method identifier. */
+                            mask?: string;
+                            /** @description Display name of the payment gateway, e.g. `Stripe`. */
+                            title?: string;
+                        };
+                        /**
+                         * @description How the booking was paid for. The matching property below carries the details.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "external" | "invoice" | "paymentGateway";
+                    };
+                    /** @description What the booking was charged. */
+                    price?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Expiring credits charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent credits charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total credits charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Expiring day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total day passes charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Total amount charged, tax included. */
+                            grossAmount: number;
+                            /** @description Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax. */
+                            taxIsInclusive?: boolean;
+                            /** @description Tax rate applied, in percent. Omitted when the location charges no tax. */
+                            taxRate?: number;
+                        };
+                        /**
+                         * @description What the booking was charged in.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice. */
+                    refundable?: boolean;
+                    /** @description Refunds made against the payment. Omitted when nothing was refunded. */
+                    refunds?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Gross amount returned by this refund. */
+                            grossAmount: number;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /**
+                         * @description What was refunded.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Set for a pending gateway payment the current user still has to complete. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Payment request id.
+                         */
+                        id: string;
+                        /** @description Relative URL the payer opens to complete the payment. */
+                        url: string;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when a scheduled payment will be charged.
+                     */
+                    scheduleDate?: string;
                     /**
                      * @description Payment status.
                      * @enum {string}
                      */
                     status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
-                    /** @description Surcharge applied to the payment, if any. */
+                    /** @description Surcharge added on top of the price, if any. */
                     surcharge?: {
                         money: {
                             /** @description Surcharge amount. */
@@ -9696,25 +10158,414 @@ export interface components {
                          */
                         type: "money";
                     };
-                    /** @description ID of the associated transaction. */
+                    /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
-                    /** @description Payment method type. */
+                    /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 };
-                /** @description Payment details. Omitted when caller has no access. */
+                /** @description How the booking was paid for, oldest first. One entry per settling transaction, so a credits or day passes payment that was charged and later partly refunded lists each transaction separately. Omitted when the caller has no access. */
                 payments?: {
-                    /** @description Payment amount in the location currency. */
-                    amount?: number;
-                    /** @description ISO 4217 currency code. */
-                    currencyCode?: string;
-                    /** @description ID of the associated invoice item. */
-                    invoiceItemRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the payment was made.
+                     */
+                    createDate?: string;
+                    /** @description Discounts applied to the price. Omitted when none applied. */
+                    discounts?: {
+                        /** @description Applied coupon. */
+                        coupon: {
+                            /** @description Fixed discount amount, in the coupon's currency. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Coupon id. */
+                            id?: string;
+                            /** @description Percentage discount amount. */
+                            percentOff?: number;
+                            /** @description Product types this coupon applies to. */
+                            productTypes?: string[];
+                            /** @description Coupon type. */
+                            type?: string;
+                        };
+                        /** @description Applied promocode. */
+                        promocode?: {
+                            /** @description Promocode string, the way a purchase references the promocode back. */
+                            code: string;
+                            /** @description Promocode expiration. */
+                            expiration?: {
+                                /** @description ISO timestamp of when the promocode expires. */
+                                date?: string;
+                                /** @description Whether the promocode expires. */
+                                enabled: boolean;
+                            };
+                            /** @description Promocode id. */
+                            id: string;
+                            /** @description Whether the promocode is limited to a first purchase. */
+                            limitByFirstPurchase?: boolean;
+                        };
+                        /** @description Subscription the discount was granted by. */
+                        subscriptionId?: string;
+                    }[];
+                    /** @description Chargeback dispute raised against the payment, if any. */
+                    dispute?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the dispute was opened.
+                         */
+                        createDate?: string;
+                    };
+                    /** @description How the booking was paid for, and by whom. */
+                    method: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Customer whose credits were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Customer whose day passes were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `external`. */
+                        external?: {
+                            /** @description Customer who paid outside of Spacebring. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `invoice`. */
+                        invoice?: {
+                            /** @description Customer the booking was invoiced to. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /** @description ID of the invoice item the booking was billed on. */
+                            invoiceItemRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Subscription the invoice item belongs to.
+                             */
+                            subscriptionRef?: string;
+                        };
+                        /** @description Set when `type` is `paymentGateway`. */
+                        paymentGateway?: {
+                            /** @description Customer who was charged. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /**
+                             * @description Payment gateway that processed the charge.
+                             * @enum {string}
+                             */
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
+                            label?: string;
+                            /** @description Masked payment method identifier. */
+                            mask?: string;
+                            /** @description Display name of the payment gateway, e.g. `Stripe`. */
+                            title?: string;
+                        };
+                        /**
+                         * @description How the booking was paid for. The matching property below carries the details.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "external" | "invoice" | "paymentGateway";
+                    };
+                    /** @description What the booking was charged. */
+                    price?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Expiring credits charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent credits charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total credits charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Expiring day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total day passes charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Total amount charged, tax included. */
+                            grossAmount: number;
+                            /** @description Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax. */
+                            taxIsInclusive?: boolean;
+                            /** @description Tax rate applied, in percent. Omitted when the location charges no tax. */
+                            taxRate?: number;
+                        };
+                        /**
+                         * @description What the booking was charged in.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice. */
+                    refundable?: boolean;
+                    /** @description Refunds made against the payment. Omitted when nothing was refunded. */
+                    refunds?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Gross amount returned by this refund. */
+                            grossAmount: number;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /**
+                         * @description What was refunded.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Set for a pending gateway payment the current user still has to complete. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Payment request id.
+                         */
+                        id: string;
+                        /** @description Relative URL the payer opens to complete the payment. */
+                        url: string;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when a scheduled payment will be charged.
+                     */
+                    scheduleDate?: string;
                     /**
                      * @description Payment status.
                      * @enum {string}
                      */
                     status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
-                    /** @description Surcharge applied to the payment, if any. */
+                    /** @description Surcharge added on top of the price, if any. */
                     surcharge?: {
                         money: {
                             /** @description Surcharge amount. */
@@ -9732,9 +10583,9 @@ export interface components {
                          */
                         type: "money";
                     };
-                    /** @description ID of the associated transaction. */
+                    /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
-                    /** @description Payment method type. */
+                    /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 }[];
                 /**
@@ -9861,18 +10712,407 @@ export interface components {
                  * @description Deprecated. Use `payments` instead.
                  */
                 payment?: {
-                    /** @description Payment amount in the location currency. */
-                    amount?: number;
-                    /** @description ISO 4217 currency code. */
-                    currencyCode?: string;
-                    /** @description ID of the associated invoice item. */
-                    invoiceItemRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the payment was made.
+                     */
+                    createDate?: string;
+                    /** @description Discounts applied to the price. Omitted when none applied. */
+                    discounts?: {
+                        /** @description Applied coupon. */
+                        coupon: {
+                            /** @description Fixed discount amount, in the coupon's currency. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Coupon id. */
+                            id?: string;
+                            /** @description Percentage discount amount. */
+                            percentOff?: number;
+                            /** @description Product types this coupon applies to. */
+                            productTypes?: string[];
+                            /** @description Coupon type. */
+                            type?: string;
+                        };
+                        /** @description Applied promocode. */
+                        promocode?: {
+                            /** @description Promocode string, the way a purchase references the promocode back. */
+                            code: string;
+                            /** @description Promocode expiration. */
+                            expiration?: {
+                                /** @description ISO timestamp of when the promocode expires. */
+                                date?: string;
+                                /** @description Whether the promocode expires. */
+                                enabled: boolean;
+                            };
+                            /** @description Promocode id. */
+                            id: string;
+                            /** @description Whether the promocode is limited to a first purchase. */
+                            limitByFirstPurchase?: boolean;
+                        };
+                        /** @description Subscription the discount was granted by. */
+                        subscriptionId?: string;
+                    }[];
+                    /** @description Chargeback dispute raised against the payment, if any. */
+                    dispute?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the dispute was opened.
+                         */
+                        createDate?: string;
+                    };
+                    /** @description How the booking was paid for, and by whom. */
+                    method: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Customer whose credits were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Customer whose day passes were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `external`. */
+                        external?: {
+                            /** @description Customer who paid outside of Spacebring. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `invoice`. */
+                        invoice?: {
+                            /** @description Customer the booking was invoiced to. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /** @description ID of the invoice item the booking was billed on. */
+                            invoiceItemRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Subscription the invoice item belongs to.
+                             */
+                            subscriptionRef?: string;
+                        };
+                        /** @description Set when `type` is `paymentGateway`. */
+                        paymentGateway?: {
+                            /** @description Customer who was charged. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /**
+                             * @description Payment gateway that processed the charge.
+                             * @enum {string}
+                             */
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
+                            label?: string;
+                            /** @description Masked payment method identifier. */
+                            mask?: string;
+                            /** @description Display name of the payment gateway, e.g. `Stripe`. */
+                            title?: string;
+                        };
+                        /**
+                         * @description How the booking was paid for. The matching property below carries the details.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "external" | "invoice" | "paymentGateway";
+                    };
+                    /** @description What the booking was charged. */
+                    price?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Expiring credits charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent credits charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total credits charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Expiring day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total day passes charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Total amount charged, tax included. */
+                            grossAmount: number;
+                            /** @description Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax. */
+                            taxIsInclusive?: boolean;
+                            /** @description Tax rate applied, in percent. Omitted when the location charges no tax. */
+                            taxRate?: number;
+                        };
+                        /**
+                         * @description What the booking was charged in.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice. */
+                    refundable?: boolean;
+                    /** @description Refunds made against the payment. Omitted when nothing was refunded. */
+                    refunds?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Gross amount returned by this refund. */
+                            grossAmount: number;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /**
+                         * @description What was refunded.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Set for a pending gateway payment the current user still has to complete. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Payment request id.
+                         */
+                        id: string;
+                        /** @description Relative URL the payer opens to complete the payment. */
+                        url: string;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when a scheduled payment will be charged.
+                     */
+                    scheduleDate?: string;
                     /**
                      * @description Payment status.
                      * @enum {string}
                      */
                     status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
-                    /** @description Surcharge applied to the payment, if any. */
+                    /** @description Surcharge added on top of the price, if any. */
                     surcharge?: {
                         money: {
                             /** @description Surcharge amount. */
@@ -9890,25 +11130,414 @@ export interface components {
                          */
                         type: "money";
                     };
-                    /** @description ID of the associated transaction. */
+                    /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
-                    /** @description Payment method type. */
+                    /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 };
-                /** @description Payment details. Omitted when caller has no access. */
+                /** @description How the booking was paid for, oldest first. One entry per settling transaction, so a credits or day passes payment that was charged and later partly refunded lists each transaction separately. Omitted when the caller has no access. */
                 payments?: {
-                    /** @description Payment amount in the location currency. */
-                    amount?: number;
-                    /** @description ISO 4217 currency code. */
-                    currencyCode?: string;
-                    /** @description ID of the associated invoice item. */
-                    invoiceItemRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the payment was made.
+                     */
+                    createDate?: string;
+                    /** @description Discounts applied to the price. Omitted when none applied. */
+                    discounts?: {
+                        /** @description Applied coupon. */
+                        coupon: {
+                            /** @description Fixed discount amount, in the coupon's currency. */
+                            amountOff?: number;
+                            /** @description Currency code for amountOff. */
+                            currencyCode?: string;
+                            /** @description Coupon id. */
+                            id?: string;
+                            /** @description Percentage discount amount. */
+                            percentOff?: number;
+                            /** @description Product types this coupon applies to. */
+                            productTypes?: string[];
+                            /** @description Coupon type. */
+                            type?: string;
+                        };
+                        /** @description Applied promocode. */
+                        promocode?: {
+                            /** @description Promocode string, the way a purchase references the promocode back. */
+                            code: string;
+                            /** @description Promocode expiration. */
+                            expiration?: {
+                                /** @description ISO timestamp of when the promocode expires. */
+                                date?: string;
+                                /** @description Whether the promocode expires. */
+                                enabled: boolean;
+                            };
+                            /** @description Promocode id. */
+                            id: string;
+                            /** @description Whether the promocode is limited to a first purchase. */
+                            limitByFirstPurchase?: boolean;
+                        };
+                        /** @description Subscription the discount was granted by. */
+                        subscriptionId?: string;
+                    }[];
+                    /** @description Chargeback dispute raised against the payment, if any. */
+                    dispute?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the dispute was opened.
+                         */
+                        createDate?: string;
+                    };
+                    /** @description How the booking was paid for, and by whom. */
+                    method: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Customer whose credits were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Customer whose day passes were spent. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `external`. */
+                        external?: {
+                            /** @description Customer who paid outside of Spacebring. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                        };
+                        /** @description Set when `type` is `invoice`. */
+                        invoice?: {
+                            /** @description Customer the booking was invoiced to. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /** @description ID of the invoice item the booking was billed on. */
+                            invoiceItemRef?: string;
+                            /**
+                             * Format: uuid
+                             * @description Subscription the invoice item belongs to.
+                             */
+                            subscriptionRef?: string;
+                        };
+                        /** @description Set when `type` is `paymentGateway`. */
+                        paymentGateway?: {
+                            /** @description Customer who was charged. */
+                            customer: {
+                                /**
+                                 * Format: uuid
+                                 * @description Customer id. Absent when the payer record is no longer available.
+                                 */
+                                id?: string;
+                                /** @description Location the payer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Location id.
+                                     */
+                                    id: string;
+                                    /** @description Location display name. */
+                                    title?: string;
+                                };
+                                /** @description First name. Present for `user` payers. */
+                                name?: string | null;
+                                /** @description Last name. Present for `user` payers. */
+                                surname?: string | null;
+                                /** @description Company name. Present for `company` payers. */
+                                title?: string;
+                                /**
+                                 * @description Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own.
+                                 * @enum {string}
+                                 */
+                                type: "company" | "user";
+                            };
+                            /**
+                             * @description Payment gateway that processed the charge.
+                             * @enum {string}
+                             */
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
+                            label?: string;
+                            /** @description Masked payment method identifier. */
+                            mask?: string;
+                            /** @description Display name of the payment gateway, e.g. `Stripe`. */
+                            title?: string;
+                        };
+                        /**
+                         * @description How the booking was paid for. The matching property below carries the details.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "external" | "invoice" | "paymentGateway";
+                    };
+                    /** @description What the booking was charged. */
+                    price?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /** @description Expiring credits charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent credits charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total credits charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /** @description Expiring day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            expiringAmount?: number;
+                            /** @description Permanent day passes charged. Omitted on a per-transaction entry, which records no split. */
+                            permanentAmount?: number;
+                            /** @description Total day passes charged. */
+                            totalAmount: number;
+                        };
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Total amount charged, tax included. */
+                            grossAmount: number;
+                            /** @description Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax. */
+                            taxIsInclusive?: boolean;
+                            /** @description Tax rate applied, in percent. Omitted when the location charges no tax. */
+                            taxRate?: number;
+                        };
+                        /**
+                         * @description What the booking was charged in.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice. */
+                    refundable?: boolean;
+                    /** @description Refunds made against the payment. Omitted when nothing was refunded. */
+                    refunds?: {
+                        /** @description Set when `type` is `credits`. */
+                        credits?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `dayPasses`. */
+                        dayPasses?: {
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually.
+                             */
+                            amountExpiring: number;
+                            /**
+                             * @deprecated
+                             * @description Deprecated. Use `amounts` instead.
+                             */
+                            amountPermanent: number;
+                            /** @description Total amount returned by this refund. */
+                            amountTotal: number;
+                            /** @description Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known. */
+                            amounts?: {
+                                /** @description Amount returned to this balance bucket. */
+                                amount: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Expiration date of the expiring balance the amount was returned to.
+                                 */
+                                expirationDate?: string;
+                                /**
+                                 * Format: uuid
+                                 * @description Subscription the expiring balance belongs to.
+                                 */
+                                subscriptionRef?: string;
+                                /**
+                                 * @description Balance bucket type.
+                                 * @enum {string}
+                                 */
+                                type: "expiring" | "permanent";
+                            }[];
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /** @description Set when `type` is `money`. */
+                        money?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp of when the refund was made.
+                             */
+                            createDate?: string;
+                            /** @description ISO 4217 currency code. */
+                            currencyCode?: string;
+                            /** @description Gross amount returned by this refund. */
+                            grossAmount: number;
+                            /** @description Refund transaction id. */
+                            id?: string;
+                        }[];
+                        /**
+                         * @description What was refunded.
+                         * @enum {string}
+                         */
+                        type: "credits" | "dayPasses" | "money";
+                    };
+                    /** @description Set for a pending gateway payment the current user still has to complete. */
+                    request?: {
+                        /**
+                         * Format: uuid
+                         * @description Payment request id.
+                         */
+                        id: string;
+                        /** @description Relative URL the payer opens to complete the payment. */
+                        url: string;
+                    };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when a scheduled payment will be charged.
+                     */
+                    scheduleDate?: string;
                     /**
                      * @description Payment status.
                      * @enum {string}
                      */
                     status?: "succeeded" | "failed" | "pending" | "processing" | "canceled";
-                    /** @description Surcharge applied to the payment, if any. */
+                    /** @description Surcharge added on top of the price, if any. */
                     surcharge?: {
                         money: {
                             /** @description Surcharge amount. */
@@ -9926,9 +11555,9 @@ export interface components {
                          */
                         type: "money";
                     };
-                    /** @description ID of the associated transaction. */
+                    /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
-                    /** @description Payment method type. */
+                    /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 }[];
                 /**
@@ -18910,6 +20539,59 @@ export interface components {
                 };
             };
         };
+        patchBooking: {
+            content: {
+                "application/json": {
+                    /** @description Booking fields to update. Fields left out keep their current value. */
+                    booking: {
+                        /** @description Full list of attendees to keep on the booking. Attendees left out are removed. Supported for room resources. */
+                        attendees?: {
+                            user: {
+                                /**
+                                 * Format: uuid
+                                 * @description User id of the attendee.
+                                 */
+                                id: string;
+                            };
+                        }[];
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the booking ends.
+                         */
+                        endDate?: string;
+                        /** @description Set to true to book the entire resource instead of individual seats. Supported for office resources. */
+                        entire?: boolean;
+                        /** @description Internal note attached to the booking. */
+                        memo?: string;
+                        /**
+                         * Format: uuid
+                         * @description ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.
+                         */
+                        resourceRef?: string;
+                        /** @description Number of seats to reserve. Supported for desk and office resources. */
+                        seats?: number;
+                        /**
+                         * @description Whether to notify the owner and the attendees about the update. Defaults to the value stored on the booking.
+                         * @enum {string}
+                         */
+                        sendUpdates?: "none" | "all";
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the booking starts. Patching it without an endDate moves the booking and keeps its current duration.
+                         */
+                        startDate?: string;
+                        /** @description Custom title for the booking. */
+                        title?: string;
+                    };
+                    /**
+                     * @description For a repeating booking, whether to update only the addressed occurrence or that one and every later occurrence.
+                     * @default singleOccurrence
+                     * @enum {string}
+                     */
+                    updateRepeatingScope?: "singleOccurrence" | "thisAndNext";
+                };
+            };
+        };
         createShopCategory: {
             content: {
                 "application/json": {
@@ -25062,9 +26744,9 @@ export interface operations {
     };
     getAssignments: {
         parameters: {
-            query: {
+            query?: {
                 /** @description UUID of the location whose resource assignments to list. */
-                locationRef: string;
+                locationRef?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -25346,6 +27028,41 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchBooking: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `<bookingId>_<ISO date>`. */
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchBooking"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getBooking"];
+                };
             };
             /** @description Bad Request */
             400: {

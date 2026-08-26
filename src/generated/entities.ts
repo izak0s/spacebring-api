@@ -15,7 +15,7 @@ export type { Network } from "./resources/networks.js";
 export type { CreatePackageBody, GetPackagesQuery, Package, PatchPackageBody } from "./resources/packages.js";
 export type { CreatePlanBody, GetPlansQuery, Plan, UpdatePlanBody } from "./resources/plans.js";
 export type { GetRegistrationsQuery, Registration } from "./resources/registrations.js";
-export type { Assignment, Booking, CreateBookingBody, CreateResourceBody, GetAssignmentsQuery, GetBookingsQuery, GetResourcesQuery, PatchResourceBody, Resource } from "./resources/resources.js";
+export type { Assignment, Booking, CreateBookingBody, CreateResourceBody, GetAssignmentsQuery, GetBookingsQuery, GetResourcesQuery, PatchBookingBody, PatchResourceBody, Resource } from "./resources/resources.js";
 export type { CreateProductBody, CreateShopCategoryBody, GetOrdersQuery, GetProductsQuery, GetShopCategoriesQuery, Order, Product, ShopCategory, UpdateProductBody, UpdateShopCategoryBody } from "./resources/shop.js";
 export type { CreateSubscriptionBody, CreateSubscriptionItemBody, GetSubscriptionsQuery, Subscription, UpdateSubscriptionBody, UpdateSubscriptionItemBody } from "./resources/subscriptions.js";
 export type { Activity, CreateSupportTicketBody, CreateSupportTicketCommentBody, GetSupportTicketsQuery, SupportTicket, UpdateSupportTicketAssigneeBody, UpdateSupportTicketStatusBody, UpdateSupportTicketTypeBody } from "./resources/support.js";
