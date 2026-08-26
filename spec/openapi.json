@@ -9196,7 +9196,7 @@
           {
             "in": "query",
             "name": "locationRef",
-            "required": true,
+            "required": false,
             "description": "UUID of the location whose resource assignments to list.",
             "schema": {
               "type": "string",
@@ -9747,6 +9747,70 @@
           {
             "OAuth2": [
               "resources.readonly",
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getBooking"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Update a booking",
+        "description": "Update a booking. Fields left out of the request keep their current value. <h3>OAuth</h3>Required scopes: <code>resources</code>",
+        "operationId": "patchBooking",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "description": "ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `<bookingId>_<ISO date>`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchBooking"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
               "resources"
             ]
           }
@@ -26469,6 +26533,10 @@
                         ],
                         "additionalProperties": false
                       },
+                      "endDate": {
+                        "description": "ISO timestamp when the assignment ends.",
+                        "type": "string"
+                      },
                       "entire": {
                         "type": "boolean",
                         "description": "Whether the assignment grants access to the entire resource."
@@ -26498,10 +26566,49 @@
                         "description": "Assigned quantity when the resource is partially assigned.",
                         "type": "number"
                       },
+                      "resource": {
+                        "description": "Resource the assignment belongs to. Present when assignments are listed on their own.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Resource id."
+                          },
+                          "imageUrl": {
+                            "description": "Resource image URL.",
+                            "type": "string"
+                          },
+                          "locationRef": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "UUID of the location the resource belongs to."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Resource title."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Resource type."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "locationRef",
+                          "title",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
                       "resourceRef": {
                         "type": "string",
                         "format": "uuid",
                         "description": "UUID of the resource the assignment belongs to."
+                      },
+                      "startDate": {
+                        "type": "string",
+                        "description": "ISO timestamp when the assignment starts."
                       },
                       "subscription": {
                         "type": "object",
@@ -26511,9 +26618,9 @@
                             "type": "string"
                           },
                           "id": {
+                            "description": "Subscription id. Absent for assignments created directly by an admin.",
                             "type": "string",
-                            "format": "uuid",
-                            "description": "Subscription id."
+                            "format": "uuid"
                           },
                           "startDate": {
                             "type": "string",
@@ -26521,11 +26628,10 @@
                           }
                         },
                         "required": [
-                          "id",
                           "startDate"
                         ],
                         "additionalProperties": false,
-                        "description": "Subscription backing this assignment."
+                        "description": "Deprecated. Use startDate and endDate instead. Subscription backing this assignment."
                       },
                       "user": {
                         "deprecated": true,
@@ -26562,6 +26668,7 @@
                     "required": [
                       "entire",
                       "resourceRef",
+                      "startDate",
                       "subscription"
                     ],
                     "additionalProperties": false
@@ -27923,6 +28030,10 @@
                       ],
                       "additionalProperties": false
                     },
+                    "endDate": {
+                      "description": "ISO timestamp when the assignment ends.",
+                      "type": "string"
+                    },
                     "entire": {
                       "type": "boolean",
                       "description": "Whether the assignment grants access to the entire resource."
@@ -27952,10 +28063,49 @@
                       "description": "Assigned quantity when the resource is partially assigned.",
                       "type": "number"
                     },
+                    "resource": {
+                      "description": "Resource the assignment belongs to. Present when assignments are listed on their own.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Resource id."
+                        },
+                        "imageUrl": {
+                          "description": "Resource image URL.",
+                          "type": "string"
+                        },
+                        "locationRef": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "UUID of the location the resource belongs to."
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Resource title."
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Resource type."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "locationRef",
+                        "title",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
                     "resourceRef": {
                       "type": "string",
                       "format": "uuid",
                       "description": "UUID of the resource the assignment belongs to."
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "description": "ISO timestamp when the assignment starts."
                     },
                     "subscription": {
                       "type": "object",
@@ -27965,9 +28115,9 @@
                           "type": "string"
                         },
                         "id": {
+                          "description": "Subscription id. Absent for assignments created directly by an admin.",
                           "type": "string",
-                          "format": "uuid",
-                          "description": "Subscription id."
+                          "format": "uuid"
                         },
                         "startDate": {
                           "type": "string",
@@ -27975,11 +28125,10 @@
                         }
                       },
                       "required": [
-                        "id",
                         "startDate"
                       ],
                       "additionalProperties": false,
-                      "description": "Subscription backing this assignment."
+                      "description": "Deprecated. Use startDate and endDate instead. Subscription backing this assignment."
                     },
                     "user": {
                       "deprecated": true,
@@ -28016,6 +28165,7 @@
                   "required": [
                     "entire",
                     "resourceRef",
+                    "startDate",
                     "subscription"
                   ],
                   "additionalProperties": false
@@ -29369,6 +29519,10 @@
                   ],
                   "additionalProperties": false
                 },
+                "endDate": {
+                  "description": "ISO timestamp when the assignment ends.",
+                  "type": "string"
+                },
                 "entire": {
                   "type": "boolean",
                   "description": "Whether the assignment grants access to the entire resource."
@@ -29398,10 +29552,49 @@
                   "description": "Assigned quantity when the resource is partially assigned.",
                   "type": "number"
                 },
+                "resource": {
+                  "description": "Resource the assignment belongs to. Present when assignments are listed on their own.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Resource id."
+                    },
+                    "imageUrl": {
+                      "description": "Resource image URL.",
+                      "type": "string"
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "UUID of the location the resource belongs to."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Resource title."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Resource type."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "locationRef",
+                    "title",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
                 "resourceRef": {
                   "type": "string",
                   "format": "uuid",
                   "description": "UUID of the resource the assignment belongs to."
+                },
+                "startDate": {
+                  "type": "string",
+                  "description": "ISO timestamp when the assignment starts."
                 },
                 "subscription": {
                   "type": "object",
@@ -29411,9 +29604,9 @@
                       "type": "string"
                     },
                     "id": {
+                      "description": "Subscription id. Absent for assignments created directly by an admin.",
                       "type": "string",
-                      "format": "uuid",
-                      "description": "Subscription id."
+                      "format": "uuid"
                     },
                     "startDate": {
                       "type": "string",
@@ -29421,11 +29614,10 @@
                     }
                   },
                   "required": [
-                    "id",
                     "startDate"
                   ],
                   "additionalProperties": false,
-                  "description": "Subscription backing this assignment."
+                  "description": "Deprecated. Use startDate and endDate instead. Subscription backing this assignment."
                 },
                 "user": {
                   "deprecated": true,
@@ -29462,6 +29654,7 @@
               "required": [
                 "entire",
                 "resourceRef",
+                "startDate",
                 "subscription"
               ],
               "additionalProperties": false
@@ -29597,17 +29790,824 @@
                   "description": "Deprecated. Use `payments` instead.",
                   "type": "object",
                   "properties": {
-                    "amount": {
-                      "description": "Payment amount in the location currency.",
-                      "type": "number"
+                    "createDate": {
+                      "description": "ISO timestamp of when the payment was made.",
+                      "type": "string",
+                      "format": "date-time"
                     },
-                    "currencyCode": {
-                      "description": "ISO 4217 currency code.",
-                      "type": "string"
+                    "discounts": {
+                      "description": "Discounts applied to the price. Omitted when none applied.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "coupon": {
+                            "type": "object",
+                            "properties": {
+                              "amountOff": {
+                                "description": "Fixed discount amount, in the coupon's currency.",
+                                "type": "number"
+                              },
+                              "currencyCode": {
+                                "description": "Currency code for amountOff.",
+                                "type": "string"
+                              },
+                              "id": {
+                                "description": "Coupon id.",
+                                "type": "string"
+                              },
+                              "percentOff": {
+                                "description": "Percentage discount amount.",
+                                "type": "number"
+                              },
+                              "productTypes": {
+                                "description": "Product types this coupon applies to.",
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": {
+                                "description": "Coupon type.",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Applied coupon."
+                          },
+                          "promocode": {
+                            "description": "Applied promocode.",
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "description": "Promocode string, the way a purchase references the promocode back."
+                              },
+                              "expiration": {
+                                "description": "Promocode expiration.",
+                                "type": "object",
+                                "properties": {
+                                  "date": {
+                                    "description": "ISO timestamp of when the promocode expires.",
+                                    "type": "string"
+                                  },
+                                  "enabled": {
+                                    "type": "boolean",
+                                    "description": "Whether the promocode expires."
+                                  }
+                                },
+                                "required": [
+                                  "enabled"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "id": {
+                                "type": "string",
+                                "description": "Promocode id."
+                              },
+                              "limitByFirstPurchase": {
+                                "description": "Whether the promocode is limited to a first purchase.",
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "subscriptionId": {
+                            "description": "Subscription the discount was granted by.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "coupon"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Discount recorded on a settled payment."
+                      }
                     },
-                    "invoiceItemRef": {
-                      "description": "ID of the associated invoice item.",
-                      "type": "string"
+                    "dispute": {
+                      "description": "Chargeback dispute raised against the payment, if any.",
+                      "type": "object",
+                      "properties": {
+                        "createDate": {
+                          "description": "ISO timestamp of when the dispute was opened.",
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "method": {
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer whose credits were spent."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer whose day passes were spent."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "external": {
+                          "description": "Set when `type` is `external`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer who paid outside of Spacebring."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "invoice": {
+                          "description": "Set when `type` is `invoice`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer the booking was invoiced to."
+                            },
+                            "invoiceItemRef": {
+                              "description": "ID of the invoice item the booking was billed on.",
+                              "type": "string"
+                            },
+                            "subscriptionRef": {
+                              "description": "Subscription the invoice item belongs to.",
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "paymentGateway": {
+                          "description": "Set when `type` is `paymentGateway`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer who was charged."
+                            },
+                            "gateway": {
+                              "description": "Payment gateway that processed the charge.",
+                              "type": "string",
+                              "enum": [
+                                "authorizenet",
+                                "flow",
+                                "fondy",
+                                "freedompay",
+                                "kakaopay",
+                                "maya",
+                                "mercadopago",
+                                "mollie",
+                                "paypal",
+                                "paystack",
+                                "payway",
+                                "plata",
+                                "stripe",
+                                "tap",
+                                "wayforpay",
+                                "xendit"
+                              ]
+                            },
+                            "label": {
+                              "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
+                              "type": "string"
+                            },
+                            "mask": {
+                              "description": "Masked payment method identifier.",
+                              "type": "string"
+                            },
+                            "title": {
+                              "description": "Display name of the payment gateway, e.g. `Stripe`.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "external",
+                            "invoice",
+                            "paymentGateway"
+                          ],
+                          "description": "How the booking was paid for. The matching property below carries the details."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "description": "How the booking was paid for, and by whom."
+                    },
+                    "price": {
+                      "description": "What the booking was charged.",
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "object",
+                          "properties": {
+                            "expiringAmount": {
+                              "description": "Expiring credits charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "permanentAmount": {
+                              "description": "Permanent credits charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "totalAmount": {
+                              "type": "number",
+                              "description": "Total credits charged."
+                            }
+                          },
+                          "required": [
+                            "totalAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "object",
+                          "properties": {
+                            "expiringAmount": {
+                              "description": "Expiring day passes charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "permanentAmount": {
+                              "description": "Permanent day passes charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "totalAmount": {
+                              "type": "number",
+                              "description": "Total day passes charged."
+                            }
+                          },
+                          "required": [
+                            "totalAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "money": {
+                          "description": "Set when `type` is `money`.",
+                          "type": "object",
+                          "properties": {
+                            "currencyCode": {
+                              "description": "ISO 4217 currency code.",
+                              "type": "string"
+                            },
+                            "grossAmount": {
+                              "type": "number",
+                              "description": "Total amount charged, tax included."
+                            },
+                            "taxIsInclusive": {
+                              "description": "Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax.",
+                              "type": "boolean"
+                            },
+                            "taxRate": {
+                              "description": "Tax rate applied, in percent. Omitted when the location charges no tax.",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "grossAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "money"
+                          ],
+                          "description": "What the booking was charged in."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "refundable": {
+                      "description": "Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice.",
+                      "type": "boolean"
+                    },
+                    "refunds": {
+                      "description": "Refunds made against the payment. Omitted when nothing was refunded.",
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "amountExpiring": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                              },
+                              "amountPermanent": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead."
+                              },
+                              "amountTotal": {
+                                "type": "number",
+                                "description": "Total amount returned by this refund."
+                              },
+                              "amounts": {
+                                "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "amount": {
+                                      "type": "number",
+                                      "description": "Amount returned to this balance bucket."
+                                    },
+                                    "expirationDate": {
+                                      "description": "Expiration date of the expiring balance the amount was returned to.",
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "subscriptionRef": {
+                                      "description": "Subscription the expiring balance belongs to.",
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "expiring",
+                                        "permanent"
+                                      ],
+                                      "description": "Balance bucket type."
+                                    }
+                                  },
+                                  "required": [
+                                    "amount",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amountExpiring",
+                              "amountPermanent",
+                              "amountTotal"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "amountExpiring": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                              },
+                              "amountPermanent": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead."
+                              },
+                              "amountTotal": {
+                                "type": "number",
+                                "description": "Total amount returned by this refund."
+                              },
+                              "amounts": {
+                                "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "amount": {
+                                      "type": "number",
+                                      "description": "Amount returned to this balance bucket."
+                                    },
+                                    "expirationDate": {
+                                      "description": "Expiration date of the expiring balance the amount was returned to.",
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "subscriptionRef": {
+                                      "description": "Subscription the expiring balance belongs to.",
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "expiring",
+                                        "permanent"
+                                      ],
+                                      "description": "Balance bucket type."
+                                    }
+                                  },
+                                  "required": [
+                                    "amount",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amountExpiring",
+                              "amountPermanent",
+                              "amountTotal"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "money": {
+                          "description": "Set when `type` is `money`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "currencyCode": {
+                                "description": "ISO 4217 currency code.",
+                                "type": "string"
+                              },
+                              "grossAmount": {
+                                "type": "number",
+                                "description": "Gross amount returned by this refund."
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "grossAmount"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "money"
+                          ],
+                          "description": "What was refunded."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "request": {
+                      "description": "Set for a pending gateway payment the current user still has to complete.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Payment request id."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Relative URL the payer opens to complete the payment."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "scheduleDate": {
+                      "description": "ISO timestamp of when a scheduled payment will be charged.",
+                      "type": "string",
+                      "format": "date-time"
                     },
                     "status": {
                       "description": "Payment status.",
@@ -29621,7 +30621,7 @@
                       ]
                     },
                     "surcharge": {
-                      "description": "Surcharge applied to the payment, if any.",
+                      "description": "Surcharge added on top of the price, if any.",
                       "type": "object",
                       "properties": {
                         "money": {
@@ -29661,33 +30661,843 @@
                       "additionalProperties": false
                     },
                     "transactionRef": {
-                      "description": "ID of the associated transaction.",
+                      "description": "ID of the transaction the payment was recorded as.",
                       "type": "string"
                     },
                     "type": {
-                      "description": "Payment method type.",
+                      "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                       "type": "string"
                     }
                   },
+                  "required": [
+                    "method"
+                  ],
                   "additionalProperties": false
                 },
                 "payments": {
-                  "description": "Payment details. Omitted when caller has no access.",
+                  "description": "How the booking was paid for, oldest first. One entry per settling transaction, so a credits or day passes payment that was charged and later partly refunded lists each transaction separately. Omitted when the caller has no access.",
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "amount": {
-                        "description": "Payment amount in the location currency.",
-                        "type": "number"
+                      "createDate": {
+                        "description": "ISO timestamp of when the payment was made.",
+                        "type": "string",
+                        "format": "date-time"
                       },
-                      "currencyCode": {
-                        "description": "ISO 4217 currency code.",
-                        "type": "string"
+                      "discounts": {
+                        "description": "Discounts applied to the price. Omitted when none applied.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "coupon": {
+                              "type": "object",
+                              "properties": {
+                                "amountOff": {
+                                  "description": "Fixed discount amount, in the coupon's currency.",
+                                  "type": "number"
+                                },
+                                "currencyCode": {
+                                  "description": "Currency code for amountOff.",
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "description": "Coupon id.",
+                                  "type": "string"
+                                },
+                                "percentOff": {
+                                  "description": "Percentage discount amount.",
+                                  "type": "number"
+                                },
+                                "productTypes": {
+                                  "description": "Product types this coupon applies to.",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "type": {
+                                  "description": "Coupon type.",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "description": "Applied coupon."
+                            },
+                            "promocode": {
+                              "description": "Applied promocode.",
+                              "type": "object",
+                              "properties": {
+                                "code": {
+                                  "type": "string",
+                                  "description": "Promocode string, the way a purchase references the promocode back."
+                                },
+                                "expiration": {
+                                  "description": "Promocode expiration.",
+                                  "type": "object",
+                                  "properties": {
+                                    "date": {
+                                      "description": "ISO timestamp of when the promocode expires.",
+                                      "type": "string"
+                                    },
+                                    "enabled": {
+                                      "type": "boolean",
+                                      "description": "Whether the promocode expires."
+                                    }
+                                  },
+                                  "required": [
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "description": "Promocode id."
+                                },
+                                "limitByFirstPurchase": {
+                                  "description": "Whether the promocode is limited to a first purchase.",
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "code",
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "subscriptionId": {
+                              "description": "Subscription the discount was granted by.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "coupon"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Discount recorded on a settled payment."
+                        }
                       },
-                      "invoiceItemRef": {
-                        "description": "ID of the associated invoice item.",
-                        "type": "string"
+                      "dispute": {
+                        "description": "Chargeback dispute raised against the payment, if any.",
+                        "type": "object",
+                        "properties": {
+                          "createDate": {
+                            "description": "ISO timestamp of when the dispute was opened.",
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "method": {
+                        "type": "object",
+                        "properties": {
+                          "credits": {
+                            "description": "Set when `type` is `credits`.",
+                            "type": "object",
+                            "properties": {
+                              "customer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "description": "Customer id. Absent when the payer record is no longer available.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "location": {
+                                    "description": "Location the payer belongs to.",
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "Location id."
+                                      },
+                                      "title": {
+                                        "description": "Location display name.",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": {
+                                    "description": "First name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "surname": {
+                                    "description": "Last name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "description": "Company name. Present for `company` payers.",
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "company",
+                                      "user"
+                                    ],
+                                    "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false,
+                                "description": "Customer whose credits were spent."
+                              }
+                            },
+                            "required": [
+                              "customer"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "dayPasses": {
+                            "description": "Set when `type` is `dayPasses`.",
+                            "type": "object",
+                            "properties": {
+                              "customer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "description": "Customer id. Absent when the payer record is no longer available.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "location": {
+                                    "description": "Location the payer belongs to.",
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "Location id."
+                                      },
+                                      "title": {
+                                        "description": "Location display name.",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": {
+                                    "description": "First name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "surname": {
+                                    "description": "Last name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "description": "Company name. Present for `company` payers.",
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "company",
+                                      "user"
+                                    ],
+                                    "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false,
+                                "description": "Customer whose day passes were spent."
+                              }
+                            },
+                            "required": [
+                              "customer"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "external": {
+                            "description": "Set when `type` is `external`.",
+                            "type": "object",
+                            "properties": {
+                              "customer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "description": "Customer id. Absent when the payer record is no longer available.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "location": {
+                                    "description": "Location the payer belongs to.",
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "Location id."
+                                      },
+                                      "title": {
+                                        "description": "Location display name.",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": {
+                                    "description": "First name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "surname": {
+                                    "description": "Last name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "description": "Company name. Present for `company` payers.",
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "company",
+                                      "user"
+                                    ],
+                                    "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false,
+                                "description": "Customer who paid outside of Spacebring."
+                              }
+                            },
+                            "required": [
+                              "customer"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "invoice": {
+                            "description": "Set when `type` is `invoice`.",
+                            "type": "object",
+                            "properties": {
+                              "customer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "description": "Customer id. Absent when the payer record is no longer available.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "location": {
+                                    "description": "Location the payer belongs to.",
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "Location id."
+                                      },
+                                      "title": {
+                                        "description": "Location display name.",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": {
+                                    "description": "First name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "surname": {
+                                    "description": "Last name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "description": "Company name. Present for `company` payers.",
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "company",
+                                      "user"
+                                    ],
+                                    "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false,
+                                "description": "Customer the booking was invoiced to."
+                              },
+                              "invoiceItemRef": {
+                                "description": "ID of the invoice item the booking was billed on.",
+                                "type": "string"
+                              },
+                              "subscriptionRef": {
+                                "description": "Subscription the invoice item belongs to.",
+                                "type": "string",
+                                "format": "uuid"
+                              }
+                            },
+                            "required": [
+                              "customer"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "paymentGateway": {
+                            "description": "Set when `type` is `paymentGateway`.",
+                            "type": "object",
+                            "properties": {
+                              "customer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "description": "Customer id. Absent when the payer record is no longer available.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "location": {
+                                    "description": "Location the payer belongs to.",
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "Location id."
+                                      },
+                                      "title": {
+                                        "description": "Location display name.",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "name": {
+                                    "description": "First name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "surname": {
+                                    "description": "Last name. Present for `user` payers.",
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "description": "Company name. Present for `company` payers.",
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "company",
+                                      "user"
+                                    ],
+                                    "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false,
+                                "description": "Customer who was charged."
+                              },
+                              "gateway": {
+                                "description": "Payment gateway that processed the charge.",
+                                "type": "string",
+                                "enum": [
+                                  "authorizenet",
+                                  "flow",
+                                  "fondy",
+                                  "freedompay",
+                                  "kakaopay",
+                                  "maya",
+                                  "mercadopago",
+                                  "mollie",
+                                  "paypal",
+                                  "paystack",
+                                  "payway",
+                                  "plata",
+                                  "stripe",
+                                  "tap",
+                                  "wayforpay",
+                                  "xendit"
+                                ]
+                              },
+                              "label": {
+                                "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
+                                "type": "string"
+                              },
+                              "mask": {
+                                "description": "Masked payment method identifier.",
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Display name of the payment gateway, e.g. `Stripe`.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "customer"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "credits",
+                              "dayPasses",
+                              "external",
+                              "invoice",
+                              "paymentGateway"
+                            ],
+                            "description": "How the booking was paid for. The matching property below carries the details."
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ],
+                        "additionalProperties": false,
+                        "description": "How the booking was paid for, and by whom."
+                      },
+                      "price": {
+                        "description": "What the booking was charged.",
+                        "type": "object",
+                        "properties": {
+                          "credits": {
+                            "description": "Set when `type` is `credits`.",
+                            "type": "object",
+                            "properties": {
+                              "expiringAmount": {
+                                "description": "Expiring credits charged. Omitted on a per-transaction entry, which records no split.",
+                                "type": "number"
+                              },
+                              "permanentAmount": {
+                                "description": "Permanent credits charged. Omitted on a per-transaction entry, which records no split.",
+                                "type": "number"
+                              },
+                              "totalAmount": {
+                                "type": "number",
+                                "description": "Total credits charged."
+                              }
+                            },
+                            "required": [
+                              "totalAmount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "dayPasses": {
+                            "description": "Set when `type` is `dayPasses`.",
+                            "type": "object",
+                            "properties": {
+                              "expiringAmount": {
+                                "description": "Expiring day passes charged. Omitted on a per-transaction entry, which records no split.",
+                                "type": "number"
+                              },
+                              "permanentAmount": {
+                                "description": "Permanent day passes charged. Omitted on a per-transaction entry, which records no split.",
+                                "type": "number"
+                              },
+                              "totalAmount": {
+                                "type": "number",
+                                "description": "Total day passes charged."
+                              }
+                            },
+                            "required": [
+                              "totalAmount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "money": {
+                            "description": "Set when `type` is `money`.",
+                            "type": "object",
+                            "properties": {
+                              "currencyCode": {
+                                "description": "ISO 4217 currency code.",
+                                "type": "string"
+                              },
+                              "grossAmount": {
+                                "type": "number",
+                                "description": "Total amount charged, tax included."
+                              },
+                              "taxIsInclusive": {
+                                "description": "Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax.",
+                                "type": "boolean"
+                              },
+                              "taxRate": {
+                                "description": "Tax rate applied, in percent. Omitted when the location charges no tax.",
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "grossAmount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "credits",
+                              "dayPasses",
+                              "money"
+                            ],
+                            "description": "What the booking was charged in."
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "refundable": {
+                        "description": "Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice.",
+                        "type": "boolean"
+                      },
+                      "refunds": {
+                        "description": "Refunds made against the payment. Omitted when nothing was refunded.",
+                        "type": "object",
+                        "properties": {
+                          "credits": {
+                            "description": "Set when `type` is `credits`.",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "amountExpiring": {
+                                  "type": "number",
+                                  "deprecated": true,
+                                  "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                                },
+                                "amountPermanent": {
+                                  "type": "number",
+                                  "deprecated": true,
+                                  "description": "Deprecated. Use `amounts` instead."
+                                },
+                                "amountTotal": {
+                                  "type": "number",
+                                  "description": "Total amount returned by this refund."
+                                },
+                                "amounts": {
+                                  "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "amount": {
+                                        "type": "number",
+                                        "description": "Amount returned to this balance bucket."
+                                      },
+                                      "expirationDate": {
+                                        "description": "Expiration date of the expiring balance the amount was returned to.",
+                                        "type": "string",
+                                        "format": "date-time"
+                                      },
+                                      "subscriptionRef": {
+                                        "description": "Subscription the expiring balance belongs to.",
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "enum": [
+                                          "expiring",
+                                          "permanent"
+                                        ],
+                                        "description": "Balance bucket type."
+                                      }
+                                    },
+                                    "required": [
+                                      "amount",
+                                      "type"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "createDate": {
+                                  "description": "ISO timestamp of when the refund was made.",
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "id": {
+                                  "description": "Refund transaction id.",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "amountExpiring",
+                                "amountPermanent",
+                                "amountTotal"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "dayPasses": {
+                            "description": "Set when `type` is `dayPasses`.",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "amountExpiring": {
+                                  "type": "number",
+                                  "deprecated": true,
+                                  "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                                },
+                                "amountPermanent": {
+                                  "type": "number",
+                                  "deprecated": true,
+                                  "description": "Deprecated. Use `amounts` instead."
+                                },
+                                "amountTotal": {
+                                  "type": "number",
+                                  "description": "Total amount returned by this refund."
+                                },
+                                "amounts": {
+                                  "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "amount": {
+                                        "type": "number",
+                                        "description": "Amount returned to this balance bucket."
+                                      },
+                                      "expirationDate": {
+                                        "description": "Expiration date of the expiring balance the amount was returned to.",
+                                        "type": "string",
+                                        "format": "date-time"
+                                      },
+                                      "subscriptionRef": {
+                                        "description": "Subscription the expiring balance belongs to.",
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "enum": [
+                                          "expiring",
+                                          "permanent"
+                                        ],
+                                        "description": "Balance bucket type."
+                                      }
+                                    },
+                                    "required": [
+                                      "amount",
+                                      "type"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "createDate": {
+                                  "description": "ISO timestamp of when the refund was made.",
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "id": {
+                                  "description": "Refund transaction id.",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "amountExpiring",
+                                "amountPermanent",
+                                "amountTotal"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "money": {
+                            "description": "Set when `type` is `money`.",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "createDate": {
+                                  "description": "ISO timestamp of when the refund was made.",
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "currencyCode": {
+                                  "description": "ISO 4217 currency code.",
+                                  "type": "string"
+                                },
+                                "grossAmount": {
+                                  "type": "number",
+                                  "description": "Gross amount returned by this refund."
+                                },
+                                "id": {
+                                  "description": "Refund transaction id.",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "grossAmount"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "credits",
+                              "dayPasses",
+                              "money"
+                            ],
+                            "description": "What was refunded."
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "request": {
+                        "description": "Set for a pending gateway payment the current user still has to complete.",
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Payment request id."
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "Relative URL the payer opens to complete the payment."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "scheduleDate": {
+                        "description": "ISO timestamp of when a scheduled payment will be charged.",
+                        "type": "string",
+                        "format": "date-time"
                       },
                       "status": {
                         "description": "Payment status.",
@@ -29701,7 +31511,7 @@
                         ]
                       },
                       "surcharge": {
-                        "description": "Surcharge applied to the payment, if any.",
+                        "description": "Surcharge added on top of the price, if any.",
                         "type": "object",
                         "properties": {
                           "money": {
@@ -29741,14 +31551,17 @@
                         "additionalProperties": false
                       },
                       "transactionRef": {
-                        "description": "ID of the associated transaction.",
+                        "description": "ID of the transaction the payment was recorded as.",
                         "type": "string"
                       },
                       "type": {
-                        "description": "Payment method type.",
+                        "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                         "type": "string"
                       }
                     },
+                    "required": [
+                      "method"
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -29986,17 +31799,824 @@
                 "description": "Deprecated. Use `payments` instead.",
                 "type": "object",
                 "properties": {
-                  "amount": {
-                    "description": "Payment amount in the location currency.",
-                    "type": "number"
+                  "createDate": {
+                    "description": "ISO timestamp of when the payment was made.",
+                    "type": "string",
+                    "format": "date-time"
                   },
-                  "currencyCode": {
-                    "description": "ISO 4217 currency code.",
-                    "type": "string"
+                  "discounts": {
+                    "description": "Discounts applied to the price. Omitted when none applied.",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "coupon": {
+                          "type": "object",
+                          "properties": {
+                            "amountOff": {
+                              "description": "Fixed discount amount, in the coupon's currency.",
+                              "type": "number"
+                            },
+                            "currencyCode": {
+                              "description": "Currency code for amountOff.",
+                              "type": "string"
+                            },
+                            "id": {
+                              "description": "Coupon id.",
+                              "type": "string"
+                            },
+                            "percentOff": {
+                              "description": "Percentage discount amount.",
+                              "type": "number"
+                            },
+                            "productTypes": {
+                              "description": "Product types this coupon applies to.",
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "type": {
+                              "description": "Coupon type.",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "description": "Applied coupon."
+                        },
+                        "promocode": {
+                          "description": "Applied promocode.",
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "description": "Promocode string, the way a purchase references the promocode back."
+                            },
+                            "expiration": {
+                              "description": "Promocode expiration.",
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "description": "ISO timestamp of when the promocode expires.",
+                                  "type": "string"
+                                },
+                                "enabled": {
+                                  "type": "boolean",
+                                  "description": "Whether the promocode expires."
+                                }
+                              },
+                              "required": [
+                                "enabled"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "id": {
+                              "type": "string",
+                              "description": "Promocode id."
+                            },
+                            "limitByFirstPurchase": {
+                              "description": "Whether the promocode is limited to a first purchase.",
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "subscriptionId": {
+                          "description": "Subscription the discount was granted by.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "coupon"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Discount recorded on a settled payment."
+                    }
                   },
-                  "invoiceItemRef": {
-                    "description": "ID of the associated invoice item.",
-                    "type": "string"
+                  "dispute": {
+                    "description": "Chargeback dispute raised against the payment, if any.",
+                    "type": "object",
+                    "properties": {
+                      "createDate": {
+                        "description": "ISO timestamp of when the dispute was opened.",
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "method": {
+                    "type": "object",
+                    "properties": {
+                      "credits": {
+                        "description": "Set when `type` is `credits`.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer id. Absent when the payer record is no longer available.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "location": {
+                                "description": "Location the payer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Location id."
+                                  },
+                                  "title": {
+                                    "description": "Location display name.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company name. Present for `company` payers.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ],
+                                "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Customer whose credits were spent."
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "dayPasses": {
+                        "description": "Set when `type` is `dayPasses`.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer id. Absent when the payer record is no longer available.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "location": {
+                                "description": "Location the payer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Location id."
+                                  },
+                                  "title": {
+                                    "description": "Location display name.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company name. Present for `company` payers.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ],
+                                "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Customer whose day passes were spent."
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "external": {
+                        "description": "Set when `type` is `external`.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer id. Absent when the payer record is no longer available.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "location": {
+                                "description": "Location the payer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Location id."
+                                  },
+                                  "title": {
+                                    "description": "Location display name.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company name. Present for `company` payers.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ],
+                                "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Customer who paid outside of Spacebring."
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "invoice": {
+                        "description": "Set when `type` is `invoice`.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer id. Absent when the payer record is no longer available.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "location": {
+                                "description": "Location the payer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Location id."
+                                  },
+                                  "title": {
+                                    "description": "Location display name.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company name. Present for `company` payers.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ],
+                                "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Customer the booking was invoiced to."
+                          },
+                          "invoiceItemRef": {
+                            "description": "ID of the invoice item the booking was billed on.",
+                            "type": "string"
+                          },
+                          "subscriptionRef": {
+                            "description": "Subscription the invoice item belongs to.",
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "paymentGateway": {
+                        "description": "Set when `type` is `paymentGateway`.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer id. Absent when the payer record is no longer available.",
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "location": {
+                                "description": "Location the payer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Location id."
+                                  },
+                                  "title": {
+                                    "description": "Location display name.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name. Present for `user` payers.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company name. Present for `company` payers.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ],
+                                "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Customer who was charged."
+                          },
+                          "gateway": {
+                            "description": "Payment gateway that processed the charge.",
+                            "type": "string",
+                            "enum": [
+                              "authorizenet",
+                              "flow",
+                              "fondy",
+                              "freedompay",
+                              "kakaopay",
+                              "maya",
+                              "mercadopago",
+                              "mollie",
+                              "paypal",
+                              "paystack",
+                              "payway",
+                              "plata",
+                              "stripe",
+                              "tap",
+                              "wayforpay",
+                              "xendit"
+                            ]
+                          },
+                          "label": {
+                            "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
+                            "type": "string"
+                          },
+                          "mask": {
+                            "description": "Masked payment method identifier.",
+                            "type": "string"
+                          },
+                          "title": {
+                            "description": "Display name of the payment gateway, e.g. `Stripe`.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "credits",
+                          "dayPasses",
+                          "external",
+                          "invoice",
+                          "paymentGateway"
+                        ],
+                        "description": "How the booking was paid for. The matching property below carries the details."
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "How the booking was paid for, and by whom."
+                  },
+                  "price": {
+                    "description": "What the booking was charged.",
+                    "type": "object",
+                    "properties": {
+                      "credits": {
+                        "description": "Set when `type` is `credits`.",
+                        "type": "object",
+                        "properties": {
+                          "expiringAmount": {
+                            "description": "Expiring credits charged. Omitted on a per-transaction entry, which records no split.",
+                            "type": "number"
+                          },
+                          "permanentAmount": {
+                            "description": "Permanent credits charged. Omitted on a per-transaction entry, which records no split.",
+                            "type": "number"
+                          },
+                          "totalAmount": {
+                            "type": "number",
+                            "description": "Total credits charged."
+                          }
+                        },
+                        "required": [
+                          "totalAmount"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "dayPasses": {
+                        "description": "Set when `type` is `dayPasses`.",
+                        "type": "object",
+                        "properties": {
+                          "expiringAmount": {
+                            "description": "Expiring day passes charged. Omitted on a per-transaction entry, which records no split.",
+                            "type": "number"
+                          },
+                          "permanentAmount": {
+                            "description": "Permanent day passes charged. Omitted on a per-transaction entry, which records no split.",
+                            "type": "number"
+                          },
+                          "totalAmount": {
+                            "type": "number",
+                            "description": "Total day passes charged."
+                          }
+                        },
+                        "required": [
+                          "totalAmount"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "money": {
+                        "description": "Set when `type` is `money`.",
+                        "type": "object",
+                        "properties": {
+                          "currencyCode": {
+                            "description": "ISO 4217 currency code.",
+                            "type": "string"
+                          },
+                          "grossAmount": {
+                            "type": "number",
+                            "description": "Total amount charged, tax included."
+                          },
+                          "taxIsInclusive": {
+                            "description": "Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax.",
+                            "type": "boolean"
+                          },
+                          "taxRate": {
+                            "description": "Tax rate applied, in percent. Omitted when the location charges no tax.",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "grossAmount"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "credits",
+                          "dayPasses",
+                          "money"
+                        ],
+                        "description": "What the booking was charged in."
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "refundable": {
+                    "description": "Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice.",
+                    "type": "boolean"
+                  },
+                  "refunds": {
+                    "description": "Refunds made against the payment. Omitted when nothing was refunded.",
+                    "type": "object",
+                    "properties": {
+                      "credits": {
+                        "description": "Set when `type` is `credits`.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "amountExpiring": {
+                              "type": "number",
+                              "deprecated": true,
+                              "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                            },
+                            "amountPermanent": {
+                              "type": "number",
+                              "deprecated": true,
+                              "description": "Deprecated. Use `amounts` instead."
+                            },
+                            "amountTotal": {
+                              "type": "number",
+                              "description": "Total amount returned by this refund."
+                            },
+                            "amounts": {
+                              "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "amount": {
+                                    "type": "number",
+                                    "description": "Amount returned to this balance bucket."
+                                  },
+                                  "expirationDate": {
+                                    "description": "Expiration date of the expiring balance the amount was returned to.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  "subscriptionRef": {
+                                    "description": "Subscription the expiring balance belongs to.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "expiring",
+                                      "permanent"
+                                    ],
+                                    "description": "Balance bucket type."
+                                  }
+                                },
+                                "required": [
+                                  "amount",
+                                  "type"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "createDate": {
+                              "description": "ISO timestamp of when the refund was made.",
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "id": {
+                              "description": "Refund transaction id.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "amountExpiring",
+                            "amountPermanent",
+                            "amountTotal"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "dayPasses": {
+                        "description": "Set when `type` is `dayPasses`.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "amountExpiring": {
+                              "type": "number",
+                              "deprecated": true,
+                              "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                            },
+                            "amountPermanent": {
+                              "type": "number",
+                              "deprecated": true,
+                              "description": "Deprecated. Use `amounts` instead."
+                            },
+                            "amountTotal": {
+                              "type": "number",
+                              "description": "Total amount returned by this refund."
+                            },
+                            "amounts": {
+                              "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "amount": {
+                                    "type": "number",
+                                    "description": "Amount returned to this balance bucket."
+                                  },
+                                  "expirationDate": {
+                                    "description": "Expiration date of the expiring balance the amount was returned to.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  "subscriptionRef": {
+                                    "description": "Subscription the expiring balance belongs to.",
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "expiring",
+                                      "permanent"
+                                    ],
+                                    "description": "Balance bucket type."
+                                  }
+                                },
+                                "required": [
+                                  "amount",
+                                  "type"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "createDate": {
+                              "description": "ISO timestamp of when the refund was made.",
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "id": {
+                              "description": "Refund transaction id.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "amountExpiring",
+                            "amountPermanent",
+                            "amountTotal"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "money": {
+                        "description": "Set when `type` is `money`.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "createDate": {
+                              "description": "ISO timestamp of when the refund was made.",
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "currencyCode": {
+                              "description": "ISO 4217 currency code.",
+                              "type": "string"
+                            },
+                            "grossAmount": {
+                              "type": "number",
+                              "description": "Gross amount returned by this refund."
+                            },
+                            "id": {
+                              "description": "Refund transaction id.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "grossAmount"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "credits",
+                          "dayPasses",
+                          "money"
+                        ],
+                        "description": "What was refunded."
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "request": {
+                    "description": "Set for a pending gateway payment the current user still has to complete.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Payment request id."
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Relative URL the payer opens to complete the payment."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "scheduleDate": {
+                    "description": "ISO timestamp of when a scheduled payment will be charged.",
+                    "type": "string",
+                    "format": "date-time"
                   },
                   "status": {
                     "description": "Payment status.",
@@ -30010,7 +32630,7 @@
                     ]
                   },
                   "surcharge": {
-                    "description": "Surcharge applied to the payment, if any.",
+                    "description": "Surcharge added on top of the price, if any.",
                     "type": "object",
                     "properties": {
                       "money": {
@@ -30050,33 +32670,843 @@
                     "additionalProperties": false
                   },
                   "transactionRef": {
-                    "description": "ID of the associated transaction.",
+                    "description": "ID of the transaction the payment was recorded as.",
                     "type": "string"
                   },
                   "type": {
-                    "description": "Payment method type.",
+                    "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                     "type": "string"
                   }
                 },
+                "required": [
+                  "method"
+                ],
                 "additionalProperties": false
               },
               "payments": {
-                "description": "Payment details. Omitted when caller has no access.",
+                "description": "How the booking was paid for, oldest first. One entry per settling transaction, so a credits or day passes payment that was charged and later partly refunded lists each transaction separately. Omitted when the caller has no access.",
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "amount": {
-                      "description": "Payment amount in the location currency.",
-                      "type": "number"
+                    "createDate": {
+                      "description": "ISO timestamp of when the payment was made.",
+                      "type": "string",
+                      "format": "date-time"
                     },
-                    "currencyCode": {
-                      "description": "ISO 4217 currency code.",
-                      "type": "string"
+                    "discounts": {
+                      "description": "Discounts applied to the price. Omitted when none applied.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "coupon": {
+                            "type": "object",
+                            "properties": {
+                              "amountOff": {
+                                "description": "Fixed discount amount, in the coupon's currency.",
+                                "type": "number"
+                              },
+                              "currencyCode": {
+                                "description": "Currency code for amountOff.",
+                                "type": "string"
+                              },
+                              "id": {
+                                "description": "Coupon id.",
+                                "type": "string"
+                              },
+                              "percentOff": {
+                                "description": "Percentage discount amount.",
+                                "type": "number"
+                              },
+                              "productTypes": {
+                                "description": "Product types this coupon applies to.",
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": {
+                                "description": "Coupon type.",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Applied coupon."
+                          },
+                          "promocode": {
+                            "description": "Applied promocode.",
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "description": "Promocode string, the way a purchase references the promocode back."
+                              },
+                              "expiration": {
+                                "description": "Promocode expiration.",
+                                "type": "object",
+                                "properties": {
+                                  "date": {
+                                    "description": "ISO timestamp of when the promocode expires.",
+                                    "type": "string"
+                                  },
+                                  "enabled": {
+                                    "type": "boolean",
+                                    "description": "Whether the promocode expires."
+                                  }
+                                },
+                                "required": [
+                                  "enabled"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "id": {
+                                "type": "string",
+                                "description": "Promocode id."
+                              },
+                              "limitByFirstPurchase": {
+                                "description": "Whether the promocode is limited to a first purchase.",
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "subscriptionId": {
+                            "description": "Subscription the discount was granted by.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "coupon"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Discount recorded on a settled payment."
+                      }
                     },
-                    "invoiceItemRef": {
-                      "description": "ID of the associated invoice item.",
-                      "type": "string"
+                    "dispute": {
+                      "description": "Chargeback dispute raised against the payment, if any.",
+                      "type": "object",
+                      "properties": {
+                        "createDate": {
+                          "description": "ISO timestamp of when the dispute was opened.",
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "method": {
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer whose credits were spent."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer whose day passes were spent."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "external": {
+                          "description": "Set when `type` is `external`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer who paid outside of Spacebring."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "invoice": {
+                          "description": "Set when `type` is `invoice`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer the booking was invoiced to."
+                            },
+                            "invoiceItemRef": {
+                              "description": "ID of the invoice item the booking was billed on.",
+                              "type": "string"
+                            },
+                            "subscriptionRef": {
+                              "description": "Subscription the invoice item belongs to.",
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "paymentGateway": {
+                          "description": "Set when `type` is `paymentGateway`.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer id. Absent when the payer record is no longer available.",
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "location": {
+                                  "description": "Location the payer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Location id."
+                                    },
+                                    "title": {
+                                      "description": "Location display name.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name. Present for `user` payers.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company name. Present for `company` payers.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ],
+                                  "description": "Whether the booking was paid by a company or by a user. Defaults to `user` for a personal card payment, which records no payer of its own."
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Customer who was charged."
+                            },
+                            "gateway": {
+                              "description": "Payment gateway that processed the charge.",
+                              "type": "string",
+                              "enum": [
+                                "authorizenet",
+                                "flow",
+                                "fondy",
+                                "freedompay",
+                                "kakaopay",
+                                "maya",
+                                "mercadopago",
+                                "mollie",
+                                "paypal",
+                                "paystack",
+                                "payway",
+                                "plata",
+                                "stripe",
+                                "tap",
+                                "wayforpay",
+                                "xendit"
+                              ]
+                            },
+                            "label": {
+                              "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
+                              "type": "string"
+                            },
+                            "mask": {
+                              "description": "Masked payment method identifier.",
+                              "type": "string"
+                            },
+                            "title": {
+                              "description": "Display name of the payment gateway, e.g. `Stripe`.",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "external",
+                            "invoice",
+                            "paymentGateway"
+                          ],
+                          "description": "How the booking was paid for. The matching property below carries the details."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "description": "How the booking was paid for, and by whom."
+                    },
+                    "price": {
+                      "description": "What the booking was charged.",
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "object",
+                          "properties": {
+                            "expiringAmount": {
+                              "description": "Expiring credits charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "permanentAmount": {
+                              "description": "Permanent credits charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "totalAmount": {
+                              "type": "number",
+                              "description": "Total credits charged."
+                            }
+                          },
+                          "required": [
+                            "totalAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "object",
+                          "properties": {
+                            "expiringAmount": {
+                              "description": "Expiring day passes charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "permanentAmount": {
+                              "description": "Permanent day passes charged. Omitted on a per-transaction entry, which records no split.",
+                              "type": "number"
+                            },
+                            "totalAmount": {
+                              "type": "number",
+                              "description": "Total day passes charged."
+                            }
+                          },
+                          "required": [
+                            "totalAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "money": {
+                          "description": "Set when `type` is `money`.",
+                          "type": "object",
+                          "properties": {
+                            "currencyCode": {
+                              "description": "ISO 4217 currency code.",
+                              "type": "string"
+                            },
+                            "grossAmount": {
+                              "type": "number",
+                              "description": "Total amount charged, tax included."
+                            },
+                            "taxIsInclusive": {
+                              "description": "Whether the resource price already contained the tax, rather than the tax being added on top of it. Together with `taxRate` it is what splits `grossAmount` into its net and tax parts. Omitted when the location charges no tax.",
+                              "type": "boolean"
+                            },
+                            "taxRate": {
+                              "description": "Tax rate applied, in percent. Omitted when the location charges no tax.",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "grossAmount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "money"
+                          ],
+                          "description": "What the booking was charged in."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "refundable": {
+                      "description": "Whether the payment can still be refunded. Omitted for `invoice` payments, where refundability depends on the invoice.",
+                      "type": "boolean"
+                    },
+                    "refunds": {
+                      "description": "Refunds made against the payment. Omitted when nothing was refunded.",
+                      "type": "object",
+                      "properties": {
+                        "credits": {
+                          "description": "Set when `type` is `credits`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "amountExpiring": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                              },
+                              "amountPermanent": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead."
+                              },
+                              "amountTotal": {
+                                "type": "number",
+                                "description": "Total amount returned by this refund."
+                              },
+                              "amounts": {
+                                "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "amount": {
+                                      "type": "number",
+                                      "description": "Amount returned to this balance bucket."
+                                    },
+                                    "expirationDate": {
+                                      "description": "Expiration date of the expiring balance the amount was returned to.",
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "subscriptionRef": {
+                                      "description": "Subscription the expiring balance belongs to.",
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "expiring",
+                                        "permanent"
+                                      ],
+                                      "description": "Balance bucket type."
+                                    }
+                                  },
+                                  "required": [
+                                    "amount",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amountExpiring",
+                              "amountPermanent",
+                              "amountTotal"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "dayPasses": {
+                          "description": "Set when `type` is `dayPasses`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "amountExpiring": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead, which reports the expiring balances the refund returned to individually."
+                              },
+                              "amountPermanent": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Deprecated. Use `amounts` instead."
+                              },
+                              "amountTotal": {
+                                "type": "number",
+                                "description": "Total amount returned by this refund."
+                              },
+                              "amounts": {
+                                "description": "Balance buckets the refund returned to, one entry each. Absent on a refund made before the buckets were recorded, where only the amounts above are known.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "amount": {
+                                      "type": "number",
+                                      "description": "Amount returned to this balance bucket."
+                                    },
+                                    "expirationDate": {
+                                      "description": "Expiration date of the expiring balance the amount was returned to.",
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "subscriptionRef": {
+                                      "description": "Subscription the expiring balance belongs to.",
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "expiring",
+                                        "permanent"
+                                      ],
+                                      "description": "Balance bucket type."
+                                    }
+                                  },
+                                  "required": [
+                                    "amount",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amountExpiring",
+                              "amountPermanent",
+                              "amountTotal"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "money": {
+                          "description": "Set when `type` is `money`.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "createDate": {
+                                "description": "ISO timestamp of when the refund was made.",
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "currencyCode": {
+                                "description": "ISO 4217 currency code.",
+                                "type": "string"
+                              },
+                              "grossAmount": {
+                                "type": "number",
+                                "description": "Gross amount returned by this refund."
+                              },
+                              "id": {
+                                "description": "Refund transaction id.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "grossAmount"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "credits",
+                            "dayPasses",
+                            "money"
+                          ],
+                          "description": "What was refunded."
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "request": {
+                      "description": "Set for a pending gateway payment the current user still has to complete.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Payment request id."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Relative URL the payer opens to complete the payment."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "scheduleDate": {
+                      "description": "ISO timestamp of when a scheduled payment will be charged.",
+                      "type": "string",
+                      "format": "date-time"
                     },
                     "status": {
                       "description": "Payment status.",
@@ -30090,7 +33520,7 @@
                       ]
                     },
                     "surcharge": {
-                      "description": "Surcharge applied to the payment, if any.",
+                      "description": "Surcharge added on top of the price, if any.",
                       "type": "object",
                       "properties": {
                         "money": {
@@ -30130,14 +33560,17 @@
                       "additionalProperties": false
                     },
                     "transactionRef": {
-                      "description": "ID of the associated transaction.",
+                      "description": "ID of the transaction the payment was recorded as.",
                       "type": "string"
                     },
                     "type": {
-                      "description": "Payment method type.",
+                      "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                       "type": "string"
                     }
                   },
+                  "required": [
+                    "method"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -48917,6 +52350,102 @@
                     "endDate",
                     "resourceRef",
                     "startDate"
+                  ]
+                }
+              },
+              "required": [
+                "booking"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchBooking": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "booking": {
+                  "type": "object",
+                  "properties": {
+                    "attendees": {
+                      "description": "Full list of attendees to keep on the booking. Attendees left out are removed. Supported for room resources.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "User id of the attendee."
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "user"
+                        ]
+                      }
+                    },
+                    "endDate": {
+                      "description": "ISO timestamp when the booking ends.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "entire": {
+                      "description": "Set to true to book the entire resource instead of individual seats. Supported for office resources.",
+                      "type": "boolean"
+                    },
+                    "memo": {
+                      "description": "Internal note attached to the booking.",
+                      "type": "string"
+                    },
+                    "resourceRef": {
+                      "description": "ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "seats": {
+                      "description": "Number of seats to reserve. Supported for desk and office resources.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "sendUpdates": {
+                      "description": "Whether to notify the owner and the attendees about the update. Defaults to the value stored on the booking.",
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "all"
+                      ]
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp when the booking starts. Patching it without an endDate moves the booking and keeps its current duration.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "title": {
+                      "description": "Custom title for the booking.",
+                      "type": "string"
+                    }
+                  },
+                  "description": "Booking fields to update. Fields left out keep their current value."
+                },
+                "updateRepeatingScope": {
+                  "default": "singleOccurrence",
+                  "description": "For a repeating booking, whether to update only the addressed occurrence or that one and every later occurrence.",
+                  "type": "string",
+                  "enum": [
+                    "singleOccurrence",
+                    "thisAndNext"
                   ]
                 }
               },

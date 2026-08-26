@@ -16,7 +16,7 @@ export type Resource = NonNullable<operations["getResource"]["responses"][200]["
 /** Query parameters for `sb.resources.getAssignments()`. */
 export interface GetAssignmentsQuery {
   /** UUID of the location whose resource assignments to list. */
-  locationRef: string;
+  locationRef?: string;
 }
 
 /** Query parameters for `sb.resources.bookings.list()`. */
@@ -85,6 +85,9 @@ export type CreateBookingBody = NonNullable<NonNullable<operations["createBookin
 /** Request body for `sb.resources.create()`. */
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
+/** Request body for `sb.resources.bookings.update()`. */
+export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBody"]>["content"]["application/json"];
+
 /** Request body for `sb.resources.update()`. */
 export type PatchResourceBody = NonNullable<NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
@@ -146,7 +149,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
      */
-    async getAssignments(query: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
+    async getAssignments(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
       return unwrapProp(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "assignments", "GET /resources/v1/assignments");
     },
     bookings: {
@@ -182,6 +185,18 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
       /** Create a booking */
       async create(booking: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
         return unwrapProp(await client.POST("/resources/bookings/v1", { body: { booking }, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
+      },
+      /**
+       * Update a booking
+       *
+       * Update a booking. Fields left out of the request keep their current value.
+       *
+       * @param bookingId ID of the booking. For a single occurrence of a repeating booking, append the occurrence date: `_`.
+       * @param body Request body.
+       * @param options Request options (abort signal).
+       */
+      async update(bookingId: string, body: PatchBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
+        return unwrapProp(await client.PATCH("/resources/bookings/v1/{bookingId}", { params: { path: { bookingId } }, body, signal: options?.signal }), "booking", "PATCH /resources/bookings/v1/{bookingId}");
       },
       /**
        * Delete a booking
