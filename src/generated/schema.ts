@@ -7432,7 +7432,7 @@ export interface components {
                     /** @description Storage key of the image. */
                     key: string;
                     /** @description MIME type of the image. */
-                    mime: string;
+                    mime?: string;
                     /** @description Public URL of the image. */
                     url: string;
                     /** @description Image width in pixels. */
@@ -7491,7 +7491,7 @@ export interface components {
                 /** @description Storage key of the image. */
                 key: string;
                 /** @description MIME type of the image. */
-                mime: string;
+                mime?: string;
                 /** @description Public URL of the image. */
                 url: string;
                 /** @description Image width in pixels. */
@@ -7547,7 +7547,7 @@ export interface components {
                     /** @description Storage key of the image. */
                     key: string;
                     /** @description MIME type of the image. */
-                    mime: string;
+                    mime?: string;
                     /** @description Public URL of the image. */
                     url: string;
                     /** @description Image width in pixels. */
@@ -12202,7 +12202,7 @@ export interface components {
                  * Format: uuid
                  * @description ID of the membership associated with this order.
                  */
-                membershipRef?: string;
+                membershipRef?: string | null;
                 /**
                  * Format: uuid
                  * @description ID of the membership that deleted this order.
@@ -12670,7 +12670,7 @@ export interface components {
                  * Format: uuid
                  * @description ID of the membership associated with this order.
                  */
-                membershipRef?: string;
+                membershipRef?: string | null;
                 /**
                  * Format: uuid
                  * @description ID of the membership that deleted this order.
