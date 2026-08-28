@@ -24263,8 +24263,8 @@
                         "description": "Storage key of the image."
                       },
                       "mime": {
-                        "type": "string",
-                        "description": "MIME type of the image."
+                        "description": "MIME type of the image.",
+                        "type": "string"
                       },
                       "url": {
                         "type": "string",
@@ -24277,7 +24277,6 @@
                     },
                     "required": [
                       "key",
-                      "mime",
                       "url"
                     ],
                     "additionalProperties": false
@@ -24402,8 +24401,8 @@
                   "description": "Storage key of the image."
                 },
                 "mime": {
-                  "type": "string",
-                  "description": "MIME type of the image."
+                  "description": "MIME type of the image.",
+                  "type": "string"
                 },
                 "url": {
                   "type": "string",
@@ -24416,7 +24415,6 @@
               },
               "required": [
                 "key",
-                "mime",
                 "url"
               ],
               "additionalProperties": false
@@ -24528,8 +24526,8 @@
                       "description": "Storage key of the image."
                     },
                     "mime": {
-                      "type": "string",
-                      "description": "MIME type of the image."
+                      "description": "MIME type of the image.",
+                      "type": "string"
                     },
                     "url": {
                       "type": "string",
@@ -24542,7 +24540,6 @@
                   },
                   "required": [
                     "key",
-                    "mime",
                     "url"
                   ],
                   "additionalProperties": false
@@ -34914,6 +34911,7 @@
                 },
                 "membershipRef": {
                   "description": "ID of the membership associated with this order.",
+                  "nullable": true,
                   "type": "string",
                   "format": "uuid"
                 },
@@ -35966,6 +35964,7 @@
               },
               "membershipRef": {
                 "description": "ID of the membership associated with this order.",
+                "nullable": true,
                 "type": "string",
                 "format": "uuid"
               },
