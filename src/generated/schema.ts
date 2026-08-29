@@ -15337,7 +15337,7 @@ export interface components {
                 resolveDate?: string;
                 /**
                  * Format: date-time
-                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into.
+                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into. Once a charge has been deferred it is the latest date the transaction can still be charged before the booking is canceled.
                  */
                 scheduleDate: string;
                 /** @description Transaction status. */
@@ -16763,7 +16763,7 @@ export interface components {
                 resolveDate?: string;
                 /**
                  * Format: date-time
-                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into.
+                 * @description Date when the transaction is scheduled to resolve, anchored to the subscription interval the booking falls into. Once a charge has been deferred it is the latest date the transaction can still be charged before the booking is canceled.
                  */
                 scheduleDate: string;
                 /** @description Transaction status. */
