@@ -1685,11 +1685,35 @@ export interface paths {
          */
         get: operations["getAssignments"];
         put?: never;
-        post?: never;
+        /**
+         * Create a resource assignment
+         * @description Create a resource assignment. An assignment links a resource, or a number of seats in it, to a company or a member. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        post: operations["createAssignment"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/resources/v1/assignments/{assignmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update a resource assignment
+         * @description Update a resource assignment. Fields left out of the request keep their current value. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        patch: operations["patchAssignment"];
         trace?: never;
     };
     "/resources/v1/{resourceId}": {
@@ -9669,6 +9693,130 @@ export interface components {
                 };
             }[];
         };
+        createAssignment: {
+            /** @description The created assignment. */
+            assignment: {
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Company assigned to the resource.
+                 */
+                company?: {
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /** @description Company name. */
+                    title: string;
+                };
+                /** @description Customer the resource is assigned to. */
+                customer?: {
+                    /**
+                     * Format: uuid
+                     * @description Customer id.
+                     */
+                    id: string;
+                    /** @description Company name when the customer is a company. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a user or company.
+                     * @enum {string}
+                     */
+                    type: "user" | "company";
+                    /** @description User details when the customer is a user. */
+                    user?: {
+                        /** @description User email. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User id.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
+                };
+                /** @description ISO timestamp when the assignment ends. */
+                endDate?: string;
+                /** @description Whether the assignment grants access to the entire resource. */
+                entire: boolean;
+                /**
+                 * Format: uuid
+                 * @description Assignment id.
+                 */
+                id?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Membership linked to the assignment.
+                 */
+                membership?: {
+                    /**
+                     * Format: uuid
+                     * @description Membership id.
+                     */
+                    id: string;
+                };
+                /** @description Assigned quantity when the resource is partially assigned. */
+                quantity?: number;
+                /** @description Resource the assignment belongs to. Present when assignments are listed on their own. */
+                resource?: {
+                    /**
+                     * Format: uuid
+                     * @description Resource id.
+                     */
+                    id: string;
+                    /** @description Resource image URL. */
+                    imageUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the location the resource belongs to.
+                     */
+                    locationRef: string;
+                    /** @description Resource title. */
+                    title: string;
+                    /** @description Resource type. */
+                    type: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description UUID of the resource the assignment belongs to.
+                 */
+                resourceRef: string;
+                /** @description ISO timestamp when the assignment starts. */
+                startDate: string;
+                /** @description Deprecated. Use startDate and endDate instead. Subscription backing this assignment. */
+                subscription: {
+                    /** @description ISO timestamp when the assignment ends. */
+                    endDate?: string;
+                    /**
+                     * Format: uuid
+                     * @description Subscription id. Absent for assignments created directly by an admin.
+                     */
+                    id?: string;
+                    /** @description ISO timestamp when the assignment starts. */
+                    startDate: string;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. User assigned to the resource.
+                 */
+                user?: {
+                    /** @description User email. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User id.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+            };
+        };
         getBookings: {
             /** @description List of bookings. */
             bookings: {
@@ -9733,7 +9881,7 @@ export interface components {
                  * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
                  */
                 membershipRefOwner?: string;
-                /** @description Internal note. Visible to admins only. */
+                /** @description Note attached to the booking. Visible to the booking owner and to admins. */
                 memo?: string;
                 /**
                  * @deprecated
@@ -10705,7 +10853,7 @@ export interface components {
                  * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
                  */
                 membershipRefOwner?: string;
-                /** @description Internal note. Visible to admins only. */
+                /** @description Note attached to the booking. Visible to the booking owner and to admins. */
                 memo?: string;
                 /**
                  * @deprecated
@@ -20162,6 +20310,65 @@ export interface components {
                 };
             };
         };
+        createAssignment: {
+            content: {
+                "application/json": {
+                    assignment: {
+                        /**
+                         * Format: uuid
+                         * @description UUID of the company or user membership the resource is assigned to. Omit to hold the resource without a customer.
+                         */
+                        customerRef?: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the assignment ends. Omit for an open-ended assignment.
+                         */
+                        endDate?: string;
+                        /** @description Whether the assignment grants access to the entire resource. */
+                        entire: boolean;
+                        /** @description Assigned quantity when the resource is partially assigned. Required when entire is false, not allowed otherwise. */
+                        quantity?: number;
+                        /**
+                         * Format: uuid
+                         * @description UUID of the resource to assign.
+                         */
+                        resourceRef: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the assignment starts.
+                         */
+                        startDate: string;
+                    };
+                };
+            };
+        };
+        patchAssignment: {
+            content: {
+                "application/json": {
+                    assignment: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the assignment ends. Send null to make the assignment open-ended.
+                         */
+                        endDate?: string | null;
+                        /** @description Whether the assignment grants access to the entire resource. */
+                        entire?: boolean;
+                        /** @description Assigned quantity when the resource is partially assigned. Required when entire is false, not allowed otherwise. */
+                        quantity?: number;
+                        /**
+                         * Format: uuid
+                         * @description UUID of the resource to assign.
+                         */
+                        resourceRef?: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the assignment starts.
+                         */
+                        startDate?: string;
+                    };
+                };
+            };
+        };
         patchResource: {
             content: {
                 "application/json": {
@@ -26765,6 +26972,107 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["getAssignments"];
                 };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createAssignment"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createAssignment"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the assignment. */
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchAssignment"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {

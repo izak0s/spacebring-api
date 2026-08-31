@@ -9267,6 +9267,161 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Create a resource assignment",
+        "description": "Create a resource assignment. An assignment links a resource, or a number of seats in it, to a company or a member. <h3>OAuth</h3>Required scopes: <code>resources</code>",
+        "operationId": "createAssignment",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createAssignment"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createAssignment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/v1/assignments/{assignmentId}": {
+      "patch": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Update a resource assignment",
+        "description": "Update a resource assignment. Fields left out of the request keep their current value. <h3>OAuth</h3>Required scopes: <code>resources</code>",
+        "operationId": "patchAssignment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignmentId",
+            "required": true,
+            "description": "The id of the assignment.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchAssignment"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/resources/v1/{resourceId}": {
@@ -29664,6 +29819,238 @@
         ],
         "additionalProperties": false
       },
+      "createAssignment": {
+        "type": "object",
+        "properties": {
+          "assignment": {
+            "type": "object",
+            "properties": {
+              "company": {
+                "deprecated": true,
+                "description": "Deprecated. Use customer instead. Company assigned to the resource.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Company id."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Company name."
+                  }
+                },
+                "required": [
+                  "id",
+                  "title"
+                ],
+                "additionalProperties": false
+              },
+              "customer": {
+                "description": "Customer the resource is assigned to.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Customer id."
+                  },
+                  "title": {
+                    "description": "Company name when the customer is a company.",
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "company"
+                    ],
+                    "description": "Whether the customer is a user or company."
+                  },
+                  "user": {
+                    "description": "User details when the customer is a user.",
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "description": "User email.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User id."
+                      },
+                      "name": {
+                        "description": "User first name.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "User last name.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "endDate": {
+                "description": "ISO timestamp when the assignment ends.",
+                "type": "string"
+              },
+              "entire": {
+                "type": "boolean",
+                "description": "Whether the assignment grants access to the entire resource."
+              },
+              "id": {
+                "description": "Assignment id.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "membership": {
+                "deprecated": true,
+                "description": "Deprecated. Use customer instead. Membership linked to the assignment.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Membership id."
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "quantity": {
+                "description": "Assigned quantity when the resource is partially assigned.",
+                "type": "number"
+              },
+              "resource": {
+                "description": "Resource the assignment belongs to. Present when assignments are listed on their own.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Resource id."
+                  },
+                  "imageUrl": {
+                    "description": "Resource image URL.",
+                    "type": "string"
+                  },
+                  "locationRef": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUID of the location the resource belongs to."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Resource title."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Resource type."
+                  }
+                },
+                "required": [
+                  "id",
+                  "locationRef",
+                  "title",
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "resourceRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "UUID of the resource the assignment belongs to."
+              },
+              "startDate": {
+                "type": "string",
+                "description": "ISO timestamp when the assignment starts."
+              },
+              "subscription": {
+                "type": "object",
+                "properties": {
+                  "endDate": {
+                    "description": "ISO timestamp when the assignment ends.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "Subscription id. Absent for assignments created directly by an admin.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "description": "ISO timestamp when the assignment starts."
+                  }
+                },
+                "required": [
+                  "startDate"
+                ],
+                "additionalProperties": false,
+                "description": "Deprecated. Use startDate and endDate instead. Subscription backing this assignment."
+              },
+              "user": {
+                "deprecated": true,
+                "description": "Deprecated. Use customer instead. User assigned to the resource.",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "description": "User email.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "User id."
+                  },
+                  "name": {
+                    "description": "User first name.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "User last name.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "entire",
+              "resourceRef",
+              "startDate",
+              "subscription"
+            ],
+            "additionalProperties": false,
+            "description": "The created assignment."
+          }
+        },
+        "required": [
+          "assignment"
+        ],
+        "additionalProperties": false
+      },
       "getBookings": {
         "type": "object",
         "properties": {
@@ -29779,7 +30166,7 @@
                   "format": "uuid"
                 },
                 "memo": {
-                  "description": "Internal note. Visible to admins only.",
+                  "description": "Note attached to the booking. Visible to the booking owner and to admins.",
                   "type": "string"
                 },
                 "payment": {
@@ -31788,7 +32175,7 @@
                 "format": "uuid"
               },
               "memo": {
-                "description": "Internal note. Visible to admins only.",
+                "description": "Note attached to the booking. Visible to the booking owner and to admins.",
                 "type": "string"
               },
               "payment": {
@@ -51440,6 +51827,109 @@
               },
               "required": [
                 "resource"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createAssignment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "customerRef": {
+                      "description": "UUID of the company or user membership the resource is assigned to. Omit to hold the resource without a customer.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "endDate": {
+                      "description": "ISO timestamp when the assignment ends. Omit for an open-ended assignment.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "entire": {
+                      "type": "boolean",
+                      "description": "Whether the assignment grants access to the entire resource."
+                    },
+                    "quantity": {
+                      "description": "Assigned quantity when the resource is partially assigned. Required when entire is false, not allowed otherwise.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    },
+                    "resourceRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "UUID of the resource to assign."
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO timestamp when the assignment starts."
+                    }
+                  },
+                  "required": [
+                    "entire",
+                    "resourceRef",
+                    "startDate"
+                  ]
+                }
+              },
+              "required": [
+                "assignment"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchAssignment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "endDate": {
+                      "description": "ISO timestamp when the assignment ends. Send null to make the assignment open-ended.",
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "entire": {
+                      "description": "Whether the assignment grants access to the entire resource.",
+                      "type": "boolean"
+                    },
+                    "quantity": {
+                      "description": "Assigned quantity when the resource is partially assigned. Required when entire is false, not allowed otherwise.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    },
+                    "resourceRef": {
+                      "description": "UUID of the resource to assign.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "startDate": {
+                      "description": "ISO timestamp when the assignment starts.",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "assignment"
               ]
             }
           }

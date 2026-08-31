@@ -13,7 +13,7 @@ export type Booking = NonNullable<operations["getBooking"]["responses"][200]["co
 /** A Resource entity as returned by the Spacebring API. */
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 
-/** Query parameters for `sb.resources.getAssignments()`. */
+/** Query parameters for `sb.resources.assignments.list()`. */
 export interface GetAssignmentsQuery {
   /** UUID of the location whose resource assignments to list. */
   locationRef?: string;
@@ -79,11 +79,17 @@ export interface GetResourcesQuery {
   types?: string;
 }
 
+/** Request body for `sb.resources.assignments.create()`. */
+export type CreateAssignmentBody = NonNullable<NonNullable<operations["createAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
+
 /** Request body for `sb.resources.bookings.create()`. */
 export type CreateBookingBody = NonNullable<NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]["booking"]>;
 
 /** Request body for `sb.resources.create()`. */
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
+
+/** Request body for `sb.resources.assignments.update()`. */
+export type PatchAssignmentBody = NonNullable<NonNullable<operations["patchAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 
 /** Request body for `sb.resources.bookings.update()`. */
 export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBody"]>["content"]["application/json"];
@@ -144,13 +150,35 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{resourceId}", { params: { path: { resourceId } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{resourceId}");
     },
-    /**
-     * Retrieve resource assignments
-     *
-     * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
-     */
-    async getAssignments(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
-      return unwrapProp(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "assignments", "GET /resources/v1/assignments");
+    assignments: {
+      /**
+       * Retrieve resource assignments
+       *
+       * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
+       */
+      async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
+        return unwrapProp(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "assignments", "GET /resources/v1/assignments");
+      },
+      /**
+       * Create a resource assignment
+       *
+       * Create a resource assignment. An assignment links a resource, or a number of seats in it, to a company or a member.
+       */
+      async create(assignment: CreateAssignmentBody, options?: SpacebringRequestOptions): Promise<Assignment> {
+        return unwrapProp(await client.POST("/resources/v1/assignments", { body: { assignment }, signal: options?.signal }), "assignment", "POST /resources/v1/assignments");
+      },
+      /**
+       * Update a resource assignment
+       *
+       * Update a resource assignment. Fields left out of the request keep their current value.
+       *
+       * @param assignmentId The id of the assignment.
+       * @param assignment The `assignment` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(assignmentId: string, assignment: PatchAssignmentBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/resources/v1/assignments/{assignmentId}", { params: { path: { assignmentId } }, body: { assignment }, signal: options?.signal }), "PATCH /resources/v1/assignments/{assignmentId}");
+      },
     },
     bookings: {
       /**
