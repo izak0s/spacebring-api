@@ -2967,6 +2967,13 @@ export interface components {
                      * @description Unique identifier of the benefit.
                      */
                     id: string;
+                    /** @description Media files attached to this benefit. */
+                    media: {
+                        /** @description Storage key of the media file. */
+                        key: string;
+                        /** @description Public URL of the media file. */
+                        url: string;
+                    }[];
                     /**
                      * Format: uri
                      * @description URL of the benefit's cover image.
@@ -3006,7 +3013,7 @@ export interface components {
                     /** @description About text of the user. */
                     about?: string | null;
                     /** @description Whether the user is blocked. */
-                    blocked: boolean;
+                    blocked?: boolean;
                     /**
                      * Format: date-time
                      * @description ISO timestamp of when the user account was created.
@@ -3037,7 +3044,7 @@ export interface components {
                      */
                     photoUrl?: string | null;
                     /** @description Whether the user has restricted access. */
-                    restricted: boolean;
+                    restricted?: boolean;
                     /** @description Last name of the user. */
                     surname?: string | null;
                 };
@@ -3057,6 +3064,13 @@ export interface components {
                  * @description Unique identifier of the benefit.
                  */
                 id: string;
+                /** @description Media files attached to this benefit. */
+                media: {
+                    /** @description Storage key of the media file. */
+                    key: string;
+                    /** @description Public URL of the media file. */
+                    url: string;
+                }[];
                 /**
                  * Format: uri
                  * @description URL of the benefit's cover image.
@@ -3096,7 +3110,7 @@ export interface components {
                 /** @description About text of the user. */
                 about?: string | null;
                 /** @description Whether the user is blocked. */
-                blocked: boolean;
+                blocked?: boolean;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the user account was created.
@@ -3127,7 +3141,7 @@ export interface components {
                  */
                 photoUrl?: string | null;
                 /** @description Whether the user has restricted access. */
-                restricted: boolean;
+                restricted?: boolean;
                 /** @description Last name of the user. */
                 surname?: string | null;
             };
@@ -3144,6 +3158,13 @@ export interface components {
                      * @description Unique identifier of the benefit.
                      */
                     id: string;
+                    /** @description Media files attached to this benefit. */
+                    media: {
+                        /** @description Storage key of the media file. */
+                        key: string;
+                        /** @description Public URL of the media file. */
+                        url: string;
+                    }[];
                     /**
                      * Format: uri
                      * @description URL of the benefit's cover image.
@@ -3183,7 +3204,7 @@ export interface components {
                     /** @description About text of the user. */
                     about?: string | null;
                     /** @description Whether the user is blocked. */
-                    blocked: boolean;
+                    blocked?: boolean;
                     /**
                      * Format: date-time
                      * @description ISO timestamp of when the user account was created.
@@ -3214,7 +3235,7 @@ export interface components {
                      */
                     photoUrl?: string | null;
                     /** @description Whether the user has restricted access. */
-                    restricted: boolean;
+                    restricted?: boolean;
                     /** @description Last name of the user. */
                     surname?: string | null;
                 };
@@ -6318,7 +6339,7 @@ export interface components {
                      * @description Product type of the limited item.
                      * @enum {string}
                      */
-                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                 }[];
             };
             /** @description Redemption limits for the coupon. */
@@ -6343,7 +6364,7 @@ export interface components {
             /** @description Percentage discount amount. */
             percentOff?: number | null;
             /** @description Product types the coupon applies to. */
-            productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+            productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
             /**
              * @description Deprecated coupon category.
              * @enum {string}
@@ -6436,7 +6457,7 @@ export interface components {
                          * @description Product type of the limited item.
                          * @enum {string}
                          */
-                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                     }[];
                 };
                 /** @description Redemption limits for the coupon. */
@@ -6451,7 +6472,7 @@ export interface components {
                 /** @description Percentage discount amount. */
                 percentOff?: number | null;
                 /** @description Product types the coupon applies to. */
-                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                 /**
                  * @description Deprecated coupon category.
                  * @enum {string}
@@ -6725,6 +6746,11 @@ export interface components {
              * @description ISO timestamp of when the attendee checked in.
              */
             checkInDate?: string;
+            /**
+             * Format: uuid
+             * @description ID of the ticket's check-in in the check-ins service.
+             */
+            checkInRef?: string;
             /**
              * Format: date-time
              * @description ISO timestamp of when the ticket was created.
@@ -7108,7 +7134,7 @@ export interface components {
                  * @description Payment type.
                  * @enum {string}
                  */
-                type: "authorizenet" | "credits" | "external" | "flow" | "fondy" | "freedompay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                type: "authorizenet" | "credits" | "external" | "flow" | "fondy" | "freedompay" | "hyperpay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
             };
             /** @description Number of tickets included in this purchase. */
             quantity: number;
@@ -7847,7 +7873,7 @@ export interface components {
                                  * @description Product type of the limited item.
                                  * @enum {string}
                                  */
-                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
                         /** @description Redemption limits for the coupon. */
@@ -7862,7 +7888,7 @@ export interface components {
                         /** @description Percentage discount. */
                         percentOff?: number;
                         /** @description Product types the coupon applies to. */
-                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                     };
                 }[];
                 /**
@@ -8020,7 +8046,7 @@ export interface components {
                              * @description Product type of the limited item.
                              * @enum {string}
                              */
-                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                         }[];
                     };
                     /** @description Redemption limits for the coupon. */
@@ -8035,7 +8061,7 @@ export interface components {
                     /** @description Percentage discount. */
                     percentOff?: number;
                     /** @description Product types the coupon applies to. */
-                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                 };
             }[];
             /**
@@ -8192,7 +8218,7 @@ export interface components {
                                  * @description Product type of the limited item.
                                  * @enum {string}
                                  */
-                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
                         /** @description Redemption limits for the coupon. */
@@ -8207,7 +8233,7 @@ export interface components {
                         /** @description Percentage discount. */
                         percentOff?: number;
                         /** @description Product types the coupon applies to. */
-                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                     };
                 }[];
                 /**
@@ -8713,7 +8739,7 @@ export interface components {
                                          * @description Product type of the limited item.
                                          * @enum {string}
                                          */
-                                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                     }[];
                                 };
                                 /** @description Redemption limits for the coupon. */
@@ -8728,7 +8754,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /**
@@ -8799,7 +8825,7 @@ export interface components {
                                              * @description Product type of the limited item.
                                              * @enum {string}
                                              */
-                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                         }[];
                                     };
                                     /** @description Redemption limits for the coupon. */
@@ -8814,7 +8840,7 @@ export interface components {
                                     /** @description Percentage discount. */
                                     percentOff?: number;
                                     /** @description Product types the coupon applies to. */
-                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                 };
                             }[];
                             /**
@@ -9322,7 +9348,7 @@ export interface components {
                                          * @description Product type of the limited item.
                                          * @enum {string}
                                          */
-                                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                        type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                     }[];
                                 };
                                 /** @description Redemption limits for the coupon. */
@@ -9337,7 +9363,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /**
@@ -9408,7 +9434,7 @@ export interface components {
                                              * @description Product type of the limited item.
                                              * @enum {string}
                                              */
-                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                            type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                         }[];
                                     };
                                     /** @description Redemption limits for the coupon. */
@@ -9423,7 +9449,7 @@ export interface components {
                                     /** @description Percentage discount. */
                                     percentOff?: number;
                                     /** @description Product types the coupon applies to. */
-                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                 };
                             }[];
                             /**
@@ -9861,6 +9887,52 @@ export interface components {
                  * @description ISO timestamp when the booking was created.
                  */
                 createDate: string;
+                /** @description Customer the booking belongs to. Omitted when the caller has no access. */
+                customer?: {
+                    /** @description Company the booking was made for, recorded when the owner was a member of a company at the time of the booking. */
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the company.
+                         */
+                        id: string;
+                        /** @description Company name. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description Customer id of the booking owner.
+                     */
+                    id: string;
+                    /** @description Profile of the booking owner. Omitted when the owner has restricted visibility. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Company the user belongs to, if any. */
+                        company?: {
+                            /** @description Company display name. */
+                            title: string;
+                        } | null;
+                        /**
+                         * Format: email
+                         * @description Email address of the user.
+                         */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                };
                 /**
                  * Format: date-time
                  * @description ISO timestamp when the booking was cancelled.
@@ -9878,7 +9950,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
+                 * @description Deprecated. Use `customer.id` instead. Customer id of the booking owner. Omitted when the caller has no access.
                  */
                 membershipRefOwner?: string;
                 /** @description Note attached to the booking. Visible to the booking owner and to admins. */
@@ -10109,7 +10181,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -10534,7 +10606,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -10833,6 +10905,52 @@ export interface components {
                  * @description ISO timestamp when the booking was created.
                  */
                 createDate: string;
+                /** @description Customer the booking belongs to. Omitted when the caller has no access. */
+                customer?: {
+                    /** @description Company the booking was made for, recorded when the owner was a member of a company at the time of the booking. */
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the company.
+                         */
+                        id: string;
+                        /** @description Company name. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description Customer id of the booking owner.
+                     */
+                    id: string;
+                    /** @description Profile of the booking owner. Omitted when the owner has restricted visibility. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Company the user belongs to, if any. */
+                        company?: {
+                            /** @description Company display name. */
+                            title: string;
+                        } | null;
+                        /**
+                         * Format: email
+                         * @description Email address of the user.
+                         */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                };
                 /**
                  * Format: date-time
                  * @description ISO timestamp when the booking was cancelled.
@@ -10850,7 +10968,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Customer id of the booking owner. Omitted when the caller has no access.
+                 * @description Deprecated. Use `customer.id` instead. Customer id of the booking owner. Omitted when the caller has no access.
                  */
                 membershipRefOwner?: string;
                 /** @description Note attached to the booking. Visible to the booking owner and to admins. */
@@ -11081,7 +11199,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -11506,7 +11624,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -12525,7 +12643,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -12993,7 +13111,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -13477,7 +13595,7 @@ export interface components {
                                      * @description Product type of the limited item.
                                      * @enum {string}
                                      */
-                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                 }[];
                             };
                             /** @description Redemption limits for the coupon. */
@@ -13492,7 +13610,7 @@ export interface components {
                             /** @description Percentage discount. */
                             percentOff?: number;
                             /** @description Product types the coupon applies to. */
-                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                         };
                     }[];
                     /**
@@ -14054,7 +14172,7 @@ export interface components {
                                  * @description Product type of the limited item.
                                  * @enum {string}
                                  */
-                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
                         /** @description Redemption limits for the coupon. */
@@ -14069,7 +14187,7 @@ export interface components {
                         /** @description Percentage discount. */
                         percentOff?: number;
                         /** @description Product types the coupon applies to. */
-                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                     };
                 }[];
                 /**
@@ -14632,7 +14750,7 @@ export interface components {
                                      * @description Product type of the limited item.
                                      * @enum {string}
                                      */
-                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                    type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                                 }[];
                             };
                             /** @description Redemption limits for the coupon. */
@@ -14647,7 +14765,7 @@ export interface components {
                             /** @description Percentage discount. */
                             percentOff?: number;
                             /** @description Product types the coupon applies to. */
-                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                            productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                         };
                     }[];
                     /**
@@ -17836,7 +17954,7 @@ export interface components {
             paymentMethod?: {
                 label?: string;
                 /** @enum {string} */
-                type?: "external" | "flow" | "fondy" | "freedompay" | "kakaopay" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay";
+                type?: "external" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "mercadopago" | "paypal" | "paystack" | "plata" | "stripe" | "tap" | "wayforpay";
             };
             plan?: {
                 /** Format: uuid */
@@ -18534,7 +18652,7 @@ export interface components {
                                  * @description Payment gateway provider.
                                  * @enum {string}
                                  */
-                                gateway: "authorizenet" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                                gateway: "authorizenet" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                                 /**
                                  * Format: uuid
                                  * @description ID of the saved payment method.
@@ -18562,7 +18680,7 @@ export interface components {
                          * @description Payment gateway type.
                          * @enum {string}
                          */
-                        type: "authorizenet" | "external" | "freedompay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                        type: "authorizenet" | "external" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                     };
                     /** @description Whether the user has accepted the payment terms. */
                     termsConsent?: boolean;
@@ -19157,7 +19275,7 @@ export interface components {
                                  * @description Product type of the limited item.
                                  * @enum {string}
                                  */
-                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
                         /** @description Redemption limits for the coupon. */
@@ -19175,7 +19293,7 @@ export interface components {
                         /** @description Percentage discount amount. */
                         percentOff?: number;
                         /** @description Product types the coupon applies to. */
-                        productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                     };
                 };
             };
@@ -19198,7 +19316,7 @@ export interface components {
                                  * @description Product type of the limited item.
                                  * @enum {string}
                                  */
-                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
+                                type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
                     };
@@ -19768,7 +19886,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /**
@@ -19926,7 +20044,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /** @description Price of the plan. */
@@ -20167,7 +20285,7 @@ export interface components {
                                         /** @description Percentage discount. */
                                         percentOff?: number;
                                         /** @description Product types the coupon applies to. */
-                                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                     };
                                 }[];
                                 /**
@@ -20566,7 +20684,7 @@ export interface components {
                                         /** @description Percentage discount. */
                                         percentOff?: number;
                                         /** @description Product types the coupon applies to. */
-                                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                        productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                     };
                                 }[];
                                 /**
@@ -21224,7 +21342,7 @@ export interface components {
                                     /** @description Percentage discount. */
                                     percentOff?: number;
                                     /** @description Product types the coupon applies to. */
-                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                 };
                             }[];
                             /** @description Kisi access group reference. */
@@ -21418,7 +21536,7 @@ export interface components {
                                     /** @description Percentage discount. */
                                     percentOff?: number;
                                     /** @description Product types the coupon applies to. */
-                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                    productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                                 };
                             }[];
                             /** @description Kisi access group reference. */
@@ -21611,7 +21729,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /** @description Kisi access group reference. */
@@ -21763,7 +21881,7 @@ export interface components {
                                 /** @description Percentage discount. */
                                 percentOff?: number;
                                 /** @description Product types the coupon applies to. */
-                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                                productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
                         /** @description Kisi access group reference. */

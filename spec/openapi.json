@@ -15067,6 +15067,28 @@
                       "format": "uuid",
                       "description": "Unique identifier of the benefit."
                     },
+                    "media": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the media file."
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "Public URL of the media file."
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Media files attached to this benefit."
+                    },
                     "mediaUrl": {
                       "description": "URL of the benefit's cover image.",
                       "nullable": true,
@@ -15084,6 +15106,7 @@
                   },
                   "required": [
                     "id",
+                    "media",
                     "title"
                   ],
                   "additionalProperties": false,
@@ -15128,8 +15151,8 @@
                       "type": "string"
                     },
                     "blocked": {
-                      "type": "boolean",
-                      "description": "Whether the user is blocked."
+                      "description": "Whether the user is blocked.",
+                      "type": "boolean"
                     },
                     "createDate": {
                       "type": "string",
@@ -15169,8 +15192,8 @@
                       "format": "uri"
                     },
                     "restricted": {
-                      "type": "boolean",
-                      "description": "Whether the user has restricted access."
+                      "description": "Whether the user has restricted access.",
+                      "type": "boolean"
                     },
                     "surname": {
                       "description": "Last name of the user.",
@@ -15179,10 +15202,8 @@
                     }
                   },
                   "required": [
-                    "blocked",
                     "createDate",
-                    "id",
-                    "restricted"
+                    "id"
                   ],
                   "additionalProperties": false,
                   "description": "The user who submitted the application."
@@ -15229,6 +15250,28 @@
                 "format": "uuid",
                 "description": "Unique identifier of the benefit."
               },
+              "media": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Storage key of the media file."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Public URL of the media file."
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Media files attached to this benefit."
+              },
               "mediaUrl": {
                 "description": "URL of the benefit's cover image.",
                 "nullable": true,
@@ -15246,6 +15289,7 @@
             },
             "required": [
               "id",
+              "media",
               "title"
             ],
             "additionalProperties": false,
@@ -15290,8 +15334,8 @@
                 "type": "string"
               },
               "blocked": {
-                "type": "boolean",
-                "description": "Whether the user is blocked."
+                "description": "Whether the user is blocked.",
+                "type": "boolean"
               },
               "createDate": {
                 "type": "string",
@@ -15331,8 +15375,8 @@
                 "format": "uri"
               },
               "restricted": {
-                "type": "boolean",
-                "description": "Whether the user has restricted access."
+                "description": "Whether the user has restricted access.",
+                "type": "boolean"
               },
               "surname": {
                 "description": "Last name of the user.",
@@ -15341,10 +15385,8 @@
               }
             },
             "required": [
-              "blocked",
               "createDate",
-              "id",
-              "restricted"
+              "id"
             ],
             "additionalProperties": false,
             "description": "The user who submitted the application."
@@ -15378,6 +15420,28 @@
                     "format": "uuid",
                     "description": "Unique identifier of the benefit."
                   },
+                  "media": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the media file."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Public URL of the media file."
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Media files attached to this benefit."
+                  },
                   "mediaUrl": {
                     "description": "URL of the benefit's cover image.",
                     "nullable": true,
@@ -15395,6 +15459,7 @@
                 },
                 "required": [
                   "id",
+                  "media",
                   "title"
                 ],
                 "additionalProperties": false,
@@ -15439,8 +15504,8 @@
                     "type": "string"
                   },
                   "blocked": {
-                    "type": "boolean",
-                    "description": "Whether the user is blocked."
+                    "description": "Whether the user is blocked.",
+                    "type": "boolean"
                   },
                   "createDate": {
                     "type": "string",
@@ -15480,8 +15545,8 @@
                     "format": "uri"
                   },
                   "restricted": {
-                    "type": "boolean",
-                    "description": "Whether the user has restricted access."
+                    "description": "Whether the user has restricted access.",
+                    "type": "boolean"
                   },
                   "surname": {
                     "description": "Last name of the user.",
@@ -15490,10 +15555,8 @@
                   }
                 },
                 "required": [
-                  "blocked",
                   "createDate",
-                  "id",
-                  "restricted"
+                  "id"
                 ],
                 "additionalProperties": false,
                 "description": "The user who submitted the application."
@@ -21988,6 +22051,7 @@
                         "studioBookings",
                         "hotDeskBookings",
                         "dedicatedDeskBookings",
+                        "officeBookings",
                         "parkingBookings",
                         "equipmentBookings",
                         "eventTickets",
@@ -22068,6 +22132,7 @@
                 "studioBookings",
                 "hotDeskBookings",
                 "dedicatedDeskBookings",
+                "officeBookings",
                 "parkingBookings",
                 "equipmentBookings",
                 "eventTickets",
@@ -22257,6 +22322,7 @@
                             "studioBookings",
                             "hotDeskBookings",
                             "dedicatedDeskBookings",
+                            "officeBookings",
                             "parkingBookings",
                             "equipmentBookings",
                             "eventTickets",
@@ -22328,6 +22394,7 @@
                     "studioBookings",
                     "hotDeskBookings",
                     "dedicatedDeskBookings",
+                    "officeBookings",
                     "parkingBookings",
                     "equipmentBookings",
                     "eventTickets",
@@ -22893,6 +22960,11 @@
             "description": "ISO timestamp of when the attendee checked in.",
             "type": "string",
             "format": "date-time"
+          },
+          "checkInRef": {
+            "description": "ID of the ticket's check-in in the check-ins service.",
+            "type": "string",
+            "format": "uuid"
           },
           "createDate": {
             "type": "string",
@@ -23715,6 +23787,7 @@
                   "flow",
                   "fondy",
                   "freedompay",
+                  "hyperpay",
                   "invoice",
                   "kakaopay",
                   "maya",
@@ -25340,6 +25413,7 @@
                                         "studioBookings",
                                         "hotDeskBookings",
                                         "dedicatedDeskBookings",
+                                        "officeBookings",
                                         "parkingBookings",
                                         "equipmentBookings",
                                         "eventTickets",
@@ -25409,6 +25483,7 @@
                                 "studioBookings",
                                 "hotDeskBookings",
                                 "dedicatedDeskBookings",
+                                "officeBookings",
                                 "parkingBookings",
                                 "equipmentBookings",
                                 "eventTickets",
@@ -25765,6 +25840,7 @@
                                   "studioBookings",
                                   "hotDeskBookings",
                                   "dedicatedDeskBookings",
+                                  "officeBookings",
                                   "parkingBookings",
                                   "equipmentBookings",
                                   "eventTickets",
@@ -25834,6 +25910,7 @@
                           "studioBookings",
                           "hotDeskBookings",
                           "dedicatedDeskBookings",
+                          "officeBookings",
                           "parkingBookings",
                           "equipmentBookings",
                           "eventTickets",
@@ -26181,6 +26258,7 @@
                                       "studioBookings",
                                       "hotDeskBookings",
                                       "dedicatedDeskBookings",
+                                      "officeBookings",
                                       "parkingBookings",
                                       "equipmentBookings",
                                       "eventTickets",
@@ -26250,6 +26328,7 @@
                               "studioBookings",
                               "hotDeskBookings",
                               "dedicatedDeskBookings",
+                              "officeBookings",
                               "parkingBookings",
                               "equipmentBookings",
                               "eventTickets",
@@ -27350,6 +27429,7 @@
                                                   "studioBookings",
                                                   "hotDeskBookings",
                                                   "dedicatedDeskBookings",
+                                                  "officeBookings",
                                                   "parkingBookings",
                                                   "equipmentBookings",
                                                   "eventTickets",
@@ -27419,6 +27499,7 @@
                                           "studioBookings",
                                           "hotDeskBookings",
                                           "dedicatedDeskBookings",
+                                          "officeBookings",
                                           "parkingBookings",
                                           "equipmentBookings",
                                           "eventTickets",
@@ -27566,6 +27647,7 @@
                                                       "studioBookings",
                                                       "hotDeskBookings",
                                                       "dedicatedDeskBookings",
+                                                      "officeBookings",
                                                       "parkingBookings",
                                                       "equipmentBookings",
                                                       "eventTickets",
@@ -27635,6 +27717,7 @@
                                               "studioBookings",
                                               "hotDeskBookings",
                                               "dedicatedDeskBookings",
+                                              "officeBookings",
                                               "parkingBookings",
                                               "equipmentBookings",
                                               "eventTickets",
@@ -28847,6 +28930,7 @@
                                                 "studioBookings",
                                                 "hotDeskBookings",
                                                 "dedicatedDeskBookings",
+                                                "officeBookings",
                                                 "parkingBookings",
                                                 "equipmentBookings",
                                                 "eventTickets",
@@ -28916,6 +29000,7 @@
                                         "studioBookings",
                                         "hotDeskBookings",
                                         "dedicatedDeskBookings",
+                                        "officeBookings",
                                         "parkingBookings",
                                         "equipmentBookings",
                                         "eventTickets",
@@ -29063,6 +29148,7 @@
                                                     "studioBookings",
                                                     "hotDeskBookings",
                                                     "dedicatedDeskBookings",
+                                                    "officeBookings",
                                                     "parkingBookings",
                                                     "equipmentBookings",
                                                     "eventTickets",
@@ -29132,6 +29218,7 @@
                                             "studioBookings",
                                             "hotDeskBookings",
                                             "dedicatedDeskBookings",
+                                            "officeBookings",
                                             "parkingBookings",
                                             "equipmentBookings",
                                             "eventTickets",
@@ -30141,6 +30228,102 @@
                   "format": "date-time",
                   "description": "ISO timestamp when the booking was created."
                 },
+                "customer": {
+                  "description": "Customer the booking belongs to. Omitted when the caller has no access.",
+                  "type": "object",
+                  "properties": {
+                    "company": {
+                      "description": "Company the booking was made for, recorded when the owner was a member of a company at the time of the booking.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the company."
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Company name."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Customer id of the booking owner."
+                    },
+                    "user": {
+                      "description": "Profile of the booking owner. Omitted when the owner has restricted visibility.",
+                      "type": "object",
+                      "properties": {
+                        "about": {
+                          "description": "Short bio of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "company": {
+                          "description": "Company the user belongs to, if any.",
+                          "nullable": true,
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "description": "Company display name."
+                            }
+                          },
+                          "required": [
+                            "title"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "email": {
+                          "description": "Email address of the user.",
+                          "nullable": true,
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the user."
+                        },
+                        "name": {
+                          "description": "First name of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "description": "Phone number of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "description": "Profile photo URL of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "description": "Last name of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
                 "deleteDate": {
                   "description": "ISO timestamp when the booking was cancelled.",
                   "type": "string",
@@ -30161,7 +30344,7 @@
                 },
                 "membershipRefOwner": {
                   "deprecated": true,
-                  "description": "Deprecated. Customer id of the booking owner. Omitted when the caller has no access.",
+                  "description": "Deprecated. Use `customer.id` instead. Customer id of the booking owner. Omitted when the caller has no access.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -30628,6 +30811,7 @@
                                 "flow",
                                 "fondy",
                                 "freedompay",
+                                "hyperpay",
                                 "kakaopay",
                                 "maya",
                                 "mercadopago",
@@ -31518,6 +31702,7 @@
                                   "flow",
                                   "fondy",
                                   "freedompay",
+                                  "hyperpay",
                                   "kakaopay",
                                   "maya",
                                   "mercadopago",
@@ -32150,6 +32335,102 @@
                 "format": "date-time",
                 "description": "ISO timestamp when the booking was created."
               },
+              "customer": {
+                "description": "Customer the booking belongs to. Omitted when the caller has no access.",
+                "type": "object",
+                "properties": {
+                  "company": {
+                    "description": "Company the booking was made for, recorded when the owner was a member of a company at the time of the booking.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the company."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Company name."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Customer id of the booking owner."
+                  },
+                  "user": {
+                    "description": "Profile of the booking owner. Omitted when the owner has restricted visibility.",
+                    "type": "object",
+                    "properties": {
+                      "about": {
+                        "description": "Short bio of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "company": {
+                        "description": "Company the user belongs to, if any.",
+                        "nullable": true,
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "Company display name."
+                          }
+                        },
+                        "required": [
+                          "title"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "email": {
+                        "description": "Email address of the user.",
+                        "nullable": true,
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the user."
+                      },
+                      "name": {
+                        "description": "First name of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "phoneNumber": {
+                        "description": "Phone number of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "photoUrl": {
+                        "description": "Profile photo URL of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "Last name of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
               "deleteDate": {
                 "description": "ISO timestamp when the booking was cancelled.",
                 "type": "string",
@@ -32170,7 +32451,7 @@
               },
               "membershipRefOwner": {
                 "deprecated": true,
-                "description": "Deprecated. Customer id of the booking owner. Omitted when the caller has no access.",
+                "description": "Deprecated. Use `customer.id` instead. Customer id of the booking owner. Omitted when the caller has no access.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -32637,6 +32918,7 @@
                               "flow",
                               "fondy",
                               "freedompay",
+                              "hyperpay",
                               "kakaopay",
                               "maya",
                               "mercadopago",
@@ -33527,6 +33809,7 @@
                                 "flow",
                                 "fondy",
                                 "freedompay",
+                                "hyperpay",
                                 "kakaopay",
                                 "maya",
                                 "mercadopago",
@@ -35661,6 +35944,7 @@
                                 "flow",
                                 "fondy",
                                 "freedompay",
+                                "hyperpay",
                                 "kakaopay",
                                 "maya",
                                 "mercadopago",
@@ -36714,6 +36998,7 @@
                               "flow",
                               "fondy",
                               "freedompay",
+                              "hyperpay",
                               "kakaopay",
                               "maya",
                               "mercadopago",
@@ -37750,6 +38035,7 @@
                                               "studioBookings",
                                               "hotDeskBookings",
                                               "dedicatedDeskBookings",
+                                              "officeBookings",
                                               "parkingBookings",
                                               "equipmentBookings",
                                               "eventTickets",
@@ -37819,6 +38105,7 @@
                                       "studioBookings",
                                       "hotDeskBookings",
                                       "dedicatedDeskBookings",
+                                      "officeBookings",
                                       "parkingBookings",
                                       "equipmentBookings",
                                       "eventTickets",
@@ -38939,6 +39226,7 @@
                                         "studioBookings",
                                         "hotDeskBookings",
                                         "dedicatedDeskBookings",
+                                        "officeBookings",
                                         "parkingBookings",
                                         "equipmentBookings",
                                         "eventTickets",
@@ -39008,6 +39296,7 @@
                                 "studioBookings",
                                 "hotDeskBookings",
                                 "dedicatedDeskBookings",
+                                "officeBookings",
                                 "parkingBookings",
                                 "equipmentBookings",
                                 "eventTickets",
@@ -40123,6 +40412,7 @@
                                             "studioBookings",
                                             "hotDeskBookings",
                                             "dedicatedDeskBookings",
+                                            "officeBookings",
                                             "parkingBookings",
                                             "equipmentBookings",
                                             "eventTickets",
@@ -40192,6 +40482,7 @@
                                     "studioBookings",
                                     "hotDeskBookings",
                                     "dedicatedDeskBookings",
+                                    "officeBookings",
                                     "parkingBookings",
                                     "equipmentBookings",
                                     "eventTickets",
@@ -46560,6 +46851,7 @@
                   "flow",
                   "fondy",
                   "freedompay",
+                  "hyperpay",
                   "kakaopay",
                   "mercadopago",
                   "paypal",
@@ -47883,6 +48175,7 @@
                               "enum": [
                                 "authorizenet",
                                 "freedompay",
+                                "hyperpay",
                                 "kakaopay",
                                 "maya",
                                 "mercadopago",
@@ -47944,6 +48237,7 @@
                         "authorizenet",
                         "external",
                         "freedompay",
+                        "hyperpay",
                         "kakaopay",
                         "maya",
                         "mercadopago",
@@ -49110,6 +49404,7 @@
                                   "studioBookings",
                                   "hotDeskBookings",
                                   "dedicatedDeskBookings",
+                                  "officeBookings",
                                   "parkingBookings",
                                   "equipmentBookings",
                                   "eventTickets",
@@ -49181,6 +49476,7 @@
                           "studioBookings",
                           "hotDeskBookings",
                           "dedicatedDeskBookings",
+                          "officeBookings",
                           "parkingBookings",
                           "equipmentBookings",
                           "eventTickets",
@@ -49243,6 +49539,7 @@
                                   "studioBookings",
                                   "hotDeskBookings",
                                   "dedicatedDeskBookings",
+                                  "officeBookings",
                                   "parkingBookings",
                                   "equipmentBookings",
                                   "eventTickets",
@@ -50544,6 +50841,7 @@
                                     "studioBookings",
                                     "hotDeskBookings",
                                     "dedicatedDeskBookings",
+                                    "officeBookings",
                                     "parkingBookings",
                                     "equipmentBookings",
                                     "eventTickets",
@@ -50884,6 +51182,7 @@
                                     "studioBookings",
                                     "hotDeskBookings",
                                     "dedicatedDeskBookings",
+                                    "officeBookings",
                                     "parkingBookings",
                                     "equipmentBookings",
                                     "eventTickets",
@@ -51438,6 +51737,7 @@
                                               "studioBookings",
                                               "hotDeskBookings",
                                               "dedicatedDeskBookings",
+                                              "officeBookings",
                                               "parkingBookings",
                                               "equipmentBookings",
                                               "eventTickets",
@@ -52396,6 +52696,7 @@
                                               "studioBookings",
                                               "hotDeskBookings",
                                               "dedicatedDeskBookings",
+                                              "officeBookings",
                                               "parkingBookings",
                                               "equipmentBookings",
                                               "eventTickets",
@@ -53672,6 +53973,7 @@
                                               "studioBookings",
                                               "hotDeskBookings",
                                               "dedicatedDeskBookings",
+                                              "officeBookings",
                                               "parkingBookings",
                                               "equipmentBookings",
                                               "eventTickets",
@@ -54079,6 +54381,7 @@
                                           "studioBookings",
                                           "hotDeskBookings",
                                           "dedicatedDeskBookings",
+                                          "officeBookings",
                                           "parkingBookings",
                                           "equipmentBookings",
                                           "eventTickets",
@@ -54461,6 +54764,7 @@
                                     "studioBookings",
                                     "hotDeskBookings",
                                     "dedicatedDeskBookings",
+                                    "officeBookings",
                                     "parkingBookings",
                                     "equipmentBookings",
                                     "eventTickets",
@@ -54773,6 +55077,7 @@
                                     "studioBookings",
                                     "hotDeskBookings",
                                     "dedicatedDeskBookings",
+                                    "officeBookings",
                                     "parkingBookings",
                                     "equipmentBookings",
                                     "eventTickets",
