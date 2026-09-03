@@ -6708,8 +6708,9 @@
           "Events"
         ],
         "summary": "Check in a ticket",
-        "description": "Check in an event ticket. Fails if the ticket is already checked in. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "description": "Check in an event ticket. Fails if the ticket is already checked in. Deprecated: this endpoint will be removed in a future release. <h3>OAuth</h3>Required scopes: <code>events</code>",
         "operationId": "checkInEventTicket",
+        "deprecated": true,
         "parameters": [
           {
             "name": "id",
@@ -9195,12 +9196,32 @@
         "parameters": [
           {
             "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of assignments per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. Ignored when registrationRef is used.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
             "name": "locationRef",
             "required": false,
             "description": "UUID of the location whose resource assignments to list.",
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. Ignored when registrationRef is used.",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -26606,6 +26627,14 @@
             "description": "ISO timestamp or date when terms consent was given.",
             "type": "string"
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "agent"
+            ],
+            "description": "Whether the registration belongs to a person or to an AI agent."
+          },
           "user": {
             "type": "object",
             "properties": {
@@ -26664,6 +26693,7 @@
           "createDate",
           "customers",
           "id",
+          "type",
           "user"
         ],
         "additionalProperties": false
@@ -29899,6 +29929,14 @@
               "additionalProperties": false
             },
             "description": "List of resource assignments in the location."
+          },
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
           }
         },
         "required": [
