@@ -1203,7 +1203,8 @@ export interface paths {
         put?: never;
         /**
          * Check in a ticket
-         * @description Check in an event ticket. Fails if the ticket is already checked in. <h3>OAuth</h3>Required scopes: <code>events</code>
+         * @deprecated
+         * @description Check in an event ticket. Fails if the ticket is already checked in. Deprecated: this endpoint will be removed in a future release. <h3>OAuth</h3>Required scopes: <code>events</code>
          */
         post: operations["checkInEventTicket"];
         delete?: never;
@@ -8351,6 +8352,11 @@ export interface components {
             role?: "owner" | "admin" | "member";
             /** @description ISO timestamp or date when terms consent was given. */
             termsConsentDate?: string;
+            /**
+             * @description Whether the registration belongs to a person or to an AI agent.
+             * @enum {string}
+             */
+            type: "user" | "agent";
             /** @description Profile details of the registered user. */
             user: {
                 /** @description About text of the user. */
@@ -9718,6 +9724,10 @@ export interface components {
                     surname?: string | null;
                 };
             }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
         };
         createAssignment: {
             /** @description The created assignment. */
@@ -27070,8 +27080,12 @@ export interface operations {
     getAssignments: {
         parameters: {
             query?: {
+                /** @description Maximum number of assignments per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. Ignored when registrationRef is used. */
+                limit?: number;
                 /** @description UUID of the location whose resource assignments to list. */
                 locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. Ignored when registrationRef is used. */
+                nextPageToken?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */

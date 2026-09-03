@@ -521,7 +521,9 @@ export type Assignment = NonNullable<operations["getAssignments"]["responses"][2
 export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 export interface GetAssignmentsQuery {
+  limit?: number;
   locationRef?: string;
+  nextPageToken?: string;
 }
 export interface GetBookingsQuery {
   "endDate[gt]"?: string;
@@ -567,7 +569,8 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource>
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined>
     assignments: {
-      async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]>
+      async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<{ assignments: Assignment[]; nextPageToken?: string; searchQueryNext?: string }>
+      iterate(query?: Omit<GetAssignmentsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Assignment, void, undefined>
       async create(assignment: CreateAssignmentBody, options?: SpacebringRequestOptions): Promise<Assignment>
       async update(assignmentId: string, assignment: PatchAssignmentBody, options?: SpacebringRequestOptions): Promise<undefined>
     },
