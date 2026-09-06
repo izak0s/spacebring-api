@@ -15,8 +15,12 @@ export type Resource = NonNullable<operations["getResource"]["responses"][200]["
 
 /** Query parameters for `sb.resources.assignments.list()`. */
 export interface GetAssignmentsQuery {
+  /** Maximum number of assignments per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. Ignored when registrationRef is used. */
+  limit?: number;
   /** UUID of the location whose resource assignments to list. */
   locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. Ignored when registrationRef is used. */
+  nextPageToken?: string;
 }
 
 /** Query parameters for `sb.resources.bookings.list()`. */
@@ -156,8 +160,20 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
        */
-      async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<Assignment[]> {
-        return unwrapProp(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "assignments", "GET /resources/v1/assignments");
+      async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<{ assignments: Assignment[]; nextPageToken?: string; searchQueryNext?: string }> {
+        return unwrap(await client.GET("/resources/v1/assignments", { params: { query }, signal: options?.signal }), "GET /resources/v1/assignments");
+      },
+      /**
+       * Retrieve resource assignments — iterates every item across all pages.
+       *
+       * Retrieve resource assignments in the location. An assignment links a resource, or a number of seats in it, to a company or a member for the duration of a subscription.
+       */
+      iterate(query?: Omit<GetAssignmentsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Assignment, void, undefined> {
+        return paginate(
+          async (nextPageToken: string | undefined) =>
+            unwrap(await client.GET("/resources/v1/assignments", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /resources/v1/assignments"),
+          "assignments",
+        );
       },
       /**
        * Create a resource assignment
