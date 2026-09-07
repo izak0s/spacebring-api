@@ -73,7 +73,16 @@ jobs:
           git show HEAD:spec/openapi.json > /tmp/old-spec.json
           git show HEAD:tests/__snapshots__/surface.test.ts.snap > /tmp/old-surface.snap
           git show HEAD:tests/__snapshots__/typed-surface.txt > /tmp/old-typed-surface.txt
-          summary=$(npx tsx codegen/diff-spec.ts /tmp/old-spec.json spec/openapi.json /tmp/old-surface.snap tests/__snapshots__/surface.test.ts.snap)
+          # --max-chars: the summary lists every changed leaf, so cap it just under
+          # GitHub's 65536-character PR-body limit (minus this body's boilerplate).
+          # Two months of accumulated spec drift renders in ~28k, so this only ever
+          # fires on a pathological upstream rewrite — and trims instead of failing.
+          # The typed-surface pair feeds the body's "Breaking" section the same
+          # compile-level reasons the auto-merge gate below computes.
+          summary=$(npx tsx codegen/diff-spec.ts /tmp/old-spec.json spec/openapi.json \
+            /tmp/old-surface.snap tests/__snapshots__/surface.test.ts.snap \
+            /tmp/old-typed-surface.txt tests/__snapshots__/typed-surface.txt \
+            --max-chars=60000)
           # unchanged | additive | breaking — additive (new methods, new
           # optional params) is safe to auto-merge; breaking (anything
           # removed/renamed/changed, or a new required param) needs review.

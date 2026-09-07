@@ -59,6 +59,11 @@ jobs:
             args="/tmp/prev-spec.json spec/openapi.json"
             if git show "$prev:tests/__snapshots__/surface.test.ts.snap" > /tmp/prev-surface.snap 2>/dev/null; then
               args="$args /tmp/prev-surface.snap tests/__snapshots__/surface.test.ts.snap"
+              # Positional, so the typed-surface pair (which drives the notes'
+              # "Breaking" section) only goes on top of the surface snapshot pair.
+              if git show "$prev:tests/__snapshots__/typed-surface.txt" > /tmp/prev-typed-surface.txt 2>/dev/null; then
+                args="$args /tmp/prev-typed-surface.txt tests/__snapshots__/typed-surface.txt"
+              fi
             fi
             {
               echo "## API changes since $prev"
@@ -66,7 +71,8 @@ jobs:
               if cmp -s /tmp/prev-spec.json spec/openapi.json; then
                 echo "_None — internal/tooling release._"
               else
-                npx tsx codegen/diff-spec.ts $args
+                # --max-chars keeps the notes under GitHub's 125000-character release-body limit.
+                npx tsx codegen/diff-spec.ts $args --max-chars=100000
               fi
               echo ""
             } > /tmp/release-notes.md

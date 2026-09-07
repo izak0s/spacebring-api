@@ -32,6 +32,13 @@ interface Surface {
   interfaces: Set<string>;
   /** required (non-optional) property lines, as { interfaceKey, key } */
   requiredProps: { interfaceKey: string; key: string }[];
+  /**
+   * Every counted line with its context kept separate from its text. `key`
+   * concatenates the two, and a signature can itself contain `|` (union
+   * types), so consumers that need the halves must read them from here rather
+   * than splitting the key back apart.
+   */
+  entries: { context: string; line: string; key: string }[];
 }
 
 const PROP = /^("[^"]+"|[A-Za-z_$][\w$]*)(\?)?:/;
@@ -40,6 +47,7 @@ export function parseSurface(content: string): Surface {
   const lines = new Map<string, number>();
   const interfaces = new Set<string>();
   const requiredProps: Surface["requiredProps"] = [];
+  const entries: Surface["entries"] = [];
 
   let file = "";
   let block: { kind: "interface" | "fn"; name: string } | null = null;
@@ -94,8 +102,9 @@ export function parseSurface(content: string): Surface {
 
     const key = `${context}|${line}`;
     lines.set(key, (lines.get(key) ?? 0) + 1);
+    entries.push({ context, line, key });
   }
-  return { lines, interfaces, requiredProps };
+  return { lines, interfaces, requiredProps, entries };
 }
 
 export function classify(before: Surface, after: Surface): { verdict: "unchanged" | "additive" | "breaking"; reasons: string[] } {
