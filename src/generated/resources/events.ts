@@ -158,10 +158,12 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
       /**
        * Check in a ticket
        *
-       * Check in an event ticket. Fails if the ticket is already checked in.
+       * Check in an event ticket. Fails if the ticket is already checked in. Deprecated: this endpoint will be removed in a future release.
        *
        * @param id The id of the event ticket.
        * @param options Request options (abort signal).
+       *
+       * @deprecated Marked as deprecated in the OpenAPI spec.
        */
       async checkIn(id: string, options?: SpacebringRequestOptions): Promise<EventTicket> {
         return unwrapProp(await client.POST("/events/tickets/v1/{id}/checkin", { params: { path: { id } }, signal: options?.signal }), "ticket", "POST /events/tickets/v1/{id}/checkin");
