@@ -20,7 +20,10 @@ export type DayPassScheduledTransaction = NonNullable<operations["getScheduledDa
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
 
 /** A MoneyTransaction entity as returned by the Spacebring API. */
-export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
+export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
+
+/** A Refund entity as returned by the Spacebring API. */
+export type Refund = NonNullable<operations["refundMoneyTransaction"]["responses"][200]["content"]["application/json"]["refund"]>;
 
 /** Query parameters for `sb.transactions.credits.list()`. */
 export interface GetCreditsTransactionsQuery {
@@ -70,18 +73,22 @@ export interface GetDayPassesTransactionsQuery {
 
 /** Query parameters for `sb.transactions.money.list()`. */
 export interface GetMoneyTransactionsQuery {
-  /** The id of the location */
-  locationRef: string;
-  /** The number of items to return */
+  /** Get transactions with greater or equal createDate. Example: createDate[gte]=2021-05-21T10:00:00Z */
+  "createDate[gte]"?: string;
+  /** Get transactions with less or equal createDate. Example: createDate[lte]=2021-05-21T10:00:00Z */
+  "createDate[lte]"?: string;
+  /** UUID of the company or user whose money transactions to list. */
+  customerRef?: string;
+  /** Maximum number of transactions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** The payment status of transactions */
-  status?: "canceled" | "failed" | "pending" | "processing" | "succeeded";
-  /** The type of transactions */
-  type?: "booking" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
-  /** The date filter of items. */
-  createDate?: { lte?: string; gte?: string };
+  /** UUID of the location whose money transactions to list. */
+  locationRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+  /** Filter by transaction status. Comma-separated status values, e.g. `status=succeeded,pending`. */
+  status?: string;
+  /** Filter by transaction type. Comma-separated type values, e.g. `type=booking,invoice`. */
+  type?: string;
 }
 
 /** Query parameters for `sb.transactions.credits.scheduled.list()`. */
@@ -113,6 +120,15 @@ export type CreateCreditsTransactionBody = NonNullable<NonNullable<operations["c
 
 /** Request body for `sb.transactions.dayPasses.create()`. */
 export type CreateDayPassesTransactionBody = NonNullable<NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
+
+/** Request body for `sb.transactions.money.create()`. */
+export type CreateMoneyTransactionBody = NonNullable<operations["createMoneyTransaction"]["requestBody"]>["content"]["application/json"];
+
+/** Request body for `sb.transactions.money.update()`. */
+export type PatchMoneyTransactionBody = NonNullable<NonNullable<operations["patchMoneyTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
+
+/** Request body for `sb.transactions.money.refund()`. */
+export type RefundMoneyTransactionBody = NonNullable<NonNullable<operations["refundMoneyTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
 
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -266,11 +282,11 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
     },
     money: {
       /** Retrieve money transactions */
-      async list(query: GetMoneyTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: MoneyTransaction[]; nextPageToken?: string }> {
+      async list(query?: GetMoneyTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: MoneyTransaction[] }> {
         return unwrap(await client.GET("/transactions/money/v1", { params: { query }, signal: options?.signal }), "GET /transactions/money/v1");
       },
       /** Retrieve money transactions — iterates every item across all pages. */
-      iterate(query: Omit<GetMoneyTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined> {
+      iterate(query?: Omit<GetMoneyTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/transactions/money/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /transactions/money/v1"),
@@ -280,11 +296,43 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       /**
        * Retrieve a money transaction
        *
-       * @param id The id of the transaction
+       * @param transactionId The id of the transaction.
        * @param options Request options (abort signal).
        */
-      async get(id: string, options?: SpacebringRequestOptions): Promise<MoneyTransaction> {
-        return unwrapProp(await client.GET("/transactions/money/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "transaction", "GET /transactions/money/v1/{id}");
+      async get(transactionId: string, options?: SpacebringRequestOptions): Promise<MoneyTransaction> {
+        return unwrapProp(await client.GET("/transactions/money/v1/{transactionId}", { params: { path: { transactionId } }, signal: options?.signal }), "transaction", "GET /transactions/money/v1/{transactionId}");
+      },
+      /**
+       * Create a money transaction
+       *
+       * Create a money transaction by charging a customer for a custom item.
+       */
+      async create(body: CreateMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<MoneyTransaction> {
+        return unwrapProp(await client.POST("/transactions/money/v1", { body, signal: options?.signal }), "transaction", "POST /transactions/money/v1");
+      },
+      /**
+       * Update a money transaction
+       *
+       * Approve or cancel a pending money transaction paid externally.
+       *
+       * @param transactionId The id of the transaction.
+       * @param transaction The `transaction` payload.
+       * @param options Request options (abort signal).
+       */
+      async update(transactionId: string, transaction: PatchMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/transactions/money/v1/{transactionId}", { params: { path: { transactionId } }, body: { transaction }, signal: options?.signal }), "PATCH /transactions/money/v1/{transactionId}");
+      },
+      /**
+       * Refund a money transaction
+       *
+       * Refund a succeeded money transaction, fully or partially, through the payment gateway it was paid with.
+       *
+       * @param transactionId The id of the transaction.
+       * @param transaction The `transaction` payload.
+       * @param options Request options (abort signal).
+       */
+      async refund(transactionId: string, transaction?: RefundMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<Refund> {
+        return unwrapProp(await client.POST("/transactions/money/v1/{transactionId}/refund", { params: { path: { transactionId } }, body: transaction === undefined ? undefined : { transaction }, signal: options?.signal }), "refund", "POST /transactions/money/v1/{transactionId}/refund");
       },
     },
   };
