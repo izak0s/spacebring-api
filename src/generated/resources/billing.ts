@@ -79,6 +79,8 @@ export interface GetInvoicesQuery {
 export interface GetUpcomingInvoiceItemsQuery {
   /** The id of the company. */
   companyRef?: string;
+  /** The id of the customer. */
+  customerRef?: string;
   /** The id of the membership. */
   membershipRef?: string;
 }

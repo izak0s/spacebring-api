@@ -41,7 +41,9 @@ export interface GetBookingsQuery {
   "startDate[lt]"?: string;
   /** Matches bookings with startDate on or before this date (ISO 8601). */
   "startDate[lte]"?: string;
-  /** UUID of the customer whose bookings to list. */
+  /** UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef or userRefOwner. */
+  companyRefOwner?: string;
+  /** UUID of the customer whose bookings to list, both made and attended. */
   customerRef?: string;
   /** @deprecated Use bracket-notation fields endDate[gt], endDate[gte], endDate[lt], endDate[lte] instead. */
   endDate?: string;
@@ -67,6 +69,8 @@ export interface GetBookingsQuery {
   status?: string;
   /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
   type?: string;
+  /** UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef or companyRefOwner. */
+  userRefOwner?: string;
   /** @deprecated Use type instead. */
   types?: string;
 }

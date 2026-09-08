@@ -110,6 +110,7 @@ export interface GetInvoicesQuery {
 }
 export interface GetUpcomingInvoiceItemsQuery {
   companyRef?: string;
+  customerRef?: string;
   membershipRef?: string;
 }
 export interface GetUpcomingInvoiceQuery {
@@ -534,6 +535,7 @@ export interface GetBookingsQuery {
   "startDate[gte]"?: string;
   "startDate[lt]"?: string;
   "startDate[lte]"?: string;
+  companyRefOwner?: string;
   customerRef?: string;
   endDate?: string;
   includeDeleted?: string;
@@ -547,6 +549,7 @@ export interface GetBookingsQuery {
   startDate?: string;
   status?: string;
   type?: string;
+  userRefOwner?: string;
   types?: string;
 }
 export interface GetResourcesQuery {
@@ -722,7 +725,8 @@ export type CreditScheduledTransaction = NonNullable<operations["getScheduledCre
 export type CreditTransaction = NonNullable<components["schemas"]["transactionCredits"]>;
 export type DayPassScheduledTransaction = NonNullable<operations["getScheduledDayPassesTransactions"]["responses"][200]["content"]["application/json"]["scheduledTransactions"]>[number];
 export type DayPassTransaction = NonNullable<components["schemas"]["transactionDayPasses"]>;
-export type MoneyTransaction = NonNullable<components["schemas"]["transaction"]>;
+export type MoneyTransaction = NonNullable<operations["getMoneyTransaction"]["responses"][200]["content"]["application/json"]["transaction"]>;
+export type Refund = NonNullable<operations["refundMoneyTransaction"]["responses"][200]["content"]["application/json"]["refund"]>;
 export interface GetCreditsTransactionsQuery {
   companyRef?: string;
   "createDate[gte]"?: string;
@@ -747,12 +751,14 @@ export interface GetDayPassesTransactionsQuery {
   type?: string;
 }
 export interface GetMoneyTransactionsQuery {
-  locationRef: string;
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
+  customerRef?: string;
   limit?: number;
-  status?: "canceled" | "failed" | "pending" | "processing" | "succeeded";
-  type?: "booking" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
-  createDate?: { lte?: string; gte?: string };
+  locationRef?: string;
   nextPageToken?: string;
+  status?: string;
+  type?: string;
 }
 export interface GetScheduledCreditsTransactionsQuery {
   customerRef?: string;
@@ -768,6 +774,9 @@ export interface GetScheduledDayPassesTransactionsQuery {
 }
 export type CreateCreditsTransactionBody = NonNullable<NonNullable<operations["createCreditsTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
 export type CreateDayPassesTransactionBody = NonNullable<NonNullable<operations["createDayPassesTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
+export type CreateMoneyTransactionBody = NonNullable<operations["createMoneyTransaction"]["requestBody"]>["content"]["application/json"];
+export type PatchMoneyTransactionBody = NonNullable<NonNullable<operations["patchMoneyTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
+export type RefundMoneyTransactionBody = NonNullable<NonNullable<operations["refundMoneyTransaction"]["requestBody"]>["content"]["application/json"]["transaction"]>;
 export function createTransactions(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     balances: {
@@ -795,9 +804,12 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       },
     },
     money: {
-      async list(query: GetMoneyTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ transactions?: MoneyTransaction[]; nextPageToken?: string }>
-      iterate(query: Omit<GetMoneyTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined>
-      async get(id: string, options?: SpacebringRequestOptions): Promise<MoneyTransaction>
+      async list(query?: GetMoneyTransactionsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; transactions: MoneyTransaction[] }>
+      iterate(query?: Omit<GetMoneyTransactionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<MoneyTransaction, void, undefined>
+      async get(transactionId: string, options?: SpacebringRequestOptions): Promise<MoneyTransaction>
+      async create(body: CreateMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<MoneyTransaction>
+      async update(transactionId: string, transaction: PatchMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<undefined>
+      async refund(transactionId: string, transaction?: RefundMoneyTransactionBody, options?: SpacebringRequestOptions): Promise<Refund>
     },
   };
 }
