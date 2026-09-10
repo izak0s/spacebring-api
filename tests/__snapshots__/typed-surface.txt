@@ -556,10 +556,11 @@ export interface GetResourcesQuery {
   limit?: number;
   locationRef: string;
   nextPageToken?: string;
+  type?: string;
   types?: string;
 }
 export type CreateAssignmentBody = NonNullable<NonNullable<operations["createAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
-export type CreateBookingBody = NonNullable<NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]["booking"]>;
+export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 export type PatchAssignmentBody = NonNullable<NonNullable<operations["patchAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBody"]>["content"]["application/json"];
@@ -581,7 +582,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
       async list(query?: GetBookingsQuery, options?: SpacebringRequestOptions): Promise<{ bookings: Booking[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetBookingsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Booking, void, undefined>
       async get(bookingId: string, options?: SpacebringRequestOptions): Promise<Booking>
-      async create(booking: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking>
+      async create(body: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking>
       async update(bookingId: string, body: PatchBookingBody, options?: SpacebringRequestOptions): Promise<Booking>
       async delete(bookingId: string, options?: SpacebringRequestOptions): Promise<undefined>
     },
