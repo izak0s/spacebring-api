@@ -6777,10 +6777,10 @@ export interface components {
             checkInDate?: string;
             /**
              * Format: uuid
-             * @description ID of the ticket's check-in in the check-ins service.
+             * @description ID of the ticket's check-in in the check-ins service. Present when check-in is enabled for the event.
              */
             checkInRef?: string;
-            /** @description Six-digit code the attendee enters at the reception to check in. Visible to the ticket owner and admins. */
+            /** @description Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event. */
             code?: string;
             /**
              * Format: date-time
@@ -6794,6 +6794,8 @@ export interface components {
             deleteDate?: string;
             /** @description Event this ticket belongs to. */
             event: {
+                /** @description Whether attendees can be checked in, per the check-in setting of the event's location. */
+                checkInEnabled: boolean;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the event ends.
@@ -15546,6 +15548,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -15565,6 +15569,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the scheduled transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Discounts applied to the scheduled transaction. */
                 discounts?: {
                     /** @description Applied coupon. */
@@ -15621,7 +15630,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -15858,6 +15867,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -15877,6 +15888,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Transaction description. */
                 description?: string;
                 /** @description Discounts applied to the transaction. */
@@ -15940,7 +15956,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -16252,6 +16268,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -16271,6 +16289,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Transaction description. */
                 description?: string;
                 /** @description Discounts applied to the transaction. */
@@ -16334,7 +16357,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -16644,6 +16667,8 @@ export interface components {
                     key: string;
                     url: string;
                 };
+                /** @description Public logo URL derived from the company website. */
+                publicLogoUrl?: string;
                 /** @description Company name. */
                 title?: string;
                 /**
@@ -16663,6 +16688,11 @@ export interface components {
                     surname?: string | null;
                 };
             };
+            /**
+             * Format: uuid
+             * @description ID of the customer the user who created the transaction belongs to.
+             */
+            customerRefCreatedBy?: string;
             /** @description Transaction description. */
             description?: string;
             /** @description Discounts applied to the transaction. */
@@ -16726,7 +16756,7 @@ export interface components {
             /**
              * Format: uuid
              * @deprecated
-             * @description Deprecated. Use userCreatedBy instead.
+             * @description Deprecated. Use customerRefCreatedBy instead.
              */
             membershipRefCreator?: string;
             /**
@@ -17009,6 +17039,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -17030,6 +17062,11 @@ export interface components {
                 };
                 /**
                  * Format: uuid
+                 * @description ID of the customer the user who created the scheduled transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
+                /**
+                 * Format: uuid
                  * @description Unique identifier of the scheduled transaction.
                  */
                 id: string;
@@ -17047,7 +17084,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -17274,6 +17311,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -17293,6 +17332,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Transaction description. */
                 description?: string;
                 /**
@@ -17314,7 +17358,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreator instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -17536,6 +17580,8 @@ export interface components {
                         key: string;
                         url: string;
                     };
+                    /** @description Public logo URL derived from the company website. */
+                    publicLogoUrl?: string;
                     /** @description Company name. */
                     title?: string;
                     /**
@@ -17555,6 +17601,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Transaction description. */
                 description?: string;
                 /**
@@ -17576,7 +17627,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreator instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -17796,6 +17847,8 @@ export interface components {
                     key: string;
                     url: string;
                 };
+                /** @description Public logo URL derived from the company website. */
+                publicLogoUrl?: string;
                 /** @description Company name. */
                 title?: string;
                 /**
@@ -17815,6 +17868,11 @@ export interface components {
                     surname?: string | null;
                 };
             };
+            /**
+             * Format: uuid
+             * @description ID of the customer the user who created the transaction belongs to.
+             */
+            customerRefCreatedBy?: string;
             /** @description Transaction description. */
             description?: string;
             /**
@@ -17836,7 +17894,7 @@ export interface components {
             /**
              * Format: uuid
              * @deprecated
-             * @description Deprecated. Use userCreator instead.
+             * @description Deprecated. Use customerRefCreatedBy instead.
              */
             membershipRefCreator?: string;
             /**
@@ -18128,6 +18186,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Customer billing address. */
                 customerAddress?: {
                     city: string;
@@ -18250,7 +18313,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -18353,6 +18416,11 @@ export interface components {
                             createDate: string;
                             /** @description ISO currency code. */
                             currencyCode: string;
+                            /**
+                             * Format: uuid
+                             * @description ID of the customer the user who created the refund belongs to.
+                             */
+                            customerRefCreatedBy?: string;
                             /** @description Refunded amount in major units. */
                             grossAmount: number;
                             /**
@@ -18825,6 +18893,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Customer billing address. */
                 customerAddress?: {
                     city: string;
@@ -18947,7 +19020,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -19050,6 +19123,11 @@ export interface components {
                             createDate: string;
                             /** @description ISO currency code. */
                             currencyCode: string;
+                            /**
+                             * Format: uuid
+                             * @description ID of the customer the user who created the refund belongs to.
+                             */
+                            customerRefCreatedBy?: string;
                             /** @description Refunded amount in major units. */
                             grossAmount: number;
                             /**
@@ -19522,6 +19600,11 @@ export interface components {
                         surname?: string | null;
                     };
                 };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer the user who created the transaction belongs to.
+                 */
+                customerRefCreatedBy?: string;
                 /** @description Customer billing address. */
                 customerAddress?: {
                     city: string;
@@ -19644,7 +19727,7 @@ export interface components {
                 /**
                  * Format: uuid
                  * @deprecated
-                 * @description Deprecated. Use userCreatedBy instead.
+                 * @description Deprecated. Use customerRefCreatedBy instead.
                  */
                 membershipRefCreator?: string;
                 /**
@@ -19747,6 +19830,11 @@ export interface components {
                             createDate: string;
                             /** @description ISO currency code. */
                             currencyCode: string;
+                            /**
+                             * Format: uuid
+                             * @description ID of the customer the user who created the refund belongs to.
+                             */
+                            customerRefCreatedBy?: string;
                             /** @description Refunded amount in major units. */
                             grossAmount: number;
                             /**
@@ -22946,6 +23034,38 @@ export interface components {
                         /** @description Custom title for the booking. */
                         title?: string;
                     };
+                    /** @description Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. Omit the field to create a free booking. */
+                    paymentMethod?: {
+                        /** @description Discounts to apply, echoed from the payment method. An empty array applies none; omitting it picks the best suited coupon. */
+                        discounts?: {
+                            /** @description Coupon to apply. */
+                            coupon?: {
+                                /**
+                                 * Format: uuid
+                                 * @description Unique identifier of the coupon.
+                                 */
+                                id: string;
+                            };
+                            /** @description Promocode that brought the coupon. */
+                            promocode?: {
+                                /** @description Promocode string. */
+                                code: string;
+                            };
+                        }[];
+                        /** @description External payment details: the payment is collected outside Spacebring, so it carries only its status. */
+                        external: {
+                            /**
+                             * @description Whether the payment was already collected (`succeeded`, the default) or is still owed (`pending`), which keeps the purchase tentative until the transaction is marked paid.
+                             * @enum {string}
+                             */
+                            status?: "pending" | "succeeded";
+                        };
+                        /**
+                         * @description Discriminator of the external payment method.
+                         * @enum {string}
+                         */
+                        type: "external";
+                    };
                 };
             };
         };
@@ -24271,7 +24391,7 @@ export interface components {
                                  * @description Payment gateway provider. Only gateways that support saved payment methods can be charged.
                                  * @enum {string}
                                  */
-                                gateway: "hyperpay" | "plata" | "stripe" | "tap" | "wayforpay";
+                                gateway: "hyperpay" | "mollie" | "plata" | "stripe" | "tap" | "wayforpay";
                                 /**
                                  * Format: uuid
                                  * @description ID of the saved payment method to charge.
@@ -29174,6 +29294,8 @@ export interface operations {
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
                 /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+                type?: string;
+                /** @description Deprecated. Use type instead. */
                 types?: string;
             };
             header?: {

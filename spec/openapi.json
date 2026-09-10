@@ -9066,10 +9066,20 @@
           },
           {
             "in": "query",
-            "name": "types",
+            "name": "type",
             "required": false,
             "description": "Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types.",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "types",
+            "required": false,
+            "description": "Deprecated. Use type instead.",
+            "schema": {
+              "deprecated": true,
               "type": "string"
             }
           },
@@ -23171,12 +23181,12 @@
             "format": "date-time"
           },
           "checkInRef": {
-            "description": "ID of the ticket's check-in in the check-ins service.",
+            "description": "ID of the ticket's check-in in the check-ins service. Present when check-in is enabled for the event.",
             "type": "string",
             "format": "uuid"
           },
           "code": {
-            "description": "Six-digit code the attendee enters at the reception to check in. Visible to the ticket owner and admins.",
+            "description": "Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event.",
             "type": "string"
           },
           "createDate": {
@@ -23192,6 +23202,10 @@
           "event": {
             "type": "object",
             "properties": {
+              "checkInEnabled": {
+                "type": "boolean",
+                "description": "Whether attendees can be checked in, per the check-in setting of the event's location."
+              },
               "endDate": {
                 "type": "string",
                 "format": "date-time",
@@ -23270,6 +23284,7 @@
               }
             },
             "required": [
+              "checkInEnabled",
               "endDate",
               "id",
               "location",
@@ -42195,6 +42210,10 @@
                       ],
                       "additionalProperties": false
                     },
+                    "publicLogoUrl": {
+                      "description": "Public logo URL derived from the company website.",
+                      "type": "string"
+                    },
                     "title": {
                       "description": "Company name.",
                       "type": "string"
@@ -42252,6 +42271,11 @@
                   ],
                   "additionalProperties": false,
                   "description": "Customer associated with this scheduled transaction."
+                },
+                "customerRefCreatedBy": {
+                  "description": "ID of the customer the user who created the scheduled transaction belongs to.",
+                  "type": "string",
+                  "format": "uuid"
                 },
                 "discounts": {
                   "description": "Discounts applied to the scheduled transaction.",
@@ -42355,7 +42379,7 @@
                 },
                 "membershipRefCreator": {
                   "deprecated": true,
-                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "description": "Deprecated. Use customerRefCreatedBy instead.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -42821,6 +42845,10 @@
                       ],
                       "additionalProperties": false
                     },
+                    "publicLogoUrl": {
+                      "description": "Public logo URL derived from the company website.",
+                      "type": "string"
+                    },
                     "title": {
                       "description": "Company name.",
                       "type": "string"
@@ -42878,6 +42906,11 @@
                   ],
                   "additionalProperties": false,
                   "description": "Customer associated with this transaction."
+                },
+                "customerRefCreatedBy": {
+                  "description": "ID of the customer the user who created the transaction belongs to.",
+                  "type": "string",
+                  "format": "uuid"
                 },
                 "description": {
                   "description": "Transaction description.",
@@ -42990,7 +43023,7 @@
                 },
                 "membershipRefCreator": {
                   "deprecated": true,
-                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "description": "Deprecated. Use customerRefCreatedBy instead.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -43568,6 +43601,10 @@
                     ],
                     "additionalProperties": false
                   },
+                  "publicLogoUrl": {
+                    "description": "Public logo URL derived from the company website.",
+                    "type": "string"
+                  },
                   "title": {
                     "description": "Company name.",
                     "type": "string"
@@ -43625,6 +43662,11 @@
                 ],
                 "additionalProperties": false,
                 "description": "Customer associated with this transaction."
+              },
+              "customerRefCreatedBy": {
+                "description": "ID of the customer the user who created the transaction belongs to.",
+                "type": "string",
+                "format": "uuid"
               },
               "description": {
                 "description": "Transaction description.",
@@ -43737,7 +43779,7 @@
               },
               "membershipRefCreator": {
                 "deprecated": true,
-                "description": "Deprecated. Use userCreatedBy instead.",
+                "description": "Deprecated. Use customerRefCreatedBy instead.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -44311,6 +44353,10 @@
                 ],
                 "additionalProperties": false
               },
+              "publicLogoUrl": {
+                "description": "Public logo URL derived from the company website.",
+                "type": "string"
+              },
               "title": {
                 "description": "Company name.",
                 "type": "string"
@@ -44368,6 +44414,11 @@
             ],
             "additionalProperties": false,
             "description": "Customer associated with this transaction."
+          },
+          "customerRefCreatedBy": {
+            "description": "ID of the customer the user who created the transaction belongs to.",
+            "type": "string",
+            "format": "uuid"
           },
           "description": {
             "description": "Transaction description.",
@@ -44480,7 +44531,7 @@
           },
           "membershipRefCreator": {
             "deprecated": true,
-            "description": "Deprecated. Use userCreatedBy instead.",
+            "description": "Deprecated. Use customerRefCreatedBy instead.",
             "type": "string",
             "format": "uuid"
           },
@@ -45010,6 +45061,10 @@
                       ],
                       "additionalProperties": false
                     },
+                    "publicLogoUrl": {
+                      "description": "Public logo URL derived from the company website.",
+                      "type": "string"
+                    },
                     "title": {
                       "description": "Company name.",
                       "type": "string"
@@ -45068,6 +45123,11 @@
                   "additionalProperties": false,
                   "description": "Customer associated with this scheduled transaction."
                 },
+                "customerRefCreatedBy": {
+                  "description": "ID of the customer the user who created the scheduled transaction belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "id": {
                   "type": "string",
                   "format": "uuid",
@@ -45086,7 +45146,7 @@
                 },
                 "membershipRefCreator": {
                   "deprecated": true,
-                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "description": "Deprecated. Use customerRefCreatedBy instead.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -45542,6 +45602,10 @@
                       ],
                       "additionalProperties": false
                     },
+                    "publicLogoUrl": {
+                      "description": "Public logo URL derived from the company website.",
+                      "type": "string"
+                    },
                     "title": {
                       "description": "Company name.",
                       "type": "string"
@@ -45600,6 +45664,11 @@
                   "additionalProperties": false,
                   "description": "Customer associated with this transaction."
                 },
+                "customerRefCreatedBy": {
+                  "description": "ID of the customer the user who created the transaction belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "description": {
                   "description": "Transaction description.",
                   "type": "string"
@@ -45622,7 +45691,7 @@
                 },
                 "membershipRefCreator": {
                   "deprecated": true,
-                  "description": "Deprecated. Use userCreator instead.",
+                  "description": "Deprecated. Use customerRefCreatedBy instead.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -46077,6 +46146,10 @@
                     ],
                     "additionalProperties": false
                   },
+                  "publicLogoUrl": {
+                    "description": "Public logo URL derived from the company website.",
+                    "type": "string"
+                  },
                   "title": {
                     "description": "Company name.",
                     "type": "string"
@@ -46135,6 +46208,11 @@
                 "additionalProperties": false,
                 "description": "Customer associated with this transaction."
               },
+              "customerRefCreatedBy": {
+                "description": "ID of the customer the user who created the transaction belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
               "description": {
                 "description": "Transaction description.",
                 "type": "string"
@@ -46157,7 +46235,7 @@
               },
               "membershipRefCreator": {
                 "deprecated": true,
-                "description": "Deprecated. Use userCreator instead.",
+                "description": "Deprecated. Use customerRefCreatedBy instead.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -46608,6 +46686,10 @@
                 ],
                 "additionalProperties": false
               },
+              "publicLogoUrl": {
+                "description": "Public logo URL derived from the company website.",
+                "type": "string"
+              },
               "title": {
                 "description": "Company name.",
                 "type": "string"
@@ -46666,6 +46748,11 @@
             "additionalProperties": false,
             "description": "Customer associated with this transaction."
           },
+          "customerRefCreatedBy": {
+            "description": "ID of the customer the user who created the transaction belongs to.",
+            "type": "string",
+            "format": "uuid"
+          },
           "description": {
             "description": "Transaction description.",
             "type": "string"
@@ -46688,7 +46775,7 @@
           },
           "membershipRefCreator": {
             "deprecated": true,
-            "description": "Deprecated. Use userCreator instead.",
+            "description": "Deprecated. Use customerRefCreatedBy instead.",
             "type": "string",
             "format": "uuid"
           },
@@ -47284,6 +47371,11 @@
                   ],
                   "additionalProperties": false
                 },
+                "customerRefCreatedBy": {
+                  "description": "ID of the customer the user who created the transaction belongs to.",
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "customerAddress": {
                   "description": "Customer billing address.",
                   "type": "object",
@@ -47548,7 +47640,7 @@
                 },
                 "membershipRefCreator": {
                   "deprecated": true,
-                  "description": "Deprecated. Use userCreatedBy instead.",
+                  "description": "Deprecated. Use customerRefCreatedBy instead.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -47762,6 +47854,11 @@
                               "currencyCode": {
                                 "type": "string",
                                 "description": "ISO currency code."
+                              },
+                              "customerRefCreatedBy": {
+                                "description": "ID of the customer the user who created the refund belongs to.",
+                                "type": "string",
+                                "format": "uuid"
                               },
                               "grossAmount": {
                                 "type": "number",
@@ -48727,6 +48824,11 @@
                 ],
                 "additionalProperties": false
               },
+              "customerRefCreatedBy": {
+                "description": "ID of the customer the user who created the transaction belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
               "customerAddress": {
                 "description": "Customer billing address.",
                 "type": "object",
@@ -48991,7 +49093,7 @@
               },
               "membershipRefCreator": {
                 "deprecated": true,
-                "description": "Deprecated. Use userCreatedBy instead.",
+                "description": "Deprecated. Use customerRefCreatedBy instead.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -49205,6 +49307,11 @@
                             "currencyCode": {
                               "type": "string",
                               "description": "ISO currency code."
+                            },
+                            "customerRefCreatedBy": {
+                              "description": "ID of the customer the user who created the refund belongs to.",
+                              "type": "string",
+                              "format": "uuid"
                             },
                             "grossAmount": {
                               "type": "number",
@@ -50166,6 +50273,11 @@
                 ],
                 "additionalProperties": false
               },
+              "customerRefCreatedBy": {
+                "description": "ID of the customer the user who created the transaction belongs to.",
+                "type": "string",
+                "format": "uuid"
+              },
               "customerAddress": {
                 "description": "Customer billing address.",
                 "type": "object",
@@ -50430,7 +50542,7 @@
               },
               "membershipRefCreator": {
                 "deprecated": true,
-                "description": "Deprecated. Use userCreatedBy instead.",
+                "description": "Deprecated. Use customerRefCreatedBy instead.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -50644,6 +50756,11 @@
                             "currencyCode": {
                               "type": "string",
                               "description": "ISO currency code."
+                            },
+                            "customerRefCreatedBy": {
+                              "description": "ID of the customer the user who created the refund belongs to.",
+                              "type": "string",
+                              "format": "uuid"
                             },
                             "grossAmount": {
                               "type": "number",
@@ -57544,6 +57661,79 @@
                     "resourceRef",
                     "startDate"
                   ]
+                },
+                "paymentMethod": {
+                  "description": "Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. Omit the field to create a free booking.",
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "Payment recorded as collected outside Spacebring.",
+                      "properties": {
+                        "discounts": {
+                          "description": "Discounts to apply, echoed from the payment method. An empty array applies none; omitting it picks the best suited coupon.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "coupon": {
+                                "description": "Coupon to apply.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Unique identifier of the coupon."
+                                  }
+                                },
+                                "required": [
+                                  "id"
+                                ]
+                              },
+                              "promocode": {
+                                "description": "Promocode that brought the coupon.",
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string",
+                                    "description": "Promocode string."
+                                  }
+                                },
+                                "required": [
+                                  "code"
+                                ]
+                              }
+                            },
+                            "description": "Discount to apply, as the payment method reported it."
+                          }
+                        },
+                        "external": {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "description": "Whether the payment was already collected (`succeeded`, the default) or is still owed (`pending`), which keeps the purchase tentative until the transaction is marked paid.",
+                              "type": "string",
+                              "enum": [
+                                "pending",
+                                "succeeded"
+                              ]
+                            }
+                          },
+                          "description": "External payment details: the payment is collected outside Spacebring, so it carries only its status."
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "external"
+                          ],
+                          "description": "Discriminator of the external payment method."
+                        }
+                      },
+                      "required": [
+                        "external",
+                        "type"
+                      ]
+                    }
+                  ]
                 }
               },
               "required": [
@@ -60107,6 +60297,7 @@
                               "type": "string",
                               "enum": [
                                 "hyperpay",
+                                "mollie",
                                 "plata",
                                 "stripe",
                                 "tap",

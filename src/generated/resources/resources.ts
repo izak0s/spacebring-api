@@ -84,6 +84,8 @@ export interface GetResourcesQuery {
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
   /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+  type?: string;
+  /** @deprecated Use type instead. */
   types?: string;
 }
 
@@ -91,7 +93,7 @@ export interface GetResourcesQuery {
 export type CreateAssignmentBody = NonNullable<NonNullable<operations["createAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 
 /** Request body for `sb.resources.bookings.create()`. */
-export type CreateBookingBody = NonNullable<NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"]["booking"]>;
+export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
 
 /** Request body for `sb.resources.create()`. */
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
@@ -231,8 +233,8 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
         return unwrapProp(await client.GET("/resources/bookings/v1/{bookingId}", { params: { path: { bookingId } }, signal: options?.signal }), "booking", "GET /resources/bookings/v1/{bookingId}");
       },
       /** Create a booking */
-      async create(booking: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
-        return unwrapProp(await client.POST("/resources/bookings/v1", { body: { booking }, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
+      async create(body: CreateBookingBody, options?: SpacebringRequestOptions): Promise<Booking> {
+        return unwrapProp(await client.POST("/resources/bookings/v1", { body, signal: options?.signal }), "booking", "POST /resources/bookings/v1");
       },
       /**
        * Update a booking
