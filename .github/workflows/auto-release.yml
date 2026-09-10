@@ -10,6 +10,12 @@ on:
 permissions:
   contents: write
 
+# Serialize releases: two bumps racing each other produce the same lost-push
+# situation this workflow now retries out of.
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
 jobs:
   bump:
     # head.repo check: only the bot branch in THIS repo can trigger a release —
@@ -57,7 +63,22 @@ jobs:
             echo "level=minor" >> "$GITHUB_OUTPUT"
           fi
 
+      # --atomic: main and the tag land together or not at all. Without it a
+      # rejected main ref (another merge won the race) still pushed the tag,
+      # which released from an orphan commit and then wedged every later run
+      # on "tag vX.Y.Z already exists".
       - name: Bump version and push tag
         run: |
-          npm version ${{ steps.bump.outputs.level }} -m ':rocket: Publish OpenAPI spec update (%s)'
-          git push --follow-tags origin main
+          level='${{ steps.bump.outputs.level }}'
+          for attempt in 1 2 3; do
+            npm version "$level" -m ':rocket: Publish OpenAPI spec update (%s)'
+            if git push --atomic --follow-tags origin main; then
+              exit 0
+            fi
+            echo "::warning::push rejected (main moved during the release) - rebasing and retrying ($attempt/3)"
+            git tag -d "v$(node -p "require('./package.json').version")"
+            git reset --hard HEAD^
+            git pull --rebase origin main
+          done
+          echo "::error::Could not push the release commit after 3 attempts."
+          exit 1

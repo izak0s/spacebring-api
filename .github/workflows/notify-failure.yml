@@ -12,7 +12,12 @@ permissions:
 
 jobs:
   notify:
-    if: github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main'
+    # Auto release runs on `pull_request`, so its head_branch is the bot
+    # branch, never main - without the second clause its failures were silent.
+    if: >
+      github.event.workflow_run.conclusion == 'failure' &&
+      (github.event.workflow_run.head_branch == 'main' ||
+       github.event.workflow_run.name == 'Auto release')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 — local composite action needs the repo
