@@ -334,6 +334,7 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
 // events.ts
 export type Event = NonNullable<components["schemas"]["event"]>;
 export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
+export type Media = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetEventsByOrganizationQuery {
   locationRef: string;
   limit?: number;
@@ -355,6 +356,7 @@ export interface GetEventTicketsQuery {
 }
 export type AddEventHostsBody = NonNullable<NonNullable<operations["addEventHosts"]["requestBody"]>["content"]["application/json"]["tickets"]>;
 export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+export type CreateEventMediaBody = NonNullable<NonNullable<operations["createEventMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type UpdateEventBody = NonNullable<NonNullable<operations["updateEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
 export type UpdateEventTicketBody = NonNullable<NonNullable<operations["updateEventTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
@@ -367,6 +369,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
     async addEventHosts(id: string, tickets: AddEventHostsBody, options?: SpacebringRequestOptions): Promise<EventTicket[]>
     async cancel(id: string, options?: SpacebringRequestOptions): Promise<Event>
     async copy(id: string, options?: SpacebringRequestOptions): Promise<Event>
+    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<Media>
     tickets: {
       async list(query?: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined>
