@@ -10,6 +10,9 @@ export type Event = NonNullable<components["schemas"]["event"]>;
 /** A EventTicket entity as returned by the Spacebring API. */
 export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
 
+/** A Media entity as returned by the Spacebring API. */
+export type Media = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.events.list()`. */
 export interface GetEventsByOrganizationQuery {
   /** The id of the location. */
@@ -51,6 +54,9 @@ export type AddEventHostsBody = NonNullable<NonNullable<operations["addEventHost
 
 /** Request body for `sb.events.create()`. */
 export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+
+/** Request body for `sb.events.createMedia()`. */
+export type CreateEventMediaBody = NonNullable<NonNullable<operations["createEventMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.events.update()`. */
 export type UpdateEventBody = NonNullable<NonNullable<operations["updateEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
@@ -99,6 +105,14 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
     /** Copy an event */
     async copy(id: string, options?: SpacebringRequestOptions): Promise<Event> {
       return unwrapProp(await client.POST("/events/v1/{id}/copy", { params: { path: { id } }, signal: options?.signal }), "event", "POST /events/v1/{id}/copy");
+    },
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for an event cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `media[0].key` when creating or updating an event within an hour; an image that is not attached by then is discarded.
+     */
+    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<Media> {
+      return unwrapProp(await client.POST("/events/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /events/v1/media");
     },
     tickets: {
       /**

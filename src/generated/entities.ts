@@ -6,7 +6,7 @@ export type { CreateCreditNoteBody, CreateInvoiceBody, CreateInvoiceItemBody, Cr
 export type { Company, CreateCompanyBody, CreateMembershipBody, GetCompaniesQuery, GetMembershipsDeletedQuery, GetMembershipsQuery, Membership, UpdateCompanyBody, UpdateMembershipBody } from "./resources/community.js";
 export type { Contract, CreateContractBody, CreateTemplateBody, GetContractsQuery, GetTemplatesQuery, IssueContractBody, Template, TerminateContractBody, UpdateContractBody, UpdateTemplateBody } from "./resources/contracts.js";
 export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, GetDiscountRedemptionsQuery, GetPromocodesQuery, Promocode, Redemption, UpdateCouponBody } from "./resources/discounts.js";
-export type { AddEventHostsBody, CreateEventBody, Event, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery, UpdateEventBody, UpdateEventTicketBody } from "./resources/events.js";
+export type { AddEventHostsBody, CreateEventBody, CreateEventMediaBody, Event, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery, Media, UpdateEventBody, UpdateEventTicketBody } from "./resources/events.js";
 export type { Comment, CreateFeedPostBody, CreateFeedPostCommentBody, GetFeedPostsQuery, Like, Post, UpdateFeedPostBody } from "./resources/feed.js";
 export type { GetFloorsQuery } from "./resources/floors.js";
 export type { CreateGuideBody, GetGuidesQuery, Guide, PatchGuideBody } from "./resources/guides.js";

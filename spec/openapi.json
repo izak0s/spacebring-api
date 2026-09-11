@@ -5842,6 +5842,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       },
@@ -6042,6 +6052,16 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -6324,6 +6344,63 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/v1/media": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for an event cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating an event within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>events</code>",
+        "operationId": "createEventMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createEventMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "events"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createEventMedia"
                 }
               }
             }
@@ -24114,6 +24191,106 @@
         ],
         "additionalProperties": false
       },
+      "createEventMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Pass it as media[0].key when creating or updating an event."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to an event. attached: an event references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
+      },
       "post": {
         "type": "object",
         "properties": {
@@ -25045,6 +25222,31 @@
           "address": {
             "type": "string"
           },
+          "businessAddress": {
+            "description": "Returned only to client credentials and to users with an admin role in the location.",
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "countryCode": {
+                "type": "string",
+                "nullable": true
+              },
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          },
           "createDate": {
             "$ref": "#/components/schemas/dateSchema"
           },
@@ -25062,6 +25264,10 @@
             "format": "uuid",
             "type": "string"
           },
+          "legalName": {
+            "description": "Returned only to client credentials and to users with an admin role in the location.",
+            "type": "string"
+          },
           "locale": {
             "type": "string",
             "enum": [
@@ -25072,8 +25278,163 @@
               "ru"
             ]
           },
+          "media": {
+            "description": "Images of the location, newest first.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "height": {
+                  "type": "integer"
+                },
+                "key": {
+                  "type": "string",
+                  "description": "Storage key of the image."
+                },
+                "mime": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Public URL of the image."
+                },
+                "width": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
           "networkRef": {
             "format": "uuid",
+            "type": "string"
+          },
+          "schedule": {
+            "description": "Opening hours of the location.",
+            "type": "object",
+            "properties": {
+              "default": {
+                "description": "Opening hours for members. Always applies.",
+                "type": "object",
+                "properties": {
+                  "closedDays": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "days": {
+                          "type": "object",
+                          "properties": {
+                            "friday": {
+                              "type": "boolean"
+                            },
+                            "monday": {
+                              "type": "boolean"
+                            },
+                            "saturday": {
+                              "type": "boolean"
+                            },
+                            "sunday": {
+                              "type": "boolean"
+                            },
+                            "thursday": {
+                              "type": "boolean"
+                            },
+                            "tuesday": {
+                              "type": "boolean"
+                            },
+                            "wednesday": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "hours": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "public": {
+                "description": "Stricter opening hours for non-members. Applies only when enabled; otherwise non-members follow the default schedule.",
+                "type": "object",
+                "properties": {
+                  "closedDays": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "days": {
+                          "type": "object",
+                          "properties": {
+                            "friday": {
+                              "type": "boolean"
+                            },
+                            "monday": {
+                              "type": "boolean"
+                            },
+                            "saturday": {
+                              "type": "boolean"
+                            },
+                            "sunday": {
+                              "type": "boolean"
+                            },
+                            "thursday": {
+                              "type": "boolean"
+                            },
+                            "tuesday": {
+                              "type": "boolean"
+                            },
+                            "wednesday": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "hours": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "taxId": {
+            "description": "Returned only to client credentials and to users with an admin role in the location.",
             "type": "string"
           },
           "timezoneId": {
@@ -27187,6 +27548,14 @@
                   "description": "Booking step size in minutes.",
                   "type": "number"
                 },
+                "bookingUnit": {
+                  "type": "string",
+                  "enum": [
+                    "hour",
+                    "day"
+                  ],
+                  "description": "Whether bookings are measured in hours or in whole days."
+                },
                 "brivoGroupRef": {
                   "description": "Brivo access group reference.",
                   "nullable": true,
@@ -27311,6 +27680,14 @@
                             "type": "number",
                             "description": "Start of this price tier in booking minutes."
                           },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "hour",
+                              "day"
+                            ],
+                            "description": "Whether the tier is priced per hour or per day."
+                          },
                           "unitAmount": {
                             "type": "number",
                             "description": "Variable price per unit within this tier."
@@ -27319,6 +27696,7 @@
                         "required": [
                           "flatAmount",
                           "from",
+                          "unit",
                           "unitAmount"
                         ],
                         "additionalProperties": false
@@ -27492,6 +27870,14 @@
                             "type": "number",
                             "description": "Start of this price tier in booking minutes."
                           },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "hour",
+                              "day"
+                            ],
+                            "description": "Whether the tier is priced per hour or per day."
+                          },
                           "unitAmount": {
                             "type": "number",
                             "description": "Variable price per unit within this tier."
@@ -27500,6 +27886,7 @@
                         "required": [
                           "flatAmount",
                           "from",
+                          "unit",
                           "unitAmount"
                         ],
                         "additionalProperties": false
@@ -28378,6 +28765,7 @@
               "required": [
                 "assignments",
                 "bookingPermission",
+                "bookingUnit",
                 "bufferTime",
                 "children",
                 "confirmationEmail",
@@ -28688,6 +29076,14 @@
                 "description": "Booking step size in minutes.",
                 "type": "number"
               },
+              "bookingUnit": {
+                "type": "string",
+                "enum": [
+                  "hour",
+                  "day"
+                ],
+                "description": "Whether bookings are measured in hours or in whole days."
+              },
               "brivoGroupRef": {
                 "description": "Brivo access group reference.",
                 "nullable": true,
@@ -28812,6 +29208,14 @@
                           "type": "number",
                           "description": "Start of this price tier in booking minutes."
                         },
+                        "unit": {
+                          "type": "string",
+                          "enum": [
+                            "hour",
+                            "day"
+                          ],
+                          "description": "Whether the tier is priced per hour or per day."
+                        },
                         "unitAmount": {
                           "type": "number",
                           "description": "Variable price per unit within this tier."
@@ -28820,6 +29224,7 @@
                       "required": [
                         "flatAmount",
                         "from",
+                        "unit",
                         "unitAmount"
                       ],
                       "additionalProperties": false
@@ -28993,6 +29398,14 @@
                           "type": "number",
                           "description": "Start of this price tier in booking minutes."
                         },
+                        "unit": {
+                          "type": "string",
+                          "enum": [
+                            "hour",
+                            "day"
+                          ],
+                          "description": "Whether the tier is priced per hour or per day."
+                        },
                         "unitAmount": {
                           "type": "number",
                           "description": "Variable price per unit within this tier."
@@ -29001,6 +29414,7 @@
                       "required": [
                         "flatAmount",
                         "from",
+                        "unit",
                         "unitAmount"
                       ],
                       "additionalProperties": false
@@ -29879,6 +30293,7 @@
             "required": [
               "assignments",
               "bookingPermission",
+              "bookingUnit",
               "bufferTime",
               "children",
               "confirmationEmail",
@@ -30396,6 +30811,7 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                       "membershipRef": {
                         "description": "Membership id of the attendee.",
@@ -30463,8 +30879,7 @@
                         ],
                         "additionalProperties": false
                       }
-                    },
-                    "additionalProperties": false
+                    }
                   },
                   "description": "Attendees of the booking. Empty when the caller has no access to booking details."
                 },
@@ -32508,6 +32923,7 @@
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "additionalProperties": false,
                   "properties": {
                     "membershipRef": {
                       "description": "Membership id of the attendee.",
@@ -32575,8 +32991,7 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "description": "Attendees of the booking. Empty when the caller has no access to booking details."
               },
@@ -54224,7 +54639,7 @@
                         "type": "object",
                         "properties": {
                           "key": {
-                            "description": "Storage key of the media file.",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint.",
                             "type": "string"
                           },
                           "url": {
@@ -54438,7 +54853,7 @@
                         "type": "object",
                         "properties": {
                           "key": {
-                            "description": "Storage key of the media file.",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint.",
                             "type": "string"
                           },
                           "url": {
@@ -54553,6 +54968,48 @@
               },
               "required": [
                 "event"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createEventMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
               ]
             }
           }
@@ -55793,6 +56250,14 @@
                       "description": "Booking step size in minutes.",
                       "type": "number"
                     },
+                    "bookingUnit": {
+                      "description": "Whether bookings are measured in hours or in whole days. With day, bookings always cover the whole schedule of the day and the duration bounds are set to 24 hours. Defaults to hour.",
+                      "type": "string",
+                      "enum": [
+                        "hour",
+                        "day"
+                      ]
+                    },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
                       "nullable": true,
@@ -56761,6 +57226,14 @@
                     "bookingStepMinutes": {
                       "description": "Booking step size in minutes.",
                       "type": "number"
+                    },
+                    "bookingUnit": {
+                      "description": "Whether bookings are measured in hours or in whole days. With day, bookings always cover the whole schedule of the day and the duration bounds are set to 24 hours. Defaults to hour.",
+                      "type": "string",
+                      "enum": [
+                        "hour",
+                        "day"
+                      ]
                     },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
@@ -57795,6 +58268,13 @@
                       "type": "object",
                       "additionalProperties": {},
                       "description": "Key-value data to merge into the booking metadata. Keys left out keep their value, and a key set to `null` is removed. Values cannot be objects or arrays. Available only for admins."
+                    },
+                    "recurrence": {
+                      "description": "RRULE lines that replace how the booking repeats, e.g. `RRULE:FREQ=WEEKLY;COUNT=10`. The DTSTART line is derived from the booking start, and the occurrences already detached from the series stay excluded. Only supported for a repeating booking, and only with updateRepeatingScope set to `thisAndNext`.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "resourceRef": {
                       "description": "ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.",

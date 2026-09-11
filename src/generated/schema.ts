@@ -1144,6 +1144,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for an event cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating an event within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        post: operations["createEventMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/tickets/v1": {
         parameters: {
             query?: never;
@@ -7197,6 +7217,47 @@ export interface components {
                 surname?: string | null;
             };
         };
+        createEventMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating an event. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to an event. attached: an event references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+            };
+        };
         post: {
             /** @description Number of comments on the post. */
             comments: number;
@@ -7649,6 +7710,15 @@ export interface components {
         timezoneId: string;
         location: {
             address?: string;
+            /** @description Returned only to client credentials and to users with an admin role in the location. */
+            businessAddress?: {
+                city?: string;
+                countryCode?: string | null;
+                line1?: string;
+                line2?: string;
+                postalCode?: string;
+                state?: string;
+            };
             createDate?: components["schemas"]["dateSchema"];
             currencyCode?: string;
             description?: string;
@@ -7656,10 +7726,66 @@ export interface components {
             email?: string;
             /** Format: uuid */
             id?: string;
+            /** @description Returned only to client credentials and to users with an admin role in the location. */
+            legalName?: string;
             /** @enum {string} */
             locale?: "en" | "es" | "ko" | "uk" | "ru";
+            /** @description Images of the location, newest first. */
+            media?: {
+                height?: number;
+                /** @description Storage key of the image. */
+                key?: string;
+                mime?: string;
+                /** @description Public URL of the image. */
+                url?: string;
+                width?: number;
+            }[];
             /** Format: uuid */
             networkRef?: string;
+            /** @description Opening hours of the location. */
+            schedule?: {
+                /** @description Opening hours for members. Always applies. */
+                default?: {
+                    closedDays?: string[];
+                    items?: {
+                        days?: {
+                            friday?: boolean;
+                            monday?: boolean;
+                            saturday?: boolean;
+                            sunday?: boolean;
+                            thursday?: boolean;
+                            tuesday?: boolean;
+                            wednesday?: boolean;
+                        };
+                        hours?: {
+                            from?: string;
+                            to?: string;
+                        };
+                    }[];
+                };
+                /** @description Stricter opening hours for non-members. Applies only when enabled; otherwise non-members follow the default schedule. */
+                public?: {
+                    closedDays?: string[];
+                    enabled?: boolean;
+                    items?: {
+                        days?: {
+                            friday?: boolean;
+                            monday?: boolean;
+                            saturday?: boolean;
+                            sunday?: boolean;
+                            thursday?: boolean;
+                            tuesday?: boolean;
+                            wednesday?: boolean;
+                        };
+                        hours?: {
+                            from?: string;
+                            to?: string;
+                        };
+                    }[];
+                };
+            };
+            /** @description Returned only to client credentials and to users with an admin role in the location. */
+            taxId?: string;
             timezoneId?: components["schemas"]["timezoneId"];
             title?: string;
         };
@@ -8561,6 +8687,11 @@ export interface components {
                 bookingPermission: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
                 /** @description Booking step size in minutes. */
                 bookingStepMinutes?: number;
+                /**
+                 * @description Whether bookings are measured in hours or in whole days.
+                 * @enum {string}
+                 */
+                bookingUnit: "hour" | "day";
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
@@ -8616,6 +8747,11 @@ export interface components {
                         flatAmount: number;
                         /** @description Start of this price tier in booking minutes. */
                         from: number;
+                        /**
+                         * @description Whether the tier is priced per hour or per day.
+                         * @enum {string}
+                         */
+                        unit: "hour" | "day";
                         /** @description Variable price per unit within this tier. */
                         unitAmount: number;
                     }[];
@@ -8689,6 +8825,11 @@ export interface components {
                         flatAmount: number;
                         /** @description Start of this price tier in booking minutes. */
                         from: number;
+                        /**
+                         * @description Whether the tier is priced per hour or per day.
+                         * @enum {string}
+                         */
+                        unit: "hour" | "day";
                         /** @description Variable price per unit within this tier. */
                         unitAmount: number;
                     }[];
@@ -9170,6 +9311,11 @@ export interface components {
                 bookingPermission: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
                 /** @description Booking step size in minutes. */
                 bookingStepMinutes?: number;
+                /**
+                 * @description Whether bookings are measured in hours or in whole days.
+                 * @enum {string}
+                 */
+                bookingUnit: "hour" | "day";
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
@@ -9225,6 +9371,11 @@ export interface components {
                         flatAmount: number;
                         /** @description Start of this price tier in booking minutes. */
                         from: number;
+                        /**
+                         * @description Whether the tier is priced per hour or per day.
+                         * @enum {string}
+                         */
+                        unit: "hour" | "day";
                         /** @description Variable price per unit within this tier. */
                         unitAmount: number;
                     }[];
@@ -9298,6 +9449,11 @@ export interface components {
                         flatAmount: number;
                         /** @description Start of this price tier in booking minutes. */
                         from: number;
+                        /**
+                         * @description Whether the tier is priced per hour or per day.
+                         * @enum {string}
+                         */
+                        unit: "hour" | "day";
                         /** @description Variable price per unit within this tier. */
                         unitAmount: number;
                     }[];
@@ -21551,7 +21707,7 @@ export interface components {
                         locationRef: string;
                         /** @description Media files attached to the event. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key?: string;
                             /** @description Public URL of the media file. */
                             url?: string;
@@ -21646,7 +21802,7 @@ export interface components {
                         locationRef: string;
                         /** @description Media files attached to the event. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key?: string;
                             /** @description Public URL of the media file. */
                             url?: string;
@@ -21689,6 +21845,22 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "networkMembers" | "members";
+                    };
+                };
+            };
+        };
+        createEventMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -22253,6 +22425,11 @@ export interface components {
                         bookingPermission?: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
                         /** @description Booking step size in minutes. */
                         bookingStepMinutes?: number;
+                        /**
+                         * @description Whether bookings are measured in hours or in whole days. With day, bookings always cover the whole schedule of the day and the duration bounds are set to 24 hours. Defaults to hour.
+                         * @enum {string}
+                         */
+                        bookingUnit?: "hour" | "day";
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
@@ -22662,6 +22839,11 @@ export interface components {
                         bookingPermission?: "admins" | "exclusiveMembers" | "members" | "networkMembers" | "public";
                         /** @description Booking step size in minutes. */
                         bookingStepMinutes?: number;
+                        /**
+                         * @description Whether bookings are measured in hours or in whole days. With day, bookings always cover the whole schedule of the day and the duration bounds are set to 24 hours. Defaults to hour.
+                         * @enum {string}
+                         */
+                        bookingUnit?: "hour" | "day";
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
@@ -23097,6 +23279,8 @@ export interface components {
                         metadata?: {
                             [key: string]: unknown;
                         };
+                        /** @description RRULE lines that replace how the booking repeats, e.g. `RRULE:FREQ=WEEKLY;COUNT=10`. The DTSTART line is derived from the booking start, and the occurrences already detached from the series stay excluded. Only supported for a repeating booking, and only with updateRepeatingScope set to `thisAndNext`. */
+                        recurrence?: string[];
                         /**
                          * Format: uuid
                          * @description ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.
@@ -27612,6 +27796,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getEvent: {
@@ -27677,6 +27870,15 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -27818,6 +28020,38 @@ export interface operations {
                     "application/json": {
                         tickets?: components["schemas"]["eventTicket"][];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createEventMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createEventMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createEventMedia"];
                 };
             };
             /** @description Bad Request */
