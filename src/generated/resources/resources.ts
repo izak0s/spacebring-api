@@ -41,7 +41,7 @@ export interface GetBookingsQuery {
   "startDate[lt]"?: string;
   /** Matches bookings with startDate on or before this date (ISO 8601). */
   "startDate[lte]"?: string;
-  /** UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef or userRefOwner. */
+  /** UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef, userRef, or userRefOwner. */
   companyRefOwner?: string;
   /** UUID of the customer whose bookings to list, both made and attended. */
   customerRef?: string;
@@ -51,7 +51,7 @@ export interface GetBookingsQuery {
   includeDeleted?: string;
   /** Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose bookings to list. Required when resourceRef is omitted. */
+  /** UUID of the location whose bookings to list. Required when both resourceRef and userRef are omitted. */
   locationRef?: string;
   /** @deprecated Use customerRef instead. UUID of the customer whose bookings to list. */
   membershipRefOwner?: string;
@@ -59,7 +59,7 @@ export interface GetBookingsQuery {
   nextPageToken?: string;
   /** Sort order as `:`, where field is startDate, endDate or createDate and direction is asc or desc. */
   order?: string;
-  /** UUID of the resource whose bookings to list. Required when locationRef is omitted. */
+  /** UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
   resourceRef?: string;
   /** Set to "true" to expand repeating bookings into single occurrences. */
   singleBookings?: string;
@@ -69,7 +69,9 @@ export interface GetBookingsQuery {
   status?: string;
   /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
   type?: string;
-  /** UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef or companyRefOwner. */
+  /** UUID of the user whose bookings to list, both made and attended. Can be given on its own, without locationRef or resourceRef, to list the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
+  userRef?: string;
+  /** UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef, companyRefOwner, or userRef. */
   userRefOwner?: string;
   /** @deprecated Use type instead. */
   types?: string;
