@@ -29856,7 +29856,7 @@ export interface operations {
                 "startDate[lt]"?: string;
                 /** @description Matches bookings with startDate on or before this date (ISO 8601). */
                 "startDate[lte]"?: string;
-                /** @description UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef or userRefOwner. */
+                /** @description UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef, userRef, or userRefOwner. */
                 companyRefOwner?: string;
                 /** @description UUID of the customer whose bookings to list, both made and attended. */
                 customerRef?: string;
@@ -29866,7 +29866,7 @@ export interface operations {
                 includeDeleted?: string;
                 /** @description Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose bookings to list. Required when resourceRef is omitted. */
+                /** @description UUID of the location whose bookings to list. Required when both resourceRef and userRef are omitted. */
                 locationRef?: string;
                 /** @description Deprecated. Use customerRef instead. UUID of the customer whose bookings to list. */
                 membershipRefOwner?: string;
@@ -29874,7 +29874,7 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc. */
                 order?: string;
-                /** @description UUID of the resource whose bookings to list. Required when locationRef is omitted. */
+                /** @description UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
                 resourceRef?: string;
                 /** @description Set to "true" to expand repeating bookings into single occurrences. */
                 singleBookings?: string;
@@ -29884,7 +29884,9 @@ export interface operations {
                 status?: string;
                 /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
                 type?: string;
-                /** @description UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef or companyRefOwner. */
+                /** @description UUID of the user whose bookings to list, both made and attended. Can be given on its own, without locationRef or resourceRef, to list the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
+                userRef?: string;
+                /** @description UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef, companyRefOwner, or userRef. */
                 userRefOwner?: string;
                 /** @description Deprecated. Use type instead. */
                 types?: string;

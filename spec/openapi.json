@@ -9749,7 +9749,7 @@
             "in": "query",
             "name": "companyRefOwner",
             "required": false,
-            "description": "UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef or userRefOwner.",
+            "description": "UUID of the company whose own bookings to list: bookings the company or its members made, not ones they were added to as attendees. Cannot be combined with customerRef, userRef, or userRefOwner.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -9800,7 +9800,7 @@
             "in": "query",
             "name": "locationRef",
             "required": false,
-            "description": "UUID of the location whose bookings to list. Required when resourceRef is omitted.",
+            "description": "UUID of the location whose bookings to list. Required when both resourceRef and userRef are omitted.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -9839,7 +9839,7 @@
             "in": "query",
             "name": "resourceRef",
             "required": false,
-            "description": "UUID of the resource whose bookings to list. Required when locationRef is omitted.",
+            "description": "UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -9884,9 +9884,19 @@
           },
           {
             "in": "query",
+            "name": "userRef",
+            "required": false,
+            "description": "UUID of the user whose bookings to list, both made and attended. Can be given on its own, without locationRef or resourceRef, to list the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
             "name": "userRefOwner",
             "required": false,
-            "description": "UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef or companyRefOwner.",
+            "description": "UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef, companyRefOwner, or userRef.",
             "schema": {
               "type": "string",
               "format": "uuid"

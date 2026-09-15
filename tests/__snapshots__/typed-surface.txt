@@ -552,6 +552,7 @@ export interface GetBookingsQuery {
   startDate?: string;
   status?: string;
   type?: string;
+  userRef?: string;
   userRefOwner?: string;
   types?: string;
 }
