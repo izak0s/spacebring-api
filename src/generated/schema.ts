@@ -5997,6 +5997,8 @@ export interface components {
                     order?: number;
                     /** @description Phone number. */
                     phoneNumber?: string;
+                    /** @description Profile photo URL, present when the signer is a user of the contract location. */
+                    photoUrl?: string;
                     /**
                      * Format: date-time
                      * @description Date this signer signed.
@@ -6212,6 +6214,8 @@ export interface components {
                     order?: number;
                     /** @description Phone number. */
                     phoneNumber?: string;
+                    /** @description Profile photo URL, present when the signer is a user of the contract location. */
+                    photoUrl?: string;
                     /**
                      * Format: date-time
                      * @description Date this signer signed.
