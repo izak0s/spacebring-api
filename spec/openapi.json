@@ -21577,6 +21577,10 @@
                         "description": "Phone number.",
                         "type": "string"
                       },
+                      "photoUrl": {
+                        "description": "Profile photo URL, present when the signer is a user of the contract location.",
+                        "type": "string"
+                      },
                       "signedDate": {
                         "description": "Date this signer signed.",
                         "type": "string",
@@ -21975,6 +21979,10 @@
                     },
                     "phoneNumber": {
                       "description": "Phone number.",
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "description": "Profile photo URL, present when the signer is a user of the contract location.",
                       "type": "string"
                     },
                     "signedDate": {
