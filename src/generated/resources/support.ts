@@ -35,6 +35,9 @@ export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations[
 /** Request body for `sb.support.tickets.updateAssignee()`. */
 export type UpdateSupportTicketAssigneeBody = NonNullable<NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 
+/** Request body for `sb.support.tickets.comment.update()`. */
+export type UpdateSupportTicketCommentBody = NonNullable<NonNullable<operations["updateSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
+
 /** Request body for `sb.support.tickets.updateStatus()`. */
 export type UpdateSupportTicketStatusBody = NonNullable<NonNullable<operations["updateSupportTicketStatus"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 
@@ -127,6 +130,18 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
          */
         async create(activity: CreateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity> {
           return unwrapProp(await client.POST("/support/tickets/v1/comment", { body: { activity }, signal: options?.signal }), "activity", "POST /support/tickets/v1/comment");
+        },
+        /**
+         * Update a ticket comment
+         *
+         * Update the text of a support ticket comment. Only the comment author can edit it, and only comments without an attachment.
+         *
+         * @param id The id of the ticket activity.
+         * @param activity The `activity` payload.
+         * @param options Request options (abort signal).
+         */
+        async update(id: string, activity: UpdateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity> {
+          return unwrapProp(await client.PATCH("/support/tickets/v1/comment/{id}", { params: { path: { id } }, body: { activity }, signal: options?.signal }), "activity", "PATCH /support/tickets/v1/comment/{id}");
         },
         /**
          * Delete a ticket comment

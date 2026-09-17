@@ -704,6 +704,7 @@ export interface GetSupportTicketsQuery {
 export type CreateSupportTicketBody = NonNullable<NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
 export type UpdateSupportTicketAssigneeBody = NonNullable<NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]["ticket"]>;
+export type UpdateSupportTicketCommentBody = NonNullable<NonNullable<operations["updateSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
 export type UpdateSupportTicketStatusBody = NonNullable<NonNullable<operations["updateSupportTicketStatus"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type UpdateSupportTicketTypeBody = NonNullable<NonNullable<operations["updateSupportTicketType"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export function createSupport(client: Client<paths>, defaults: SpacebringDefaults) {
@@ -718,6 +719,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
       async updateType(id: string, ticket: UpdateSupportTicketTypeBody, options?: SpacebringRequestOptions): Promise<undefined>
       comment: {
         async create(activity: CreateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity>
+        async update(id: string, activity: UpdateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity>
         async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
       },
     },

@@ -2194,7 +2194,11 @@ export interface paths {
         delete: operations["deleteSupportTicketComment"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update a ticket comment
+         * @description Update the text of a support ticket comment. Only the comment author can edit it, and only comments without an attachment. <h3>OAuth</h3>Required scopes: <code>support</code>
+         */
+        patch: operations["updateSupportTicketComment"];
         trace?: never;
     };
     "/transactions/credits/scheduled/v1": {
@@ -7812,13 +7816,13 @@ export interface components {
                  * @deprecated
                  * @description Maximum credit grant duration in days. Deprecated: use grants instead.
                  */
-                duration?: 30 | 90 | 180 | 365;
+                duration?: number;
                 /** @description Grants included in the package. */
                 grants: {
                     /** @description Grant amount in major units for credits, or whole units for day passes. */
                     amount: number;
-                    /** @description Expiration duration in days for credit grants. */
-                    duration?: 30 | 90 | 180 | 365;
+                    /** @description Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant. */
+                    duration?: number;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the grant.
@@ -7874,13 +7878,13 @@ export interface components {
                  * @deprecated
                  * @description Maximum credit grant duration in days. Deprecated: use grants instead.
                  */
-                duration?: 30 | 90 | 180 | 365;
+                duration?: number;
                 /** @description Grants included in the package. */
                 grants: {
                     /** @description Grant amount in major units for credits, or whole units for day passes. */
                     amount: number;
-                    /** @description Expiration duration in days for credit grants. */
-                    duration?: 30 | 90 | 180 | 365;
+                    /** @description Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant. */
+                    duration?: number;
                     /**
                      * Format: uuid
                      * @description Unique identifier of the grant.
@@ -8562,8 +8566,8 @@ export interface components {
                          * @description Company id.
                          */
                         id: string;
-                        /** @description Company name. */
-                        title: string;
+                        /** @description Company name. Present only for admin callers and the customer's own assignments. */
+                        title?: string;
                     };
                     /** @description Customer the resource is assigned to. */
                     customer?: {
@@ -9186,8 +9190,8 @@ export interface components {
                          * @description Company id.
                          */
                         id: string;
-                        /** @description Company name. */
-                        title: string;
+                        /** @description Company name. Present only for admin callers and the customer's own assignments. */
+                        title?: string;
                     };
                     /** @description Customer the resource is assigned to. */
                     customer?: {
@@ -9806,8 +9810,8 @@ export interface components {
                      * @description Company id.
                      */
                     id: string;
-                    /** @description Company name. */
-                    title: string;
+                    /** @description Company name. Present only for admin callers and the customer's own assignments. */
+                    title?: string;
                 };
                 /** @description Customer the resource is assigned to. */
                 customer?: {
@@ -9934,8 +9938,8 @@ export interface components {
                      * @description Company id.
                      */
                     id: string;
-                    /** @description Company name. */
-                    title: string;
+                    /** @description Company name. Present only for admin callers and the customer's own assignments. */
+                    title?: string;
                 };
                 /** @description Customer the resource is assigned to. */
                 customer?: {
@@ -15613,6 +15617,11 @@ export interface components {
              * @enum {string}
              */
             type: "assigneeUpdated" | "comment" | "statusUpdated" | "ticketCreated";
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the comment text was last edited.
+             */
+            updateDate?: string;
         };
         getScheduledCreditsTransactions: {
             /** @description Pagination token to fetch the next page of results. Returned when more results exist. */
@@ -22026,8 +22035,8 @@ export interface components {
                         grants: {
                             /** @description Grant amount in major units for credits, or whole units for day passes. */
                             amount: number;
-                            /** @description Expiration duration in days for credit grants. */
-                            duration?: 30 | 90 | 180 | 365;
+                            /** @description Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant. */
+                            duration?: number;
                             /**
                              * @description Type of balance this grant provides.
                              * @enum {string}
@@ -22054,8 +22063,8 @@ export interface components {
                         grants?: {
                             /** @description Grant amount in major units for credits, or whole units for day passes. */
                             amount: number;
-                            /** @description Expiration duration in days for credit grants. */
-                            duration?: 30 | 90 | 180 | 365;
+                            /** @description Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant. */
+                            duration?: number;
                             /**
                              * @description Type of balance this grant provides.
                              * @enum {string}
@@ -24436,6 +24445,17 @@ export interface components {
                          * @description ID of the ticket to add the comment to.
                          */
                         ticketRef: string;
+                    };
+                };
+            };
+        };
+        updateSupportTicketComment: {
+            content: {
+                "application/json": {
+                    /** @description Ticket comment activity fields to update. */
+                    activity: {
+                        /** @description New comment text. */
+                        text: string;
                     };
                 };
             };
@@ -31087,6 +31107,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    updateSupportTicketComment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the ticket activity. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["updateSupportTicketComment"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        activity?: components["schemas"]["ticketActivity"];
+                    };
+                };
             };
             /** @description Bad Request */
             400: {
