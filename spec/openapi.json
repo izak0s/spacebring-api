@@ -12212,6 +12212,73 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Update a ticket comment",
+        "description": "Update the text of a support ticket comment. Only the comment author can edit it, and only comments without an attachment. <h3>OAuth</h3>Required scopes: <code>support</code>",
+        "operationId": "updateSupportTicketComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the ticket activity.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/updateSupportTicketComment"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "support"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "activity": {
+                      "$ref": "#/components/schemas/ticketActivity"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/transactions/credits/scheduled/v1": {
@@ -25495,32 +25562,9 @@
                 "duration": {
                   "deprecated": true,
                   "description": "Maximum credit grant duration in days. Deprecated: use grants instead.",
-                  "anyOf": [
-                    {
-                      "type": "number",
-                      "enum": [
-                        30
-                      ]
-                    },
-                    {
-                      "type": "number",
-                      "enum": [
-                        90
-                      ]
-                    },
-                    {
-                      "type": "number",
-                      "enum": [
-                        180
-                      ]
-                    },
-                    {
-                      "type": "number",
-                      "enum": [
-                        365
-                      ]
-                    }
-                  ]
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 3650
                 },
                 "grants": {
                   "type": "array",
@@ -25532,33 +25576,10 @@
                         "description": "Grant amount in major units for credits, or whole units for day passes."
                       },
                       "duration": {
-                        "description": "Expiration duration in days for credit grants.",
-                        "anyOf": [
-                          {
-                            "type": "number",
-                            "enum": [
-                              30
-                            ]
-                          },
-                          {
-                            "type": "number",
-                            "enum": [
-                              90
-                            ]
-                          },
-                          {
-                            "type": "number",
-                            "enum": [
-                              180
-                            ]
-                          },
-                          {
-                            "type": "number",
-                            "enum": [
-                              365
-                            ]
-                          }
-                        ]
+                        "description": "Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant.",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 3650
                       },
                       "id": {
                         "type": "string",
@@ -25652,32 +25673,9 @@
               "duration": {
                 "deprecated": true,
                 "description": "Maximum credit grant duration in days. Deprecated: use grants instead.",
-                "anyOf": [
-                  {
-                    "type": "number",
-                    "enum": [
-                      30
-                    ]
-                  },
-                  {
-                    "type": "number",
-                    "enum": [
-                      90
-                    ]
-                  },
-                  {
-                    "type": "number",
-                    "enum": [
-                      180
-                    ]
-                  },
-                  {
-                    "type": "number",
-                    "enum": [
-                      365
-                    ]
-                  }
-                ]
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3650
               },
               "grants": {
                 "type": "array",
@@ -25689,33 +25687,10 @@
                       "description": "Grant amount in major units for credits, or whole units for day passes."
                     },
                     "duration": {
-                      "description": "Expiration duration in days for credit grants.",
-                      "anyOf": [
-                        {
-                          "type": "number",
-                          "enum": [
-                            30
-                          ]
-                        },
-                        {
-                          "type": "number",
-                          "enum": [
-                            90
-                          ]
-                        },
-                        {
-                          "type": "number",
-                          "enum": [
-                            180
-                          ]
-                        },
-                        {
-                          "type": "number",
-                          "enum": [
-                            365
-                          ]
-                        }
-                      ]
+                      "description": "Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 3650
                     },
                     "id": {
                       "type": "string",
@@ -27312,13 +27287,12 @@
                             "description": "Company id."
                           },
                           "title": {
-                            "type": "string",
-                            "description": "Company name."
+                            "description": "Company name. Present only for admin callers and the customer's own assignments.",
+                            "type": "string"
                           }
                         },
                         "required": [
-                          "id",
-                          "title"
+                          "id"
                         ],
                         "additionalProperties": false
                       },
@@ -28840,13 +28814,12 @@
                           "description": "Company id."
                         },
                         "title": {
-                          "type": "string",
-                          "description": "Company name."
+                          "description": "Company name. Present only for admin callers and the customer's own assignments.",
+                          "type": "string"
                         }
                       },
                       "required": [
-                        "id",
-                        "title"
+                        "id"
                       ],
                       "additionalProperties": false
                     },
@@ -30360,13 +30333,12 @@
                       "description": "Company id."
                     },
                     "title": {
-                      "type": "string",
-                      "description": "Company name."
+                      "description": "Company name. Present only for admin callers and the customer's own assignments.",
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "id",
-                    "title"
+                    "id"
                   ],
                   "additionalProperties": false
                 },
@@ -30601,13 +30573,12 @@
                     "description": "Company id."
                   },
                   "title": {
-                    "type": "string",
-                    "description": "Company name."
+                    "description": "Company name. Present only for admin callers and the customer's own assignments.",
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "id",
-                  "title"
+                  "id"
                 ],
                 "additionalProperties": false
               },
@@ -42472,6 +42443,11 @@
               "ticketCreated"
             ],
             "description": "Type of ticket activity."
+          },
+          "updateDate": {
+            "description": "ISO timestamp of when the comment text was last edited.",
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -55395,33 +55371,10 @@
                             "description": "Grant amount in major units for credits, or whole units for day passes."
                           },
                           "duration": {
-                            "description": "Expiration duration in days for credit grants.",
-                            "anyOf": [
-                              {
-                                "type": "number",
-                                "enum": [
-                                  30
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  90
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  180
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  365
-                                ]
-                              }
-                            ]
+                            "description": "Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant.",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 3650
                           },
                           "type": {
                             "type": "string",
@@ -55492,33 +55445,10 @@
                             "description": "Grant amount in major units for credits, or whole units for day passes."
                           },
                           "duration": {
-                            "description": "Expiration duration in days for credit grants.",
-                            "anyOf": [
-                              {
-                                "type": "number",
-                                "enum": [
-                                  30
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  90
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  180
-                                ]
-                              },
-                              {
-                                "type": "number",
-                                "enum": [
-                                  365
-                                ]
-                              }
-                            ]
+                            "description": "Number of days after purchase until the granted balance expires, from 1 to 3650. Omit for a non-expiring grant.",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 3650
                           },
                           "type": {
                             "type": "string",
@@ -60525,6 +60455,35 @@
                     "ticketRef"
                   ],
                   "description": "Ticket comment activity to create."
+                }
+              },
+              "required": [
+                "activity"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "updateSupportTicketComment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "activity": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "New comment text."
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "description": "Ticket comment activity fields to update."
                 }
               },
               "required": [
