@@ -3029,7 +3029,8 @@ export interface components {
                     }[];
                     /**
                      * Format: uri
-                     * @description URL of the benefit's cover image.
+                     * @deprecated
+                     * @description Deprecated: use media[0].url instead.
                      */
                     mediaUrl?: string | null;
                     /** @description Short tagline of the benefit. */
@@ -3126,7 +3127,8 @@ export interface components {
                 }[];
                 /**
                  * Format: uri
-                 * @description URL of the benefit's cover image.
+                 * @deprecated
+                 * @description Deprecated: use media[0].url instead.
                  */
                 mediaUrl?: string | null;
                 /** @description Short tagline of the benefit. */
@@ -3220,7 +3222,8 @@ export interface components {
                     }[];
                     /**
                      * Format: uri
-                     * @description URL of the benefit's cover image.
+                     * @deprecated
+                     * @description Deprecated: use media[0].url instead.
                      */
                     mediaUrl?: string | null;
                     /** @description Short tagline of the benefit. */
@@ -3587,7 +3590,7 @@ export interface components {
                      */
                     transactionRef: string;
                 }[];
-                /** @description URL to download the invoice PDF (issued invoices only). */
+                /** @description URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
                 pdfUrl?: string;
                 /** @description Whether this invoice was created post-payment. */
                 postPaymentCreation: boolean;
@@ -3605,7 +3608,7 @@ export interface components {
                 prePaymentCreditAmount?: number;
                 /** @description Pre-payment credit notes amount in major units. */
                 prePaymentCreditNotesAmount: number;
-                /** @description URL to download the receipt PDF (paid invoices only). */
+                /** @description URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
                 receiptPdfUrl?: string;
                 /** @description Customer balance at draft creation. */
                 startingBalance?: number;
@@ -3984,7 +3987,7 @@ export interface components {
                  */
                 transactionRef: string;
             }[];
-            /** @description URL to download the invoice PDF (issued invoices only). */
+            /** @description URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
             pdfUrl?: string;
             /** @description Whether this invoice was created post-payment. */
             postPaymentCreation: boolean;
@@ -4002,7 +4005,7 @@ export interface components {
             prePaymentCreditAmount?: number;
             /** @description Pre-payment credit notes amount in major units. */
             prePaymentCreditNotesAmount: number;
-            /** @description URL to download the receipt PDF (paid invoices only). */
+            /** @description URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
             receiptPdfUrl?: string;
             /** @description Customer balance at draft creation. */
             startingBalance?: number;
@@ -4378,7 +4381,7 @@ export interface components {
                      */
                     transactionRef: string;
                 }[];
-                /** @description URL to download the invoice PDF (issued invoices only). */
+                /** @description URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
                 pdfUrl?: string;
                 /** @description Whether this invoice was created post-payment. */
                 postPaymentCreation: boolean;
@@ -4396,7 +4399,7 @@ export interface components {
                 prePaymentCreditAmount?: number;
                 /** @description Pre-payment credit notes amount in major units. */
                 prePaymentCreditNotesAmount: number;
-                /** @description URL to download the receipt PDF (paid invoices only). */
+                /** @description URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link. */
                 receiptPdfUrl?: string;
                 /** @description Customer balance at draft creation. */
                 startingBalance?: number;
@@ -5342,7 +5345,7 @@ export interface components {
                 number?: number;
                 /** @description Out-of-band refund amount in major units. */
                 outOfBandAmount?: number;
-                /** @description URL to download the credit note PDF. */
+                /** @description URL to download the credit note PDF. The link is replaced by a new one 180 days after the credit note was created and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the credit note again for the current link. */
                 pdfUrl: string;
                 /** @description Post-payment credit amount in major units. */
                 postPaymentAmount: number;
@@ -5669,7 +5672,7 @@ export interface components {
             number?: number;
             /** @description Out-of-band refund amount in major units. */
             outOfBandAmount?: number;
-            /** @description URL to download the credit note PDF. */
+            /** @description URL to download the credit note PDF. The link is replaced by a new one 180 days after the credit note was created and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the credit note again for the current link. */
             pdfUrl: string;
             /** @description Post-payment credit amount in major units. */
             postPaymentAmount: number;

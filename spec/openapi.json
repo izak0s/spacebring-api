@@ -15463,7 +15463,8 @@
                       "description": "Media files attached to this benefit."
                     },
                     "mediaUrl": {
-                      "description": "URL of the benefit's cover image.",
+                      "deprecated": true,
+                      "description": "Deprecated: use media[0].url instead.",
                       "nullable": true,
                       "type": "string",
                       "format": "uri"
@@ -15646,7 +15647,8 @@
                 "description": "Media files attached to this benefit."
               },
               "mediaUrl": {
-                "description": "URL of the benefit's cover image.",
+                "deprecated": true,
+                "description": "Deprecated: use media[0].url instead.",
                 "nullable": true,
                 "type": "string",
                 "format": "uri"
@@ -15816,7 +15818,8 @@
                     "description": "Media files attached to this benefit."
                   },
                   "mediaUrl": {
-                    "description": "URL of the benefit's cover image.",
+                    "deprecated": true,
+                    "description": "Deprecated: use media[0].url instead.",
                     "nullable": true,
                     "type": "string",
                     "format": "uri"
@@ -16594,7 +16597,7 @@
                   "description": "Payment records for this invoice."
                 },
                 "pdfUrl": {
-                  "description": "URL to download the invoice PDF (issued invoices only).",
+                  "description": "URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
                   "type": "string"
                 },
                 "postPaymentCreation": {
@@ -16620,7 +16623,7 @@
                   "description": "Pre-payment credit notes amount in major units."
                 },
                 "receiptPdfUrl": {
-                  "description": "URL to download the receipt PDF (paid invoices only).",
+                  "description": "URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
                   "type": "string"
                 },
                 "startingBalance": {
@@ -17487,7 +17490,7 @@
             "description": "Payment records for this invoice."
           },
           "pdfUrl": {
-            "description": "URL to download the invoice PDF (issued invoices only).",
+            "description": "URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
             "type": "string"
           },
           "postPaymentCreation": {
@@ -17513,7 +17516,7 @@
             "description": "Pre-payment credit notes amount in major units."
           },
           "receiptPdfUrl": {
-            "description": "URL to download the receipt PDF (paid invoices only).",
+            "description": "URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
             "type": "string"
           },
           "startingBalance": {
@@ -18368,7 +18371,7 @@
                 "description": "Payment records for this invoice."
               },
               "pdfUrl": {
-                "description": "URL to download the invoice PDF (issued invoices only).",
+                "description": "URL to download the invoice PDF (issued invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
                 "type": "string"
               },
               "postPaymentCreation": {
@@ -18394,7 +18397,7 @@
                 "description": "Pre-payment credit notes amount in major units."
               },
               "receiptPdfUrl": {
-                "description": "URL to download the receipt PDF (paid invoices only).",
+                "description": "URL to download the receipt PDF (paid invoices only). The link is replaced by a new one 180 days after the invoice was issued and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the invoice again for the current link.",
                 "type": "string"
               },
               "startingBalance": {
@@ -20251,7 +20254,7 @@
                 },
                 "pdfUrl": {
                   "type": "string",
-                  "description": "URL to download the credit note PDF."
+                  "description": "URL to download the credit note PDF. The link is replaced by a new one 180 days after the credit note was created and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the credit note again for the current link."
                 },
                 "postPaymentAmount": {
                   "type": "number",
@@ -20944,7 +20947,7 @@
           },
           "pdfUrl": {
             "type": "string",
-            "description": "URL to download the credit note PDF."
+            "description": "URL to download the credit note PDF. The link is replaced by a new one 180 days after the credit note was created and every 180 days after that; the one it replaced keeps working for 10 more days and then stops. Fetch the credit note again for the current link."
           },
           "postPaymentAmount": {
             "type": "number",
