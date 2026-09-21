@@ -1761,6 +1761,26 @@ export interface paths {
         patch: operations["patchResource"];
         trace?: never;
     };
+    "/resources/v1/{resourceId}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check resource availability
+         * @description Check whether a resource can be booked for a slot before creating the booking. The same rules as booking creation apply: capacity, the location and resource schedule, duration limits and the booking window. When the slot is unavailable, the response carries the code the booking would fail with. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>
+         */
+        post: operations["getResourceAvailability"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/resources/bookings/v1": {
         parameters: {
             query?: never;
@@ -3506,7 +3526,7 @@ export interface components {
                 payments: {
                     /**
                      * Format: date-time
-                     * @description ISO timestamp of the payment.
+                     * @description ISO timestamp of when the payment was recorded.
                      */
                     createDate: string;
                     /** @description Payment dispute details. */
@@ -3538,6 +3558,11 @@ export interface components {
                          */
                         type: "external" | "paymentGateway";
                     };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.
+                     */
+                    paymentDate?: string;
                     /** @description Payment price details. */
                     price: {
                         money: {
@@ -3903,7 +3928,7 @@ export interface components {
             payments: {
                 /**
                  * Format: date-time
-                 * @description ISO timestamp of the payment.
+                 * @description ISO timestamp of when the payment was recorded.
                  */
                 createDate: string;
                 /** @description Payment dispute details. */
@@ -3935,6 +3960,11 @@ export interface components {
                      */
                     type: "external" | "paymentGateway";
                 };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.
+                 */
+                paymentDate?: string;
                 /** @description Payment price details. */
                 price: {
                     money: {
@@ -4297,7 +4327,7 @@ export interface components {
                 payments: {
                     /**
                      * Format: date-time
-                     * @description ISO timestamp of the payment.
+                     * @description ISO timestamp of when the payment was recorded.
                      */
                     createDate: string;
                     /** @description Payment dispute details. */
@@ -4329,6 +4359,11 @@ export interface components {
                          */
                         type: "external" | "paymentGateway";
                     };
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.
+                     */
+                    paymentDate?: string;
                     /** @description Payment price details. */
                     price: {
                         money: {
@@ -4748,7 +4783,7 @@ export interface components {
         invoicePayment: {
             /**
              * Format: date-time
-             * @description ISO timestamp of the payment.
+             * @description ISO timestamp of when the payment was recorded.
              */
             createDate: string;
             /** @description Payment dispute details. */
@@ -4780,6 +4815,11 @@ export interface components {
                  */
                 type: "external" | "paymentGateway";
             };
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.
+             */
+            paymentDate?: string;
             /** @description Payment price details. */
             price: {
                 money: {
@@ -6813,6 +6853,8 @@ export interface components {
             checkInRef?: string;
             /** @description Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event. */
             code?: string;
+            /** @description Note the attendee left when purchasing the ticket. Visible to the ticket owner and location admins only. */
+            comment?: string;
             /**
              * Format: date-time
              * @description ISO timestamp of when the ticket was created.
@@ -10052,6 +10094,17 @@ export interface components {
                 };
             };
         };
+        getResourceAvailability: {
+            /** @description Whether the resource can be booked for the requested slot. */
+            available: boolean;
+            /** @description The first rule the slot breaks. Present only when available is false. */
+            reason?: {
+                /** @description The error code the booking would fail with, e.g. `bookingConflict` or `bookingScheduleConflict`. */
+                code: string;
+                /** @description The human-readable explanation of why the slot is unavailable. */
+                message: string;
+            };
+        };
         getBookings: {
             /** @description List of bookings. */
             bookings: {
@@ -11028,6 +11081,37 @@ export interface components {
                 resourceRef: string;
                 /** @description Number of seats reserved. */
                 seats?: number;
+                /** @description Where the booking was created. Visible to admins only. Absent on bookings made before it was recorded. */
+                source?: {
+                    /** @description Set when `type` is `api`. */
+                    api?: {
+                        /** @description ID of the OAuth client the integration authenticated with. */
+                        clientId: string;
+                    };
+                    /** @description Set when `type` is `app`. */
+                    app?: Record<string, never>;
+                    /** @description Set when `type` is `googleCalendar`. */
+                    googleCalendar?: {
+                        /** @description ID of the Google Calendar the event was imported from. */
+                        calendarId?: string;
+                        /** @description ID of the Google Calendar event the booking mirrors. */
+                        eventId?: string;
+                        /** @description Link to the Google Calendar event. */
+                        eventLink?: string;
+                    };
+                    /** @description Set when `type` is `mcp`. */
+                    mcp?: {
+                        /** @description ID of the OAuth client the MCP client authenticated with. */
+                        clientId: string;
+                    };
+                    /** @description Set when `type` is `member`. */
+                    member?: Record<string, never>;
+                    /**
+                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details.
+                     * @enum {string}
+                     */
+                    type: "api" | "app" | "googleCalendar" | "mcp" | "member";
+                };
                 /**
                  * Format: date-time
                  * @description ISO timestamp when the booking starts.
@@ -12050,6 +12134,37 @@ export interface components {
                 resourceRef: string;
                 /** @description Number of seats reserved. */
                 seats?: number;
+                /** @description Where the booking was created. Visible to admins only. Absent on bookings made before it was recorded. */
+                source?: {
+                    /** @description Set when `type` is `api`. */
+                    api?: {
+                        /** @description ID of the OAuth client the integration authenticated with. */
+                        clientId: string;
+                    };
+                    /** @description Set when `type` is `app`. */
+                    app?: Record<string, never>;
+                    /** @description Set when `type` is `googleCalendar`. */
+                    googleCalendar?: {
+                        /** @description ID of the Google Calendar the event was imported from. */
+                        calendarId?: string;
+                        /** @description ID of the Google Calendar event the booking mirrors. */
+                        eventId?: string;
+                        /** @description Link to the Google Calendar event. */
+                        eventLink?: string;
+                    };
+                    /** @description Set when `type` is `mcp`. */
+                    mcp?: {
+                        /** @description ID of the OAuth client the MCP client authenticated with. */
+                        clientId: string;
+                    };
+                    /** @description Set when `type` is `member`. */
+                    member?: Record<string, never>;
+                    /**
+                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details.
+                     * @enum {string}
+                     */
+                    type: "api" | "app" | "googleCalendar" | "mcp" | "member";
+                };
                 /**
                  * Format: date-time
                  * @description ISO timestamp when the booking starts.
@@ -18644,6 +18759,11 @@ export interface components {
                     type: string;
                 };
                 /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.
+                 */
+                paymentDate?: string;
+                /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
                  */
@@ -19351,6 +19471,11 @@ export interface components {
                     type: string;
                 };
                 /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.
+                 */
+                paymentDate?: string;
+                /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
                  */
@@ -20057,6 +20182,11 @@ export interface components {
                     /** @description Payment gateway identifier, or external. */
                     type: string;
                 };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.
+                 */
+                paymentDate?: string;
                 /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
@@ -20968,7 +21098,13 @@ export interface components {
                         /** @description Payment method details. */
                         method: {
                             /** @description External payment method, recorded outside the platform. */
-                            external?: Record<string, never>;
+                            external?: {
+                                /**
+                                 * Format: date-time
+                                 * @description ISO timestamp of when the money was received. Defaults to now. Must not be in the future.
+                                 */
+                                paymentDate?: string;
+                            };
                             /** @description Payment gateway (card) payment method. */
                             paymentGateway?: {
                                 /**
@@ -23176,6 +23312,28 @@ export interface components {
                 };
             };
         };
+        getResourceAvailability: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: date-time
+                     * @description The end of the slot to check, in ISO 8601.
+                     */
+                    endDate: string;
+                    /** @description Set to true to check the entire resource instead of individual seats. Supported for office resources. */
+                    entire?: boolean;
+                    /** @description The number of seats to check. Required for seat-based resources such as hot desks, unless entire is true. */
+                    quantity?: number;
+                    /** @description RRULE lines describing a repeating slot, e.g. `RRULE:FREQ=WEEKLY;COUNT=10`. The DTSTART line is derived from startDate. The slot is unavailable as soon as any occurrence is. */
+                    recurrence?: string[];
+                    /**
+                     * Format: date-time
+                     * @description The start of the slot to check, in ISO 8601.
+                     */
+                    startDate: string;
+                };
+            };
+        };
         createBooking: {
             content: {
                 "application/json": {
@@ -24595,7 +24753,13 @@ export interface components {
                         /** @description Payment method details. */
                         method: {
                             /** @description External payment method, recorded outside the platform. */
-                            external?: Record<string, never>;
+                            external?: {
+                                /**
+                                 * Format: date-time
+                                 * @description ISO timestamp of when the money was received. Defaults to now. Must not be in the future.
+                                 */
+                                paymentDate?: string;
+                            };
                             /** @description Payment gateway (card) payment method. */
                             paymentGateway?: {
                                 /**
@@ -29852,6 +30016,41 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getResourceAvailability: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the resource. */
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["getResourceAvailability"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getResourceAvailability"];
+                };
             };
             /** @description Bad Request */
             400: {

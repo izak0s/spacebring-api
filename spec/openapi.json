@@ -9664,6 +9664,74 @@
         }
       }
     },
+    "/resources/v1/{resourceId}/availability": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Check resource availability",
+        "description": "Check whether a resource can be booked for a slot before creating the booking. The same rules as booking creation apply: capacity, the location and resource schedule, duration limits and the booking window. When the slot is unavailable, the response carries the code the booking would fail with. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>",
+        "operationId": "getResourceAvailability",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "resourceId",
+            "required": true,
+            "description": "The id of the resource.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/getResourceAvailability"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "resources.readonly",
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getResourceAvailability"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/resources/bookings/v1": {
       "get": {
         "tags": [
@@ -16374,7 +16442,7 @@
                       "createDate": {
                         "type": "string",
                         "format": "date-time",
-                        "description": "ISO timestamp of the payment."
+                        "description": "ISO timestamp of when the payment was recorded."
                       },
                       "dispute": {
                         "description": "Payment dispute details.",
@@ -16440,6 +16508,11 @@
                         ],
                         "additionalProperties": false,
                         "description": "Payment method used."
+                      },
+                      "paymentDate": {
+                        "description": "ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.",
+                        "type": "string",
+                        "format": "date-time"
                       },
                       "price": {
                         "type": "object",
@@ -17267,7 +17340,7 @@
                 "createDate": {
                   "type": "string",
                   "format": "date-time",
-                  "description": "ISO timestamp of the payment."
+                  "description": "ISO timestamp of when the payment was recorded."
                 },
                 "dispute": {
                   "description": "Payment dispute details.",
@@ -17333,6 +17406,11 @@
                   ],
                   "additionalProperties": false,
                   "description": "Payment method used."
+                },
+                "paymentDate": {
+                  "description": "ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.",
+                  "type": "string",
+                  "format": "date-time"
                 },
                 "price": {
                   "type": "object",
@@ -18148,7 +18226,7 @@
                     "createDate": {
                       "type": "string",
                       "format": "date-time",
-                      "description": "ISO timestamp of the payment."
+                      "description": "ISO timestamp of when the payment was recorded."
                     },
                     "dispute": {
                       "description": "Payment dispute details.",
@@ -18214,6 +18292,11 @@
                       ],
                       "additionalProperties": false,
                       "description": "Payment method used."
+                    },
+                    "paymentDate": {
+                      "description": "ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.",
+                      "type": "string",
+                      "format": "date-time"
                     },
                     "price": {
                       "type": "object",
@@ -19069,7 +19152,7 @@
           "createDate": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO timestamp of the payment."
+            "description": "ISO timestamp of when the payment was recorded."
           },
           "dispute": {
             "description": "Payment dispute details.",
@@ -19135,6 +19218,11 @@
             ],
             "additionalProperties": false,
             "description": "Payment method used."
+          },
+          "paymentDate": {
+            "description": "ISO timestamp of when the money was received. Absent until the payment succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it.",
+            "type": "string",
+            "format": "date-time"
           },
           "price": {
             "type": "object",
@@ -23352,6 +23440,10 @@
           },
           "code": {
             "description": "Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event.",
+            "type": "string"
+          },
+          "comment": {
+            "description": "Note the attendee left when purchasing the ticket. Visible to the ticket owner and location admins only.",
             "type": "string"
           },
           "createDate": {
@@ -30790,6 +30882,38 @@
         ],
         "additionalProperties": false
       },
+      "getResourceAvailability": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "Whether the resource can be booked for the requested slot."
+          },
+          "reason": {
+            "description": "The first rule the slot breaks. Present only when available is false.",
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "The error code the booking would fail with, e.g. `bookingConflict` or `bookingScheduleConflict`."
+              },
+              "message": {
+                "type": "string",
+                "description": "The human-readable explanation of why the slot is unavailable."
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "additionalProperties": false
+      },
       "getBookings": {
         "type": "object",
         "properties": {
@@ -32801,6 +32925,86 @@
                   "type": "integer",
                   "minimum": -9007199254740991,
                   "maximum": 9007199254740991
+                },
+                "source": {
+                  "description": "Where the booking was created. Visible to admins only. Absent on bookings made before it was recorded.",
+                  "type": "object",
+                  "properties": {
+                    "api": {
+                      "description": "Set when `type` is `api`.",
+                      "type": "object",
+                      "properties": {
+                        "clientId": {
+                          "type": "string",
+                          "description": "ID of the OAuth client the integration authenticated with."
+                        }
+                      },
+                      "required": [
+                        "clientId"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "app": {
+                      "description": "Set when `type` is `app`.",
+                      "type": "object",
+                      "properties": {},
+                      "additionalProperties": false
+                    },
+                    "googleCalendar": {
+                      "description": "Set when `type` is `googleCalendar`.",
+                      "type": "object",
+                      "properties": {
+                        "calendarId": {
+                          "description": "ID of the Google Calendar the event was imported from.",
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "description": "ID of the Google Calendar event the booking mirrors.",
+                          "type": "string"
+                        },
+                        "eventLink": {
+                          "description": "Link to the Google Calendar event.",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "mcp": {
+                      "description": "Set when `type` is `mcp`.",
+                      "type": "object",
+                      "properties": {
+                        "clientId": {
+                          "type": "string",
+                          "description": "ID of the OAuth client the MCP client authenticated with."
+                        }
+                      },
+                      "required": [
+                        "clientId"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "member": {
+                      "description": "Set when `type` is `member`.",
+                      "type": "object",
+                      "properties": {},
+                      "additionalProperties": false
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "api",
+                        "app",
+                        "googleCalendar",
+                        "mcp",
+                        "member"
+                      ],
+                      "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details."
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false
                 },
                 "startDate": {
                   "type": "string",
@@ -34913,6 +35117,86 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "source": {
+                "description": "Where the booking was created. Visible to admins only. Absent on bookings made before it was recorded.",
+                "type": "object",
+                "properties": {
+                  "api": {
+                    "description": "Set when `type` is `api`.",
+                    "type": "object",
+                    "properties": {
+                      "clientId": {
+                        "type": "string",
+                        "description": "ID of the OAuth client the integration authenticated with."
+                      }
+                    },
+                    "required": [
+                      "clientId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "app": {
+                    "description": "Set when `type` is `app`.",
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": false
+                  },
+                  "googleCalendar": {
+                    "description": "Set when `type` is `googleCalendar`.",
+                    "type": "object",
+                    "properties": {
+                      "calendarId": {
+                        "description": "ID of the Google Calendar the event was imported from.",
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "description": "ID of the Google Calendar event the booking mirrors.",
+                        "type": "string"
+                      },
+                      "eventLink": {
+                        "description": "Link to the Google Calendar event.",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "mcp": {
+                    "description": "Set when `type` is `mcp`.",
+                    "type": "object",
+                    "properties": {
+                      "clientId": {
+                        "type": "string",
+                        "description": "ID of the OAuth client the MCP client authenticated with."
+                      }
+                    },
+                    "required": [
+                      "clientId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "member": {
+                    "description": "Set when `type` is `member`.",
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "api",
+                      "app",
+                      "googleCalendar",
+                      "mcp",
+                      "member"
+                    ],
+                    "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details."
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": false
               },
               "startDate": {
                 "type": "string",
@@ -48417,6 +48701,11 @@
                   "deprecated": true,
                   "description": "Deprecated. Use payment.method instead."
                 },
+                "paymentDate": {
+                  "description": "ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.",
+                  "type": "string",
+                  "format": "date-time"
+                },
                 "plan": {
                   "deprecated": true,
                   "description": "Deprecated. Use product instead.",
@@ -49870,6 +50159,11 @@
                 "deprecated": true,
                 "description": "Deprecated. Use payment.method instead."
               },
+              "paymentDate": {
+                "description": "ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.",
+                "type": "string",
+                "format": "date-time"
+              },
               "plan": {
                 "deprecated": true,
                 "description": "Deprecated. Use product instead.",
@@ -51318,6 +51612,11 @@
                 "additionalProperties": false,
                 "deprecated": true,
                 "description": "Deprecated. Use payment.method instead."
+              },
+              "paymentDate": {
+                "description": "ISO timestamp of when the money was received. Absent until the transaction succeeds. A payment gateway sets it when it approves the payment; an external payment takes the date the administrator recorded, defaulting to when they recorded it. Ordering and the createDate filters always follow createDate, not this field.",
+                "type": "string",
+                "format": "date-time"
               },
               "plan": {
                 "deprecated": true,
@@ -53050,7 +53349,13 @@
                         "external": {
                           "description": "External payment method, recorded outside the platform.",
                           "type": "object",
-                          "properties": {}
+                          "properties": {
+                            "paymentDate": {
+                              "description": "ISO timestamp of when the money was received. Defaults to now. Must not be in the future.",
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
                         },
                         "paymentGateway": {
                           "description": "Payment gateway (card) payment method.",
@@ -57985,6 +58290,49 @@
         },
         "required": true
       },
+      "getResourceAvailability": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "endDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "The end of the slot to check, in ISO 8601."
+                },
+                "entire": {
+                  "description": "Set to true to check the entire resource instead of individual seats. Supported for office resources.",
+                  "type": "boolean"
+                },
+                "quantity": {
+                  "description": "The number of seats to check. Required for seat-based resources such as hot desks, unless entire is true.",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "recurrence": {
+                  "description": "RRULE lines describing a repeating slot, e.g. `RRULE:FREQ=WEEKLY;COUNT=10`. The DTSTART line is derived from startDate. The slot is unavailable as soon as any occurrence is.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "The start of the slot to check, in ISO 8601."
+                }
+              },
+              "required": [
+                "endDate",
+                "startDate"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "createBooking": {
         "content": {
           "application/json": {
@@ -60747,7 +61095,13 @@
                         "external": {
                           "description": "External payment method, recorded outside the platform.",
                           "type": "object",
-                          "properties": {}
+                          "properties": {
+                            "paymentDate": {
+                              "description": "ISO timestamp of when the money was received. Defaults to now. Must not be in the future.",
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
                         },
                         "paymentGateway": {
                           "description": "Payment gateway (card) payment method.",

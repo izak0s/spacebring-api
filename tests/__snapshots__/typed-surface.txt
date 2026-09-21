@@ -523,6 +523,7 @@ export function createRegistrations(client: Client<paths>, defaults: SpacebringD
 // resources.ts
 export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
 export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
+export type GetResourceAvailability = NonNullable<components["schemas"]["getResourceAvailability"]>;
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 export interface GetAssignmentsQuery {
   limit?: number;
@@ -566,6 +567,7 @@ export interface GetResourcesQuery {
 export type CreateAssignmentBody = NonNullable<NonNullable<operations["createAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
+export type GetResourceAvailabilityBody = NonNullable<operations["getResourceAvailability"]["requestBody"]>["content"]["application/json"];
 export type PatchAssignmentBody = NonNullable<NonNullable<operations["patchAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBody"]>["content"]["application/json"];
 export type PatchResourceBody = NonNullable<NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
@@ -576,6 +578,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     async get(resourceId: string, options?: SpacebringRequestOptions): Promise<Resource>
     async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource>
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async getResourceAvailability(resourceId: string, body: GetResourceAvailabilityBody, options?: SpacebringRequestOptions): Promise<GetResourceAvailability>
     assignments: {
       async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<{ assignments: Assignment[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetAssignmentsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Assignment, void, undefined>
