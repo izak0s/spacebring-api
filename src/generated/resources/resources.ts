@@ -2,13 +2,16 @@
 // Regenerate with `npm run generate:facade`.
 import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
-import type { operations, paths } from "../schema.js";
+import type { components, operations, paths } from "../schema.js";
 
 /** A Assignment entity as returned by the Spacebring API. */
 export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
 
 /** A Booking entity as returned by the Spacebring API. */
 export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
+
+/** A GetResourceAvailability entity as returned by the Spacebring API. */
+export type GetResourceAvailability = NonNullable<components["schemas"]["getResourceAvailability"]>;
 
 /** A Resource entity as returned by the Spacebring API. */
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
@@ -100,6 +103,9 @@ export type CreateBookingBody = NonNullable<operations["createBooking"]["request
 /** Request body for `sb.resources.create()`. */
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
+/** Request body for `sb.resources.getResourceAvailability()`. */
+export type GetResourceAvailabilityBody = NonNullable<operations["getResourceAvailability"]["requestBody"]>["content"]["application/json"];
+
 /** Request body for `sb.resources.assignments.update()`. */
 export type PatchAssignmentBody = NonNullable<NonNullable<operations["patchAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 
@@ -161,6 +167,18 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      */
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{resourceId}", { params: { path: { resourceId } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{resourceId}");
+    },
+    /**
+     * Check resource availability
+     *
+     * Check whether a resource can be booked for a slot before creating the booking. The same rules as booking creation apply: capacity, the location and resource schedule, duration limits and the booking window. When the slot is unavailable, the response carries the code the booking would fail with.
+     *
+     * @param resourceId The id of the resource.
+     * @param body Request body.
+     * @param options Request options (abort signal).
+     */
+    async getResourceAvailability(resourceId: string, body: GetResourceAvailabilityBody, options?: SpacebringRequestOptions): Promise<GetResourceAvailability> {
+      return unwrap(await client.POST("/resources/v1/{resourceId}/availability", { params: { path: { resourceId } }, body, signal: options?.signal }), "POST /resources/v1/{resourceId}/availability");
     },
     assignments: {
       /**
