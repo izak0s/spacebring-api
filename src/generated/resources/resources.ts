@@ -60,7 +60,7 @@ export interface GetBookingsQuery {
   membershipRefOwner?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Sort order as `:`, where field is startDate, endDate or createDate and direction is asc or desc. */
+  /** Sort order as `:`, where field is startDate, endDate or createDate and direction is asc or desc. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
   order?: string;
   /** UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
   resourceRef?: string;

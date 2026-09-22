@@ -8809,7 +8809,7 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
-                /** @description Whether day passes are enabled. */
+                /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
                 description: string;
@@ -9433,7 +9433,7 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
-                /** @description Whether day passes are enabled. */
+                /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
                 description: string;
@@ -15499,6 +15499,8 @@ export interface components {
              * @description ID of the assignee user.
              */
             userRefAssignee?: string;
+            /** @description IDs of the users Lem AI suggests as assignees, best match first. Only returned to admins with support permission. */
+            userRefsAssigneeSuggested?: string[];
             /** @description Requester user details. */
             userRequester?: {
                 /** @description Whether the user is blocked. */
@@ -22628,7 +22630,7 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
-                        /** @description Whether day passes are enabled. */
+                        /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
                         description?: string;
@@ -23042,7 +23044,7 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
-                        /** @description Whether day passes are enabled. */
+                        /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
                         description?: string;
@@ -24528,10 +24530,10 @@ export interface components {
                         /** @description Description text of the ticket. */
                         text: string;
                         /**
-                         * @description Category type of the ticket.
+                         * @description Category type of the ticket. When omitted, the type is detected from the text and administrators can change it later.
                          * @enum {string}
                          */
-                        type: "access" | "accountAndBilling" | "bookings" | "cleaning" | "discriminationAndHarassment" | "internet" | "mailAndPackages" | "noiseAndAcoustics" | "offensiveOrObjectionableContent" | "other" | "printing" | "repairAndMaintenance" | "temperatureAndVentilation" | "websiteAndApp";
+                        type?: "access" | "accountAndBilling" | "bookings" | "cleaning" | "discriminationAndHarassment" | "internet" | "mailAndPackages" | "noiseAndAcoustics" | "offensiveOrObjectionableContent" | "other" | "printing" | "repairAndMaintenance" | "temperatureAndVentilation" | "websiteAndApp";
                         /**
                          * Format: uuid
                          * @description ID of the user requesting the ticket. Defaults to the authenticated user when omitted.
@@ -30098,7 +30100,7 @@ export interface operations {
                 membershipRefOwner?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc. */
+                /** @description Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
                 order?: string;
                 /** @description UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
                 resourceRef?: string;

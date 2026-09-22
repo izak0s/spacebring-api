@@ -9898,7 +9898,7 @@
             "in": "query",
             "name": "order",
             "required": false,
-            "description": "Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc.",
+            "description": "Sort order as `<field>:<direction>`, where field is startDate, endDate or createDate and direction is asc or desc. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise.",
             "schema": {
               "type": "string"
             }
@@ -27799,7 +27799,7 @@
                   "description": "Credit pricing settings."
                 },
                 "dayPassesEnabled": {
-                  "description": "Whether day passes are enabled.",
+                  "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes.",
                   "type": "boolean"
                 },
                 "description": {
@@ -29326,7 +29326,7 @@
                 "description": "Credit pricing settings."
               },
               "dayPassesEnabled": {
-                "description": "Whether day passes are enabled.",
+                "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes.",
                 "type": "boolean"
               },
               "description": {
@@ -42229,6 +42229,14 @@
             "description": "ID of the assignee user.",
             "type": "string",
             "format": "uuid"
+          },
+          "userRefsAssigneeSuggested": {
+            "description": "IDs of the users Lem AI suggests as assignees, best match first. Only returned to admins with support permission.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           "userRequester": {
             "description": "Requester user details.",
@@ -56633,7 +56641,7 @@
                       ]
                     },
                     "dayPassesEnabled": {
-                      "description": "Whether day passes are enabled.",
+                      "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected.",
                       "type": "boolean"
                     },
                     "description": {
@@ -57610,7 +57618,7 @@
                       ]
                     },
                     "dayPassesEnabled": {
-                      "description": "Whether day passes are enabled.",
+                      "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected.",
                       "type": "boolean"
                     },
                     "description": {
@@ -60612,6 +60620,7 @@
                       "description": "Description text of the ticket."
                     },
                     "type": {
+                      "description": "Category type of the ticket. When omitted, the type is detected from the text and administrators can change it later.",
                       "type": "string",
                       "enum": [
                         "access",
@@ -60628,8 +60637,7 @@
                         "repairAndMaintenance",
                         "temperatureAndVentilation",
                         "websiteAndApp"
-                      ],
-                      "description": "Category type of the ticket."
+                      ]
                     },
                     "userRefRequester": {
                       "description": "ID of the user requesting the ticket. Defaults to the authenticated user when omitted.",
@@ -60639,8 +60647,7 @@
                   },
                   "required": [
                     "locationRef",
-                    "text",
-                    "type"
+                    "text"
                   ],
                   "description": "Support ticket to create."
                 }
