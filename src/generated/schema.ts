@@ -8892,6 +8892,13 @@ export interface components {
                  * @description ID of the network.
                  */
                 networkRef: string;
+                /** @description Outlook Calendar integration settings. */
+                outlookCalendar?: {
+                    /** @description Outlook calendar id. */
+                    id: string;
+                    /** @description Whether two-way sync is enabled. */
+                    twoWaySyncEnabled: boolean;
+                };
                 /**
                  * Format: uuid
                  * @description Parent resource id when this is a child resource.
@@ -9516,6 +9523,13 @@ export interface components {
                  * @description ID of the network.
                  */
                 networkRef: string;
+                /** @description Outlook Calendar integration settings. */
+                outlookCalendar?: {
+                    /** @description Outlook calendar id. */
+                    id: string;
+                    /** @description Whether two-way sync is enabled. */
+                    twoWaySyncEnabled: boolean;
+                };
                 /**
                  * Format: uuid
                  * @description Parent resource id when this is a child resource.
@@ -11106,11 +11120,20 @@ export interface components {
                     };
                     /** @description Set when `type` is `member`. */
                     member?: Record<string, never>;
+                    /** @description Set when `type` is `outlookCalendar`. */
+                    outlookCalendar?: {
+                        /** @description ID of the Outlook calendar the event was imported from. */
+                        calendarId?: string;
+                        /** @description ID of the Outlook event the booking mirrors. */
+                        eventId?: string;
+                        /** @description Link to the Outlook event. */
+                        eventLink?: string;
+                    };
                     /**
-                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details.
+                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar or Outlook Calendar import, or a direct API integration. The matching property below carries the details.
                      * @enum {string}
                      */
-                    type: "api" | "app" | "googleCalendar" | "mcp" | "member";
+                    type: "api" | "app" | "googleCalendar" | "mcp" | "member" | "outlookCalendar";
                 };
                 /**
                  * Format: date-time
@@ -12159,11 +12182,20 @@ export interface components {
                     };
                     /** @description Set when `type` is `member`. */
                     member?: Record<string, never>;
+                    /** @description Set when `type` is `outlookCalendar`. */
+                    outlookCalendar?: {
+                        /** @description ID of the Outlook calendar the event was imported from. */
+                        calendarId?: string;
+                        /** @description ID of the Outlook event the booking mirrors. */
+                        eventId?: string;
+                        /** @description Link to the Outlook event. */
+                        eventLink?: string;
+                    };
                     /**
-                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details.
+                     * @description Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar or Outlook Calendar import, or a direct API integration. The matching property below carries the details.
                      * @enum {string}
                      */
-                    type: "api" | "app" | "googleCalendar" | "mcp" | "member";
+                    type: "api" | "app" | "googleCalendar" | "mcp" | "member" | "outlookCalendar";
                 };
                 /**
                  * Format: date-time
@@ -13112,10 +13144,10 @@ export interface components {
                     type?: string;
                 };
                 /**
-                 * @description Current order status.
+                 * @description Current order status. An order is pending while its payment is still processing.
                  * @enum {string}
                  */
-                status: "new" | "inProgress" | "completed" | "canceled";
+                status: "canceled" | "completed" | "inProgress" | "new" | "pending";
                 /** @description User who placed the order. */
                 user: {
                     /** @description Short bio of the user. */
@@ -13580,10 +13612,10 @@ export interface components {
                     type?: string;
                 };
                 /**
-                 * @description Current order status.
+                 * @description Current order status. An order is pending while its payment is still processing.
                  * @enum {string}
                  */
-                status: "new" | "inProgress" | "completed" | "canceled";
+                status: "canceled" | "completed" | "inProgress" | "new" | "pending";
                 /** @description User who placed the order. */
                 user: {
                     /** @description Short bio of the user. */
@@ -22699,6 +22731,13 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
+                        /** @description Outlook Calendar integration settings. Pass null to disconnect the calendar from the resource. */
+                        outlookCalendar?: {
+                            /** @description Outlook calendar id. */
+                            id: string;
+                            /** @description Whether two-way sync is enabled. */
+                            twoWaySyncEnabled: boolean;
+                        } | null;
                         /**
                          * Format: uuid
                          * @description Parent resource id when creating a child resource.
@@ -23103,6 +23142,13 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
+                        /** @description Outlook Calendar integration settings. Pass null to disconnect the calendar from the resource. */
+                        outlookCalendar?: {
+                            /** @description Outlook calendar id. */
+                            id: string;
+                            /** @description Whether two-way sync is enabled. */
+                            twoWaySyncEnabled: boolean;
+                        } | null;
                         /**
                          * Format: uuid
                          * @description Parent resource id when creating a child resource.
