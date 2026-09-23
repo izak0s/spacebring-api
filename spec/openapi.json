@@ -27365,6 +27365,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "assignments": {
                   "type": "array",
@@ -27992,6 +27993,25 @@
                   "type": "string",
                   "format": "uuid",
                   "description": "ID of the network."
+                },
+                "outlookCalendar": {
+                  "description": "Outlook Calendar integration settings.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Outlook calendar id."
+                    },
+                    "twoWaySyncEnabled": {
+                      "type": "boolean",
+                      "description": "Whether two-way sync is enabled."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "twoWaySyncEnabled"
+                  ],
+                  "additionalProperties": false
                 },
                 "parentRef": {
                   "description": "Parent resource id when this is a child resource.",
@@ -28872,8 +28892,7 @@
                 "title",
                 "type",
                 "visibility"
-              ],
-              "additionalProperties": false
+              ]
             },
             "description": "List of resources."
           },
@@ -28892,6 +28911,8 @@
         "properties": {
           "resource": {
             "type": "object",
+            "additionalProperties": false,
+            "description": "The resource.",
             "properties": {
               "assignments": {
                 "type": "array",
@@ -29519,6 +29540,25 @@
                 "type": "string",
                 "format": "uuid",
                 "description": "ID of the network."
+              },
+              "outlookCalendar": {
+                "description": "Outlook Calendar integration settings.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Outlook calendar id."
+                  },
+                  "twoWaySyncEnabled": {
+                    "type": "boolean",
+                    "description": "Whether two-way sync is enabled."
+                  }
+                },
+                "required": [
+                  "id",
+                  "twoWaySyncEnabled"
+                ],
+                "additionalProperties": false
               },
               "parentRef": {
                 "description": "Parent resource id when this is a child resource.",
@@ -30399,9 +30439,7 @@
               "title",
               "type",
               "visibility"
-            ],
-            "additionalProperties": false,
-            "description": "The resource."
+            ]
           }
         },
         "required": [
@@ -32989,6 +33027,25 @@
                       "properties": {},
                       "additionalProperties": false
                     },
+                    "outlookCalendar": {
+                      "description": "Set when `type` is `outlookCalendar`.",
+                      "type": "object",
+                      "properties": {
+                        "calendarId": {
+                          "description": "ID of the Outlook calendar the event was imported from.",
+                          "type": "string"
+                        },
+                        "eventId": {
+                          "description": "ID of the Outlook event the booking mirrors.",
+                          "type": "string"
+                        },
+                        "eventLink": {
+                          "description": "Link to the Outlook event.",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
                     "type": {
                       "type": "string",
                       "enum": [
@@ -32996,9 +33053,10 @@
                         "app",
                         "googleCalendar",
                         "mcp",
-                        "member"
+                        "member",
+                        "outlookCalendar"
                       ],
-                      "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details."
+                      "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar or Outlook Calendar import, or a direct API integration. The matching property below carries the details."
                     }
                   },
                   "required": [
@@ -35181,6 +35239,25 @@
                     "properties": {},
                     "additionalProperties": false
                   },
+                  "outlookCalendar": {
+                    "description": "Set when `type` is `outlookCalendar`.",
+                    "type": "object",
+                    "properties": {
+                      "calendarId": {
+                        "description": "ID of the Outlook calendar the event was imported from.",
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "description": "ID of the Outlook event the booking mirrors.",
+                        "type": "string"
+                      },
+                      "eventLink": {
+                        "description": "Link to the Outlook event.",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
                   "type": {
                     "type": "string",
                     "enum": [
@@ -35188,9 +35265,10 @@
                       "app",
                       "googleCalendar",
                       "mcp",
-                      "member"
+                      "member",
+                      "outlookCalendar"
                     ],
-                    "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar import, or a direct API integration. The matching property below carries the details."
+                    "description": "Where the booking was created: the admin app, the member app, an MCP client, a Google Calendar or Outlook Calendar import, or a direct API integration. The matching property below carries the details."
                   }
                 },
                 "required": [
@@ -37229,12 +37307,13 @@
                 "status": {
                   "type": "string",
                   "enum": [
-                    "new",
-                    "inProgress",
+                    "canceled",
                     "completed",
-                    "canceled"
+                    "inProgress",
+                    "new",
+                    "pending"
                   ],
-                  "description": "Current order status."
+                  "description": "Current order status. An order is pending while its payment is still processing."
                 },
                 "user": {
                   "type": "object",
@@ -38283,12 +38362,13 @@
               "status": {
                 "type": "string",
                 "enum": [
-                  "new",
-                  "inProgress",
+                  "canceled",
                   "completed",
-                  "canceled"
+                  "inProgress",
+                  "new",
+                  "pending"
                 ],
-                "description": "Current order status."
+                "description": "Current order status. An order is pending while its payment is still processing."
               },
               "user": {
                 "type": "object",
@@ -56470,6 +56550,7 @@
               "properties": {
                 "resource": {
                   "type": "object",
+                  "description": "Resource fields to create.",
                   "properties": {
                     "autoRelease": {
                       "description": "Auto-release settings for no-show bookings.",
@@ -56805,6 +56886,25 @@
                       "required": [
                         "enabled",
                         "tiers"
+                      ]
+                    },
+                    "outlookCalendar": {
+                      "description": "Outlook Calendar integration settings. Pass null to disconnect the calendar from the resource.",
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Outlook calendar id."
+                        },
+                        "twoWaySyncEnabled": {
+                          "type": "boolean",
+                          "description": "Whether two-way sync is enabled."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "twoWaySyncEnabled"
                       ]
                     },
                     "parentRef": {
@@ -57324,8 +57424,7 @@
                     "locationRef",
                     "title",
                     "type"
-                  ],
-                  "description": "Resource fields to create."
+                  ]
                 }
               },
               "required": [
@@ -57447,6 +57546,7 @@
               "properties": {
                 "resource": {
                   "type": "object",
+                  "description": "Resource fields to update.",
                   "properties": {
                     "autoRelease": {
                       "description": "Auto-release settings for no-show bookings.",
@@ -57772,6 +57872,25 @@
                       "required": [
                         "enabled",
                         "tiers"
+                      ]
+                    },
+                    "outlookCalendar": {
+                      "description": "Outlook Calendar integration settings. Pass null to disconnect the calendar from the resource.",
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Outlook calendar id."
+                        },
+                        "twoWaySyncEnabled": {
+                          "type": "boolean",
+                          "description": "Whether two-way sync is enabled."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "twoWaySyncEnabled"
                       ]
                     },
                     "parentRef": {
@@ -58286,8 +58405,7 @@
                       ],
                       "description": "Who can see this resource in listings."
                     }
-                  },
-                  "description": "Resource fields to update."
+                  }
                 }
               },
               "required": [
