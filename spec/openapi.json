@@ -27762,11 +27762,11 @@
                         "properties": {
                           "flatAmount": {
                             "type": "number",
-                            "description": "Fixed fee added for this tier."
+                            "description": "Fixed fee added once to bookings in this tier."
                           },
                           "from": {
                             "type": "number",
-                            "description": "Start of this price tier in booking minutes."
+                            "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                           },
                           "unit": {
                             "type": "string",
@@ -27778,7 +27778,7 @@
                           },
                           "unitAmount": {
                             "type": "number",
-                            "description": "Variable price per unit within this tier."
+                            "description": "Price per unit of booking time within this tier, never per minute."
                           }
                         },
                         "required": [
@@ -27952,11 +27952,11 @@
                         "properties": {
                           "flatAmount": {
                             "type": "number",
-                            "description": "Fixed fee added for this tier."
+                            "description": "Fixed fee added once to bookings in this tier."
                           },
                           "from": {
                             "type": "number",
-                            "description": "Start of this price tier in booking minutes."
+                            "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                           },
                           "unit": {
                             "type": "string",
@@ -27968,7 +27968,7 @@
                           },
                           "unitAmount": {
                             "type": "number",
-                            "description": "Variable price per unit within this tier."
+                            "description": "Price per unit of booking time within this tier, never per minute."
                           }
                         },
                         "required": [
@@ -29309,11 +29309,11 @@
                       "properties": {
                         "flatAmount": {
                           "type": "number",
-                          "description": "Fixed fee added for this tier."
+                          "description": "Fixed fee added once to bookings in this tier."
                         },
                         "from": {
                           "type": "number",
-                          "description": "Start of this price tier in booking minutes."
+                          "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                         },
                         "unit": {
                           "type": "string",
@@ -29325,7 +29325,7 @@
                         },
                         "unitAmount": {
                           "type": "number",
-                          "description": "Variable price per unit within this tier."
+                          "description": "Price per unit of booking time within this tier, never per minute."
                         }
                       },
                       "required": [
@@ -29499,11 +29499,11 @@
                       "properties": {
                         "flatAmount": {
                           "type": "number",
-                          "description": "Fixed fee added for this tier."
+                          "description": "Fixed fee added once to bookings in this tier."
                         },
                         "from": {
                           "type": "number",
-                          "description": "Start of this price tier in booking minutes."
+                          "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                         },
                         "unit": {
                           "type": "string",
@@ -29515,7 +29515,7 @@
                         },
                         "unitAmount": {
                           "type": "number",
-                          "description": "Variable price per unit within this tier."
+                          "description": "Price per unit of booking time within this tier, never per minute."
                         }
                       },
                       "required": [
@@ -36798,6 +36798,69 @@
                           ],
                           "additionalProperties": false
                         },
+                        "external": {
+                          "description": "External payment method details: the payment is collected outside Spacebring, in cash or by bank transfer.",
+                          "type": "object",
+                          "properties": {
+                            "customer": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "Customer identifier.",
+                                  "type": "string"
+                                },
+                                "location": {
+                                  "description": "Location the customer belongs to.",
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Unique identifier of the location."
+                                    },
+                                    "title": {
+                                      "type": "string",
+                                      "description": "Display name of the location."
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "title"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "name": {
+                                  "description": "First name of the customer.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "surname": {
+                                  "description": "Last name of the customer.",
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "description": "Company title.",
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "description": "Customer type.",
+                                  "type": "string",
+                                  "enum": [
+                                    "company",
+                                    "user"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false,
+                              "description": "Customer who paid outside Spacebring."
+                            }
+                          },
+                          "required": [
+                            "customer"
+                          ],
+                          "additionalProperties": false
+                        },
                         "invoice": {
                           "description": "Invoice payment method details.",
                           "type": "object",
@@ -36993,6 +37056,7 @@
                           "type": "string",
                           "enum": [
                             "credits",
+                            "external",
                             "invoice",
                             "paymentGateway"
                           ],
@@ -37853,6 +37917,69 @@
                         ],
                         "additionalProperties": false
                       },
+                      "external": {
+                        "description": "External payment method details: the payment is collected outside Spacebring, in cash or by bank transfer.",
+                        "type": "object",
+                        "properties": {
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "Customer identifier.",
+                                "type": "string"
+                              },
+                              "location": {
+                                "description": "Location the customer belongs to.",
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Unique identifier of the location."
+                                  },
+                                  "title": {
+                                    "type": "string",
+                                    "description": "Display name of the location."
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "title"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "name": {
+                                "description": "First name of the customer.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "surname": {
+                                "description": "Last name of the customer.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "title": {
+                                "description": "Company title.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "description": "Customer type.",
+                                "type": "string",
+                                "enum": [
+                                  "company",
+                                  "user"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Customer who paid outside Spacebring."
+                          }
+                        },
+                        "required": [
+                          "customer"
+                        ],
+                        "additionalProperties": false
+                      },
                       "invoice": {
                         "description": "Invoice payment method details.",
                         "type": "object",
@@ -38048,6 +38175,7 @@
                         "type": "string",
                         "enum": [
                           "credits",
+                          "external",
                           "invoice",
                           "paymentGateway"
                         ],
@@ -56696,15 +56824,15 @@
                             "properties": {
                               "flatAmount": {
                                 "type": "number",
-                                "description": "Fixed fee added for this tier."
+                                "description": "Fixed fee added once to bookings in this tier."
                               },
                               "from": {
                                 "type": "number",
-                                "description": "Start of this price tier in booking minutes."
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                               },
                               "unitAmount": {
                                 "type": "number",
-                                "description": "Variable price per unit within this tier."
+                                "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
                               }
                             },
                             "required": [
@@ -56863,15 +56991,15 @@
                             "properties": {
                               "flatAmount": {
                                 "type": "number",
-                                "description": "Fixed fee added for this tier."
+                                "description": "Fixed fee added once to bookings in this tier."
                               },
                               "from": {
                                 "type": "number",
-                                "description": "Start of this price tier in booking minutes."
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                               },
                               "unitAmount": {
                                 "type": "number",
-                                "description": "Variable price per unit within this tier."
+                                "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
                               }
                             },
                             "required": [
@@ -57692,15 +57820,15 @@
                             "properties": {
                               "flatAmount": {
                                 "type": "number",
-                                "description": "Fixed fee added for this tier."
+                                "description": "Fixed fee added once to bookings in this tier."
                               },
                               "from": {
                                 "type": "number",
-                                "description": "Start of this price tier in booking minutes."
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                               },
                               "unitAmount": {
                                 "type": "number",
-                                "description": "Variable price per unit within this tier."
+                                "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
                               }
                             },
                             "required": [
@@ -57849,15 +57977,15 @@
                             "properties": {
                               "flatAmount": {
                                 "type": "number",
-                                "description": "Fixed fee added for this tier."
+                                "description": "Fixed fee added once to bookings in this tier."
                               },
                               "from": {
                                 "type": "number",
-                                "description": "Start of this price tier in booking minutes."
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
                               },
                               "unitAmount": {
                                 "type": "number",
-                                "description": "Variable price per unit within this tier."
+                                "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
                               }
                             },
                             "required": [

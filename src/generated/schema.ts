@@ -8796,16 +8796,16 @@ export interface components {
                     enabled: boolean;
                     /** @description Stepped credit pricing tiers. */
                     tiers: {
-                        /** @description Fixed fee added for this tier. */
+                        /** @description Fixed fee added once to bookings in this tier. */
                         flatAmount: number;
-                        /** @description Start of this price tier in booking minutes. */
+                        /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                         from: number;
                         /**
                          * @description Whether the tier is priced per hour or per day.
                          * @enum {string}
                          */
                         unit: "hour" | "day";
-                        /** @description Variable price per unit within this tier. */
+                        /** @description Price per unit of booking time within this tier, never per minute. */
                         unitAmount: number;
                     }[];
                 };
@@ -8874,16 +8874,16 @@ export interface components {
                     enabled: boolean;
                     /** @description Stepped money pricing tiers. */
                     tiers: {
-                        /** @description Fixed fee added for this tier. */
+                        /** @description Fixed fee added once to bookings in this tier. */
                         flatAmount: number;
-                        /** @description Start of this price tier in booking minutes. */
+                        /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                         from: number;
                         /**
                          * @description Whether the tier is priced per hour or per day.
                          * @enum {string}
                          */
                         unit: "hour" | "day";
-                        /** @description Variable price per unit within this tier. */
+                        /** @description Price per unit of booking time within this tier, never per minute. */
                         unitAmount: number;
                     }[];
                 };
@@ -9427,16 +9427,16 @@ export interface components {
                     enabled: boolean;
                     /** @description Stepped credit pricing tiers. */
                     tiers: {
-                        /** @description Fixed fee added for this tier. */
+                        /** @description Fixed fee added once to bookings in this tier. */
                         flatAmount: number;
-                        /** @description Start of this price tier in booking minutes. */
+                        /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                         from: number;
                         /**
                          * @description Whether the tier is priced per hour or per day.
                          * @enum {string}
                          */
                         unit: "hour" | "day";
-                        /** @description Variable price per unit within this tier. */
+                        /** @description Price per unit of booking time within this tier, never per minute. */
                         unitAmount: number;
                     }[];
                 };
@@ -9505,16 +9505,16 @@ export interface components {
                     enabled: boolean;
                     /** @description Stepped money pricing tiers. */
                     tiers: {
-                        /** @description Fixed fee added for this tier. */
+                        /** @description Fixed fee added once to bookings in this tier. */
                         flatAmount: number;
-                        /** @description Start of this price tier in booking minutes. */
+                        /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                         from: number;
                         /**
                          * @description Whether the tier is priced per hour or per day.
                          * @enum {string}
                          */
                         unit: "hour" | "day";
-                        /** @description Variable price per unit within this tier. */
+                        /** @description Price per unit of booking time within this tier, never per minute. */
                         unitAmount: number;
                     }[];
                 };
@@ -12920,6 +12920,35 @@ export interface components {
                                 type?: "company" | "user";
                             };
                         };
+                        /** @description External payment method details: the payment is collected outside Spacebring, in cash or by bank transfer. */
+                        external?: {
+                            /** @description Customer who paid outside Spacebring. */
+                            customer: {
+                                /** @description Customer identifier. */
+                                id?: string;
+                                /** @description Location the customer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the location.
+                                     */
+                                    id: string;
+                                    /** @description Display name of the location. */
+                                    title: string;
+                                };
+                                /** @description First name of the customer. */
+                                name?: string | null;
+                                /** @description Last name of the customer. */
+                                surname?: string | null;
+                                /** @description Company title. */
+                                title?: string;
+                                /**
+                                 * @description Customer type.
+                                 * @enum {string}
+                                 */
+                                type?: "company" | "user";
+                            };
+                        };
                         /** @description Invoice payment method details. */
                         invoice?: {
                             /** @description Customer who paid by invoice. */
@@ -13013,7 +13042,7 @@ export interface components {
                          * @description Payment method type.
                          * @enum {string}
                          */
-                        type: "credits" | "invoice" | "paymentGateway";
+                        type: "credits" | "external" | "invoice" | "paymentGateway";
                     };
                     /** @description Price breakdown for this payment. */
                     price: {
@@ -13388,6 +13417,35 @@ export interface components {
                                 type?: "company" | "user";
                             };
                         };
+                        /** @description External payment method details: the payment is collected outside Spacebring, in cash or by bank transfer. */
+                        external?: {
+                            /** @description Customer who paid outside Spacebring. */
+                            customer: {
+                                /** @description Customer identifier. */
+                                id?: string;
+                                /** @description Location the customer belongs to. */
+                                location?: {
+                                    /**
+                                     * Format: uuid
+                                     * @description Unique identifier of the location.
+                                     */
+                                    id: string;
+                                    /** @description Display name of the location. */
+                                    title: string;
+                                };
+                                /** @description First name of the customer. */
+                                name?: string | null;
+                                /** @description Last name of the customer. */
+                                surname?: string | null;
+                                /** @description Company title. */
+                                title?: string;
+                                /**
+                                 * @description Customer type.
+                                 * @enum {string}
+                                 */
+                                type?: "company" | "user";
+                            };
+                        };
                         /** @description Invoice payment method details. */
                         invoice?: {
                             /** @description Customer who paid by invoice. */
@@ -13481,7 +13539,7 @@ export interface components {
                          * @description Payment method type.
                          * @enum {string}
                          */
-                        type: "credits" | "invoice" | "paymentGateway";
+                        type: "credits" | "external" | "invoice" | "paymentGateway";
                     };
                     /** @description Price breakdown for this payment. */
                     price: {
@@ -22654,11 +22712,11 @@ export interface components {
                             price?: number;
                             /** @description Stepped credit pricing tiers. */
                             tiers: {
-                                /** @description Fixed fee added for this tier. */
+                                /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Start of this price tier in booking minutes. */
+                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                                 from: number;
-                                /** @description Variable price per unit within this tier. */
+                                /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
                             }[];
                         };
@@ -22723,11 +22781,11 @@ export interface components {
                             price?: number;
                             /** @description Stepped money pricing tiers. */
                             tiers: {
-                                /** @description Fixed fee added for this tier. */
+                                /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Start of this price tier in booking minutes. */
+                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                                 from: number;
-                                /** @description Variable price per unit within this tier. */
+                                /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
                             }[];
                         };
@@ -23075,11 +23133,11 @@ export interface components {
                             price?: number;
                             /** @description Stepped credit pricing tiers. */
                             tiers: {
-                                /** @description Fixed fee added for this tier. */
+                                /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Start of this price tier in booking minutes. */
+                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                                 from: number;
-                                /** @description Variable price per unit within this tier. */
+                                /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
                             }[];
                         };
@@ -23134,11 +23192,11 @@ export interface components {
                             price?: number;
                             /** @description Stepped money pricing tiers. */
                             tiers: {
-                                /** @description Fixed fee added for this tier. */
+                                /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Start of this price tier in booking minutes. */
+                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
                                 from: number;
-                                /** @description Variable price per unit within this tier. */
+                                /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
                             }[];
                         };
