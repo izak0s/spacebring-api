@@ -156,6 +156,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/benefits/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for a benefit cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a benefit within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>benefits</code>
+         */
+        post: operations["createBenefitMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/benefits/applications/v1": {
         parameters: {
             query?: never;
@@ -3026,6 +3046,47 @@ export interface components {
                  * @enum {string}
                  */
                 visibility: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
+            };
+        };
+        createBenefitMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating a benefit. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a benefit. attached: a benefit references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
             };
         };
         getBenefitApplications: {
@@ -7811,7 +7872,9 @@ export interface components {
                             wednesday?: boolean;
                         };
                         hours?: {
+                            /** @description Opening time in 24-hour format. */
                             from?: string;
+                            /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                             to?: string;
                         };
                     }[];
@@ -7831,7 +7894,9 @@ export interface components {
                             wednesday?: boolean;
                         };
                         hours?: {
+                            /** @description Opening time in 24-hour format. */
                             from?: string;
+                            /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                             to?: string;
                         };
                     }[];
@@ -9162,7 +9227,7 @@ export interface components {
                             hours: {
                                 /** @description Opening time in 24-hour "HH:mm" format. */
                                 from: string;
-                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                 to: string;
                             };
                         }[];
@@ -9198,7 +9263,7 @@ export interface components {
                             hours: {
                                 /** @description Opening time in 24-hour "HH:mm" format. */
                                 from: string;
-                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                 to: string;
                             };
                         }[];
@@ -9793,7 +9858,7 @@ export interface components {
                             hours: {
                                 /** @description Opening time in 24-hour "HH:mm" format. */
                                 from: string;
-                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                 to: string;
                             };
                         }[];
@@ -9829,7 +9894,7 @@ export interface components {
                             hours: {
                                 /** @description Opening time in 24-hour "HH:mm" format. */
                                 from: string;
-                                /** @description Closing time in 24-hour "HH:mm" format. */
+                                /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                 to: string;
                             };
                         }[];
@@ -12726,6 +12791,46 @@ export interface components {
                  * @description ISO timestamp of when the order was created.
                  */
                 createDate: string;
+                /** @description Customer who owns the order: the company or user it is paid by, or the buyer when the order is free. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the customer.
+                     */
+                    id: string;
+                    /** @description Name of the company. Present when the customer is a company. */
+                    title?: string;
+                    /**
+                     * @description Customer type.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User who owns the order. Present when the customer is a user. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Email address of the user. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer who created the order in its location. Absent when the creator has no membership in that location.
+                 */
+                customerRefCreatedBy?: string;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the order was deleted.
@@ -13195,6 +13300,18 @@ export interface components {
                     /** @description Profile photo URL of the user. */
                     photoUrl?: string | null;
                     /** @description Last name of the user. */
+                    surname?: string | null;
+                };
+                /** @description User who created the order: the buyer, or an admin who created it on the buyer's behalf. Absent for orders created before this was recorded. */
+                userCreatedBy?: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user who created the order.
+                     */
+                    id: string;
+                    /** @description First name of the user who created the order. */
+                    name?: string | null;
+                    /** @description Last name of the user who created the order. */
                     surname?: string | null;
                 };
                 /** @description User who deleted this order, if applicable. */
@@ -13223,6 +13340,46 @@ export interface components {
                  * @description ISO timestamp of when the order was created.
                  */
                 createDate: string;
+                /** @description Customer who owns the order: the company or user it is paid by, or the buyer when the order is free. */
+                customer: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the customer.
+                     */
+                    id: string;
+                    /** @description Name of the company. Present when the customer is a company. */
+                    title?: string;
+                    /**
+                     * @description Customer type.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User who owns the order. Present when the customer is a user. */
+                    user?: {
+                        /** @description Short bio of the user. */
+                        about?: string | null;
+                        /** @description Email address of the user. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL of the user. */
+                        photoUrl?: string | null;
+                        /** @description Last name of the user. */
+                        surname?: string | null;
+                    };
+                };
+                /**
+                 * Format: uuid
+                 * @description ID of the customer who created the order in its location. Absent when the creator has no membership in that location.
+                 */
+                customerRefCreatedBy?: string;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the order was deleted.
@@ -13692,6 +13849,18 @@ export interface components {
                     /** @description Profile photo URL of the user. */
                     photoUrl?: string | null;
                     /** @description Last name of the user. */
+                    surname?: string | null;
+                };
+                /** @description User who created the order: the buyer, or an admin who created it on the buyer's behalf. Absent for orders created before this was recorded. */
+                userCreatedBy?: {
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user who created the order.
+                     */
+                    id: string;
+                    /** @description First name of the user who created the order. */
+                    name?: string | null;
+                    /** @description Last name of the user who created the order. */
                     surname?: string | null;
                 };
                 /** @description User who deleted this order, if applicable. */
@@ -20924,7 +21093,7 @@ export interface components {
                         locationRef: string;
                         /** @description Media files to attach. The url is generated server-side. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /**
@@ -21009,7 +21178,7 @@ export interface components {
                         featured?: boolean;
                         /** @description Media files to attach. The url is generated server-side. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /**
@@ -21025,6 +21194,22 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
+                    };
+                };
+            };
+        };
+        createBenefitMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -22942,7 +23127,7 @@ export interface components {
                                     hours: {
                                         /** @description Opening time in 24-hour "HH:mm" format. */
                                         from: string;
-                                        /** @description Closing time in 24-hour "HH:mm" format. */
+                                        /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                         to: string;
                                     };
                                 }[];
@@ -22978,7 +23163,7 @@ export interface components {
                                     hours: {
                                         /** @description Opening time in 24-hour "HH:mm" format. */
                                         from: string;
-                                        /** @description Closing time in 24-hour "HH:mm" format. */
+                                        /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                         to: string;
                                     };
                                 }[];
@@ -23353,7 +23538,7 @@ export interface components {
                                     hours: {
                                         /** @description Opening time in 24-hour "HH:mm" format. */
                                         from: string;
-                                        /** @description Closing time in 24-hour "HH:mm" format. */
+                                        /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                         to: string;
                                     };
                                 }[];
@@ -23389,7 +23574,7 @@ export interface components {
                                     hours: {
                                         /** @description Opening time in 24-hour "HH:mm" format. */
                                         from: string;
-                                        /** @description Closing time in 24-hour "HH:mm" format. */
+                                        /** @description Closing time in 24-hour format, counted from the start of the weekday. A day that stays open past midnight closes after 24:00, for example at 26:00 for 2:00 AM the next day, and at most 24 hours after the opening time. */
                                         to: string;
                                     };
                                 }[];
@@ -25426,6 +25611,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getBenefit: {
@@ -25492,6 +25686,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     deleteBenefit: {
@@ -25512,6 +25715,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createBenefitMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createBenefitMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createBenefitMedia"];
+                };
             };
             /** @description Bad Request */
             400: {

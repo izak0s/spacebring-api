@@ -21,6 +21,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
 export type Application = NonNullable<components["schemas"]["benefitApplication"]>;
 export type Benefit = NonNullable<components["schemas"]["benefit"]>;
 export type BenefitCategory = NonNullable<components["schemas"]["benefitCategory"]>;
+export type BenefitMedia = NonNullable<operations["createBenefitMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetBenefitApplicationsQuery {
   benefitRef?: string;
   categoryRef?: string;
@@ -45,6 +46,7 @@ export interface GetBenefitsQuery {
 export type ApplyBenefitBody = NonNullable<NonNullable<operations["applyBenefit"]["requestBody"]>["content"]["application/json"]["application"]>;
 export type CreateBenefitBody = NonNullable<NonNullable<operations["createBenefit"]["requestBody"]>["content"]["application/json"]["benefit"]>;
 export type CreateBenefitCategoryBody = NonNullable<NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
+export type CreateBenefitMediaBody = NonNullable<NonNullable<operations["createBenefitMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type UpdateBenefitBody = NonNullable<NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"]["benefit"]>;
 export type UpdateBenefitCategoryBody = NonNullable<NonNullable<operations["updateBenefitCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
 export function createBenefits(client: Client<paths>, defaults: SpacebringDefaults) {
@@ -55,6 +57,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
     async create(benefit: CreateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit>
     async update(benefitId: string, benefit: UpdateBenefitBody, options?: SpacebringRequestOptions): Promise<Benefit>
     async delete(benefitId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async createMedia(media: CreateBenefitMediaBody, options?: SpacebringRequestOptions): Promise<BenefitMedia>
     applications: {
       async list(query?: GetBenefitApplicationsQuery, options?: SpacebringRequestOptions): Promise<{ applications: Application[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetBenefitApplicationsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Application, void, undefined>
@@ -333,8 +336,8 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
 
 // events.ts
 export type Event = NonNullable<components["schemas"]["event"]>;
+export type EventMedia = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
-export type Media = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetEventsByOrganizationQuery {
   locationRef: string;
   limit?: number;
@@ -369,7 +372,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
     async addEventHosts(id: string, tickets: AddEventHostsBody, options?: SpacebringRequestOptions): Promise<EventTicket[]>
     async cancel(id: string, options?: SpacebringRequestOptions): Promise<Event>
     async copy(id: string, options?: SpacebringRequestOptions): Promise<Event>
-    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<Media>
+    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<EventMedia>
     tickets: {
       async list(query?: GetEventTicketsQuery, options?: SpacebringRequestOptions): Promise<{ tickets?: EventTicket[]; nextPageToken?: string; searchQueryNext?: string }>
       iterate(query?: Omit<GetEventTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<EventTicket, void, undefined>
