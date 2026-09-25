@@ -13,6 +13,9 @@ export type Benefit = NonNullable<components["schemas"]["benefit"]>;
 /** A BenefitCategory entity as returned by the Spacebring API. */
 export type BenefitCategory = NonNullable<components["schemas"]["benefitCategory"]>;
 
+/** A BenefitMedia entity as returned by the Spacebring API. */
+export type BenefitMedia = NonNullable<operations["createBenefitMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.benefits.applications.list()`. */
 export interface GetBenefitApplicationsQuery {
   /** UUID of the benefit. */
@@ -63,6 +66,9 @@ export type CreateBenefitBody = NonNullable<NonNullable<operations["createBenefi
 
 /** Request body for `sb.benefits.categories.create()`. */
 export type CreateBenefitCategoryBody = NonNullable<NonNullable<operations["createBenefitCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
+
+/** Request body for `sb.benefits.createMedia()`. */
+export type CreateBenefitMediaBody = NonNullable<NonNullable<operations["createBenefitMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.benefits.update()`. */
 export type UpdateBenefitBody = NonNullable<NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"]["benefit"]>;
@@ -123,6 +129,14 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      */
     async delete(benefitId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, signal: options?.signal }), "DELETE /benefits/v1/{benefitId}");
+    },
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for a benefit cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `media[0].key` when creating or updating a benefit within an hour; an image that is not attached by then is discarded.
+     */
+    async createMedia(media: CreateBenefitMediaBody, options?: SpacebringRequestOptions): Promise<BenefitMedia> {
+      return unwrapProp(await client.POST("/benefits/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /benefits/v1/media");
     },
     applications: {
       /**
