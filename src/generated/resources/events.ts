@@ -7,11 +7,11 @@ import type { components, operations, paths } from "../schema.js";
 /** A Event entity as returned by the Spacebring API. */
 export type Event = NonNullable<components["schemas"]["event"]>;
 
+/** A EventMedia entity as returned by the Spacebring API. */
+export type EventMedia = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** A EventTicket entity as returned by the Spacebring API. */
 export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
-
-/** A Media entity as returned by the Spacebring API. */
-export type Media = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 
 /** Query parameters for `sb.events.list()`. */
 export interface GetEventsByOrganizationQuery {
@@ -111,7 +111,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Create a media upload for an event cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `media[0].key` when creating or updating an event within an hour; an image that is not attached by then is discarded.
      */
-    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<Media> {
+    async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<EventMedia> {
       return unwrapProp(await client.POST("/events/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /events/v1/media");
     },
     tickets: {
