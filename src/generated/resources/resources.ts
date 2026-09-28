@@ -60,7 +60,7 @@ export interface GetBookingsQuery {
   membershipRefOwner?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Sort order as `:`, where field is startDate, endDate or createDate and direction is asc or desc. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
+  /** Sort order as `:`, where field is startDate, endDate, createDate or deleteDate and direction is asc or desc. deleteDate lists only cancelled bookings, by when they were cancelled, and cannot be combined with singleBookings. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
   order?: string;
   /** UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
   resourceRef?: string;
@@ -68,7 +68,7 @@ export interface GetBookingsQuery {
   singleBookings?: string;
   /** @deprecated Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
   startDate?: string;
-  /** Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed. */
+  /** Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed, or to canceled when ordering by deleteDate. */
   status?: string;
   /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
   type?: string;
