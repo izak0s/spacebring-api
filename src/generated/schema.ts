@@ -8614,6 +8614,8 @@ export interface components {
                 exclusiveLocations: string[];
                 /** @description Whether the admin can manage the feed. */
                 feed: boolean;
+                /** @description Whether the admin can manage resources and their bookings. */
+                resources?: boolean;
                 /** @description Whether the admin can change network settings. */
                 settings: boolean;
                 /** @description Whether the admin can manage the shop. */
@@ -8915,7 +8917,7 @@ export interface components {
                  * @description Unique identifier of the resource.
                  */
                 id: string;
-                /** @description Public URL of the resource image. */
+                /** @description Public URL of the resource's cover, the first image in media. */
                 imageUrl?: string;
                 /** @description Kisi access group reference. */
                 kisiGroupRef?: number | null;
@@ -8926,7 +8928,7 @@ export interface components {
                  * @description ID of the location.
                  */
                 locationRef: string;
-                /** @description Images attached to the resource. */
+                /** @description Images of the resource in display order, the first one being its cover. */
                 media: {
                     /** @description Storage key of the image. */
                     key: string;
@@ -9546,7 +9548,7 @@ export interface components {
                  * @description Unique identifier of the resource.
                  */
                 id: string;
-                /** @description Public URL of the resource image. */
+                /** @description Public URL of the resource's cover, the first image in media. */
                 imageUrl?: string;
                 /** @description Kisi access group reference. */
                 kisiGroupRef?: number | null;
@@ -9557,7 +9559,7 @@ export interface components {
                  * @description ID of the location.
                  */
                 locationRef: string;
-                /** @description Images attached to the resource. */
+                /** @description Images of the resource in display order, the first one being its cover. */
                 media: {
                     /** @description Storage key of the image. */
                     key: string;
@@ -22953,7 +22955,7 @@ export interface components {
                          * @description ID of the location.
                          */
                         locationRef: string;
-                        /** @description Images to attach when creating the resource. */
+                        /** @description Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all. */
                         media?: {
                             /** @description Storage key of the uploaded image. */
                             key: string;
@@ -23364,7 +23366,7 @@ export interface components {
                         } | null;
                         /** @description Kisi access group reference. */
                         kisiGroupRef?: number | null;
-                        /** @description Images to attach when creating the resource. */
+                        /** @description Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all. */
                         media?: {
                             /** @description Storage key of the uploaded image. */
                             key: string;
