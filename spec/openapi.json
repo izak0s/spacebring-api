@@ -27421,6 +27421,10 @@
                 "type": "boolean",
                 "description": "Whether the admin can manage the feed."
               },
+              "resources": {
+                "description": "Whether the admin can manage resources and their bookings.",
+                "type": "boolean"
+              },
               "settings": {
                 "type": "boolean",
                 "description": "Whether the admin can change network settings."
@@ -28081,7 +28085,7 @@
                   "description": "Unique identifier of the resource."
                 },
                 "imageUrl": {
-                  "description": "Public URL of the resource image.",
+                  "description": "Public URL of the resource's cover, the first image in media.",
                   "type": "string"
                 },
                 "kisiGroupRef": {
@@ -28117,7 +28121,7 @@
                     ],
                     "additionalProperties": false
                   },
-                  "description": "Images attached to the resource."
+                  "description": "Images of the resource in display order, the first one being its cover."
                 },
                 "money": {
                   "type": "object",
@@ -29628,7 +29632,7 @@
                 "description": "Unique identifier of the resource."
               },
               "imageUrl": {
-                "description": "Public URL of the resource image.",
+                "description": "Public URL of the resource's cover, the first image in media.",
                 "type": "string"
               },
               "kisiGroupRef": {
@@ -29664,7 +29668,7 @@
                   ],
                   "additionalProperties": false
                 },
-                "description": "Images attached to the resource."
+                "description": "Images of the resource in display order, the first one being its cover."
               },
               "money": {
                 "type": "object",
@@ -57388,7 +57392,8 @@
                       "description": "ID of the location."
                     },
                     "media": {
-                      "description": "Images to attach when creating the resource.",
+                      "description": "Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all.",
+                      "maxItems": 10,
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -58374,7 +58379,8 @@
                       "type": "number"
                     },
                     "media": {
-                      "description": "Images to attach when creating the resource.",
+                      "description": "Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all.",
+                      "maxItems": 10,
                       "type": "array",
                       "items": {
                         "type": "object",
