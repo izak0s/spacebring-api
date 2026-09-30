@@ -7,6 +7,9 @@ import type { components, operations, paths } from "../schema.js";
 /** A Company entity as returned by the Spacebring API. */
 export type Company = NonNullable<components["schemas"]["company"]>;
 
+/** A CompanyMedia entity as returned by the Spacebring API. */
+export type CompanyMedia = NonNullable<operations["createCompanyMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** A Membership entity as returned by the Spacebring API. */
 export type Membership = NonNullable<components["schemas"]["membership"]>;
 
@@ -58,6 +61,9 @@ export interface GetMembershipsQuery {
 
 /** Request body for `sb.community.companies.create()`. */
 export type CreateCompanyBody = NonNullable<NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"]["company"]>;
+
+/** Request body for `sb.community.companies.createMedia()`. */
+export type CreateCompanyMediaBody = NonNullable<NonNullable<operations["createCompanyMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.community.memberships.create()`. */
 export type CreateMembershipBody = NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"];
@@ -117,6 +123,14 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
        */
       async update(id: string, company: UpdateCompanyBody, options?: SpacebringRequestOptions): Promise<Company> {
         return unwrapProp(await client.PUT("/community/companies/v1/{id}", { params: { path: { id } }, body: { company }, signal: options?.signal }), "company", "PUT /community/companies/v1/{id}");
+      },
+      /**
+       * Create a logo upload
+       *
+       * Create an upload for a company logo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `logo.key` when creating or updating a company within an hour; a logo that is not attached by then is discarded.
+       */
+      async createMedia(media: CreateCompanyMediaBody, options?: SpacebringRequestOptions): Promise<CompanyMedia> {
+        return unwrapProp(await client.POST("/community/companies/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /community/companies/v1/media");
       },
     },
     memberships: {

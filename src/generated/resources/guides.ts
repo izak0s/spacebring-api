@@ -7,6 +7,9 @@ import type { components, operations, paths } from "../schema.js";
 /** A Guide entity as returned by the Spacebring API. */
 export type Guide = NonNullable<components["schemas"]["guide"]>;
 
+/** A GuideMedia entity as returned by the Spacebring API. */
+export type GuideMedia = NonNullable<operations["createGuideMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.guides.list()`. */
 export interface GetGuidesQuery {
   /** Maximum number of guides per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
@@ -19,6 +22,9 @@ export interface GetGuidesQuery {
 
 /** Request body for `sb.guides.create()`. */
 export type CreateGuideBody = NonNullable<NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
+
+/** Request body for `sb.guides.createMedia()`. */
+export type CreateGuideMediaBody = NonNullable<NonNullable<operations["createGuideMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.guides.update()`. */
 export type PatchGuideBody = NonNullable<NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
@@ -84,6 +90,14 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      */
     async delete(guideId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/guides/v1/{guideId}", { params: { path: { guideId } }, signal: options?.signal }), "DELETE /guides/v1/{guideId}");
+    },
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for an image or a video in a guide. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned url to the guide `description` as a Markdown image, `![alt text](url)`, when creating or updating a guide within an hour; a file that is not attached by then is discarded. A video must declare its `width` and `height`; an image's dimensions are read from the file.
+     */
+    async createMedia(media: CreateGuideMediaBody, options?: SpacebringRequestOptions): Promise<GuideMedia> {
+      return unwrapProp(await client.POST("/guides/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /guides/v1/media");
     },
   };
 }

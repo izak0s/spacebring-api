@@ -3135,6 +3135,396 @@
         }
       }
     },
+    "/check_ins/v1": {
+      "get": {
+        "tags": [
+          "Check-ins"
+        ],
+        "summary": "Retrieve check-ins",
+        "description": "Retrieve the check-ins of a location, newest arrival first. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns.readonly</code> or <code>checkIns</code>",
+        "operationId": "getCheckIns",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "checkInDate[gte]",
+            "required": false,
+            "description": "Filter check-ins whose arrival is on or after this date (ISO 8601). Use with checkInDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "checkInDate[lte]",
+            "required": false,
+            "description": "Filter check-ins whose arrival is on or before this date (ISO 8601). Use with checkInDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of check-ins per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": true,
+            "description": "UUID of the location.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "description": "Comma-separated list of check-in statuses to filter by, e.g. `scheduled,checkedIn`. Valid values: checkedIn, checkedOut, scheduled, expired. Defaults to all statuses.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Comma-separated list of check-in types to filter by, e.g. `eventTicket,visit`. Valid values: deskBooking, roomBooking, eventTicket, visit, subscription. Defaults to all types.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userRef",
+            "required": false,
+            "description": "UUID of the user to filter check-ins by. Defaults to check-ins of every user.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "checkIns.readonly",
+              "checkIns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCheckIns"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check_ins/v1/{checkInId}": {
+      "get": {
+        "tags": [
+          "Check-ins"
+        ],
+        "summary": "Get a check-in",
+        "description": "Get a check-in by its id. With bearer token authentication, the user must be an administrator of the check-in's location. <h3>OAuth</h3>Required scopes: <code>checkIns.readonly</code> or <code>checkIns</code>",
+        "operationId": "getCheckIn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "checkInId",
+            "required": true,
+            "description": "The ID of the check-in.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "checkIns.readonly",
+              "checkIns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCheckIn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check_ins/v1/checkin": {
+      "post": {
+        "tags": [
+          "Check-ins"
+        ],
+        "summary": "Check in",
+        "description": "Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>",
+        "operationId": "checkIn",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/checkIn"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "checkIns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCheckIn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check_ins/v1/checkout": {
+      "post": {
+        "tags": [
+          "Check-ins"
+        ],
+        "summary": "Check out",
+        "description": "Record a departure on an open check-in. Identify it with its check-in id, or with the location and the six-digit code it was opened with. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>",
+        "operationId": "checkOut",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/checkOut"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "checkIns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCheckIn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/community/companies/v1": {
       "get": {
         "tags": [
@@ -3307,6 +3697,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       }
@@ -3448,6 +3848,20 @@
                       "legalName": {
                         "type": "string"
                       },
+                      "logo": {
+                        "type": "object",
+                        "nullable": true,
+                        "description": "Logo of the company. Upload the file with Create a logo upload first. Set it to null to remove the logo; a key equal to the current logo keeps it.",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the logo file, as returned by the media upload endpoint."
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      },
                       "metadata": {
                         "$ref": "#/components/schemas/metadata"
                       },
@@ -3492,6 +3906,73 @@
                       "$ref": "#/components/schemas/company"
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/community/companies/v1/media": {
+      "post": {
+        "tags": [
+          "Community"
+        ],
+        "summary": "Create a logo upload",
+        "description": "Create an upload for a company logo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>logo.key</code> when creating or updating a company within an hour; a logo that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>community</code>",
+        "operationId": "createCompanyMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createCompanyMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "community"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createCompanyMedia"
                 }
               }
             }
@@ -4833,7 +5314,7 @@
           "Contracts"
         ],
         "summary": "Create a template",
-        "description": "Create a contract template from an uploaded file. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "description": "Create a contract template from a .docx file uploaded through the template upload endpoint. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
         "operationId": "createTemplate",
         "parameters": [
           {
@@ -4864,6 +5345,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/getTemplate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/templates/v1/media": {
+      "post": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Create a template upload",
+        "description": "Create a media upload for a contract template file, a .docx document of up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>template.file.key</code> when creating or updating a template within an hour; a file that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "operationId": "createTemplateMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createTemplateMedia"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "invoices"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTemplateMedia"
                 }
               }
             }
@@ -4947,7 +5492,7 @@
           "Contracts"
         ],
         "summary": "Update a template",
-        "description": "Update a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
+        "description": "Update a contract template. A new file is uploaded through the template upload endpoint. <h3>OAuth</h3>Required scopes: <code>invoices</code>",
         "operationId": "updateTemplate",
         "parameters": [
           {
@@ -4987,6 +5532,16 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -7089,6 +7644,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       }
@@ -7277,6 +7842,16 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -7777,6 +8352,63 @@
         }
       }
     },
+    "/feed/v1/media": {
+      "post": {
+        "tags": [
+          "Feed"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for an image or a video in a post. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in <code>media[].key</code> when creating or updating a post within an hour; a file that is not attached by then is discarded. A video must declare its <code>width</code> and <code>height</code>; an image's dimensions are read from the file. <h3>OAuth</h3>Required scopes: <code>feed</code>",
+        "operationId": "createFeedPostMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createFeedPostMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "feed"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createFeedPostMedia"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/floors/v1": {
       "get": {
         "tags": [
@@ -8070,6 +8702,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       }
@@ -8245,6 +8887,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       },
@@ -8313,6 +8965,63 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guides/v1/media": {
+      "post": {
+        "tags": [
+          "Guides"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for an image or a video in a guide. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned url to the guide <code>description</code> as a Markdown image, <code>![alt text](url)</code>, when creating or updating a guide within an hour; a file that is not attached by then is discarded. A video must declare its <code>width</code> and <code>height</code>; an image's dimensions are read from the file. <h3>OAuth</h3>Required scopes: <code>support</code>",
+        "operationId": "createGuideMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createGuideMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "support"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createGuideMedia"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
@@ -9354,6 +10063,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       }
@@ -9618,6 +10337,63 @@
         }
       }
     },
+    "/resources/v1/media": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for a resource photo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned key to <code>media</code> when creating or updating a resource within an hour; an image that is not attached by then is discarded. A resource holds up to 10 photos, the first being its cover. <h3>OAuth</h3>Required scopes: <code>resources</code>",
+        "operationId": "createResourceMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createResourceMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "resources"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createResourceMedia"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/resources/v1/{resourceId}": {
       "get": {
         "tags": [
@@ -9730,6 +10506,16 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -10803,6 +11589,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       }
@@ -10938,6 +11734,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
           }
         }
       },
@@ -10973,6 +11779,63 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shop/products/v1/media": {
+      "post": {
+        "tags": [
+          "Shop"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for a product cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a product within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>shop</code>",
+        "operationId": "createProductMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createProductMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "shop"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createProductMedia"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -14816,12 +15679,12 @@
     "securitySchemes": {
       "BasicAuth": {
         "type": "http",
-        "description": "See our [authentication documentation](https://www.spacebring.com/docs/api-reference/authentication#basic-authentication) for how to authorize your requests",
+        "description": "See our [authentication documentation](https://www.spacebring.com/docs/developer/api/authentication#basic-authentication) for how to authorize your requests",
         "scheme": "basic"
       },
       "OAuth2": {
         "type": "oauth2",
-        "description": "See our [authentication documentation](https://www.spacebring.com/docs/api-reference/authentication#oauth2) for how to authorize your requests",
+        "description": "See our [authentication documentation](https://www.spacebring.com/docs/developer/api/authentication#oauth2) for how to authorize your requests",
         "flows": {
           "authorizationCode": {
             "authorizationUrl": "https://api.spacebring.com/oauth2/authorize",
@@ -14830,6 +15693,8 @@
             "scopes": {
               "benefits.readonly": "Read benefits and applications",
               "benefits": "Read and write benefits and applications",
+              "checkIns.readonly": "Read check-ins",
+              "checkIns": "Read and write check-ins",
               "community.readonly": "Read community companies and memberships",
               "community": "Read and write community companies and memberships",
               "events.readonly": "Read events and tickets",
@@ -21395,6 +22260,439 @@
           "updateDate"
         ]
       },
+      "getCheckIns": {
+        "type": "object",
+        "properties": {
+          "checkIns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "booking": {
+                  "description": "Booking this check-in was created for, if any.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the booking."
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "checkInDate": {
+                  "description": "ISO timestamp of when the user checked in.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "checkInScheduleRef": {
+                  "description": "ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "checkOutDate": {
+                  "description": "ISO timestamp of when the user checked out.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "code": {
+                  "description": "Confirmation code of the check-in.",
+                  "type": "string"
+                },
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the check-in was created."
+                },
+                "endDate": {
+                  "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "eventTicket": {
+                  "description": "Event ticket this check-in was created for, if any.",
+                  "type": "object",
+                  "properties": {
+                    "eventRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the event."
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the event ticket."
+                    }
+                  },
+                  "required": [
+                    "eventRef",
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the check-in."
+                },
+                "networkRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the network this check-in belongs to."
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the location this check-in belongs to."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "checkedIn",
+                    "checkedOut",
+                    "scheduled",
+                    "expired"
+                  ],
+                  "description": "Status of the check-in."
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the check-in starts."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "deskBooking",
+                    "roomBooking",
+                    "eventTicket",
+                    "visit",
+                    "subscription"
+                  ],
+                  "description": "What the check-in was created for."
+                },
+                "user": {
+                  "description": "The user this check-in is for, read from the users service so the details are current.",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "description": "Email address of the user.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Unique identifier of the user."
+                    },
+                    "name": {
+                      "description": "First name of the user.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "phoneNumber": {
+                      "description": "Phone number of the user.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "photoUrl": {
+                      "description": "User profile photo URL.",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "surname": {
+                      "description": "Surname of the user.",
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "visit": {
+                  "description": "Visit this check-in was created for, if any.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the visit."
+                    },
+                    "userHost": {
+                      "description": "The host the visit is with, read from the users service so the details are current.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the host."
+                        },
+                        "name": {
+                          "description": "First name of the host.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "description": "Surname of the host.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "createDate",
+                "id",
+                "networkRef",
+                "locationRef",
+                "status",
+                "startDate",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of check-ins."
+          },
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "checkIns"
+        ],
+        "additionalProperties": false
+      },
+      "getCheckIn": {
+        "type": "object",
+        "properties": {
+          "checkIn": {
+            "type": "object",
+            "properties": {
+              "booking": {
+                "description": "Booking this check-in was created for, if any.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the booking."
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "checkInDate": {
+                "description": "ISO timestamp of when the user checked in.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "checkInScheduleRef": {
+                "description": "ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "checkOutDate": {
+                "description": "ISO timestamp of when the user checked out.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "code": {
+                "description": "Confirmation code of the check-in.",
+                "type": "string"
+              },
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the check-in was created."
+              },
+              "endDate": {
+                "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "eventTicket": {
+                "description": "Event ticket this check-in was created for, if any.",
+                "type": "object",
+                "properties": {
+                  "eventRef": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the event."
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the event ticket."
+                  }
+                },
+                "required": [
+                  "eventRef",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the check-in."
+              },
+              "networkRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the network this check-in belongs to."
+              },
+              "locationRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the location this check-in belongs to."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "checkedIn",
+                  "checkedOut",
+                  "scheduled",
+                  "expired"
+                ],
+                "description": "Status of the check-in."
+              },
+              "startDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the check-in starts."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "deskBooking",
+                  "roomBooking",
+                  "eventTicket",
+                  "visit",
+                  "subscription"
+                ],
+                "description": "What the check-in was created for."
+              },
+              "user": {
+                "description": "The user this check-in is for, read from the users service so the details are current.",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "description": "Email address of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the user."
+                  },
+                  "name": {
+                    "description": "First name of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "Phone number of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "User profile photo URL.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "Surname of the user.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "visit": {
+                "description": "Visit this check-in was created for, if any.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the visit."
+                  },
+                  "userHost": {
+                    "description": "The host the visit is with, read from the users service so the details are current.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the host."
+                      },
+                      "name": {
+                        "description": "First name of the host.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "Surname of the host.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "createDate",
+              "id",
+              "networkRef",
+              "locationRef",
+              "status",
+              "startDate",
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "The check-in."
+          }
+        },
+        "required": [
+          "checkIn"
+        ],
+        "additionalProperties": false
+      },
       "dateSchema": {
         "format": "date-time",
         "type": "string",
@@ -21468,6 +22766,20 @@
             "format": "uuid",
             "type": "string"
           },
+          "logo": {
+            "type": "object",
+            "description": "Logo of the company. Left out when the company has none.",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the logo file."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL of the logo file."
+              }
+            }
+          },
           "metadata": {
             "$ref": "#/components/schemas/metadata"
           },
@@ -21485,6 +22797,111 @@
             "type": "string"
           }
         }
+      },
+      "createCompanyMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the logo file. Pass it as logo.key when creating or updating a company."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a company. attached: a company references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL of the logo file once it is uploaded, the same URL the company returns as logo.url."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload",
+              "url"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
       },
       "user": {
         "type": "object",
@@ -22616,6 +24033,108 @@
         },
         "required": [
           "template"
+        ],
+        "additionalProperties": false
+      },
+      "createTemplateMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the template file. Pass it as template.file.key when creating or updating a template."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ],
+                "description": "MIME type of the template file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the template file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached. attached: the file is in use."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL of the template file once it is uploaded."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload",
+              "url"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
         ],
         "additionalProperties": false
       },
@@ -25112,6 +26631,109 @@
         ],
         "additionalProperties": false
       },
+      "createFeedPostMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Pass it in media[].key when creating or updating a post."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp",
+                  "video/mp4",
+                  "video/quicktime",
+                  "video/webm"
+                ],
+                "description": "MIME type of the media file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the media file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a post. attached: a post references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
+      },
       "floor": {
         "type": "object",
         "additionalProperties": false,
@@ -25566,6 +27188,114 @@
         },
         "required": [
           "guide"
+        ],
+        "additionalProperties": false
+      },
+      "createGuideMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp",
+                  "video/mp4",
+                  "video/quicktime",
+                  "video/webm"
+                ],
+                "description": "MIME type of the media file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the media file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a guide. attached: a guide references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL of the media file. Add it to the guide description as a Markdown image, ![alt text](url), when creating or updating a guide to attach the file."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload",
+              "url"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
         ],
         "additionalProperties": false
       },
@@ -31105,6 +32835,106 @@
         ],
         "additionalProperties": false
       },
+      "createResourceMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Add it to media when creating or updating a resource."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a resource. attached: a resource references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
+      },
       "getResourceAvailability": {
         "type": "object",
         "properties": {
@@ -36530,6 +38360,106 @@
         },
         "required": [
           "product"
+        ],
+        "additionalProperties": false
+      },
+      "createProductMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Pass it as media[0].key when creating or updating a product."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a product. attached: a product references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
         ],
         "additionalProperties": false
       },
@@ -54517,6 +56447,63 @@
         },
         "required": true
       },
+      "checkIn": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "checkInId": {
+                  "description": "The ID of the check-in.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "code": {
+                  "description": "Confirmation code of the check-in, or a member's personal code. Required when the check-in was created with one.",
+                  "type": "string"
+                },
+                "locationRef": {
+                  "description": "UUID of the location the code was issued in. Required when the check-in is resolved by its code or a customer ref.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "customerRef": {
+                  "description": "ID of a member to check in on their subscription without a code. Only administrators of the location can check a member in this way.",
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "checkOut": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "checkInId": {
+                  "description": "The ID of the check-in.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "code": {
+                  "description": "Confirmation code of the check-in, or a member's personal code. Required when the check-in was created with one.",
+                  "type": "string"
+                },
+                "locationRef": {
+                  "description": "UUID of the location the code was issued in. Required when the check-in is resolved by its code or a customer ref.",
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
       "createCompany": {
         "required": true,
         "content": {
@@ -54569,6 +56556,19 @@
                       "format": "uuid",
                       "description": "The location id where to create a company."
                     },
+                    "logo": {
+                      "type": "object",
+                      "description": "Logo of the company. Upload the file with Create a logo upload first.",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Storage key of the logo file, as returned by the media upload endpoint."
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ]
+                    },
                     "metadata": {
                       "$ref": "#/components/schemas/metadata"
                     },
@@ -54597,6 +56597,48 @@
             }
           }
         }
+      },
+      "createCompanyMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
+              ]
+            }
+          }
+        },
+        "required": true
       },
       "createMembership": {
         "required": true,
@@ -55111,7 +57153,7 @@
                       "properties": {
                         "key": {
                           "type": "string",
-                          "description": "Storage key of the template file."
+                          "description": "Storage key of the uploaded .docx template file, as returned by the media upload endpoint."
                         }
                       },
                       "required": [
@@ -55145,6 +57187,45 @@
         },
         "required": true
       },
+      "createTemplateMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      ],
+                      "description": "MIME type of the file to upload, application/vnd.openxmlformats-officedocument.wordprocessingml.document."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 52428800,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "updateTemplate": {
         "content": {
           "application/json": {
@@ -55159,7 +57240,7 @@
                       "properties": {
                         "key": {
                           "type": "string",
-                          "description": "Storage key of the template file."
+                          "description": "Storage key of the uploaded .docx template file, as returned by the media upload endpoint."
                         }
                       },
                       "required": [
@@ -55991,7 +58072,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the media file."
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -56074,7 +58155,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the media file."
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -56185,6 +58266,65 @@
         },
         "required": true
       },
+      "createFeedPostMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "height": {
+                      "description": "Height of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    },
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp",
+                        "video/mp4",
+                        "video/quicktime",
+                        "video/webm"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 52428800,
+                      "description": "Size of the file in bytes, at most 5242880 for an image and 52428800 for a video. The upload is rejected when the body length differs."
+                    },
+                    "width": {
+                      "description": "Width of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "createGuide": {
         "content": {
           "application/json": {
@@ -56195,7 +58335,7 @@
                   "type": "object",
                   "properties": {
                     "description": {
-                      "description": "Markdown content of the guide.",
+                      "description": "Markdown content of the guide. To show an image or a video, upload it with the media upload endpoint and add its url as a Markdown image, ![alt text](url).",
                       "type": "string"
                     },
                     "locationRef": {
@@ -56261,7 +58401,7 @@
                   "type": "object",
                   "properties": {
                     "description": {
-                      "description": "Markdown content of the guide.",
+                      "description": "Markdown content of the guide. To show an image or a video, upload it with the media upload endpoint and add its url as a Markdown image, ![alt text](url).",
                       "type": "string"
                     },
                     "title": {
@@ -56301,6 +58441,65 @@
               },
               "required": [
                 "guide"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createGuideMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "height": {
+                      "description": "Height of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    },
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp",
+                        "video/mp4",
+                        "video/quicktime",
+                        "video/webm"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 52428800,
+                      "description": "Size of the file in bytes, at most 5242880 for an image and 52428800 for a video. The upload is rejected when the body length differs."
+                    },
+                    "width": {
+                      "description": "Width of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
               ]
             }
           }
@@ -57400,7 +59599,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the uploaded image."
+                            "description": "Storage key of the uploaded image, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -58102,6 +60301,48 @@
         },
         "required": true
       },
+      "createResourceMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "patchResource": {
         "content": {
           "application/json": {
@@ -58387,7 +60628,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the uploaded image."
+                            "description": "Storage key of the uploaded image, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -59416,7 +61657,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the media file."
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -59628,7 +61869,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the media file."
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
                           }
                         },
                         "required": [
@@ -59802,6 +62043,48 @@
               },
               "required": [
                 "product"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createProductMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
               ]
             }
           }

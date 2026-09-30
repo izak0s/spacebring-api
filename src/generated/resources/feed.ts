@@ -7,6 +7,9 @@ import type { components, operations, paths } from "../schema.js";
 /** A Comment entity as returned by the Spacebring API. */
 export type Comment = NonNullable<components["schemas"]["postComment"]>;
 
+/** A FeedMedia entity as returned by the Spacebring API. */
+export type FeedMedia = NonNullable<operations["createFeedPostMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** A Like entity as returned by the Spacebring API. */
 export type Like = NonNullable<components["schemas"]["postLike"]>;
 
@@ -29,11 +32,22 @@ export type CreateFeedPostBody = NonNullable<NonNullable<operations["createFeedP
 /** Request body for `sb.feed.comments.create()`. */
 export type CreateFeedPostCommentBody = NonNullable<NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"]["comment"]>;
 
+/** Request body for `sb.feed.createMedia()`. */
+export type CreateFeedPostMediaBody = NonNullable<NonNullable<operations["createFeedPostMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
+
 /** Request body for `sb.feed.posts.update()`. */
 export type UpdateFeedPostBody = NonNullable<NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for an image or a video in a post. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in `media[].key` when creating or updating a post within an hour; a file that is not attached by then is discarded. A video must declare its `width` and `height`; an image's dimensions are read from the file.
+     */
+    async createMedia(media: CreateFeedPostMediaBody, options?: SpacebringRequestOptions): Promise<FeedMedia> {
+      return unwrapProp(await client.POST("/feed/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /feed/v1/media");
+    },
     comments: {
       /**
        * Create a post comment

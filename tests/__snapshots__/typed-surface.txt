@@ -183,8 +183,33 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
   };
 }
 
+// checkIns.ts
+export type CheckIn = NonNullable<operations["getCheckIn"]["responses"][200]["content"]["application/json"]["checkIn"]>;
+export interface GetCheckInsQuery {
+  "checkInDate[gte]"?: string;
+  "checkInDate[lte]"?: string;
+  limit?: number;
+  locationRef: string;
+  nextPageToken?: string;
+  status?: string;
+  type?: string;
+  userRef?: string;
+}
+export type CheckInBody = NonNullable<operations["checkIn"]["requestBody"]>["content"]["application/json"];
+export type CheckOutBody = NonNullable<operations["checkOut"]["requestBody"]>["content"]["application/json"];
+export function createCheckins(client: Client<paths>, defaults: SpacebringDefaults) {
+  return {
+    async list(query: GetCheckInsQuery, options?: SpacebringRequestOptions): Promise<{ checkIns: CheckIn[]; nextPageToken?: string; searchQueryNext?: string }>
+    iterate(query: Omit<GetCheckInsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CheckIn, void, undefined>
+    async get(checkInId: string, options?: SpacebringRequestOptions): Promise<CheckIn>
+    async checkIn(body: CheckInBody, options?: SpacebringRequestOptions): Promise<CheckIn>
+    async checkOut(body: CheckOutBody, options?: SpacebringRequestOptions): Promise<CheckIn>
+  };
+}
+
 // community.ts
 export type Company = NonNullable<components["schemas"]["company"]>;
+export type CompanyMedia = NonNullable<operations["createCompanyMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export type Membership = NonNullable<components["schemas"]["membership"]>;
 export interface GetCompaniesQuery {
   locationRef: string;
@@ -210,6 +235,7 @@ export interface GetMembershipsQuery {
   types?: "member" | "nonmember";
 }
 export type CreateCompanyBody = NonNullable<NonNullable<operations["createCompany"]["requestBody"]>["content"]["application/json"]["company"]>;
+export type CreateCompanyMediaBody = NonNullable<NonNullable<operations["createCompanyMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type CreateMembershipBody = NonNullable<operations["createMembership"]["requestBody"]>["content"]["application/json"];
 export type UpdateCompanyBody = NonNullable<NonNullable<operations["updateCompany"]["requestBody"]>["content"]["application/json"]["company"]>;
 export type UpdateMembershipBody = NonNullable<NonNullable<operations["updateMembership"]["requestBody"]>["content"]["application/json"]["membership"]>;
@@ -221,6 +247,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
       async get(id: string, options?: SpacebringRequestOptions): Promise<Company>
       async create(company: CreateCompanyBody, options?: SpacebringRequestOptions): Promise<Company>
       async update(id: string, company: UpdateCompanyBody, options?: SpacebringRequestOptions): Promise<Company>
+      async createMedia(media: CreateCompanyMediaBody, options?: SpacebringRequestOptions): Promise<CompanyMedia>
     },
     memberships: {
       async list(query: GetMembershipsQuery, options?: SpacebringRequestOptions): Promise<{ memberships?: Membership[]; nextPageToken?: string; searchQueryNext?: string }>
@@ -238,6 +265,7 @@ export function createCommunity(client: Client<paths>, defaults: SpacebringDefau
 // contracts.ts
 export type Contract = NonNullable<operations["getContract"]["responses"][200]["content"]["application/json"]["contract"]>;
 export type Template = NonNullable<operations["getTemplate"]["responses"][200]["content"]["application/json"]["template"]>;
+export type TemplateMedia = NonNullable<operations["createTemplateMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetContractsQuery {
   "createDate[gte]"?: string;
   "createDate[lte]"?: string;
@@ -261,6 +289,7 @@ export interface GetTemplatesQuery {
 }
 export type CreateContractBody = NonNullable<NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
 export type CreateTemplateBody = NonNullable<NonNullable<operations["createTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
+export type CreateTemplateMediaBody = NonNullable<NonNullable<operations["createTemplateMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type IssueContractBody = NonNullable<NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]["signatureMethod"]>;
 export type TerminateContractBody = NonNullable<NonNullable<operations["terminateContract"]["requestBody"]>["content"]["application/json"]["reason"]>;
 export type UpdateContractBody = NonNullable<NonNullable<operations["updateContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
@@ -285,6 +314,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       async create(template: CreateTemplateBody, options?: SpacebringRequestOptions): Promise<Template>
       async update(templateId: string, template: UpdateTemplateBody, options?: SpacebringRequestOptions): Promise<undefined>
       async delete(templateId: string, options?: SpacebringRequestOptions): Promise<undefined>
+      async createMedia(media: CreateTemplateMediaBody, options?: SpacebringRequestOptions): Promise<TemplateMedia>
       async duplicate(templateId: string, options?: SpacebringRequestOptions): Promise<Template>
     },
   };
@@ -386,6 +416,7 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
 
 // feed.ts
 export type Comment = NonNullable<components["schemas"]["postComment"]>;
+export type FeedMedia = NonNullable<operations["createFeedPostMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export type Like = NonNullable<components["schemas"]["postLike"]>;
 export type Post = NonNullable<components["schemas"]["post"]>;
 export interface GetFeedPostsQuery {
@@ -395,9 +426,11 @@ export interface GetFeedPostsQuery {
 }
 export type CreateFeedPostBody = NonNullable<NonNullable<operations["createFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 export type CreateFeedPostCommentBody = NonNullable<NonNullable<operations["createFeedPostComment"]["requestBody"]>["content"]["application/json"]["comment"]>;
+export type CreateFeedPostMediaBody = NonNullable<NonNullable<operations["createFeedPostMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type UpdateFeedPostBody = NonNullable<NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
+    async createMedia(media: CreateFeedPostMediaBody, options?: SpacebringRequestOptions): Promise<FeedMedia>
     comments: {
       async create(comment: CreateFeedPostCommentBody, options?: SpacebringRequestOptions): Promise<Comment>
       async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
@@ -434,12 +467,14 @@ export function createFloors(client: Client<paths>, defaults: SpacebringDefaults
 
 // guides.ts
 export type Guide = NonNullable<components["schemas"]["guide"]>;
+export type GuideMedia = NonNullable<operations["createGuideMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetGuidesQuery {
   limit?: number;
   locationRef: string;
   nextPageToken?: string;
 }
 export type CreateGuideBody = NonNullable<NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
+export type CreateGuideMediaBody = NonNullable<NonNullable<operations["createGuideMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type PatchGuideBody = NonNullable<NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
 export function createGuides(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -449,6 +484,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
     async create(guide: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
     async update(guideId: string, guide: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
     async delete(guideId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async createMedia(media: CreateGuideMediaBody, options?: SpacebringRequestOptions): Promise<GuideMedia>
   };
 }
 
@@ -528,6 +564,7 @@ export type Assignment = NonNullable<operations["getAssignments"]["responses"][2
 export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
 export type GetResourceAvailability = NonNullable<components["schemas"]["getResourceAvailability"]>;
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
+export type ResourceMedia = NonNullable<operations["createResourceMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetAssignmentsQuery {
   limit?: number;
   locationRef?: string;
@@ -570,6 +607,7 @@ export interface GetResourcesQuery {
 export type CreateAssignmentBody = NonNullable<NonNullable<operations["createAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 export type CreateBookingBody = NonNullable<operations["createBooking"]["requestBody"]>["content"]["application/json"];
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
+export type CreateResourceMediaBody = NonNullable<NonNullable<operations["createResourceMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type GetResourceAvailabilityBody = NonNullable<operations["getResourceAvailability"]["requestBody"]>["content"]["application/json"];
 export type PatchAssignmentBody = NonNullable<NonNullable<operations["patchAssignment"]["requestBody"]>["content"]["application/json"]["assignment"]>;
 export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBody"]>["content"]["application/json"];
@@ -581,6 +619,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     async get(resourceId: string, options?: SpacebringRequestOptions): Promise<Resource>
     async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource>
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async createMedia(media: CreateResourceMediaBody, options?: SpacebringRequestOptions): Promise<ResourceMedia>
     async getResourceAvailability(resourceId: string, body: GetResourceAvailabilityBody, options?: SpacebringRequestOptions): Promise<GetResourceAvailability>
     assignments: {
       async list(query?: GetAssignmentsQuery, options?: SpacebringRequestOptions): Promise<{ assignments: Assignment[]; nextPageToken?: string; searchQueryNext?: string }>
@@ -602,6 +641,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
 // shop.ts
 export type Order = NonNullable<operations["getOrder"]["responses"][200]["content"]["application/json"]["order"]>;
 export type Product = NonNullable<components["schemas"]["product"]>;
+export type ProductMedia = NonNullable<operations["createProductMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export type ShopCategory = NonNullable<components["schemas"]["shopCategory"]>;
 export interface GetOrdersQuery {
   categoryRef?: string;
@@ -631,6 +671,7 @@ export interface GetShopCategoriesQuery {
   locationRef: string;
 }
 export type CreateProductBody = NonNullable<NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
+export type CreateProductMediaBody = NonNullable<NonNullable<operations["createProductMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type CreateShopCategoryBody = NonNullable<NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
 export type UpdateProductBody = NonNullable<NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
 export type UpdateShopCategoryBody = NonNullable<NonNullable<operations["updateShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
@@ -655,6 +696,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
       async create(product: CreateProductBody, options?: SpacebringRequestOptions): Promise<Product>
       async update(productId: string, product: UpdateProductBody, options?: SpacebringRequestOptions): Promise<Product>
       async delete(productId: string, options?: SpacebringRequestOptions): Promise<undefined>
+      async createMedia(media: CreateProductMediaBody, options?: SpacebringRequestOptions): Promise<ProductMedia>
     },
   };
 }

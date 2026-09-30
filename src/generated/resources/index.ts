@@ -6,6 +6,7 @@ import type { paths } from "../schema.js";
 import { createAltcurrencies as altCurrenciesGroup } from "./altCurrencies.js";
 import { createBenefits as benefitsGroup } from "./benefits.js";
 import { createBilling as billingGroup } from "./billing.js";
+import { createCheckins as checkInsGroup } from "./checkIns.js";
 import { createCommunity as communityGroup } from "./community.js";
 import { createContracts as contractsGroup } from "./contracts.js";
 import { createDiscounts as discountsGroup } from "./discounts.js";
@@ -30,6 +31,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     altCurrencies: altCurrenciesGroup(client, defaults),
     benefits: benefitsGroup(client, defaults),
     billing: billingGroup(client, defaults),
+    checkIns: checkInsGroup(client, defaults),
     community: communityGroup(client, defaults),
     contracts: contractsGroup(client, defaults),
     discounts: discountsGroup(client, defaults),

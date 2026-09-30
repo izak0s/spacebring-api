@@ -10,6 +10,9 @@ export type Contract = NonNullable<operations["getContract"]["responses"][200]["
 /** A Template entity as returned by the Spacebring API. */
 export type Template = NonNullable<operations["getTemplate"]["responses"][200]["content"]["application/json"]["template"]>;
 
+/** A TemplateMedia entity as returned by the Spacebring API. */
+export type TemplateMedia = NonNullable<operations["createTemplateMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.contracts.list()`. */
 export interface GetContractsQuery {
   /** Filter contracts created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
@@ -52,6 +55,9 @@ export type CreateContractBody = NonNullable<NonNullable<operations["createContr
 
 /** Request body for `sb.contracts.templates.create()`. */
 export type CreateTemplateBody = NonNullable<NonNullable<operations["createTemplate"]["requestBody"]>["content"]["application/json"]["template"]>;
+
+/** Request body for `sb.contracts.templates.createMedia()`. */
+export type CreateTemplateMediaBody = NonNullable<NonNullable<operations["createTemplateMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.contracts.issue()`. */
 export type IssueContractBody = NonNullable<NonNullable<operations["issueContract"]["requestBody"]>["content"]["application/json"]["signatureMethod"]>;
@@ -209,7 +215,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       /**
        * Create a template
        *
-       * Create a contract template from an uploaded file.
+       * Create a contract template from a .docx file uploaded through the template upload endpoint.
        */
       async create(template: CreateTemplateBody, options?: SpacebringRequestOptions): Promise<Template> {
         return unwrapProp(await client.POST("/contracts/templates/v1", { body: { template }, signal: options?.signal }), "template", "POST /contracts/templates/v1");
@@ -217,7 +223,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
       /**
        * Update a template
        *
-       * Update a contract template.
+       * Update a contract template. A new file is uploaded through the template upload endpoint.
        *
        * @param templateId The id of the template.
        * @param template The `template` payload.
@@ -236,6 +242,14 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
        */
       async delete(templateId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/contracts/templates/v1/{templateId}", { params: { path: { templateId } }, signal: options?.signal }), "DELETE /contracts/templates/v1/{templateId}");
+      },
+      /**
+       * Create a template upload
+       *
+       * Create a media upload for a contract template file, a .docx document of up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `template.file.key` when creating or updating a template within an hour; a file that is not attached by then is discarded.
+       */
+      async createMedia(media: CreateTemplateMediaBody, options?: SpacebringRequestOptions): Promise<TemplateMedia> {
+        return unwrapProp(await client.POST("/contracts/templates/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /contracts/templates/v1/media");
       },
       /**
        * Duplicate a template
