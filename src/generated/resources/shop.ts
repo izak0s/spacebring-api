@@ -10,6 +10,9 @@ export type Order = NonNullable<operations["getOrder"]["responses"][200]["conten
 /** A Product entity as returned by the Spacebring API. */
 export type Product = NonNullable<components["schemas"]["product"]>;
 
+/** A ProductMedia entity as returned by the Spacebring API. */
+export type ProductMedia = NonNullable<operations["createProductMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** A ShopCategory entity as returned by the Spacebring API. */
 export type ShopCategory = NonNullable<components["schemas"]["shopCategory"]>;
 
@@ -65,6 +68,9 @@ export interface GetShopCategoriesQuery {
 
 /** Request body for `sb.shop.products.create()`. */
 export type CreateProductBody = NonNullable<NonNullable<operations["createProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
+
+/** Request body for `sb.shop.products.createMedia()`. */
+export type CreateProductMediaBody = NonNullable<NonNullable<operations["createProductMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.shop.categories.create()`. */
 export type CreateShopCategoryBody = NonNullable<NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
@@ -224,6 +230,14 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        */
       async delete(productId: string, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.DELETE("/shop/products/v1/{productId}", { params: { path: { productId } }, signal: options?.signal }), "DELETE /shop/products/v1/{productId}");
+      },
+      /**
+       * Create a media upload
+       *
+       * Create a media upload for a product cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `media[0].key` when creating or updating a product within an hour; an image that is not attached by then is discarded.
+       */
+      async createMedia(media: CreateProductMediaBody, options?: SpacebringRequestOptions): Promise<ProductMedia> {
+        return unwrapProp(await client.POST("/shop/products/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /shop/products/v1/media");
       },
     },
   };

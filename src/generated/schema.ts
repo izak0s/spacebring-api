@@ -572,6 +572,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/check_ins/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve check-ins
+         * @description Retrieve the check-ins of a location, newest arrival first. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns.readonly</code> or <code>checkIns</code>
+         */
+        get: operations["getCheckIns"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/check_ins/v1/{checkInId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a check-in
+         * @description Get a check-in by its id. With bearer token authentication, the user must be an administrator of the check-in's location. <h3>OAuth</h3>Required scopes: <code>checkIns.readonly</code> or <code>checkIns</code>
+         */
+        get: operations["getCheckIn"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/check_ins/v1/checkin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check in
+         * @description Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>
+         */
+        post: operations["checkIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/check_ins/v1/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check out
+         * @description Record a departure on an open check-in. Identify it with its check-in id, or with the location and the six-digit code it was opened with. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>
+         */
+        post: operations["checkOut"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/community/companies/v1": {
         parameters: {
             query?: never;
@@ -614,6 +694,26 @@ export interface paths {
          */
         put: operations["updateCompany"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/community/companies/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a logo upload
+         * @description Create an upload for a company logo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>logo.key</code> when creating or updating a company within an hour; a logo that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>community</code>
+         */
+        post: operations["createCompanyMedia"];
         delete?: never;
         options?: never;
         head?: never;
@@ -859,9 +959,29 @@ export interface paths {
         put?: never;
         /**
          * Create a template
-         * @description Create a contract template from an uploaded file. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         * @description Create a contract template from a .docx file uploaded through the template upload endpoint. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         post: operations["createTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contracts/templates/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a template upload
+         * @description Create a media upload for a contract template file, a .docx document of up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>template.file.key</code> when creating or updating a template within an hour; a file that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        post: operations["createTemplateMedia"];
         delete?: never;
         options?: never;
         head?: never;
@@ -891,7 +1011,7 @@ export interface paths {
         head?: never;
         /**
          * Update a template
-         * @description Update a contract template. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         * @description Update a contract template. A new file is uploaded through the template upload endpoint. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         patch: operations["updateTemplate"];
         trace?: never;
@@ -1417,6 +1537,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/feed/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for an image or a video in a post. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in <code>media[].key</code> when creating or updating a post within an hour; a file that is not attached by then is discarded. A video must declare its <code>width</code> and <code>height</code>; an image's dimensions are read from the file. <h3>OAuth</h3>Required scopes: <code>feed</code>
+         */
+        post: operations["createFeedPostMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/floors/v1": {
         parameters: {
             query?: never;
@@ -1507,6 +1647,26 @@ export interface paths {
          * @description Update a guide. At least one guide property must be provided. <h3>OAuth</h3>Required scopes: <code>support</code>. Admin (or equivalent) role in the guide's organization is required.
          */
         patch: operations["patchGuide"];
+        trace?: never;
+    };
+    "/guides/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for an image or a video in a guide. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned url to the guide <code>description</code> as a Markdown image, <code>![alt text](url)</code>, when creating or updating a guide within an hour; a file that is not attached by then is discarded. A video must declare its <code>width</code> and <code>height</code>; an image's dimensions are read from the file. <h3>OAuth</h3>Required scopes: <code>support</code>
+         */
+        post: operations["createGuideMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/locations/v1": {
@@ -1757,6 +1917,26 @@ export interface paths {
         patch: operations["patchAssignment"];
         trace?: never;
     };
+    "/resources/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for a resource photo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned key to <code>media</code> when creating or updating a resource within an hour; an image that is not attached by then is discarded. A resource holds up to 10 photos, the first being its cover. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        post: operations["createResourceMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/resources/v1/{resourceId}": {
         parameters: {
             query?: never;
@@ -1952,6 +2132,26 @@ export interface paths {
          * @description Delete a certain product. <h3>OAuth</h3>Required scopes: <code>shop</code>
          */
         delete: operations["deleteProduct"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for a product cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a product within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>shop</code>
+         */
+        post: operations["createProductMedia"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -5853,6 +6053,252 @@ export interface components {
              */
             voidDate?: string;
         };
+        getCheckIns: {
+            /** @description List of check-ins. */
+            checkIns: {
+                /** @description Booking this check-in was created for, if any. */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the booking.
+                     */
+                    id: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the user checked in.
+                 */
+                checkInDate?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
+                 */
+                checkInScheduleRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the user checked out.
+                 */
+                checkOutDate?: string;
+                /** @description Confirmation code of the check-in. */
+                code?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in was created.
+                 */
+                createDate: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.
+                 */
+                endDate?: string;
+                /** @description Event ticket this check-in was created for, if any. */
+                eventTicket?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the event.
+                     */
+                    eventRef: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the event ticket.
+                     */
+                    id: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the check-in.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this check-in belongs to.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this check-in belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * @description Status of the check-in.
+                 * @enum {string}
+                 */
+                status: "checkedIn" | "checkedOut" | "scheduled" | "expired";
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in starts.
+                 */
+                startDate: string;
+                /**
+                 * @description What the check-in was created for.
+                 * @enum {string}
+                 */
+                type: "deskBooking" | "roomBooking" | "eventTicket" | "visit" | "subscription";
+                /** @description The user this check-in is for, read from the users service so the details are current. */
+                user?: {
+                    /** @description Email address of the user. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description First name of the user. */
+                    name?: string | null;
+                    /** @description Phone number of the user. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description Surname of the user. */
+                    surname?: string | null;
+                };
+                /** @description Visit this check-in was created for, if any. */
+                visit?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the visit.
+                     */
+                    id: string;
+                    /** @description The host the visit is with, read from the users service so the details are current. */
+                    userHost?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the host.
+                         */
+                        id: string;
+                        /** @description First name of the host. */
+                        name?: string | null;
+                        /** @description Surname of the host. */
+                        surname?: string | null;
+                    };
+                };
+            }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getCheckIn: {
+            /** @description The check-in. */
+            checkIn: {
+                /** @description Booking this check-in was created for, if any. */
+                booking?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the booking.
+                     */
+                    id: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the user checked in.
+                 */
+                checkInDate?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
+                 */
+                checkInScheduleRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the user checked out.
+                 */
+                checkOutDate?: string;
+                /** @description Confirmation code of the check-in. */
+                code?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in was created.
+                 */
+                createDate: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.
+                 */
+                endDate?: string;
+                /** @description Event ticket this check-in was created for, if any. */
+                eventTicket?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the event.
+                     */
+                    eventRef: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of the event ticket.
+                     */
+                    id: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the check-in.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the network this check-in belongs to.
+                 */
+                networkRef: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this check-in belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * @description Status of the check-in.
+                 * @enum {string}
+                 */
+                status: "checkedIn" | "checkedOut" | "scheduled" | "expired";
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the check-in starts.
+                 */
+                startDate: string;
+                /**
+                 * @description What the check-in was created for.
+                 * @enum {string}
+                 */
+                type: "deskBooking" | "roomBooking" | "eventTicket" | "visit" | "subscription";
+                /** @description The user this check-in is for, read from the users service so the details are current. */
+                user?: {
+                    /** @description Email address of the user. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description Unique identifier of the user.
+                     */
+                    id: string;
+                    /** @description First name of the user. */
+                    name?: string | null;
+                    /** @description Phone number of the user. */
+                    phoneNumber?: string | null;
+                    /** @description User profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description Surname of the user. */
+                    surname?: string | null;
+                };
+                /** @description Visit this check-in was created for, if any. */
+                visit?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the visit.
+                     */
+                    id: string;
+                    /** @description The host the visit is with, read from the users service so the details are current. */
+                    userHost?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the host.
+                         */
+                        id: string;
+                        /** @description First name of the host. */
+                        name?: string | null;
+                        /** @description Surname of the host. */
+                        surname?: string | null;
+                    };
+                };
+            };
+        };
         /**
          * Format: date-time
          * @description The date and time in ISO 8601 format, e.g. 2021-05-21T10:00:00Z
@@ -5883,12 +6329,62 @@ export interface components {
             legalName?: string;
             /** Format: uuid */
             locationRef?: string;
+            /** @description Logo of the company. Left out when the company has none. */
+            logo?: {
+                /** @description Storage key of the logo file. */
+                key?: string;
+                /** @description Public URL of the logo file. */
+                url?: string;
+            };
             metadata?: components["schemas"]["metadata"];
             notes?: string;
             /** Format: uuid */
             subscriptionRef?: string;
             taxId?: string;
             title?: string;
+        };
+        createCompanyMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the logo file. Pass it as logo.key when creating or updating a company. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a company. attached: a company references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+                /** @description Public URL of the logo file once it is uploaded, the same URL the company returns as logo.url. */
+                url: string;
+            };
         };
         user: {
             about?: string;
@@ -6452,6 +6948,49 @@ export interface components {
                  * @description ISO timestamp of when the template was last updated.
                  */
                 updateDate: string;
+            };
+        };
+        createTemplateMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the template file. Pass it as template.file.key when creating or updating a template. */
+                key: string;
+                /**
+                 * @description MIME type of the template file.
+                 * @enum {string}
+                 */
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                /** @description Size of the template file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached. attached: the file is in use.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+                /** @description Public URL of the template file once it is uploaded. */
+                url: string;
             };
         };
         coupon: {
@@ -7616,6 +8155,47 @@ export interface components {
              */
             postRef: string;
         };
+        createFeedPostMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it in media[].key when creating or updating a post. */
+                key: string;
+                /**
+                 * @description MIME type of the media file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp" | "video/mp4" | "video/quicktime" | "video/webm";
+                /** @description Size of the media file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a post. attached: a post references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+            };
+        };
         floor: {
             /**
              * Format: date-time
@@ -7818,6 +8398,49 @@ export interface components {
                  * @enum {string}
                  */
                 visibility: "public" | "admins" | "members" | "networkMembers";
+            };
+        };
+        createGuideMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. */
+                key: string;
+                /**
+                 * @description MIME type of the media file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp" | "video/mp4" | "video/quicktime" | "video/webm";
+                /** @description Size of the media file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a guide. attached: a guide references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+                /** @description Public URL of the media file. Add it to the guide description as a Markdown image, ![alt text](url), when creating or updating a guide to attach the file. */
+                url: string;
             };
         };
         /** @description Timezone identifier for the location (e.g. 'Europe/Kyiv') */
@@ -10172,6 +10795,47 @@ export interface components {
                     name?: string | null;
                     /** @description User last name. */
                     surname?: string | null;
+                };
+            };
+        };
+        createResourceMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Add it to media when creating or updating a resource. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a resource. attached: a resource references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
                 };
             };
         };
@@ -12779,6 +13443,47 @@ export interface components {
                  * @enum {string}
                  */
                 visibility: "public" | "admins" | "members" | "networkMembers";
+            };
+        };
+        createProductMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating a product. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a product. attached: a product references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
             };
         };
         getOrders: {
@@ -21630,6 +22335,47 @@ export interface components {
                 };
             };
         };
+        checkIn: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: uuid
+                     * @description The ID of the check-in.
+                     */
+                    checkInId?: string;
+                    /** @description Confirmation code of the check-in, or a member's personal code. Required when the check-in was created with one. */
+                    code?: string;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the location the code was issued in. Required when the check-in is resolved by its code or a customer ref.
+                     */
+                    locationRef?: string;
+                    /**
+                     * Format: uuid
+                     * @description ID of a member to check in on their subscription without a code. Only administrators of the location can check a member in this way.
+                     */
+                    customerRef?: string;
+                };
+            };
+        };
+        checkOut: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: uuid
+                     * @description The ID of the check-in.
+                     */
+                    checkInId?: string;
+                    /** @description Confirmation code of the check-in, or a member's personal code. Required when the check-in was created with one. */
+                    code?: string;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the location the code was issued in. Required when the check-in is resolved by its code or a customer ref.
+                     */
+                    locationRef?: string;
+                };
+            };
+        };
         createCompany: {
             content: {
                 "application/json": {
@@ -21657,6 +22403,11 @@ export interface components {
                          * @description The location id where to create a company.
                          */
                         locationRef: string;
+                        /** @description Logo of the company. Upload the file with Create a logo upload first. */
+                        logo?: {
+                            /** @description Storage key of the logo file, as returned by the media upload endpoint. */
+                            key: string;
+                        };
                         metadata?: components["schemas"]["metadata"];
                         /** @description The notes of company to create. */
                         notes?: string;
@@ -21664,6 +22415,22 @@ export interface components {
                         taxId?: string;
                         /** @description The title of company to create. */
                         title: string;
+                    };
+                };
+            };
+        };
+        createCompanyMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -21952,7 +22719,7 @@ export interface components {
                     template: {
                         /** @description Template file reference. */
                         file: {
-                            /** @description Storage key of the template file. */
+                            /** @description Storage key of the uploaded .docx template file, as returned by the media upload endpoint. */
                             key: string;
                         };
                         /**
@@ -21966,6 +22733,22 @@ export interface components {
                 };
             };
         };
+        createTemplateMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload, application/vnd.openxmlformats-officedocument.wordprocessingml.document.
+                         * @enum {string}
+                         */
+                        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
+                    };
+                };
+            };
+        };
         updateTemplate: {
             content: {
                 "application/json": {
@@ -21973,7 +22756,7 @@ export interface components {
                     template: {
                         /** @description Template file reference. */
                         file?: {
-                            /** @description Storage key of the template file. */
+                            /** @description Storage key of the uploaded .docx template file, as returned by the media upload endpoint. */
                             key: string;
                         };
                         /** @description Template title. */
@@ -22308,7 +23091,7 @@ export interface components {
                         locationRef: string;
                         /** @description Media files to attach to the post. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Open Graph metadata for link previews. */
@@ -22342,7 +23125,7 @@ export interface components {
                     post: {
                         /** @description Media files to attach to the post. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Open Graph metadata for link previews. */
@@ -22395,12 +23178,32 @@ export interface components {
                 };
             };
         };
+        createFeedPostMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /** @description Height of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        height?: number;
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp" | "video/mp4" | "video/quicktime" | "video/webm";
+                        /** @description Size of the file in bytes, at most 5242880 for an image and 52428800 for a video. The upload is rejected when the body length differs. */
+                        size: number;
+                        /** @description Width of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        width?: number;
+                    };
+                };
+            };
+        };
         createGuide: {
             content: {
                 "application/json": {
                     /** @description Guide to create. */
                     guide: {
-                        /** @description Markdown content of the guide. */
+                        /** @description Markdown content of the guide. To show an image or a video, upload it with the media upload endpoint and add its url as a Markdown image, ![alt text](url). */
                         description?: string;
                         /**
                          * Format: uuid
@@ -22427,7 +23230,7 @@ export interface components {
                 "application/json": {
                     /** @description Guide fields to update. */
                     guide: {
-                        /** @description Markdown content of the guide. */
+                        /** @description Markdown content of the guide. To show an image or a video, upload it with the media upload endpoint and add its url as a Markdown image, ![alt text](url). */
                         description?: string;
                         /** @description Display name of the guide. */
                         title?: string;
@@ -22440,6 +23243,26 @@ export interface components {
                         attachments?: {
                             key: string;
                         }[];
+                    };
+                };
+            };
+        };
+        createGuideMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /** @description Height of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        height?: number;
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp" | "video/mp4" | "video/quicktime" | "video/webm";
+                        /** @description Size of the file in bytes, at most 5242880 for an image and 52428800 for a video. The upload is rejected when the body length differs. */
+                        size: number;
+                        /** @description Width of a video in pixels, required for a video, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        width?: number;
                     };
                 };
             };
@@ -22957,7 +23780,7 @@ export interface components {
                         locationRef: string;
                         /** @description Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all. */
                         media?: {
-                            /** @description Storage key of the uploaded image. */
+                            /** @description Storage key of the uploaded image, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Money pricing settings. */
@@ -23253,6 +24076,22 @@ export interface components {
                 };
             };
         };
+        createResourceMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
+                    };
+                };
+            };
+        };
         patchResource: {
             content: {
                 "application/json": {
@@ -23368,7 +24207,7 @@ export interface components {
                         kisiGroupRef?: number | null;
                         /** @description Images of the resource in display order, the first one being its cover. On update the list replaces the current images, and an empty list removes them all. */
                         media?: {
-                            /** @description Storage key of the uploaded image. */
+                            /** @description Storage key of the uploaded image, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Money pricing settings. */
@@ -23831,7 +24670,7 @@ export interface components {
                         locationRef: string;
                         /** @description Media files of the product. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Purchasable options for this product. */
@@ -23967,7 +24806,7 @@ export interface components {
                         featured?: boolean;
                         /** @description Media files of the product. */
                         media?: {
-                            /** @description Storage key of the media file. */
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
                         /** @description Purchasable options for this product. */
@@ -24080,6 +24919,22 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "members" | "networkMembers";
+                    };
+                };
+            };
+        };
+        createProductMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -26881,6 +27736,226 @@ export interface operations {
             };
         };
     };
+    getCheckIns: {
+        parameters: {
+            query: {
+                /** @description Filter check-ins whose arrival is on or after this date (ISO 8601). Use with checkInDate[lte] for a range. */
+                "checkInDate[gte]"?: string;
+                /** @description Filter check-ins whose arrival is on or before this date (ISO 8601). Use with checkInDate[gte] for a range. */
+                "checkInDate[lte]"?: string;
+                /** @description Maximum number of check-ins per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location. */
+                locationRef: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Comma-separated list of check-in statuses to filter by, e.g. `scheduled,checkedIn`. Valid values: checkedIn, checkedOut, scheduled, expired. Defaults to all statuses. */
+                status?: string;
+                /** @description Comma-separated list of check-in types to filter by, e.g. `eventTicket,visit`. Valid values: deskBooking, roomBooking, eventTicket, visit, subscription. Defaults to all types. */
+                type?: string;
+                /** @description UUID of the user to filter check-ins by. Defaults to check-ins of every user. */
+                userRef?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCheckIns"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getCheckIn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The ID of the check-in. */
+                checkInId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCheckIn"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    checkIn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["checkIn"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCheckIn"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    checkOut: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["checkOut"];
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCheckIn"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     getCompanies: {
         parameters: {
             query: {
@@ -26959,6 +28034,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getCompany: {
@@ -27025,6 +28109,11 @@ export interface operations {
                             state?: string;
                         };
                         legalName?: string;
+                        /** @description Logo of the company. Upload the file with Create a logo upload first. Set it to null to remove the logo; a key equal to the current logo keeps it. */
+                        logo?: {
+                            /** @description Storage key of the logo file, as returned by the media upload endpoint. */
+                            key: string;
+                        } | null;
                         metadata?: components["schemas"]["metadata"];
                         notes?: string;
                         taxId?: string;
@@ -27043,6 +28132,47 @@ export interface operations {
                     "application/json": {
                         company?: components["schemas"]["company"];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createCompanyMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createCompanyMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createCompanyMedia"];
                 };
             };
             /** @description Bad Request */
@@ -27745,6 +28875,47 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createTemplateMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createTemplateMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createTemplateMedia"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getTemplate: {
@@ -27839,6 +29010,15 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -28890,6 +30070,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getFeedPost: {
@@ -28957,6 +30146,15 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -29278,6 +30476,38 @@ export interface operations {
             };
         };
     };
+    createFeedPostMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createFeedPostMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createFeedPostMedia"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     getFloors: {
         parameters: {
             query: {
@@ -29429,6 +30659,15 @@ export interface operations {
             };
             /** @description Forbidden */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -29588,6 +30827,47 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createGuideMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createGuideMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createGuideMedia"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -30143,6 +31423,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getAssignments: {
@@ -30303,6 +31592,38 @@ export interface operations {
             };
         };
     };
+    createResourceMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createResourceMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createResourceMedia"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     getResource: {
         parameters: {
             query?: never;
@@ -30362,6 +31683,15 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -30870,6 +32200,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     getProduct: {
@@ -30942,6 +32281,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     deleteProduct: {
@@ -30962,6 +32310,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createProductMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createProductMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createProductMedia"];
+                };
             };
             /** @description Bad Request */
             400: {

@@ -16,6 +16,9 @@ export type GetResourceAvailability = NonNullable<components["schemas"]["getReso
 /** A Resource entity as returned by the Spacebring API. */
 export type Resource = NonNullable<operations["getResource"]["responses"][200]["content"]["application/json"]["resource"]>;
 
+/** A ResourceMedia entity as returned by the Spacebring API. */
+export type ResourceMedia = NonNullable<operations["createResourceMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.resources.assignments.list()`. */
 export interface GetAssignmentsQuery {
   /** Maximum number of assignments per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. Ignored when registrationRef is used. */
@@ -103,6 +106,9 @@ export type CreateBookingBody = NonNullable<operations["createBooking"]["request
 /** Request body for `sb.resources.create()`. */
 export type CreateResourceBody = NonNullable<NonNullable<operations["createResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 
+/** Request body for `sb.resources.createMedia()`. */
+export type CreateResourceMediaBody = NonNullable<NonNullable<operations["createResourceMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
+
 /** Request body for `sb.resources.getResourceAvailability()`. */
 export type GetResourceAvailabilityBody = NonNullable<operations["getResourceAvailability"]["requestBody"]>["content"]["application/json"];
 
@@ -167,6 +173,14 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      */
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.PATCH("/resources/v1/{resourceId}", { params: { path: { resourceId } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{resourceId}");
+    },
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for a resource photo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned key to `media` when creating or updating a resource within an hour; an image that is not attached by then is discarded. A resource holds up to 10 photos, the first being its cover.
+     */
+    async createMedia(media: CreateResourceMediaBody, options?: SpacebringRequestOptions): Promise<ResourceMedia> {
+      return unwrapProp(await client.POST("/resources/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /resources/v1/media");
     },
     /**
      * Check resource availability
