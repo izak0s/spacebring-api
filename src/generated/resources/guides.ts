@@ -4,6 +4,9 @@ import type { Client } from "openapi-fetch";
 import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringRequestOptions } from "../../core.js";
 import type { components, operations, paths } from "../schema.js";
 
+/** A Attachment entity as returned by the Spacebring API. */
+export type Attachment = NonNullable<operations["createGuideAttachment"]["responses"][201]["content"]["application/json"]["attachment"]>;
+
 /** A Guide entity as returned by the Spacebring API. */
 export type Guide = NonNullable<components["schemas"]["guide"]>;
 
@@ -19,6 +22,9 @@ export interface GetGuidesQuery {
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
 }
+
+/** Request body for `sb.guides.createAttachment()`. */
+export type CreateGuideAttachmentBody = NonNullable<NonNullable<operations["createGuideAttachment"]["requestBody"]>["content"]["application/json"]["attachment"]>;
 
 /** Request body for `sb.guides.create()`. */
 export type CreateGuideBody = NonNullable<NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
@@ -90,6 +96,14 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      */
     async delete(guideId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/guides/v1/{guideId}", { params: { path: { guideId } }, signal: options?.signal }), "DELETE /guides/v1/{guideId}");
+    },
+    /**
+     * Create an attachment upload
+     *
+     * Create an upload for a file to attach to a guide, of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in `attachments[].key` when creating or updating a guide within an hour; a file that is not attached by then is discarded. The file is served as a download under the declared name.
+     */
+    async createAttachment(attachment: CreateGuideAttachmentBody, options?: SpacebringRequestOptions): Promise<Attachment> {
+      return unwrapProp(await client.POST("/guides/v1/attachments", { body: { attachment }, signal: options?.signal }), "attachment", "POST /guides/v1/attachments");
     },
     /**
      * Create a media upload

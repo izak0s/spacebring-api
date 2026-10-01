@@ -466,6 +466,7 @@ export function createFloors(client: Client<paths>, defaults: SpacebringDefaults
 }
 
 // guides.ts
+export type Attachment = NonNullable<operations["createGuideAttachment"]["responses"][201]["content"]["application/json"]["attachment"]>;
 export type Guide = NonNullable<components["schemas"]["guide"]>;
 export type GuideMedia = NonNullable<operations["createGuideMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetGuidesQuery {
@@ -473,6 +474,7 @@ export interface GetGuidesQuery {
   locationRef: string;
   nextPageToken?: string;
 }
+export type CreateGuideAttachmentBody = NonNullable<NonNullable<operations["createGuideAttachment"]["requestBody"]>["content"]["application/json"]["attachment"]>;
 export type CreateGuideBody = NonNullable<NonNullable<operations["createGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
 export type CreateGuideMediaBody = NonNullable<NonNullable<operations["createGuideMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type PatchGuideBody = NonNullable<NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
@@ -484,6 +486,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
     async create(guide: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
     async update(guideId: string, guide: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
     async delete(guideId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async createAttachment(attachment: CreateGuideAttachmentBody, options?: SpacebringRequestOptions): Promise<Attachment>
     async createMedia(media: CreateGuideMediaBody, options?: SpacebringRequestOptions): Promise<GuideMedia>
   };
 }
@@ -741,6 +744,7 @@ export function createSubscriptions(client: Client<paths>, defaults: SpacebringD
 // support.ts
 export type Activity = NonNullable<components["schemas"]["ticketActivity"]>;
 export type SupportTicket = NonNullable<components["schemas"]["ticket"]>;
+export type TicketMedia = NonNullable<operations["createSupportTicketMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetSupportTicketsQuery {
   locationRef: string;
   limit?: number;
@@ -751,6 +755,7 @@ export interface GetSupportTicketsQuery {
 }
 export type CreateSupportTicketBody = NonNullable<NonNullable<operations["createSupportTicket"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
+export type CreateSupportTicketMediaBody = NonNullable<NonNullable<operations["createSupportTicketMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 export type UpdateSupportTicketAssigneeBody = NonNullable<NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]["ticket"]>;
 export type UpdateSupportTicketCommentBody = NonNullable<NonNullable<operations["updateSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
 export type UpdateSupportTicketStatusBody = NonNullable<NonNullable<operations["updateSupportTicketStatus"]["requestBody"]>["content"]["application/json"]["ticket"]>;
@@ -762,6 +767,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
       iterate(query: Omit<GetSupportTicketsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<SupportTicket, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }>
       async create(ticket: CreateSupportTicketBody, options?: SpacebringRequestOptions): Promise<{ activities?: Activity[]; ticket?: SupportTicket }>
+      async createMedia(media: CreateSupportTicketMediaBody, options?: SpacebringRequestOptions): Promise<TicketMedia>
       async updateAssignee(id: string, ticket: UpdateSupportTicketAssigneeBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }>
       async updateStatus(id: string, ticket: UpdateSupportTicketStatusBody, options?: SpacebringRequestOptions): Promise<{ activity?: Activity; ticket?: SupportTicket }>
       async updateType(id: string, ticket: UpdateSupportTicketTypeBody, options?: SpacebringRequestOptions): Promise<undefined>
