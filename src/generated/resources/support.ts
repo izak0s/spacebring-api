@@ -10,6 +10,9 @@ export type Activity = NonNullable<components["schemas"]["ticketActivity"]>;
 /** A SupportTicket entity as returned by the Spacebring API. */
 export type SupportTicket = NonNullable<components["schemas"]["ticket"]>;
 
+/** A TicketMedia entity as returned by the Spacebring API. */
+export type TicketMedia = NonNullable<operations["createSupportTicketMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.support.tickets.list()`. */
 export interface GetSupportTicketsQuery {
   /** The id of the location. */
@@ -31,6 +34,9 @@ export type CreateSupportTicketBody = NonNullable<NonNullable<operations["create
 
 /** Request body for `sb.support.tickets.comment.create()`. */
 export type CreateSupportTicketCommentBody = NonNullable<NonNullable<operations["createSupportTicketComment"]["requestBody"]>["content"]["application/json"]["activity"]>;
+
+/** Request body for `sb.support.tickets.createMedia()`. */
+export type CreateSupportTicketMediaBody = NonNullable<NonNullable<operations["createSupportTicketMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.support.tickets.updateAssignee()`. */
 export type UpdateSupportTicketAssigneeBody = NonNullable<NonNullable<operations["updateSupportTicketAssignee"]["requestBody"]>["content"]["application/json"]["ticket"]>;
@@ -87,6 +93,14 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
         return unwrap(await client.POST("/support/tickets/v1", { body: { ticket }, signal: options?.signal }), "POST /support/tickets/v1");
       },
       /**
+       * Create a ticket media upload
+       *
+       * Create a media upload for a ticket comment attachment, a file of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `activity.attachments[0].key` when creating a ticket comment within 25 minutes; a file that is not attached by then is discarded.
+       */
+      async createMedia(media: CreateSupportTicketMediaBody, options?: SpacebringRequestOptions): Promise<TicketMedia> {
+        return unwrapProp(await client.POST("/support/tickets/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /support/tickets/v1/media");
+      },
+      /**
        * Update a ticket's assignee
        *
        * Update support ticket assignee.
@@ -126,7 +140,7 @@ export function createSupport(client: Client<paths>, defaults: SpacebringDefault
         /**
          * Create a ticket comment
          *
-         * Create a support ticket comment.
+         * Create a support ticket comment. To attach a file, create a media upload first, send the file, then pass its key as `activity.attachments[0].key`; a 409 response means the file has not been received yet, so retry shortly.
          */
         async create(activity: CreateSupportTicketCommentBody, options?: SpacebringRequestOptions): Promise<Activity> {
           return unwrapProp(await client.POST("/support/tickets/v1/comment", { body: { activity }, signal: options?.signal }), "activity", "POST /support/tickets/v1/comment");

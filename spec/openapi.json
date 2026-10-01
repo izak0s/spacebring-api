@@ -8976,6 +8976,63 @@
         }
       }
     },
+    "/guides/v1/attachments": {
+      "post": {
+        "tags": [
+          "Guides"
+        ],
+        "summary": "Create an attachment upload",
+        "description": "Create an upload for a file to attach to a guide, of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in <code>attachments[].key</code> when creating or updating a guide within an hour; a file that is not attached by then is discarded. The file is served as a download under the declared name. <h3>OAuth</h3>Required scopes: <code>support</code>",
+        "operationId": "createGuideAttachment",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createGuideAttachment"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "support"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createGuideAttachment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/guides/v1/media": {
       "post": {
         "tags": [
@@ -13112,7 +13169,7 @@
           "Support"
         ],
         "summary": "Create a ticket comment",
-        "description": "Create a support ticket comment. <h3>OAuth</h3>Required scopes: <code>support</code>",
+        "description": "Create a support ticket comment. To attach a file, create a media upload first, send the file, then pass its key as <code>activity.attachments[0].key</code>; a 409 response means the file has not been received yet, so retry shortly. <h3>OAuth</h3>Required scopes: <code>support</code>",
         "operationId": "createSupportTicketComment",
         "parameters": [
           {
@@ -13154,6 +13211,16 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -13272,6 +13339,60 @@
                       "$ref": "#/components/schemas/ticketActivity"
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/support/tickets/v1/media": {
+      "post": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Create a ticket media upload",
+        "description": "Create a media upload for a ticket comment attachment, a file of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>activity.attachments[0].key</code> when creating a ticket comment within 25 minutes; a file that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>support</code>",
+        "operationId": "createSupportTicketMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createSupportTicketMedia"
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "support"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createSupportTicketMedia"
                 }
               }
             }
@@ -27188,6 +27309,113 @@
         },
         "required": [
           "guide"
+        ],
+        "additionalProperties": false
+      },
+      "createGuideAttachment": {
+        "type": "object",
+        "properties": {
+          "attachment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the file. Pass it in attachments[].key when creating or updating a guide."
+              },
+              "mimeType": {
+                "type": "string",
+                "description": "MIME type of the file."
+              },
+              "name": {
+                "type": "string",
+                "description": "File name shown with the guide."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending"
+                ],
+                "description": "Upload status. pending: the file has not been received yet; attach it once the PUT request succeeds."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Disposition": {
+                        "type": "string",
+                        "description": "Makes browsers download the file rather than open it."
+                      },
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Disposition",
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL the file is served from once uploaded."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "name",
+              "size",
+              "status",
+              "upload",
+              "url"
+            ],
+            "additionalProperties": false,
+            "description": "The created attachment upload."
+          }
+        },
+        "required": [
+          "attachment"
         ],
         "additionalProperties": false
       },
@@ -45284,6 +45512,108 @@
         ],
         "additionalProperties": false
       },
+      "createSupportTicketMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the file. Pass it as activity.attachments[0].key when creating a ticket comment."
+              },
+              "mimeType": {
+                "type": "string",
+                "description": "MIME type of the file."
+              },
+              "name": {
+                "type": "string",
+                "description": "File name shown with the comment."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending"
+                ],
+                "description": "Upload status. pending: the file has not been received yet; attach it once the PUT request succeeds."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              },
+              "url": {
+                "type": "string",
+                "description": "Public URL the file is served from once uploaded."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "name",
+              "size",
+              "status",
+              "upload",
+              "url"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
+      },
       "getScheduledCreditsTransactions": {
         "type": "object",
         "properties": {
@@ -58359,7 +58689,7 @@
                       "description": "Who can see this guide."
                     },
                     "attachments": {
-                      "description": "Storage keys of uploaded files to attach to the guide.",
+                      "description": "Keys of attachment uploads whose files have been uploaded. A key the guide cannot attach, such as an unknown, expired or already attached one, fails the request.",
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -58420,7 +58750,7 @@
                       "description": "Who can see this guide."
                     },
                     "attachments": {
-                      "description": "Storage keys of uploaded files to attach to the guide.",
+                      "description": "Keys of attachment uploads whose files have been uploaded. A key the guide cannot attach, such as an unknown, expired or already attached one, fails the request.",
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -58441,6 +58771,48 @@
               },
               "required": [
                 "guide"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createGuideAttachment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "attachment": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "description": "MIME type of the file to upload."
+                    },
+                    "name": {
+                      "description": "File name shown with the guide and used when the file is downloaded. Defaults to the storage key.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 52428800,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "attachment"
               ]
             }
           }
@@ -63756,7 +64128,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "Storage key of the uploaded attachment."
+                            "description": "Key of a media upload whose file has been uploaded."
                           }
                         },
                         "required": [
@@ -63812,6 +64184,62 @@
               },
               "required": [
                 "activity"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createSupportTicketMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "height": {
+                      "description": "Height of a video in pixels, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    },
+                    "mimeType": {
+                      "type": "string",
+                      "description": "MIME type of the file to upload."
+                    },
+                    "name": {
+                      "description": "File name shown with the comment. Defaults to the storage key.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 52428800,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    },
+                    "width": {
+                      "description": "Width of a video in pixels, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
               ]
             }
           }

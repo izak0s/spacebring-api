@@ -1649,6 +1649,26 @@ export interface paths {
         patch: operations["patchGuide"];
         trace?: never;
     };
+    "/guides/v1/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create an attachment upload
+         * @description Create an upload for a file to attach to a guide, of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key in <code>attachments[].key</code> when creating or updating a guide within an hour; a file that is not attached by then is discarded. The file is served as a download under the declared name. <h3>OAuth</h3>Required scopes: <code>support</code>
+         */
+        post: operations["createGuideAttachment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/guides/v1/media": {
         parameters: {
             query?: never;
@@ -2408,7 +2428,7 @@ export interface paths {
         put?: never;
         /**
          * Create a ticket comment
-         * @description Create a support ticket comment. <h3>OAuth</h3>Required scopes: <code>support</code>
+         * @description Create a support ticket comment. To attach a file, create a media upload first, send the file, then pass its key as <code>activity.attachments[0].key</code>; a 409 response means the file has not been received yet, so retry shortly. <h3>OAuth</h3>Required scopes: <code>support</code>
          */
         post: operations["createSupportTicketComment"];
         delete?: never;
@@ -2439,6 +2459,26 @@ export interface paths {
          * @description Update the text of a support ticket comment. Only the comment author can edit it, and only comments without an attachment. <h3>OAuth</h3>Required scopes: <code>support</code>
          */
         patch: operations["updateSupportTicketComment"];
+        trace?: never;
+    };
+    "/support/tickets/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a ticket media upload
+         * @description Create a media upload for a ticket comment attachment, a file of any type up to 50 MB. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>activity.attachments[0].key</code> when creating a ticket comment within 25 minutes; a file that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>support</code>
+         */
+        post: operations["createSupportTicketMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/transactions/credits/scheduled/v1": {
@@ -8398,6 +8438,50 @@ export interface components {
                  * @enum {string}
                  */
                 visibility: "public" | "admins" | "members" | "networkMembers";
+            };
+        };
+        createGuideAttachment: {
+            /** @description The created attachment upload. */
+            attachment: {
+                /** @description Storage key of the file. Pass it in attachments[].key when creating or updating a guide. */
+                key: string;
+                /** @description MIME type of the file. */
+                mimeType: string;
+                /** @description File name shown with the guide. */
+                name: string;
+                /** @description Size of the file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet; attach it once the PUT request succeeds.
+                 * @enum {string}
+                 */
+                status: "pending";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Makes browsers download the file rather than open it. */
+                        "Content-Disposition": string;
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+                /** @description Public URL the file is served from once uploaded. */
+                url: string;
             };
         };
         createGuideMedia: {
@@ -16709,6 +16793,48 @@ export interface components {
              */
             updateDate?: string;
         };
+        createSupportTicketMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the file. Pass it as activity.attachments[0].key when creating a ticket comment. */
+                key: string;
+                /** @description MIME type of the file. */
+                mimeType: string;
+                /** @description File name shown with the comment. */
+                name: string;
+                /** @description Size of the file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet; attach it once the PUT request succeeds.
+                 * @enum {string}
+                 */
+                status: "pending";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+                /** @description Public URL the file is served from once uploaded. */
+                url: string;
+            };
+        };
         getScheduledCreditsTransactions: {
             /** @description Pagination token to fetch the next page of results. Returned when more results exist. */
             nextPageToken?: string;
@@ -23217,7 +23343,7 @@ export interface components {
                          * @enum {string}
                          */
                         visibility: "public" | "admins" | "members" | "networkMembers";
-                        /** @description Storage keys of uploaded files to attach to the guide. */
+                        /** @description Keys of attachment uploads whose files have been uploaded. A key the guide cannot attach, such as an unknown, expired or already attached one, fails the request. */
                         attachments?: {
                             key: string;
                         }[];
@@ -23239,10 +23365,25 @@ export interface components {
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "members" | "networkMembers";
-                        /** @description Storage keys of uploaded files to attach to the guide. */
+                        /** @description Keys of attachment uploads whose files have been uploaded. A key the guide cannot attach, such as an unknown, expired or already attached one, fails the request. */
                         attachments?: {
                             key: string;
                         }[];
+                    };
+                };
+            };
+        };
+        createGuideAttachment: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    attachment: {
+                        /** @description MIME type of the file to upload. */
+                        mimeType: string;
+                        /** @description File name shown with the guide and used when the file is downloaded. Defaults to the storage key. */
+                        name?: string;
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -25744,7 +25885,7 @@ export interface components {
                     activity: {
                         /** @description Attachments to include with the comment. At most one is allowed. */
                         attachments?: {
-                            /** @description Storage key of the uploaded attachment. */
+                            /** @description Key of a media upload whose file has been uploaded. */
                             key: string;
                         }[];
                         /** @description Comment text. Either text or attachments must be provided. */
@@ -25765,6 +25906,25 @@ export interface components {
                     activity: {
                         /** @description New comment text. */
                         text: string;
+                    };
+                };
+            };
+        };
+        createSupportTicketMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /** @description Height of a video in pixels, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        height?: number;
+                        /** @description MIME type of the file to upload. */
+                        mimeType: string;
+                        /** @description File name shown with the comment. Defaults to the storage key. */
+                        name?: string;
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
+                        /** @description Width of a video in pixels, which apps use to lay it out before it loads. An image's dimensions are read from the uploaded file, so this is ignored for an image. */
+                        width?: number;
                     };
                 };
             };
@@ -30845,6 +31005,38 @@ export interface operations {
             };
         };
     };
+    createGuideAttachment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createGuideAttachment"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createGuideAttachment"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     createGuideMedia: {
         parameters: {
             query?: never;
@@ -33009,6 +33201,15 @@ export interface operations {
                     "application/json": components["schemas"]["responseError"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
         };
     };
     deleteSupportTicketComment: {
@@ -33068,6 +33269,38 @@ export interface operations {
                     "application/json": {
                         activity?: components["schemas"]["ticketActivity"];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createSupportTicketMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createSupportTicketMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createSupportTicketMedia"];
                 };
             };
             /** @description Bad Request */

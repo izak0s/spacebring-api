@@ -10,7 +10,7 @@ export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, Ge
 export type { AddEventHostsBody, CreateEventBody, CreateEventMediaBody, Event, EventMedia, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery, UpdateEventBody, UpdateEventTicketBody } from "./resources/events.js";
 export type { Comment, CreateFeedPostBody, CreateFeedPostCommentBody, CreateFeedPostMediaBody, FeedMedia, GetFeedPostsQuery, Like, Post, UpdateFeedPostBody } from "./resources/feed.js";
 export type { GetFloorsQuery } from "./resources/floors.js";
-export type { CreateGuideBody, CreateGuideMediaBody, GetGuidesQuery, Guide, GuideMedia, PatchGuideBody } from "./resources/guides.js";
+export type { Attachment, CreateGuideAttachmentBody, CreateGuideBody, CreateGuideMediaBody, GetGuidesQuery, Guide, GuideMedia, PatchGuideBody } from "./resources/guides.js";
 export type { Location } from "./resources/locations.js";
 export type { Network } from "./resources/networks.js";
 export type { CreatePackageBody, GetPackagesQuery, Package, PatchPackageBody } from "./resources/packages.js";
@@ -19,6 +19,6 @@ export type { GetRegistrationsQuery, Registration } from "./resources/registrati
 export type { Assignment, Booking, CreateAssignmentBody, CreateBookingBody, CreateResourceBody, CreateResourceMediaBody, GetAssignmentsQuery, GetBookingsQuery, GetResourceAvailability, GetResourceAvailabilityBody, GetResourcesQuery, PatchAssignmentBody, PatchBookingBody, PatchResourceBody, Resource, ResourceMedia } from "./resources/resources.js";
 export type { CreateProductBody, CreateProductMediaBody, CreateShopCategoryBody, GetOrdersQuery, GetProductsQuery, GetShopCategoriesQuery, Order, Product, ProductMedia, ShopCategory, UpdateProductBody, UpdateShopCategoryBody } from "./resources/shop.js";
 export type { CreateSubscriptionBody, CreateSubscriptionItemBody, GetSubscriptionsQuery, Subscription, UpdateSubscriptionBody, UpdateSubscriptionItemBody } from "./resources/subscriptions.js";
-export type { Activity, CreateSupportTicketBody, CreateSupportTicketCommentBody, GetSupportTicketsQuery, SupportTicket, UpdateSupportTicketAssigneeBody, UpdateSupportTicketCommentBody, UpdateSupportTicketStatusBody, UpdateSupportTicketTypeBody } from "./resources/support.js";
+export type { Activity, CreateSupportTicketBody, CreateSupportTicketCommentBody, CreateSupportTicketMediaBody, GetSupportTicketsQuery, SupportTicket, TicketMedia, UpdateSupportTicketAssigneeBody, UpdateSupportTicketCommentBody, UpdateSupportTicketStatusBody, UpdateSupportTicketTypeBody } from "./resources/support.js";
 export type { Balance, CreateCreditsTransactionBody, CreateDayPassesTransactionBody, CreateMoneyTransactionBody, CreditScheduledTransaction, CreditTransaction, DayPassScheduledTransaction, DayPassTransaction, GetCreditsTransactionsQuery, GetDayPassesTransactionsQuery, GetMoneyTransactionsQuery, GetScheduledCreditsTransactionsQuery, GetScheduledDayPassesTransactionsQuery, MoneyTransaction, PatchMoneyTransactionBody, Refund, RefundMoneyTransactionBody } from "./resources/transactions.js";
 export type { CheckInVisitBody, CheckOutVisitBody, Contact, CreateContactBody, CreateRequestBody, CreateVisitBody, GetContactsQuery, GetRequestsQuery, GetVisitsQuery, Request, UpdateVisitBody, Visit } from "./resources/visitors.js";
