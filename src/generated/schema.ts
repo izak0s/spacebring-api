@@ -4877,6 +4877,46 @@ export interface components {
             };
             /** @description ISO currency code. Reflects the alt currency when present, otherwise the base currency. */
             currencyCode: string;
+            /** @description Customer the item is billed to. */
+            customer?: {
+                /**
+                 * Format: uuid
+                 * @description ID of the company or membership.
+                 */
+                id: string;
+                /** @description Company logo. */
+                logo?: {
+                    key: string;
+                    url: string;
+                };
+                /** @description Company name. */
+                title?: string;
+                /**
+                 * @description Whether the customer is a company or a user.
+                 * @enum {string}
+                 */
+                type: "company" | "user";
+                /** @description User details for membership customers. */
+                user?: {
+                    /** @description User bio. */
+                    about?: string | null;
+                    /** @description User email address. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User ID.
+                     */
+                    id: string;
+                    /** @description First name. */
+                    name?: string | null;
+                    /** @description Phone number. */
+                    phoneNumber?: string | null;
+                    /** @description Profile photo URL. */
+                    photoUrl?: string | null;
+                    /** @description Last name. */
+                    surname?: string | null;
+                };
+            };
             /**
              * Format: date-time
              * @description ISO timestamp of when the item was deleted.
@@ -5233,6 +5273,46 @@ export interface components {
                 };
                 /** @description ISO currency code. Reflects the alt currency when present, otherwise the base currency. */
                 currencyCode: string;
+                /** @description Customer the item is billed to. */
+                customer?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the company or membership.
+                     */
+                    id: string;
+                    /** @description Company logo. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a company or a user.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description User details for membership customers. */
+                    user?: {
+                        /** @description User bio. */
+                        about?: string | null;
+                        /** @description User email address. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User ID.
+                         */
+                        id: string;
+                        /** @description First name. */
+                        name?: string | null;
+                        /** @description Phone number. */
+                        phoneNumber?: string | null;
+                        /** @description Profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description Last name. */
+                        surname?: string | null;
+                    };
+                };
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the item was deleted.
@@ -6465,7 +6545,10 @@ export interface components {
             locationRef?: string;
             metadata?: components["schemas"]["metadata"];
             notes?: string;
-            /** @enum {string} */
+            /**
+             * @description Whether the user administers the membership's location. It's read-only, as administrators are managed on the Administrators page.
+             * @enum {string}
+             */
             role?: "member" | "admin";
             /** @enum {string} */
             status?: "requested" | "approved";
@@ -22587,8 +22670,6 @@ export interface components {
                         legalName?: string;
                         /** @description The tax id of the membership to create. */
                         taxId?: string;
-                        /** @enum {string} */
-                        role: "admin" | "member";
                         metadata?: components["schemas"]["metadata"];
                         notes?: string;
                         /**
@@ -24730,7 +24811,7 @@ export interface components {
                         recurrence?: string[];
                         /**
                          * Format: uuid
-                         * @description ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.
+                         * @description ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and accept the booking's payment method. A booking paid by card or externally can't move to a resource with a lower price, and a move to a pricier one charges the difference as a separate transaction. Not supported for repeating bookings.
                          */
                         resourceRef?: string;
                         /** @description Number of seats to reserve. Supported for desk and office resources. */
@@ -28497,8 +28578,6 @@ export interface operations {
                         };
                         legalName?: string;
                         metadata?: components["schemas"]["metadata"];
-                        /** @enum {string} */
-                        role?: "admin" | "member";
                         taxId?: string;
                     };
                 };
