@@ -4391,13 +4391,6 @@
                       "metadata": {
                         "$ref": "#/components/schemas/metadata"
                       },
-                      "role": {
-                        "type": "string",
-                        "enum": [
-                          "admin",
-                          "member"
-                        ]
-                      },
                       "taxId": {
                         "type": "string"
                       }
@@ -19967,6 +19960,96 @@
             "type": "string",
             "description": "ISO currency code. Reflects the alt currency when present, otherwise the base currency."
           },
+          "customer": {
+            "description": "Customer the item is billed to.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the company or membership."
+              },
+              "logo": {
+                "description": "Company logo.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "title": {
+                "description": "Company name.",
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "company",
+                  "user"
+                ],
+                "description": "Whether the customer is a company or a user."
+              },
+              "user": {
+                "description": "User details for membership customers.",
+                "type": "object",
+                "properties": {
+                  "about": {
+                    "description": "User bio.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "email": {
+                    "description": "User email address.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "User ID."
+                  },
+                  "name": {
+                    "description": "First name.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "description": "Phone number.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "photoUrl": {
+                    "description": "Profile photo URL.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "surname": {
+                    "description": "Last name.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "additionalProperties": false
+          },
           "deleteDate": {
             "description": "ISO timestamp of when the item was deleted.",
             "type": "string",
@@ -20648,6 +20731,96 @@
                 "currencyCode": {
                   "type": "string",
                   "description": "ISO currency code. Reflects the alt currency when present, otherwise the base currency."
+                },
+                "customer": {
+                  "description": "Customer the item is billed to.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the company or membership."
+                    },
+                    "logo": {
+                      "description": "Company logo.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": {
+                      "description": "Company name.",
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "company",
+                        "user"
+                      ],
+                      "description": "Whether the customer is a company or a user."
+                    },
+                    "user": {
+                      "description": "User details for membership customers.",
+                      "type": "object",
+                      "properties": {
+                        "about": {
+                          "description": "User bio.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "email": {
+                          "description": "User email address.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "User ID."
+                        },
+                        "name": {
+                          "description": "First name.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "description": "Phone number.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "description": "Profile photo URL.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "description": "Last name.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false
                 },
                 "deleteDate": {
                   "description": "ISO timestamp of when the item was deleted.",
@@ -23134,6 +23307,7 @@
           },
           "role": {
             "type": "string",
+            "description": "Whether the user administers the membership's location. It's read-only, as administrators are managed on the Administrators page.",
             "enum": [
               "member",
               "admin"
@@ -57028,13 +57202,6 @@
                       "type": "string",
                       "description": "The tax id of the membership to create."
                     },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "admin",
-                        "member"
-                      ]
-                    },
                     "metadata": {
                       "$ref": "#/components/schemas/metadata"
                     },
@@ -57082,7 +57249,6 @@
                     }
                   },
                   "required": [
-                    "role",
                     "locationRef",
                     "user"
                   ]
@@ -61880,7 +62046,7 @@
                       }
                     },
                     "resourceRef": {
-                      "description": "ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and sell the booking's payment method at the same price. Not supported for repeating bookings.",
+                      "description": "ID of the resource to move the booking to. The target must belong to the same location, be of an interchangeable type, and accept the booking's payment method. A booking paid by card or externally can't move to a resource with a lower price, and a move to a pricier one charges the difference as a separate transaction. Not supported for repeating bookings.",
                       "type": "string",
                       "format": "uuid"
                     },
