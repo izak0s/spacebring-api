@@ -2125,7 +2125,7 @@
           "Billing"
         ],
         "summary": "List invoice items",
-        "description": "List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "listInvoiceItems",
         "parameters": [
           {
@@ -2211,6 +2211,19 @@
             "description": "Filter by invoice status. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent to the customer but unpaid\n- **paid** — fully paid\n- **voided** — cancelled and no longer valid",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pending",
+            "required": false,
+            "description": "Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
             }
           },
           {
@@ -29961,6 +29974,41 @@
                   ],
                   "description": "Whether bookings are measured in hours or in whole days."
                 },
+                "bookingWindow": {
+                  "type": "object",
+                  "properties": {
+                    "bookAhead": {
+                      "description": "How far ahead users can book the resource.",
+                      "type": "string",
+                      "enum": [
+                        "oneDay",
+                        "twoDays",
+                        "oneWeek",
+                        "twoWeeks",
+                        "oneMonth",
+                        "threeMonths",
+                        "sixMonths",
+                        "oneYear",
+                        "unlimited"
+                      ]
+                    },
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Whether the resource uses this booking window instead of the one its location sets for the resource type."
+                    },
+                    "minNotice": {
+                      "description": "How many minutes before it starts a booking of the resource has to be made.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 43200
+                    }
+                  },
+                  "required": [
+                    "enabled"
+                  ],
+                  "additionalProperties": false,
+                  "description": "How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type."
+                },
                 "brivoGroupRef": {
                   "description": "Brivo access group reference.",
                   "nullable": true,
@@ -31190,6 +31238,7 @@
                 "assignments",
                 "bookingPermission",
                 "bookingUnit",
+                "bookingWindow",
                 "bufferTime",
                 "children",
                 "confirmationEmail",
@@ -31507,6 +31556,41 @@
                   "day"
                 ],
                 "description": "Whether bookings are measured in hours or in whole days."
+              },
+              "bookingWindow": {
+                "type": "object",
+                "properties": {
+                  "bookAhead": {
+                    "description": "How far ahead users can book the resource.",
+                    "type": "string",
+                    "enum": [
+                      "oneDay",
+                      "twoDays",
+                      "oneWeek",
+                      "twoWeeks",
+                      "oneMonth",
+                      "threeMonths",
+                      "sixMonths",
+                      "oneYear",
+                      "unlimited"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether the resource uses this booking window instead of the one its location sets for the resource type."
+                  },
+                  "minNotice": {
+                    "description": "How many minutes before it starts a booking of the resource has to be made.",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 43200
+                  }
+                },
+                "required": [
+                  "enabled"
+                ],
+                "additionalProperties": false,
+                "description": "How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type."
               },
               "brivoGroupRef": {
                 "description": "Brivo access group reference.",
@@ -32737,6 +32821,7 @@
               "assignments",
               "bookingPermission",
               "bookingUnit",
+              "bookingWindow",
               "bufferTime",
               "children",
               "confirmationEmail",
@@ -34468,6 +34553,14 @@
                       "description": "ID of the transaction the payment was recorded as.",
                       "type": "string"
                     },
+                    "transactionType": {
+                      "description": "Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.",
+                      "type": "string",
+                      "enum": [
+                        "charge",
+                        "refund"
+                      ]
+                    },
                     "type": {
                       "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                       "type": "string"
@@ -35358,6 +35451,14 @@
                       "transactionRef": {
                         "description": "ID of the transaction the payment was recorded as.",
                         "type": "string"
+                      },
+                      "transactionType": {
+                        "description": "Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.",
+                        "type": "string",
+                        "enum": [
+                          "charge",
+                          "refund"
+                        ]
                       },
                       "type": {
                         "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
@@ -36680,6 +36781,14 @@
                     "description": "ID of the transaction the payment was recorded as.",
                     "type": "string"
                   },
+                  "transactionType": {
+                    "description": "Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.",
+                    "type": "string",
+                    "enum": [
+                      "charge",
+                      "refund"
+                    ]
+                  },
                   "type": {
                     "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
                     "type": "string"
@@ -37570,6 +37679,14 @@
                     "transactionRef": {
                       "description": "ID of the transaction the payment was recorded as.",
                       "type": "string"
+                    },
+                    "transactionType": {
+                      "description": "Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.",
+                      "type": "string",
+                      "enum": [
+                        "charge",
+                        "refund"
+                      ]
                     },
                     "type": {
                       "description": "Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`.",
@@ -59903,6 +60020,40 @@
                         "day"
                       ]
                     },
+                    "bookingWindow": {
+                      "description": "How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either.",
+                      "type": "object",
+                      "properties": {
+                        "bookAhead": {
+                          "description": "How far ahead users can book the resource, the same values the location takes. Required while enabled is true.",
+                          "type": "string",
+                          "enum": [
+                            "oneDay",
+                            "twoDays",
+                            "oneWeek",
+                            "twoWeeks",
+                            "oneMonth",
+                            "threeMonths",
+                            "sixMonths",
+                            "oneYear",
+                            "unlimited"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether the resource uses this booking window instead of the one its location sets for the resource type."
+                        },
+                        "minNotice": {
+                          "description": "How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true.",
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 43200
+                        }
+                      },
+                      "required": [
+                        "enabled"
+                      ]
+                    },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
                       "nullable": true,
@@ -60940,6 +61091,40 @@
                       "enum": [
                         "hour",
                         "day"
+                      ]
+                    },
+                    "bookingWindow": {
+                      "description": "How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either.",
+                      "type": "object",
+                      "properties": {
+                        "bookAhead": {
+                          "description": "How far ahead users can book the resource, the same values the location takes. Required while enabled is true.",
+                          "type": "string",
+                          "enum": [
+                            "oneDay",
+                            "twoDays",
+                            "oneWeek",
+                            "twoWeeks",
+                            "oneMonth",
+                            "threeMonths",
+                            "sixMonths",
+                            "oneYear",
+                            "unlimited"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether the resource uses this booking window instead of the one its location sets for the resource type."
+                        },
+                        "minNotice": {
+                          "description": "How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true.",
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 43200
+                        }
+                      },
+                      "required": [
+                        "enabled"
                       ]
                     },
                     "brivoGroupRef": {

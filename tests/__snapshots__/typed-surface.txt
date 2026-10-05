@@ -134,6 +134,7 @@ export interface ListInvoiceItemsQuery {
   - **paid** — fully paid
   - **voided** — cancelled and no longer valid */
   status?: string;
+  pending?: "true" | "false";
   type?: string;
 }
 export type CreateCreditNoteBody = NonNullable<NonNullable<operations["createCreditNote"]["requestBody"]>["content"]["application/json"]["creditNote"]>;

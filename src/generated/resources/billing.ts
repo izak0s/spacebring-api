@@ -117,6 +117,8 @@ export interface ListInvoiceItemsQuery {
   - **paid** — fully paid
   - **voided** — cancelled and no longer valid */
   status?: string;
+  /** Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false. */
+  pending?: "true" | "false";
   /** Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
   type?: string;
 }
@@ -363,7 +365,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items
          *
-         * List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice.
+         * List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription.
          */
         async list(query?: ListInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<{ invoiceItems: InvoiceItem[]; nextPageToken?: string; searchQueryNext?: string }> {
           return unwrap(await client.GET("/billing/invoices/v1/items", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1/items");
@@ -371,7 +373,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items — iterates every item across all pages.
          *
-         * List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice.
+         * List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription.
          */
         iterate(query?: Omit<ListInvoiceItemsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<InvoiceItem, void, undefined> {
           return paginate(

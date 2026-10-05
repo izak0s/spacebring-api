@@ -421,7 +421,7 @@ export interface paths {
         };
         /**
          * List invoice items
-         * @description List invoice items filtered customer, location, type, status, or date range. Status and issue date filters match items connected to an invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["listInvoiceItems"];
         put?: never;
@@ -9602,6 +9602,18 @@ export interface components {
                  * @enum {string}
                  */
                 bookingUnit: "hour" | "day";
+                /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type. */
+                bookingWindow: {
+                    /**
+                     * @description How far ahead users can book the resource.
+                     * @enum {string}
+                     */
+                    bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                    /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                    enabled: boolean;
+                    /** @description How many minutes before it starts a booking of the resource has to be made. */
+                    minNotice?: number;
+                };
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
@@ -10233,6 +10245,18 @@ export interface components {
                  * @enum {string}
                  */
                 bookingUnit: "hour" | "day";
+                /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type. */
+                bookingWindow: {
+                    /**
+                     * @description How far ahead users can book the resource.
+                     * @enum {string}
+                     */
+                    bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                    /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                    enabled: boolean;
+                    /** @description How many minutes before it starts a booking of the resource has to be made. */
+                    minNotice?: number;
+                };
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
@@ -11558,6 +11582,11 @@ export interface components {
                     };
                     /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
+                    /**
+                     * @description Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.
+                     * @enum {string}
+                     */
+                    transactionType?: "charge" | "refund";
                     /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 };
@@ -11983,6 +12012,11 @@ export interface components {
                     };
                     /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
+                    /**
+                     * @description Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.
+                     * @enum {string}
+                     */
+                    transactionType?: "charge" | "refund";
                     /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 }[];
@@ -12620,6 +12654,11 @@ export interface components {
                     };
                     /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
+                    /**
+                     * @description Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.
+                     * @enum {string}
+                     */
+                    transactionType?: "charge" | "refund";
                     /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 };
@@ -13045,6 +13084,11 @@ export interface components {
                     };
                     /** @description ID of the transaction the payment was recorded as. */
                     transactionRef?: string;
+                    /**
+                     * @description Whether the transaction took the `price` from the payer or gave it back, as when a booking paid with credits or day passes is shortened. `price` is always positive, so a `refund` subtracts from what the booking cost.
+                     * @enum {string}
+                     */
+                    transactionType?: "charge" | "refund";
                     /** @description Shorthand for the payment method: the gateway slug for `paymentGateway` payments, otherwise `method.type`. */
                     type?: string;
                 }[];
@@ -23906,6 +23950,18 @@ export interface components {
                          * @enum {string}
                          */
                         bookingUnit?: "hour" | "day";
+                        /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either. */
+                        bookingWindow?: {
+                            /**
+                             * @description How far ahead users can book the resource, the same values the location takes. Required while enabled is true.
+                             * @enum {string}
+                             */
+                            bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                            /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                            enabled: boolean;
+                            /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
+                            minNotice?: number;
+                        };
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
@@ -24343,6 +24399,18 @@ export interface components {
                          * @enum {string}
                          */
                         bookingUnit?: "hour" | "day";
+                        /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either. */
+                        bookingWindow?: {
+                            /**
+                             * @description How far ahead users can book the resource, the same values the location takes. Required while enabled is true.
+                             * @enum {string}
+                             */
+                            bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                            /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                            enabled: boolean;
+                            /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
+                            minNotice?: number;
+                        };
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
@@ -27456,6 +27524,8 @@ export interface operations {
                  *     - **voided** — cancelled and no longer valid
                  */
                 status?: string;
+                /** @description Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false. */
+                pending?: "true" | "false";
                 /** @description Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
                 type?: string;
             };
