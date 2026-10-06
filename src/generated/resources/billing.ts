@@ -93,23 +93,23 @@ export interface GetUpcomingInvoiceQuery {
 
 /** Query parameters for `sb.billing.invoices.items.list()`. */
 export interface ListInvoiceItemsQuery {
-  /** Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  /** Filter invoice items created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
   "createDate[gte]"?: string;
-  /** Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  /** Filter invoice items created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
   "createDate[lte]"?: string;
-  /** UUID of the customer whose invoices to list. */
+  /** UUID of the customer whose invoice items to list. */
   customerRef?: string;
-  /** Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
+  /** Filter invoice items on invoices issued on or after this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[lte] for a range. */
   "issueDate[gte]"?: string;
-  /** Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range. */
+  /** Filter invoice items on invoices issued on or before this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[gte] for a range. */
   "issueDate[lte]"?: string;
-  /** Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+  /** Maximum number of invoice items per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose invoices to list. */
+  /** UUID of the location whose invoice items to list. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
+  /** Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.
 
   Supported values:
   - **draft** — created but not sent
@@ -297,17 +297,6 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         return unwrapProp(await client.POST("/billing/invoices/v1/{invoiceId}/duplicate", { params: { path: { invoiceId } }, signal: options?.signal }), "invoice", "POST /billing/invoices/v1/{invoiceId}/duplicate");
       },
       /**
-       * List invoice items
-       *
-       * List all items for a specific invoice.
-       *
-       * @param invoiceId The id of an invoice.
-       * @param options Request options (abort signal).
-       */
-      async getItems(invoiceId: string, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[] }> {
-        return unwrap(await client.GET("/billing/invoices/v1/{invoiceId}/items", { params: { path: { invoiceId } }, signal: options?.signal }), "GET /billing/invoices/v1/{invoiceId}/items");
-      },
-      /**
        * Retrieve the upcoming invoice
        *
        * Retrieve the upcoming invoice preview for a membership or subscription.
@@ -365,7 +354,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items
          *
-         * List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription.
+         * List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
          */
         async list(query?: ListInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<{ invoiceItems: InvoiceItem[]; nextPageToken?: string; searchQueryNext?: string }> {
           return unwrap(await client.GET("/billing/invoices/v1/items", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1/items");
@@ -373,7 +362,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items — iterates every item across all pages.
          *
-         * List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription.
+         * List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
          */
         iterate(query?: Omit<ListInvoiceItemsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<InvoiceItem, void, undefined> {
           return paginate(
@@ -424,7 +413,13 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined> {
           return unwrap(await client.DELETE("/billing/invoices/v1/items/{id}", { params: { path: { id } }, signal: options?.signal }), "DELETE /billing/invoices/v1/items/{id}");
         },
-        /** List upcoming invoice items */
+        /**
+         * List upcoming invoice items
+         *
+         * List a customer's pending invoice items. Deprecated: use List invoice items with `pending=true` and `customerRef` instead.
+         *
+         * @deprecated Marked as deprecated in the OpenAPI spec.
+         */
         async getUpcoming(query?: GetUpcomingInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<InvoiceItem[]> {
           return unwrapProp(await client.GET("/billing/invoices/v1/items/upcoming", { params: { query }, signal: options?.signal }), "invoiceItems", "GET /billing/invoices/v1/items/upcoming");
         },
