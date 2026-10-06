@@ -332,26 +332,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/billing/invoices/v1/{invoiceId}/items": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List invoice items
-         * @description List all items for a specific invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
-         */
-        get: operations["getInvoiceItems"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/billing/invoices/v1/{invoiceId}/pay": {
         parameters: {
             query?: never;
@@ -421,7 +401,7 @@ export interface paths {
         };
         /**
          * List invoice items
-         * @description List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["listInvoiceItems"];
         put?: never;
@@ -473,7 +453,8 @@ export interface paths {
         };
         /**
          * List upcoming invoice items
-         * @description List upcoming invoice items. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @deprecated
+         * @description List a customer's pending invoice items. Deprecated: use <a href="/developer/api/billing/list-invoice-items">List invoice items</a> with <code>pending=true</code> and <code>customerRef</code> instead. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["getUpcomingInvoiceItems"];
         put?: never;
@@ -4984,6 +4965,11 @@ export interface components {
              */
             invoiceRef?: string;
             /**
+             * Format: date-time
+             * @description ISO timestamp of when the item was issued with its invoice.
+             */
+            issueDate?: string;
+            /**
              * Format: uuid
              * @description ID of the organization (location).
              */
@@ -5379,6 +5365,11 @@ export interface components {
                  * @description ID of the invoice this item belongs to.
                  */
                 invoiceRef?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the item was issued with its invoice.
+                 */
+                issueDate?: string;
                 /**
                  * Format: uuid
                  * @description ID of the organization (location).
@@ -8634,7 +8625,7 @@ export interface components {
             legalName?: string;
             /** @enum {string} */
             locale?: "en" | "es" | "ko" | "uk" | "ru";
-            /** @description Images of the location, newest first. */
+            /** @description Photos and videos of the location in the order administrators arranged them, with any added since first, newest first. The first one is the location's cover. */
             media?: {
                 height?: number;
                 /** @description Storage key of the image. */
@@ -9992,6 +9983,60 @@ export interface components {
                  * @enum {string}
                  */
                 preparationMinutes: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /** @description Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. A booking is priced by the rule covering the weekday of its start in the location's time zone, and by the regular tiers when no rule covers it. */
+                pricingRules: {
+                    /** @description Credit prices on the selected days. When omitted, the regular credit tiers apply on them. */
+                    credits?: {
+                        /** @description Stepped credit pricing tiers for the selected days. */
+                        tiers: {
+                            /** @description Fixed fee added once to bookings in this tier. */
+                            flatAmount: number;
+                            /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                            from: number;
+                            /**
+                             * @description Whether the tier is priced per hour or per day.
+                             * @enum {string}
+                             */
+                            unit: "hour" | "day";
+                            /** @description Price per unit of booking time within this tier, never per minute. */
+                            unitAmount: number;
+                        }[];
+                    };
+                    /** @description Weekdays, in the location's time zone, on which a booking that starts gets these prices. */
+                    days: {
+                        /** @description Whether the rule applies to bookings starting on a Friday. */
+                        friday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Monday. */
+                        monday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Saturday. */
+                        saturday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Sunday. */
+                        sunday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Thursday. */
+                        thursday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Tuesday. */
+                        tuesday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Wednesday. */
+                        wednesday: boolean;
+                    };
+                    /** @description Money prices on the selected days. When omitted, the regular money tiers apply on them. */
+                    money?: {
+                        /** @description Stepped money pricing tiers for the selected days. */
+                        tiers: {
+                            /** @description Fixed fee added once to bookings in this tier. */
+                            flatAmount: number;
+                            /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                            from: number;
+                            /**
+                             * @description Whether the tier is priced per hour or per day.
+                             * @enum {string}
+                             */
+                            unit: "hour" | "day";
+                            /** @description Price per unit of booking time within this tier, never per minute. */
+                            unitAmount: number;
+                        }[];
+                    };
+                }[];
                 /**
                  * @description Refund threshold for cancellations.
                  * @enum {string}
@@ -10635,6 +10680,60 @@ export interface components {
                  * @enum {string}
                  */
                 preparationMinutes: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                /** @description Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. A booking is priced by the rule covering the weekday of its start in the location's time zone, and by the regular tiers when no rule covers it. */
+                pricingRules: {
+                    /** @description Credit prices on the selected days. When omitted, the regular credit tiers apply on them. */
+                    credits?: {
+                        /** @description Stepped credit pricing tiers for the selected days. */
+                        tiers: {
+                            /** @description Fixed fee added once to bookings in this tier. */
+                            flatAmount: number;
+                            /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                            from: number;
+                            /**
+                             * @description Whether the tier is priced per hour or per day.
+                             * @enum {string}
+                             */
+                            unit: "hour" | "day";
+                            /** @description Price per unit of booking time within this tier, never per minute. */
+                            unitAmount: number;
+                        }[];
+                    };
+                    /** @description Weekdays, in the location's time zone, on which a booking that starts gets these prices. */
+                    days: {
+                        /** @description Whether the rule applies to bookings starting on a Friday. */
+                        friday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Monday. */
+                        monday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Saturday. */
+                        saturday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Sunday. */
+                        sunday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Thursday. */
+                        thursday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Tuesday. */
+                        tuesday: boolean;
+                        /** @description Whether the rule applies to bookings starting on a Wednesday. */
+                        wednesday: boolean;
+                    };
+                    /** @description Money prices on the selected days. When omitted, the regular money tiers apply on them. */
+                    money?: {
+                        /** @description Stepped money pricing tiers for the selected days. */
+                        tiers: {
+                            /** @description Fixed fee added once to bookings in this tier. */
+                            flatAmount: number;
+                            /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                            from: number;
+                            /**
+                             * @description Whether the tier is priced per hour or per day.
+                             * @enum {string}
+                             */
+                            unit: "hour" | "day";
+                            /** @description Price per unit of booking time within this tier, never per minute. */
+                            unitAmount: number;
+                        }[];
+                    };
+                }[];
                 /**
                  * @description Refund threshold for cancellations.
                  * @enum {string}
@@ -24191,6 +24290,50 @@ export interface components {
                          * @enum {string}
                          */
                         preparationMinutes?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                        /** @description Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. The list holds at most one rule. On update the list replaces the current rule, and an empty list removes it. */
+                        pricingRules?: {
+                            /** @description Credit prices on the selected days, kept only while credits are enabled. Omit to keep the regular credit tiers on them. */
+                            credits?: {
+                                /** @description Stepped credit pricing tiers for the selected days. */
+                                tiers: {
+                                    /** @description Fixed fee added once to bookings in this tier. */
+                                    flatAmount: number;
+                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    from: number;
+                                    /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
+                                    unitAmount: number;
+                                }[];
+                            };
+                            /** @description Weekdays, in the location's time zone, on which a booking that starts gets these prices. Select at least one day. */
+                            days: {
+                                /** @description Whether the rule applies to bookings starting on a Friday. */
+                                friday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Monday. */
+                                monday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Saturday. */
+                                saturday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Sunday. */
+                                sunday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Thursday. */
+                                thursday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Tuesday. */
+                                tuesday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Wednesday. */
+                                wednesday: boolean;
+                            };
+                            /** @description Money prices on the selected days, kept only while money is enabled. Omit to keep the regular money tiers on them. */
+                            money?: {
+                                /** @description Stepped money pricing tiers for the selected days. */
+                                tiers: {
+                                    /** @description Fixed fee added once to bookings in this tier. */
+                                    flatAmount: number;
+                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    from: number;
+                                    /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
+                                    unitAmount: number;
+                                }[];
+                            };
+                        }[];
                         /**
                          * @description How long before start a booking remains refundable.
                          * @enum {string}
@@ -24630,6 +24773,50 @@ export interface components {
                          * @enum {string}
                          */
                         preparationMinutes?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
+                        /** @description Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. The list holds at most one rule. On update the list replaces the current rule, and an empty list removes it. */
+                        pricingRules?: {
+                            /** @description Credit prices on the selected days, kept only while credits are enabled. Omit to keep the regular credit tiers on them. */
+                            credits?: {
+                                /** @description Stepped credit pricing tiers for the selected days. */
+                                tiers: {
+                                    /** @description Fixed fee added once to bookings in this tier. */
+                                    flatAmount: number;
+                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    from: number;
+                                    /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
+                                    unitAmount: number;
+                                }[];
+                            };
+                            /** @description Weekdays, in the location's time zone, on which a booking that starts gets these prices. Select at least one day. */
+                            days: {
+                                /** @description Whether the rule applies to bookings starting on a Friday. */
+                                friday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Monday. */
+                                monday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Saturday. */
+                                saturday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Sunday. */
+                                sunday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Thursday. */
+                                thursday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Tuesday. */
+                                tuesday: boolean;
+                                /** @description Whether the rule applies to bookings starting on a Wednesday. */
+                                wednesday: boolean;
+                            };
+                            /** @description Money prices on the selected days, kept only while money is enabled. Omit to keep the regular money tiers on them. */
+                            money?: {
+                                /** @description Stepped money pricing tiers for the selected days. */
+                                tiers: {
+                                    /** @description Fixed fee added once to bookings in this tier. */
+                                    flatAmount: number;
+                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    from: number;
+                                    /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
+                                    unitAmount: number;
+                                }[];
+                            };
+                        }[];
                         /**
                          * @description How long before start a booking remains refundable.
                          * @enum {string}
@@ -27353,44 +27540,6 @@ export interface operations {
             };
         };
     };
-    getInvoiceItems: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description The id of the network. Required when using bearer token authentication */
-                "spacebring-network-id"?: string;
-            };
-            path: {
-                /** @description The id of an invoice. */
-                invoiceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        invoice?: components["schemas"]["invoice"];
-                        invoiceItems?: components["schemas"]["invoiceItem"][];
-                    };
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["responseError"];
-                };
-            };
-        };
-    };
     payInvoice: {
         parameters: {
             query?: never;
@@ -27498,24 +27647,24 @@ export interface operations {
     listInvoiceItems: {
         parameters: {
             query?: {
-                /** @description Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                /** @description Filter invoice items created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
                 "createDate[gte]"?: string;
-                /** @description Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                /** @description Filter invoice items created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
                 "createDate[lte]"?: string;
-                /** @description UUID of the customer whose invoices to list. */
+                /** @description UUID of the customer whose invoice items to list. */
                 customerRef?: string;
-                /** @description Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
+                /** @description Filter invoice items on invoices issued on or after this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[lte] for a range. */
                 "issueDate[gte]"?: string;
-                /** @description Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range. */
+                /** @description Filter invoice items on invoices issued on or before this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[gte] for a range. */
                 "issueDate[lte]"?: string;
-                /** @description Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                /** @description Maximum number of invoice items per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose invoices to list. */
+                /** @description UUID of the location whose invoice items to list. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
                 /**
-                 * @description Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
+                 * @description Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.
                  *
                  *     Supported values:
                  *     - **draft** — created but not sent

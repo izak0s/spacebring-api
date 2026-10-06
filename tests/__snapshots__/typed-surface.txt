@@ -165,7 +165,6 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
       async delete(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async cancelPayment(invoiceId: string, options?: SpacebringRequestOptions): Promise<undefined>
       async duplicate(invoiceId: string, options?: SpacebringRequestOptions): Promise<Invoice>
-      async getItems(invoiceId: string, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[] }>
       async getUpcoming(query?: GetUpcomingInvoiceQuery, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[]; upcomingItems?: UpcomingItem[] }>
       async issue(invoiceId: string, skipAutoCharge?: IssueInvoiceBody, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; invoiceItems?: InvoiceItem[] }>
       async pay(invoiceId: string, body: PayInvoiceBody, options?: SpacebringRequestOptions): Promise<{ invoice?: Invoice; payment?: Payment }>

@@ -1860,82 +1860,6 @@
         }
       }
     },
-    "/billing/invoices/v1/{invoiceId}/items": {
-      "get": {
-        "tags": [
-          "Billing"
-        ],
-        "summary": "List invoice items",
-        "description": "List all items for a specific invoice. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
-        "operationId": "getInvoiceItems",
-        "parameters": [
-          {
-            "name": "invoiceId",
-            "in": "path",
-            "description": "The id of an invoice.",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "spacebring-network-id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": false,
-            "description": "The id of the network. Required when using bearer token authentication"
-          }
-        ],
-        "security": [
-          {
-            "BasicAuth": []
-          },
-          {
-            "OAuth2": [
-              "invoices.readonly",
-              "invoices"
-            ]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "invoice": {
-                      "$ref": "#/components/schemas/invoice"
-                    },
-                    "invoiceItems": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/invoiceItem"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/responseError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/billing/invoices/v1/{invoiceId}/pay": {
       "post": {
         "tags": [
@@ -2125,14 +2049,14 @@
           "Billing"
         ],
         "summary": "List invoice items",
-        "description": "List invoice items filtered by customer, location, type, status, pending, or date range. Status and issue date filters match items connected to an invoice. Pending items are not on an invoice and not part of a subscription. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "listInvoiceItems",
         "parameters": [
           {
             "in": "query",
             "name": "createDate[gte]",
             "required": false,
-            "description": "Filter invoices created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "description": "Filter invoice items created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
             "schema": {
               "type": "string"
             }
@@ -2141,7 +2065,7 @@
             "in": "query",
             "name": "createDate[lte]",
             "required": false,
-            "description": "Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "description": "Filter invoice items created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
             "schema": {
               "type": "string"
             }
@@ -2150,7 +2074,7 @@
             "in": "query",
             "name": "customerRef",
             "required": false,
-            "description": "UUID of the customer whose invoices to list.",
+            "description": "UUID of the customer whose invoice items to list.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -2160,7 +2084,7 @@
             "in": "query",
             "name": "issueDate[gte]",
             "required": false,
-            "description": "Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range.",
+            "description": "Filter invoice items on invoices issued on or after this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[lte] for a range.",
             "schema": {
               "type": "string"
             }
@@ -2169,7 +2093,7 @@
             "in": "query",
             "name": "issueDate[lte]",
             "required": false,
-            "description": "Filter invoices issued on or before this date (ISO 8601). Use with issueDate[gte] for a range.",
+            "description": "Filter invoice items on invoices issued on or before this date (ISO 8601). Items not on an issued invoice are excluded. Use with issueDate[gte] for a range.",
             "schema": {
               "type": "string"
             }
@@ -2178,7 +2102,7 @@
             "in": "query",
             "name": "limit",
             "required": false,
-            "description": "Maximum number of invoices per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "description": "Maximum number of invoice items per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -2189,7 +2113,7 @@
             "in": "query",
             "name": "locationRef",
             "required": false,
-            "description": "UUID of the location whose invoices to list.",
+            "description": "UUID of the location whose invoice items to list.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -2208,7 +2132,7 @@
             "in": "query",
             "name": "status",
             "required": false,
-            "description": "Filter by invoice status. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent to the customer but unpaid\n- **paid** — fully paid\n- **voided** — cancelled and no longer valid",
+            "description": "Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent to the customer but unpaid\n- **paid** — fully paid\n- **voided** — cancelled and no longer valid",
             "schema": {
               "type": "string"
             }
@@ -2521,8 +2445,9 @@
           "Billing"
         ],
         "summary": "List upcoming invoice items",
-        "description": "List upcoming invoice items. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "List a customer's pending invoice items. Deprecated: use <a href=\"/developer/api/billing/list-invoice-items\">List invoice items</a> with <code>pending=true</code> and <code>customerRef</code> instead. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "getUpcomingInvoiceItems",
+        "deprecated": true,
         "parameters": [
           {
             "name": "companyRef",
@@ -15814,9 +15739,9 @@
         "description": "See our [authentication documentation](https://www.spacebring.com/docs/developer/api/authentication#oauth2) for how to authorize your requests",
         "flows": {
           "authorizationCode": {
-            "authorizationUrl": "https://api.spacebring.com/oauth2/authorize",
-            "tokenUrl": "https://api.spacebring.com/oauth2/token",
-            "refreshUrl": "https://api.spacebring.com/oauth2/token",
+            "authorizationUrl": "https://oauth2.spacebring.com/api/oauth2/authorize",
+            "tokenUrl": "https://oauth2.spacebring.com/api/oauth2/token",
+            "refreshUrl": "https://oauth2.spacebring.com/api/oauth2/token",
             "scopes": {
               "benefits.readonly": "Read benefits and applications",
               "benefits": "Read and write benefits and applications",
@@ -20176,6 +20101,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "issueDate": {
+            "description": "ISO timestamp of when the item was issued with its invoice.",
+            "type": "string",
+            "format": "date-time"
+          },
           "locationRef": {
             "type": "string",
             "format": "uuid",
@@ -20947,6 +20877,11 @@
                   "description": "ID of the invoice this item belongs to.",
                   "type": "string",
                   "format": "uuid"
+                },
+                "issueDate": {
+                  "description": "ISO timestamp of when the item was issued with its invoice.",
+                  "type": "string",
+                  "format": "date-time"
                 },
                 "locationRef": {
                   "type": "string",
@@ -27781,7 +27716,7 @@
             ]
           },
           "media": {
-            "description": "Images of the location, newest first.",
+            "description": "Photos and videos of the location in the order administrators arranged them, with any added since first, newest first. The first one is the location's cover.",
             "type": "array",
             "items": {
               "type": "object",
@@ -30952,6 +30887,155 @@
                   "description": "Deprecated. Use bufferTime instead.",
                   "deprecated": true
                 },
+                "pricingRules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "credits": {
+                        "description": "Credit prices on the selected days. When omitted, the regular credit tiers apply on them.",
+                        "type": "object",
+                        "properties": {
+                          "tiers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "flatAmount": {
+                                  "type": "number",
+                                  "description": "Fixed fee added once to bookings in this tier."
+                                },
+                                "from": {
+                                  "type": "number",
+                                  "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                },
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "hour",
+                                    "day"
+                                  ],
+                                  "description": "Whether the tier is priced per hour or per day."
+                                },
+                                "unitAmount": {
+                                  "type": "number",
+                                  "description": "Price per unit of booking time within this tier, never per minute."
+                                }
+                              },
+                              "required": [
+                                "flatAmount",
+                                "from",
+                                "unit",
+                                "unitAmount"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "Stepped credit pricing tiers for the selected days."
+                          }
+                        },
+                        "required": [
+                          "tiers"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "days": {
+                        "type": "object",
+                        "properties": {
+                          "friday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Friday."
+                          },
+                          "monday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Monday."
+                          },
+                          "saturday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Saturday."
+                          },
+                          "sunday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Sunday."
+                          },
+                          "thursday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Thursday."
+                          },
+                          "tuesday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Tuesday."
+                          },
+                          "wednesday": {
+                            "type": "boolean",
+                            "description": "Whether the rule applies to bookings starting on a Wednesday."
+                          }
+                        },
+                        "required": [
+                          "friday",
+                          "monday",
+                          "saturday",
+                          "sunday",
+                          "thursday",
+                          "tuesday",
+                          "wednesday"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Weekdays, in the location's time zone, on which a booking that starts gets these prices."
+                      },
+                      "money": {
+                        "description": "Money prices on the selected days. When omitted, the regular money tiers apply on them.",
+                        "type": "object",
+                        "properties": {
+                          "tiers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "flatAmount": {
+                                  "type": "number",
+                                  "description": "Fixed fee added once to bookings in this tier."
+                                },
+                                "from": {
+                                  "type": "number",
+                                  "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                },
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "hour",
+                                    "day"
+                                  ],
+                                  "description": "Whether the tier is priced per hour or per day."
+                                },
+                                "unitAmount": {
+                                  "type": "number",
+                                  "description": "Price per unit of booking time within this tier, never per minute."
+                                }
+                              },
+                              "required": [
+                                "flatAmount",
+                                "from",
+                                "unit",
+                                "unitAmount"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "Stepped money pricing tiers for the selected days."
+                          }
+                        },
+                        "required": [
+                          "tiers"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "days"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. A booking is priced by the rule covering the weekday of its start in the location's time zone, and by the regular tiers when no rule covers it."
+                },
                 "refundThreshold": {
                   "type": "string",
                   "enum": [
@@ -31254,6 +31338,7 @@
                 "money",
                 "networkRef",
                 "preparationMinutes",
+                "pricingRules",
                 "refundThreshold",
                 "title",
                 "type",
@@ -32535,6 +32620,155 @@
                 "description": "Deprecated. Use bufferTime instead.",
                 "deprecated": true
               },
+              "pricingRules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "credits": {
+                      "description": "Credit prices on the selected days. When omitted, the regular credit tiers apply on them.",
+                      "type": "object",
+                      "properties": {
+                        "tiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "flatAmount": {
+                                "type": "number",
+                                "description": "Fixed fee added once to bookings in this tier."
+                              },
+                              "from": {
+                                "type": "number",
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                              },
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "hour",
+                                  "day"
+                                ],
+                                "description": "Whether the tier is priced per hour or per day."
+                              },
+                              "unitAmount": {
+                                "type": "number",
+                                "description": "Price per unit of booking time within this tier, never per minute."
+                              }
+                            },
+                            "required": [
+                              "flatAmount",
+                              "from",
+                              "unit",
+                              "unitAmount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "Stepped credit pricing tiers for the selected days."
+                        }
+                      },
+                      "required": [
+                        "tiers"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "days": {
+                      "type": "object",
+                      "properties": {
+                        "friday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Friday."
+                        },
+                        "monday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Monday."
+                        },
+                        "saturday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Saturday."
+                        },
+                        "sunday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Sunday."
+                        },
+                        "thursday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Thursday."
+                        },
+                        "tuesday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Tuesday."
+                        },
+                        "wednesday": {
+                          "type": "boolean",
+                          "description": "Whether the rule applies to bookings starting on a Wednesday."
+                        }
+                      },
+                      "required": [
+                        "friday",
+                        "monday",
+                        "saturday",
+                        "sunday",
+                        "thursday",
+                        "tuesday",
+                        "wednesday"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Weekdays, in the location's time zone, on which a booking that starts gets these prices."
+                    },
+                    "money": {
+                      "description": "Money prices on the selected days. When omitted, the regular money tiers apply on them.",
+                      "type": "object",
+                      "properties": {
+                        "tiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "flatAmount": {
+                                "type": "number",
+                                "description": "Fixed fee added once to bookings in this tier."
+                              },
+                              "from": {
+                                "type": "number",
+                                "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                              },
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "hour",
+                                  "day"
+                                ],
+                                "description": "Whether the tier is priced per hour or per day."
+                              },
+                              "unitAmount": {
+                                "type": "number",
+                                "description": "Price per unit of booking time within this tier, never per minute."
+                              }
+                            },
+                            "required": [
+                              "flatAmount",
+                              "from",
+                              "unit",
+                              "unitAmount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "Stepped money pricing tiers for the selected days."
+                        }
+                      },
+                      "required": [
+                        "tiers"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "days"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. A booking is priced by the rule covering the weekday of its start in the location's time zone, and by the regular tiers when no rule covers it."
+              },
               "refundThreshold": {
                 "type": "string",
                 "enum": [
@@ -32837,6 +33071,7 @@
               "money",
               "networkRef",
               "preparationMinutes",
+              "pricingRules",
               "refundThreshold",
               "title",
               "type",
@@ -60598,6 +60833,132 @@
                         "sixtyMinutes"
                       ]
                     },
+                    "pricingRules": {
+                      "description": "Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. The list holds at most one rule. On update the list replaces the current rule, and an empty list removes it.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "credits": {
+                            "description": "Credit prices on the selected days, kept only while credits are enabled. Omit to keep the regular credit tiers on them.",
+                            "type": "object",
+                            "properties": {
+                              "tiers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "flatAmount": {
+                                      "type": "number",
+                                      "description": "Fixed fee added once to bookings in this tier."
+                                    },
+                                    "from": {
+                                      "type": "number",
+                                      "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                    },
+                                    "unitAmount": {
+                                      "type": "number",
+                                      "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
+                                    }
+                                  },
+                                  "required": [
+                                    "flatAmount",
+                                    "from",
+                                    "unitAmount"
+                                  ]
+                                },
+                                "description": "Stepped credit pricing tiers for the selected days."
+                              }
+                            },
+                            "required": [
+                              "tiers"
+                            ]
+                          },
+                          "days": {
+                            "type": "object",
+                            "properties": {
+                              "friday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Friday."
+                              },
+                              "monday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Monday."
+                              },
+                              "saturday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Saturday."
+                              },
+                              "sunday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Sunday."
+                              },
+                              "thursday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Thursday."
+                              },
+                              "tuesday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Tuesday."
+                              },
+                              "wednesday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Wednesday."
+                              }
+                            },
+                            "required": [
+                              "friday",
+                              "monday",
+                              "saturday",
+                              "sunday",
+                              "thursday",
+                              "tuesday",
+                              "wednesday"
+                            ],
+                            "description": "Weekdays, in the location's time zone, on which a booking that starts gets these prices. Select at least one day."
+                          },
+                          "money": {
+                            "description": "Money prices on the selected days, kept only while money is enabled. Omit to keep the regular money tiers on them.",
+                            "type": "object",
+                            "properties": {
+                              "tiers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "flatAmount": {
+                                      "type": "number",
+                                      "description": "Fixed fee added once to bookings in this tier."
+                                    },
+                                    "from": {
+                                      "type": "number",
+                                      "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                    },
+                                    "unitAmount": {
+                                      "type": "number",
+                                      "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
+                                    }
+                                  },
+                                  "required": [
+                                    "flatAmount",
+                                    "from",
+                                    "unitAmount"
+                                  ]
+                                },
+                                "description": "Stepped money pricing tiers for the selected days."
+                              }
+                            },
+                            "required": [
+                              "tiers"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "days"
+                        ]
+                      }
+                    },
                     "refundThreshold": {
                       "type": "string",
                       "enum": [
@@ -61660,6 +62021,132 @@
                         "thirtyMinutes",
                         "sixtyMinutes"
                       ]
+                    },
+                    "pricingRules": {
+                      "description": "Prices that replace the regular money and credit tiers for bookings starting on the selected weekdays. The list holds at most one rule. On update the list replaces the current rule, and an empty list removes it.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "credits": {
+                            "description": "Credit prices on the selected days, kept only while credits are enabled. Omit to keep the regular credit tiers on them.",
+                            "type": "object",
+                            "properties": {
+                              "tiers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "flatAmount": {
+                                      "type": "number",
+                                      "description": "Fixed fee added once to bookings in this tier."
+                                    },
+                                    "from": {
+                                      "type": "number",
+                                      "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                    },
+                                    "unitAmount": {
+                                      "type": "number",
+                                      "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
+                                    }
+                                  },
+                                  "required": [
+                                    "flatAmount",
+                                    "from",
+                                    "unitAmount"
+                                  ]
+                                },
+                                "description": "Stepped credit pricing tiers for the selected days."
+                              }
+                            },
+                            "required": [
+                              "tiers"
+                            ]
+                          },
+                          "days": {
+                            "type": "object",
+                            "properties": {
+                              "friday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Friday."
+                              },
+                              "monday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Monday."
+                              },
+                              "saturday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Saturday."
+                              },
+                              "sunday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Sunday."
+                              },
+                              "thursday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Thursday."
+                              },
+                              "tuesday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Tuesday."
+                              },
+                              "wednesday": {
+                                "type": "boolean",
+                                "description": "Whether the rule applies to bookings starting on a Wednesday."
+                              }
+                            },
+                            "required": [
+                              "friday",
+                              "monday",
+                              "saturday",
+                              "sunday",
+                              "thursday",
+                              "tuesday",
+                              "wednesday"
+                            ],
+                            "description": "Weekdays, in the location's time zone, on which a booking that starts gets these prices. Select at least one day."
+                          },
+                          "money": {
+                            "description": "Money prices on the selected days, kept only while money is enabled. Omit to keep the regular money tiers on them.",
+                            "type": "object",
+                            "properties": {
+                              "tiers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "flatAmount": {
+                                      "type": "number",
+                                      "description": "Fixed fee added once to bookings in this tier."
+                                    },
+                                    "from": {
+                                      "type": "number",
+                                      "description": "Booking length in minutes at which this tier starts, for example 480 for 8 hours."
+                                    },
+                                    "unitAmount": {
+                                      "type": "number",
+                                      "description": "Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour."
+                                    }
+                                  },
+                                  "required": [
+                                    "flatAmount",
+                                    "from",
+                                    "unitAmount"
+                                  ]
+                                },
+                                "description": "Stepped money pricing tiers for the selected days."
+                              }
+                            },
+                            "required": [
+                              "tiers"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "days"
+                        ]
+                      }
                     },
                     "refundThreshold": {
                       "type": "string",
