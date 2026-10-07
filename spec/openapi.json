@@ -2049,7 +2049,7 @@
           "Billing"
         ],
         "summary": "List invoice items",
-        "description": "List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "listInvoiceItems",
         "parameters": [
           {
@@ -2135,6 +2135,16 @@
             "description": "Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent to the customer but unpaid\n- **paid** — fully paid\n- **voided** — cancelled and no longer valid",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "invoiceRef",
+            "required": false,
+            "description": "UUID of the invoice whose items to list, in place of customerRef or locationRef or with them. Pages and sorts like the rest of the list, and the other filters still apply.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -15242,6 +15252,16 @@
             "in": "query",
             "name": "userRefHost",
             "description": "The id of the user, host of the visit.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "userRefVisitor",
+            "description": "The id of the user, visitor of the visit.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -34288,6 +34308,11 @@
                               "description": "ID of the invoice item the booking was billed on.",
                               "type": "string"
                             },
+                            "invoiceRef": {
+                              "description": "Invoice the invoice item was added to. Not set while the item is pending.",
+                              "type": "string",
+                              "format": "uuid"
+                            },
                             "subscriptionRef": {
                               "description": "Subscription the invoice item belongs to.",
                               "type": "string",
@@ -35186,6 +35211,11 @@
                               "invoiceItemRef": {
                                 "description": "ID of the invoice item the booking was billed on.",
                                 "type": "string"
+                              },
+                              "invoiceRef": {
+                                "description": "Invoice the invoice item was added to. Not set while the item is pending.",
+                                "type": "string",
+                                "format": "uuid"
                               },
                               "subscriptionRef": {
                                 "description": "Subscription the invoice item belongs to.",
@@ -36516,6 +36546,11 @@
                             "description": "ID of the invoice item the booking was billed on.",
                             "type": "string"
                           },
+                          "invoiceRef": {
+                            "description": "Invoice the invoice item was added to. Not set while the item is pending.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
                           "subscriptionRef": {
                             "description": "Subscription the invoice item belongs to.",
                             "type": "string",
@@ -37414,6 +37449,11 @@
                             "invoiceItemRef": {
                               "description": "ID of the invoice item the booking was billed on.",
                               "type": "string"
+                            },
+                            "invoiceRef": {
+                              "description": "Invoice the invoice item was added to. Not set while the item is pending.",
+                              "type": "string",
+                              "format": "uuid"
                             },
                             "subscriptionRef": {
                               "description": "Subscription the invoice item belongs to.",

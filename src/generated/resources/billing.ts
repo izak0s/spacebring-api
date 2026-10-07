@@ -117,6 +117,8 @@ export interface ListInvoiceItemsQuery {
   - **paid** — fully paid
   - **voided** — cancelled and no longer valid */
   status?: string;
+  /** UUID of the invoice whose items to list, in place of customerRef or locationRef or with them. Pages and sorts like the rest of the list, and the other filters still apply. */
+  invoiceRef?: string;
   /** Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false. */
   pending?: "true" | "false";
   /** Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
@@ -354,7 +356,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items
          *
-         * List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
+         * List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
          */
         async list(query?: ListInvoiceItemsQuery, options?: SpacebringRequestOptions): Promise<{ invoiceItems: InvoiceItem[]; nextPageToken?: string; searchQueryNext?: string }> {
           return unwrap(await client.GET("/billing/invoices/v1/items", { params: { query }, signal: options?.signal }), "GET /billing/invoices/v1/items");
@@ -362,7 +364,7 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
         /**
          * List invoice items — iterates every item across all pages.
          *
-         * List invoice items filtered by customer, location, type, status, pending, or date range. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
+         * List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location.
          */
         iterate(query?: Omit<ListInvoiceItemsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<InvoiceItem, void, undefined> {
           return paginate(
