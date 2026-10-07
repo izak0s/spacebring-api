@@ -134,6 +134,7 @@ export interface ListInvoiceItemsQuery {
   - **paid** — fully paid
   - **voided** — cancelled and no longer valid */
   status?: string;
+  invoiceRef?: string;
   pending?: "true" | "false";
   type?: string;
 }
@@ -894,6 +895,7 @@ export interface GetRequestsQuery {
 export interface GetVisitsQuery {
   locationRef: string;
   userRefHost?: string;
+  userRefVisitor?: string;
   createDate?: { lte?: string; gte?: string };
   date?: { lte?: string; gte?: string };
   limit?: number;

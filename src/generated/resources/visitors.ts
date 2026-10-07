@@ -43,6 +43,8 @@ export interface GetVisitsQuery {
   locationRef: string;
   /** The id of the user, host of the visit. */
   userRefHost?: string;
+  /** The id of the user, visitor of the visit. */
+  userRefVisitor?: string;
   /** The date filter of items. */
   createDate?: { lte?: string; gte?: string };
   /** The visit date filter of items. */
