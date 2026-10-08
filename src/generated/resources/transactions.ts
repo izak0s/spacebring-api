@@ -43,9 +43,9 @@ export interface GetCreditsTransactionsQuery {
   membershipRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
-  /** Filter by transaction status. Comma-separated status values, e.g. `status=succeeded,pending`. */
+  /** Filter by payment status: 'succeeded' completed, 'pending' awaiting payment, 'processing' being settled by the gateway, 'failed' did not go through, 'canceled' called off before completion. Comma-separated, one or more of: canceled, failed, pending, processing, succeeded. */
   status?: string;
-  /** Filter by transaction type. Comma-separated storage type values, e.g. `type=refund,booking`. Matches analytics report type filters. */
+  /** Filter by what moved the credits: allocations add credits ('adminAllocation' granted by an admin, 'subscriptionAllocation' from a plan, 'purchaseAllocation' from a bought package); 'booking', 'order', 'eventTicket' and 'adminCharge' spend them; 'refund' returns them; 'expiration' and 'subscriptionExpiration' remove unused credits. Matches analytics report type filters. Comma-separated, one or more of: adminAllocation, adminCharge, booking, eventTicket, expiration, order, purchaseAllocation, refund, subscriptionAllocation, subscriptionExpiration. */
   type?: string;
 }
 
@@ -67,7 +67,7 @@ export interface GetDayPassesTransactionsQuery {
   membershipRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
-  /** Filter by transaction type. Comma-separated storage type values, e.g. `type=refund,booking`. Matches analytics report type filters. */
+  /** Filter by what moved the day passes: allocations add passes ('adminAllocation' granted by an admin, 'subscriptionAllocation' from a plan, 'purchaseAllocation' from a bought package); 'booking' and 'adminCharge' spend them; 'refund' returns them; 'expiration' and 'subscriptionExpiration' remove unused passes. Matches analytics report type filters. Comma-separated, one or more of: adminAllocation, adminCharge, booking, expiration, purchaseAllocation, refund, subscriptionAllocation, subscriptionExpiration. */
   type?: string;
 }
 
@@ -85,9 +85,9 @@ export interface GetMoneyTransactionsQuery {
   locationRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
-  /** Filter by transaction status. Comma-separated status values, e.g. `status=succeeded,pending`. */
+  /** Filter by payment status: 'succeeded' completed, 'pending' awaiting payment, 'processing' being settled by the gateway, 'failed' did not go through, 'canceled' called off before completion. Comma-separated, one or more of: canceled, failed, pending, processing, succeeded. */
   status?: string;
-  /** Filter by transaction type. Comma-separated type values, e.g. `type=booking,invoice`. */
+  /** Filter by what was paid for: 'booking' a resource, 'creditPackage' a credits or day passes package, 'eventTicket' an event ticket, 'invoice' an issued invoice, 'order' a shop order, 'subscription' a membership plan, 'custom' a one-off charge created by an admin. Comma-separated, one or more of: booking, creditPackage, custom, eventTicket, invoice, order, subscription. */
   type?: string;
 }
 
