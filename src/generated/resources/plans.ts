@@ -24,6 +24,12 @@ export interface GetPlansQuery {
 /** Request body for `sb.plans.create()`. */
 export type CreatePlanBody = NonNullable<NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 
+/** Request body for `sb.plans.deletePlans()`. */
+export type DeletePlansBody = NonNullable<NonNullable<operations["deletePlans"]["requestBody"]>["content"]["application/json"]["planIds"]>;
+
+/** Request body for `sb.plans.patchPlans()`. */
+export type PatchPlansBody = NonNullable<NonNullable<operations["patchPlans"]["requestBody"]>["content"]["application/json"]["plans"]>;
+
 /** Request body for `sb.plans.update()`. */
 export type UpdatePlanBody = NonNullable<NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 
@@ -86,6 +92,22 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      */
     async delete(planId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/plans/v1/{planId}", { params: { path: { planId } }, signal: options?.signal }), "DELETE /plans/v1/{planId}");
+    },
+    /**
+     * Delete plans
+     *
+     * Delete up to 100 plans at once. Plans that are already deleted are skipped.
+     */
+    async deletePlans(planIds: DeletePlansBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.DELETE("/plans/v1", { body: { planIds }, signal: options?.signal }), "DELETE /plans/v1");
+    },
+    /**
+     * Update plans
+     *
+     * Turn sign-up on with a type, or off, for up to 100 plans at once. Plans that already have this sign-up are left unchanged. A free plan can't use immediate sign-up.
+     */
+    async patchPlans(plans: PatchPlansBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/plans/v1", { body: { plans }, signal: options?.signal }), "PATCH /plans/v1");
     },
   };
 }

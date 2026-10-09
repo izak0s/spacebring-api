@@ -19,9 +19,9 @@ export interface GetCheckInsQuery {
   locationRef: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Comma-separated list of check-in statuses to filter by, e.g. `scheduled,checkedIn`. Valid values: checkedIn, checkedOut, scheduled, expired. Defaults to all statuses. */
+  /** Filter by status: 'scheduled' nobody has arrived yet, 'checkedIn' the person is on site, 'checkedOut' they left, 'expired' the window closed with nobody arriving. Defaults to every status. Comma-separated, one or more of: checkedIn, checkedOut, scheduled, expired. */
   status?: string;
-  /** Comma-separated list of check-in types to filter by, e.g. `eventTicket,visit`. Valid values: deskBooking, roomBooking, eventTicket, visit, subscription. Defaults to all types. */
+  /** Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving with their personal code. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription. */
   type?: string;
   /** UUID of the user to filter check-ins by. Defaults to check-ins of every user. */
   userRef?: string;

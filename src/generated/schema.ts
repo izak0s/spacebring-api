@@ -1796,10 +1796,18 @@ export interface paths {
          * @description Create a plan. <h3>OAuth</h3>Required scopes: <code>plans</code>
          */
         post: operations["createPlan"];
-        delete?: never;
+        /**
+         * Delete plans
+         * @description Delete up to 100 plans at once. Plans that are already deleted are skipped. <h3>OAuth</h3>Required scopes: <code>plans</code>
+         */
+        delete: operations["deletePlans"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update plans
+         * @description Turn sign-up on with a type, or off, for up to 100 plans at once. Plans that already have this sign-up are left unchanged. A free plan can't use immediate sign-up. <h3>OAuth</h3>Required scopes: <code>plans</code>
+         */
+        patch: operations["patchPlans"];
         trace?: never;
     };
     "/plans/v1/{planId}": {
@@ -21780,10 +21788,21 @@ export interface components {
             };
         };
         balance: {
-            allocation?: number;
-            amount?: number;
-            crossLocationUsage?: number;
-            expirationDate?: components["schemas"]["dateSchema"];
+            /** @description Amount allocated to this balance, in credits for a credits balance and in day passes for a day passes balance. */
+            allocation: number;
+            /** @description Amount left in this balance. */
+            amount: number;
+            /** @description Amount of this balance already spent at other locations of the network. */
+            crossLocationUsage: number;
+            /**
+             * Format: date-time
+             * @description When this balance expires. Absent for the permanent balance.
+             */
+            expirationDate?: string;
+            /**
+             * Format: uuid
+             * @description Subscription that allocated this balance. Absent for the permanent balance.
+             */
             subscriptionRef?: string;
         };
         contact: {
@@ -23902,6 +23921,44 @@ export interface components {
                 };
             };
         };
+        deletePlans: {
+            content: {
+                "application/json": {
+                    /** @description Array of IDs of plans to delete. Up to 100 per request. */
+                    planIds: string[];
+                };
+            };
+        };
+        patchPlans: {
+            content: {
+                "application/json": {
+                    /** @description Plans to update and the fields to set on each of them. */
+                    plans: {
+                        /** @description IDs of the plans to update. Up to 100 per request. */
+                        ids: string[];
+                        /** @description Self sign-up settings to set on every plan. */
+                        selfSignup: {
+                            /**
+                             * @description Turn self sign-up on.
+                             * @enum {boolean}
+                             */
+                            enabled: true;
+                            /**
+                             * @description Self sign-up flow type. immediate: customers subscribe at once. request: customers apply and an admin approves.
+                             * @enum {string}
+                             */
+                            type: "immediate" | "request";
+                        } | {
+                            /**
+                             * @description Turn self sign-up off. Each plan keeps its sign-up type.
+                             * @enum {boolean}
+                             */
+                            enabled: false;
+                        };
+                    };
+                };
+            };
+        };
         updatePlan: {
             content: {
                 "application/json": {
@@ -24967,14 +25024,23 @@ export interface components {
             content: {
                 "application/json": {
                     booking: {
-                        /** @description Attendees to invite to the booking. Supported for room resources. Users without a membership in the location are left out, and so is the owner. */
+                        /** @description Attendees to invite to the booking, each an existing user by id or a person by email. Supported for room resources. A person invited by email joins the network without a membership in the location. The owner is left out, and so are all attendees when the owner is not a member of the location. */
                         attendees?: {
                             user: {
                                 /**
                                  * Format: uuid
-                                 * @description User id of the attendee.
+                                 * @description User id of an existing user.
                                  */
                                 id: string;
+                            } | {
+                                /** @description Email of the person to invite. An existing user with this email is invited, otherwise a user is created. */
+                                email: string;
+                                /** @description First name of a user created for the email. */
+                                name?: string;
+                                /** @description Phone number of a user created for the email. */
+                                phoneNumber?: string;
+                                /** @description Last name of a user created for the email. */
+                                surname?: string;
                             };
                         }[];
                         /**
@@ -26430,7 +26496,7 @@ export interface components {
                                  * @description Payment gateway provider. Only gateways that support saved payment methods can be charged.
                                  * @enum {string}
                                  */
-                                gateway: "hyperpay" | "mollie" | "plata" | "stripe" | "tap" | "wayforpay";
+                                gateway: "hyperpay" | "mollie" | "paypal" | "plata" | "stripe" | "tap" | "wayforpay";
                                 /**
                                  * Format: uuid
                                  * @description ID of the saved payment method to charge.
@@ -28231,9 +28297,9 @@ export interface operations {
                 locationRef: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Comma-separated list of check-in statuses to filter by, e.g. `scheduled,checkedIn`. Valid values: checkedIn, checkedOut, scheduled, expired. Defaults to all statuses. */
+                /** @description Filter by status: 'scheduled' nobody has arrived yet, 'checkedIn' the person is on site, 'checkedOut' they left, 'expired' the window closed with nobody arriving. Defaults to every status. Comma-separated, one or more of: checkedIn, checkedOut, scheduled, expired. */
                 status?: string;
-                /** @description Comma-separated list of check-in types to filter by, e.g. `eventTicket,visit`. Valid values: deskBooking, roomBooking, eventTicket, visit, subscription. Defaults to all types. */
+                /** @description Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving with their personal code. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription. */
                 type?: string;
                 /** @description UUID of the user to filter check-ins by. Defaults to check-ins of every user. */
                 userRef?: string;
@@ -31690,6 +31756,66 @@ export interface operations {
                         plan?: components["schemas"]["plan"];
                     };
                 };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deletePlans: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["deletePlans"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchPlans: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchPlans"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {
