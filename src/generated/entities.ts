@@ -14,7 +14,7 @@ export type { Attachment, CreateGuideAttachmentBody, CreateGuideBody, CreateGuid
 export type { Location } from "./resources/locations.js";
 export type { Network } from "./resources/networks.js";
 export type { CreatePackageBody, GetPackagesQuery, Package, PatchPackageBody } from "./resources/packages.js";
-export type { CreatePlanBody, GetPlansQuery, Plan, UpdatePlanBody } from "./resources/plans.js";
+export type { CreatePlanBody, DeletePlansBody, GetPlansQuery, PatchPlansBody, Plan, UpdatePlanBody } from "./resources/plans.js";
 export type { GetRegistrationsQuery, Registration } from "./resources/registrations.js";
 export type { Assignment, Booking, CreateAssignmentBody, CreateBookingBody, CreateResourceBody, CreateResourceMediaBody, GetAssignmentsQuery, GetBookingsQuery, GetResourceAvailability, GetResourceAvailabilityBody, GetResourcesQuery, PatchAssignmentBody, PatchBookingBody, PatchResourceBody, Resource, ResourceMedia } from "./resources/resources.js";
 export type { CreateProductBody, CreateProductMediaBody, CreateShopCategoryBody, GetOrdersQuery, GetProductsQuery, GetShopCategoriesQuery, Order, Product, ProductMedia, ShopCategory, UpdateProductBody, UpdateShopCategoryBody } from "./resources/shop.js";

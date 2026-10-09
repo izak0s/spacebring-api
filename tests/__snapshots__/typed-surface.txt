@@ -538,6 +538,8 @@ export interface GetPlansQuery {
   resourceRef?: string;
 }
 export type CreatePlanBody = NonNullable<NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
+export type DeletePlansBody = NonNullable<NonNullable<operations["deletePlans"]["requestBody"]>["content"]["application/json"]["planIds"]>;
+export type PatchPlansBody = NonNullable<NonNullable<operations["patchPlans"]["requestBody"]>["content"]["application/json"]["plans"]>;
 export type UpdatePlanBody = NonNullable<NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -547,6 +549,8 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
     async create(plan: CreatePlanBody, options?: SpacebringRequestOptions): Promise<Plan>
     async update(planId: string, plan: UpdatePlanBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(planId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async deletePlans(planIds: DeletePlansBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async patchPlans(plans: PatchPlansBody, options?: SpacebringRequestOptions): Promise<undefined>
   };
 }
 
