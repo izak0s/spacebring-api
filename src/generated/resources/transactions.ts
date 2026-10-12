@@ -313,7 +313,7 @@ export function createTransactions(client: Client<paths>, defaults: SpacebringDe
       /**
        * Update a money transaction
        *
-       * Approve or cancel a pending money transaction paid externally.
+       * Change the internal note of a money transaction, or approve or cancel a pending money transaction paid externally. A user needs the Billing permission in the transaction's location.
        *
        * @param transactionId The id of the transaction.
        * @param transaction The `transaction` payload.

@@ -14437,7 +14437,7 @@
           "Transactions"
         ],
         "summary": "Update a money transaction",
-        "description": "Approve or cancel a pending money transaction paid externally. <h3>OAuth</h3>Required scopes: <code>transactions</code>",
+        "description": "Change the internal note of a money transaction, or approve or cancel a pending money transaction paid externally. A user needs the Billing permission in the transaction's location. <h3>OAuth</h3>Required scopes: <code>transactions</code>",
         "operationId": "patchMoneyTransaction",
         "parameters": [
           {
@@ -25493,6 +25493,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "checkOutDate": {
+            "description": "ISO timestamp of when the attendee last checked out. Cleared when they check in again.",
+            "type": "string",
+            "format": "date-time"
+          },
           "code": {
             "description": "Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event.",
             "type": "string"
@@ -29782,6 +29787,23 @@
                             "format": "uuid",
                             "description": "Customer id."
                           },
+                          "logo": {
+                            "description": "Company logo when the customer is a company.",
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
                           "title": {
                             "description": "Company name when the customer is a company.",
                             "type": "string"
@@ -29810,6 +29832,11 @@
                               },
                               "name": {
                                 "description": "User first name.",
+                                "nullable": true,
+                                "type": "string"
+                              },
+                              "photoUrl": {
+                                "description": "Profile photo URL.",
                                 "nullable": true,
                                 "type": "string"
                               },
@@ -31515,6 +31542,23 @@
                           "format": "uuid",
                           "description": "Customer id."
                         },
+                        "logo": {
+                          "description": "Company logo when the customer is a company.",
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "url": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "url"
+                          ],
+                          "additionalProperties": false
+                        },
                         "title": {
                           "description": "Company name when the customer is a company.",
                           "type": "string"
@@ -31543,6 +31587,11 @@
                             },
                             "name": {
                               "description": "User first name.",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "photoUrl": {
+                              "description": "Profile photo URL.",
                               "nullable": true,
                               "type": "string"
                             },
@@ -33237,6 +33286,23 @@
                       "format": "uuid",
                       "description": "Customer id."
                     },
+                    "logo": {
+                      "description": "Company logo when the customer is a company.",
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
                     "title": {
                       "description": "Company name when the customer is a company.",
                       "type": "string"
@@ -33265,6 +33331,11 @@
                         },
                         "name": {
                           "description": "User first name.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "description": "Profile photo URL.",
                           "nullable": true,
                           "type": "string"
                         },
@@ -33477,6 +33548,23 @@
                     "format": "uuid",
                     "description": "Customer id."
                   },
+                  "logo": {
+                    "description": "Company logo when the customer is a company.",
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
                   "title": {
                     "description": "Company name when the customer is a company.",
                     "type": "string"
@@ -33505,6 +33593,11 @@
                       },
                       "name": {
                         "description": "User first name.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "photoUrl": {
+                        "description": "Profile photo URL.",
                         "nullable": true,
                         "type": "string"
                       },
@@ -51791,6 +51884,10 @@
                   "format": "uuid",
                   "description": "Unique identifier of the transaction."
                 },
+                "internalNote": {
+                  "description": "Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator.",
+                  "type": "string"
+                },
                 "invoice": {
                   "deprecated": true,
                   "description": "Deprecated. Use product instead.",
@@ -53249,6 +53346,10 @@
                 "format": "uuid",
                 "description": "Unique identifier of the transaction."
               },
+              "internalNote": {
+                "description": "Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator.",
+                "type": "string"
+              },
               "invoice": {
                 "deprecated": true,
                 "description": "Deprecated. Use product instead.",
@@ -54702,6 +54803,10 @@
                 "type": "string",
                 "format": "uuid",
                 "description": "Unique identifier of the transaction."
+              },
+              "internalNote": {
+                "description": "Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator.",
+                "type": "string"
               },
               "invoice": {
                 "deprecated": true,
@@ -65691,18 +65796,20 @@
                 "transaction": {
                   "type": "object",
                   "properties": {
+                    "internalNote": {
+                      "description": "Note about the payment that only administrators see, such as how an external payment was collected. Can be changed on any money transaction. An empty string clears it.",
+                      "type": "string",
+                      "maxLength": 5000
+                    },
                     "status": {
+                      "description": "New status of the pending external payment: `succeeded` approves it, `canceled` rejects it. Only a pending external payment can change its status.",
                       "type": "string",
                       "enum": [
                         "canceled",
                         "succeeded"
-                      ],
-                      "description": "New status of the pending external payment: `succeeded` approves it, `canceled` rejects it."
+                      ]
                     }
                   },
-                  "required": [
-                    "status"
-                  ],
                   "description": "Transaction fields to update."
                 }
               },
