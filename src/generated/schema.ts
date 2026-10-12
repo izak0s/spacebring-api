@@ -2641,7 +2641,7 @@ export interface paths {
         head?: never;
         /**
          * Update a money transaction
-         * @description Approve or cancel a pending money transaction paid externally. <h3>OAuth</h3>Required scopes: <code>transactions</code>
+         * @description Change the internal note of a money transaction, or approve or cancel a pending money transaction paid externally. A user needs the Billing permission in the transaction's location. <h3>OAuth</h3>Required scopes: <code>transactions</code>
          */
         patch: operations["patchMoneyTransaction"];
         trace?: never;
@@ -7573,6 +7573,11 @@ export interface components {
              * @description ID of the ticket's check-in in the check-ins service. Present when check-in is enabled for the event.
              */
             checkInRef?: string;
+            /**
+             * Format: date-time
+             * @description ISO timestamp of when the attendee last checked out. Cleared when they check in again.
+             */
+            checkOutDate?: string;
             /** @description Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event. */
             code?: string;
             /** @description Note the attendee left when purchasing the ticket. Visible to the ticket owner and location admins only. */
@@ -9477,6 +9482,11 @@ export interface components {
                          * @description Customer id.
                          */
                         id: string;
+                        /** @description Company logo when the customer is a company. */
+                        logo?: {
+                            key: string;
+                            url: string;
+                        };
                         /** @description Company name when the customer is a company. */
                         title?: string;
                         /**
@@ -9495,6 +9505,8 @@ export interface components {
                             id: string;
                             /** @description User first name. */
                             name?: string | null;
+                            /** @description Profile photo URL. */
+                            photoUrl?: string | null;
                             /** @description User last name. */
                             surname?: string | null;
                         };
@@ -10174,6 +10186,11 @@ export interface components {
                          * @description Customer id.
                          */
                         id: string;
+                        /** @description Company logo when the customer is a company. */
+                        logo?: {
+                            key: string;
+                            url: string;
+                        };
                         /** @description Company name when the customer is a company. */
                         title?: string;
                         /**
@@ -10192,6 +10209,8 @@ export interface components {
                             id: string;
                             /** @description User first name. */
                             name?: string | null;
+                            /** @description Profile photo URL. */
+                            photoUrl?: string | null;
                             /** @description User last name. */
                             surname?: string | null;
                         };
@@ -10867,6 +10886,11 @@ export interface components {
                      * @description Customer id.
                      */
                     id: string;
+                    /** @description Company logo when the customer is a company. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
                     /** @description Company name when the customer is a company. */
                     title?: string;
                     /**
@@ -10885,6 +10909,8 @@ export interface components {
                         id: string;
                         /** @description User first name. */
                         name?: string | null;
+                        /** @description Profile photo URL. */
+                        photoUrl?: string | null;
                         /** @description User last name. */
                         surname?: string | null;
                     };
@@ -10995,6 +11021,11 @@ export interface components {
                      * @description Customer id.
                      */
                     id: string;
+                    /** @description Company logo when the customer is a company. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
                     /** @description Company name when the customer is a company. */
                     title?: string;
                     /**
@@ -11013,6 +11044,8 @@ export interface components {
                         id: string;
                         /** @description User first name. */
                         name?: string | null;
+                        /** @description Profile photo URL. */
+                        photoUrl?: string | null;
                         /** @description User last name. */
                         surname?: string | null;
                     };
@@ -19908,6 +19941,8 @@ export interface components {
                  * @description Unique identifier of the transaction.
                  */
                 id: string;
+                /** @description Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator. */
+                internalNote?: string;
                 /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
@@ -20620,6 +20655,8 @@ export interface components {
                  * @description Unique identifier of the transaction.
                  */
                 id: string;
+                /** @description Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator. */
+                internalNote?: string;
                 /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
@@ -21332,6 +21369,8 @@ export interface components {
                  * @description Unique identifier of the transaction.
                  */
                 id: string;
+                /** @description Note about the payment that only administrators see, such as how an external payment was collected. Absent when there is no note or the viewer is not an administrator. */
+                internalNote?: string;
                 /**
                  * @deprecated
                  * @description Deprecated. Use product instead.
@@ -26518,11 +26557,13 @@ export interface components {
                 "application/json": {
                     /** @description Transaction fields to update. */
                     transaction: {
+                        /** @description Note about the payment that only administrators see, such as how an external payment was collected. Can be changed on any money transaction. An empty string clears it. */
+                        internalNote?: string;
                         /**
-                         * @description New status of the pending external payment: `succeeded` approves it, `canceled` rejects it.
+                         * @description New status of the pending external payment: `succeeded` approves it, `canceled` rejects it. Only a pending external payment can change its status.
                          * @enum {string}
                          */
-                        status: "canceled" | "succeeded";
+                        status?: "canceled" | "succeeded";
                     };
                 };
             };
