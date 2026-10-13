@@ -3057,6 +3057,7 @@ export interface components {
                      * @enum {string}
                      */
                     buttonLabel: "apply" | "buy" | "contact" | "get" | "learnMore";
+                    /** @description Confirmation email settings for applications. */
                     confirmationEmail: {
                         /** @description Whether a confirmation email is sent after applying. */
                         enabled: boolean;
@@ -3085,7 +3086,7 @@ export interface components {
                  * @description Unique identifier of the benefit.
                  */
                 id: string;
-                /** @description Auto-detected language of the description. */
+                /** @description Auto-detected language of the description. Empty when there is no description. */
                 locale: string;
                 /**
                  * Format: uuid
@@ -3137,6 +3138,7 @@ export interface components {
                  * @enum {string}
                  */
                 buttonLabel: "apply" | "buy" | "contact" | "get" | "learnMore";
+                /** @description Confirmation email settings for applications. */
                 confirmationEmail: {
                     /** @description Whether a confirmation email is sent after applying. */
                     enabled: boolean;
@@ -3165,7 +3167,7 @@ export interface components {
              * @description Unique identifier of the benefit.
              */
             id: string;
-            /** @description Auto-detected language of the description. */
+            /** @description Auto-detected language of the description. Empty when there is no description. */
             locale: string;
             /**
              * Format: uuid
@@ -3214,6 +3216,7 @@ export interface components {
                      * @enum {string}
                      */
                     buttonLabel: "apply" | "buy" | "contact" | "get" | "learnMore";
+                    /** @description Confirmation email settings for applications. */
                     confirmationEmail: {
                         /** @description Whether a confirmation email is sent after applying. */
                         enabled: boolean;
@@ -3242,7 +3245,7 @@ export interface components {
                  * @description Unique identifier of the benefit.
                  */
                 id: string;
-                /** @description Auto-detected language of the description. */
+                /** @description Auto-detected language of the description. Empty when there is no description. */
                 locale: string;
                 /**
                  * Format: uuid
@@ -8040,7 +8043,7 @@ export interface components {
         };
         post: {
             /** @description Number of comments on the post. */
-            comments: number;
+            comments?: number | null;
             /**
              * Format: date-time
              * @description ISO timestamp of when the post was created.
@@ -8059,7 +8062,7 @@ export interface components {
             /** @description Whether the current user has liked the post. */
             liked?: boolean;
             /** @description Number of likes on the post. */
-            likes: number;
+            likes?: number | null;
             /** @description Detected language locale of the post text. */
             locale?: string;
             /**
@@ -8070,20 +8073,20 @@ export interface components {
             /** @description Media files attached to the post. */
             media: {
                 /** @description Image height in pixels. */
-                height: number;
+                height?: number | null;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the media item.
                  */
-                id: string;
+                id?: string | null;
                 /** @description Storage key of the media file. */
                 key: string;
                 /** @description MIME type of the media file. */
-                mime: string;
+                mime?: string | null;
                 /** @description Public URL of the media file. */
-                url: string;
+                url?: string | null;
                 /** @description Image width in pixels. */
-                width: number;
+                width?: number | null;
             }[];
             /** @description Membership of the post author. */
             membership: {
@@ -8091,7 +8094,7 @@ export interface components {
                  * Format: uuid
                  * @description Unique identifier of the membership.
                  */
-                id: string;
+                id?: string | null;
                 /** @description User associated with the membership. */
                 user?: {
                     /** @description User bio. */
@@ -8122,7 +8125,7 @@ export interface components {
              * Format: uuid
              * @description ID of the membership that created the post.
              */
-            membershipRef: string;
+            membershipRef?: string | null;
             /** @description Open Graph metadata for link previews. */
             og?: {
                 /** @description Open Graph description. */
@@ -8134,12 +8137,12 @@ export interface components {
                 /** @description Open Graph type. */
                 type?: string | null;
                 /** @description Open Graph URL. */
-                url: string;
+                url?: string | null;
                 /** @description Open Graph video URL. */
                 videoUrl?: string | null;
             };
             /** @description Whether the post is pinned. */
-            pinned: boolean;
+            pinned?: boolean | null;
             /** @description Post text content. */
             text?: string;
             /** @description User who created the post. */
@@ -8182,14 +8185,14 @@ export interface components {
             /** @description Whether the current user has liked the comment. */
             liked?: boolean;
             /** @description Number of likes on the comment. */
-            likes: number;
+            likes?: number | null;
             /** @description Membership of the comment author. */
             membership: {
                 /**
                  * Format: uuid
                  * @description Unique identifier of the membership.
                  */
-                id: string;
+                id?: string | null;
                 /** @description User associated with the membership. */
                 user?: {
                     /**
@@ -8217,8 +8220,8 @@ export interface components {
                  * @description Unique identifier of the mention.
                  */
                 id: string;
-                /** @description Mention value. */
-                value: string;
+                /** @description Full name of the mentioned user. Absent when the users service no longer knows the user. */
+                value?: string;
             }[];
             /**
              * Format: uuid
@@ -8248,14 +8251,14 @@ export interface components {
              * Format: uuid
              * @description Unique identifier of the like.
              */
-            id: string;
+            id?: string | null;
             /** @description Membership of the user who liked. */
             membership: {
                 /**
                  * Format: uuid
                  * @description Unique identifier of the membership.
                  */
-                id: string;
+                id?: string | null;
                 /** @description User associated with the membership. */
                 user?: {
                     /**
@@ -8729,9 +8732,9 @@ export interface components {
                     duration?: number;
                     /**
                      * Format: uuid
-                     * @description Unique identifier of the grant.
+                     * @description Unique identifier of the grant. Absent on grants of packages created before grants had IDs.
                      */
-                    id: string;
+                    id?: string;
                     /**
                      * @description Type of balance this grant provides.
                      * @enum {string}
@@ -8791,9 +8794,9 @@ export interface components {
                     duration?: number;
                     /**
                      * Format: uuid
-                     * @description Unique identifier of the grant.
+                     * @description Unique identifier of the grant. Absent on grants of packages created before grants had IDs.
                      */
-                    id: string;
+                    id?: string;
                     /**
                      * @description Type of balance this grant provides.
                      * @enum {string}
@@ -9386,7 +9389,7 @@ export interface components {
              * @description ISO timestamp of when the user was last seen in the network.
              */
             lastSeenDate?: string;
-            /** @description Location-scoped admin permissions. Included only for owners or when viewing the current user's registration. */
+            /** @description Location-scoped admin permissions. Included only for owners and super admins or when viewing the current user's registration. */
             locationPermissions?: {
                 /** @description Whether the admin can manage other admins. */
                 admins: boolean;
@@ -9421,7 +9424,7 @@ export interface components {
              * @description Role of the user in the network.
              * @enum {string}
              */
-            role?: "owner" | "admin" | "member";
+            role?: "owner" | "superAdmin" | "admin" | "member";
             /** @description ISO timestamp or date when terms consent was given. */
             termsConsentDate?: string;
             /**
@@ -27244,7 +27247,7 @@ export interface operations {
             query?: {
                 /** @description UUID of the benefit. */
                 benefitRef?: string;
-                /** @description Comma-separated benefit category UUIDs, e.g. `uuid1,uuid2`. */
+                /** @description Filter by the category of the benefit applied for: the IDs of benefit categories. Comma-separated, one or more UUIDs. */
                 categoryRef?: string;
                 /** @description Filter applications submitted on or after this date (ISO 8601). Use with createDate[lte] for a range. */
                 "createDate[gte]"?: string;
@@ -29048,16 +29051,7 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Case-insensitive search by contract title. Requires customerRef or locationRef to scope the search. */
                 q?: string;
-                /**
-                 * @description Filter by contract status. Comma-separated values, e.g. `draft,issued`.
-                 *
-                 *     Supported values:
-                 *     - **draft** — created but not sent
-                 *     - **issued** — sent, awaiting signature
-                 *     - **signed** — active
-                 *     - **declined** — rejected
-                 *     - **terminated** — cancelled after signing
-                 */
+                /** @description Filter by status: 'draft' created and not sent yet, 'issued' sent and waiting for signatures, 'signed' signed by everyone and active, 'declined' a signer declined it or it expired unsigned, 'terminated' ended by an admin after it was signed. Defaults to every status. Comma-separated, one or more of: draft, issued, signed, declined, terminated. */
                 status?: string;
             };
             header?: {
@@ -33144,20 +33138,11 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Sort order for results. */
+                /** @description Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions; defaults to createDate:desc. */
                 order?: string;
-                /** @description UUID of the plan to filter subscriptions by. */
+                /** @description UUID of the plan to filter subscriptions by. Applies to a location's subscriptions. */
                 planRef?: string;
-                /**
-                 * @description Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
-                 *
-                 *     Supported values:
-                 *     - **active** — currently active
-                 *     - **scheduled** — scheduled to start
-                 *     - **incomplete** — pending setup or payment
-                 *     - **incompleteExpired** — incomplete and expired
-                 *     - **canceled** — canceled
-                 */
+                /** @description Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
                 status?: string;
             };
             header?: {

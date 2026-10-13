@@ -21,18 +21,11 @@ export interface GetSubscriptionsQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Sort order for results. */
+  /** Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions; defaults to createDate:desc. */
   order?: string;
-  /** UUID of the plan to filter subscriptions by. */
+  /** UUID of the plan to filter subscriptions by. Applies to a location's subscriptions. */
   planRef?: string;
-  /** Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.
-
-  Supported values:
-  - **active** — currently active
-  - **scheduled** — scheduled to start
-  - **incomplete** — pending setup or payment
-  - **incompleteExpired** — incomplete and expired
-  - **canceled** — canceled */
+  /** Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
   status?: string;
 }
 

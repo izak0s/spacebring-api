@@ -275,12 +275,6 @@ export interface GetContractsQuery {
   locationRef?: string;
   nextPageToken?: string;
   q?: string;
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent, awaiting signature
-  - **signed** — active
-  - **declined** — rejected
-  - **terminated** — cancelled after signing */
   status?: string;
 }
 export interface GetTemplatesQuery {
@@ -720,12 +714,6 @@ export interface GetSubscriptionsQuery {
   nextPageToken?: string;
   order?: string;
   planRef?: string;
-  Supported values:
-  - **active** — currently active
-  - **scheduled** — scheduled to start
-  - **incomplete** — pending setup or payment
-  - **incompleteExpired** — incomplete and expired
-  - **canceled** — canceled */
   status?: string;
 }
 export type CreateSubscriptionBody = NonNullable<operations["createSubscription"]["requestBody"]>["content"]["application/json"];
