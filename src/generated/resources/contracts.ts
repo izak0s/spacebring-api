@@ -29,14 +29,7 @@ export interface GetContractsQuery {
   nextPageToken?: string;
   /** Case-insensitive search by contract title. Requires customerRef or locationRef to scope the search. */
   q?: string;
-  /** Filter by contract status. Comma-separated values, e.g. `draft,issued`.
-
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent, awaiting signature
-  - **signed** — active
-  - **declined** — rejected
-  - **terminated** — cancelled after signing */
+  /** Filter by status: 'draft' created and not sent yet, 'issued' sent and waiting for signatures, 'signed' signed by everyone and active, 'declined' a signer declined it or it expired unsigned, 'terminated' ended by an admin after it was signed. Defaults to every status. Comma-separated, one or more of: draft, issued, signed, declined, terminated. */
   status?: string;
 }
 

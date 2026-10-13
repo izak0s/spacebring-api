@@ -1021,7 +1021,7 @@
             "in": "query",
             "name": "categoryRef",
             "required": false,
-            "description": "Comma-separated benefit category UUIDs, e.g. `uuid1,uuid2`.",
+            "description": "Filter by the category of the benefit applied for: the IDs of benefit categories. Comma-separated, one or more UUIDs.",
             "schema": {
               "type": "string"
             }
@@ -4576,7 +4576,7 @@
             "in": "query",
             "name": "status",
             "required": false,
-            "description": "Filter by contract status. Comma-separated values, e.g. `draft,issued`.\n\nSupported values:\n- **draft** — created but not sent\n- **issued** — sent, awaiting signature\n- **signed** — active\n- **declined** — rejected\n- **terminated** — cancelled after signing",
+            "description": "Filter by status: 'draft' created and not sent yet, 'issued' sent and waiting for signatures, 'signed' signed by everyone and active, 'declined' a signer declined it or it expired unsigned, 'terminated' ended by an admin after it was signed. Defaults to every status. Comma-separated, one or more of: draft, issued, signed, declined, terminated.",
             "schema": {
               "type": "string"
             }
@@ -12230,7 +12230,7 @@
             "in": "query",
             "name": "order",
             "required": false,
-            "description": "Sort order for results.",
+            "description": "Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions; defaults to createDate:desc.",
             "schema": {
               "type": "string"
             }
@@ -12239,7 +12239,7 @@
             "in": "query",
             "name": "planRef",
             "required": false,
-            "description": "UUID of the plan to filter subscriptions by.",
+            "description": "UUID of the plan to filter subscriptions by. Applies to a location's subscriptions.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -12249,7 +12249,7 @@
             "in": "query",
             "name": "status",
             "required": false,
-            "description": "Filter by subscription status. Comma-separated values, e.g. `active,scheduled`. Defaults to `active`, `scheduled`, and `incomplete` when omitted.\n\nSupported values:\n- **active** — currently active\n- **scheduled** — scheduled to start\n- **incomplete** — pending setup or payment\n- **incompleteExpired** — incomplete and expired\n- **canceled** — canceled",
+            "description": "Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled.",
             "schema": {
               "type": "string"
             }
@@ -16139,7 +16139,8 @@
                         "enabled",
                         "template"
                       ],
-                      "additionalProperties": false
+                      "additionalProperties": false,
+                      "description": "Confirmation email settings for applications."
                     },
                     "enabled": {
                       "type": "boolean",
@@ -16180,7 +16181,7 @@
                 },
                 "locale": {
                   "type": "string",
-                  "description": "Auto-detected language of the description."
+                  "description": "Auto-detected language of the description. Empty when there is no description."
                 },
                 "locationRef": {
                   "type": "string",
@@ -16313,7 +16314,8 @@
                   "enabled",
                   "template"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "description": "Confirmation email settings for applications."
               },
               "enabled": {
                 "type": "boolean",
@@ -16354,7 +16356,7 @@
           },
           "locale": {
             "type": "string",
-            "description": "Auto-detected language of the description."
+            "description": "Auto-detected language of the description. Empty when there is no description."
           },
           "locationRef": {
             "type": "string",
@@ -16474,7 +16476,8 @@
                       "enabled",
                       "template"
                     ],
-                    "additionalProperties": false
+                    "additionalProperties": false,
+                    "description": "Confirmation email settings for applications."
                   },
                   "enabled": {
                     "type": "boolean",
@@ -16515,7 +16518,7 @@
               },
               "locale": {
                 "type": "string",
-                "description": "Auto-detected language of the description."
+                "description": "Auto-detected language of the description. Empty when there is no description."
               },
               "locationRef": {
                 "type": "string",
@@ -26535,8 +26538,9 @@
         "type": "object",
         "properties": {
           "comments": {
-            "type": "number",
-            "description": "Number of comments on the post."
+            "description": "Number of comments on the post.",
+            "nullable": true,
+            "type": "number"
           },
           "createDate": {
             "type": "string",
@@ -26558,8 +26562,9 @@
             "type": "boolean"
           },
           "likes": {
-            "type": "number",
-            "description": "Number of likes on the post."
+            "description": "Number of likes on the post.",
+            "nullable": true,
+            "type": "number"
           },
           "locale": {
             "description": "Detected language locale of the post text.",
@@ -26576,38 +26581,38 @@
               "type": "object",
               "properties": {
                 "height": {
-                  "type": "number",
-                  "description": "Image height in pixels."
+                  "description": "Image height in pixels.",
+                  "nullable": true,
+                  "type": "number"
                 },
                 "id": {
+                  "description": "Unique identifier of the media item.",
+                  "nullable": true,
                   "type": "string",
-                  "format": "uuid",
-                  "description": "Unique identifier of the media item."
+                  "format": "uuid"
                 },
                 "key": {
                   "type": "string",
                   "description": "Storage key of the media file."
                 },
                 "mime": {
-                  "type": "string",
-                  "description": "MIME type of the media file."
+                  "description": "MIME type of the media file.",
+                  "nullable": true,
+                  "type": "string"
                 },
                 "url": {
-                  "type": "string",
-                  "description": "Public URL of the media file."
+                  "description": "Public URL of the media file.",
+                  "nullable": true,
+                  "type": "string"
                 },
                 "width": {
-                  "type": "number",
-                  "description": "Image width in pixels."
+                  "description": "Image width in pixels.",
+                  "nullable": true,
+                  "type": "number"
                 }
               },
               "required": [
-                "height",
-                "id",
-                "key",
-                "mime",
-                "url",
-                "width"
+                "key"
               ],
               "additionalProperties": false
             },
@@ -26617,9 +26622,10 @@
             "type": "object",
             "properties": {
               "id": {
+                "description": "Unique identifier of the membership.",
+                "nullable": true,
                 "type": "string",
-                "format": "uuid",
-                "description": "Unique identifier of the membership."
+                "format": "uuid"
               },
               "user": {
                 "description": "User associated with the membership.",
@@ -26672,16 +26678,14 @@
                 "additionalProperties": false
               }
             },
-            "required": [
-              "id"
-            ],
             "additionalProperties": false,
             "description": "Membership of the post author."
           },
           "membershipRef": {
+            "description": "ID of the membership that created the post.",
+            "nullable": true,
             "type": "string",
-            "format": "uuid",
-            "description": "ID of the membership that created the post."
+            "format": "uuid"
           },
           "og": {
             "description": "Open Graph metadata for link previews.",
@@ -26708,8 +26712,9 @@
                 "type": "string"
               },
               "url": {
-                "type": "string",
-                "description": "Open Graph URL."
+                "description": "Open Graph URL.",
+                "nullable": true,
+                "type": "string"
               },
               "videoUrl": {
                 "description": "Open Graph video URL.",
@@ -26717,14 +26722,12 @@
                 "type": "string"
               }
             },
-            "required": [
-              "url"
-            ],
             "additionalProperties": false
           },
           "pinned": {
-            "type": "boolean",
-            "description": "Whether the post is pinned."
+            "description": "Whether the post is pinned.",
+            "nullable": true,
+            "type": "boolean"
           },
           "text": {
             "description": "Post text content.",
@@ -26782,15 +26785,11 @@
           }
         },
         "required": [
-          "comments",
           "createDate",
           "id",
-          "likes",
           "locationRef",
           "media",
-          "membership",
-          "membershipRef",
-          "pinned"
+          "membership"
         ],
         "additionalProperties": false
       },
@@ -26812,16 +26811,18 @@
             "type": "boolean"
           },
           "likes": {
-            "type": "number",
-            "description": "Number of likes on the comment."
+            "description": "Number of likes on the comment.",
+            "nullable": true,
+            "type": "number"
           },
           "membership": {
             "type": "object",
             "properties": {
               "id": {
+                "description": "Unique identifier of the membership.",
+                "nullable": true,
                 "type": "string",
-                "format": "uuid",
-                "description": "Unique identifier of the membership."
+                "format": "uuid"
               },
               "user": {
                 "description": "User associated with the membership.",
@@ -26859,9 +26860,6 @@
                 "additionalProperties": false
               }
             },
-            "required": [
-              "id"
-            ],
             "additionalProperties": false,
             "description": "Membership of the comment author."
           },
@@ -26877,13 +26875,12 @@
                   "description": "Unique identifier of the mention."
                 },
                 "value": {
-                  "type": "string",
-                  "description": "Mention value."
+                  "description": "Full name of the mentioned user. Absent when the users service no longer knows the user.",
+                  "type": "string"
                 }
               },
               "required": [
-                "id",
-                "value"
+                "id"
               ],
               "additionalProperties": false
             }
@@ -26906,7 +26903,6 @@
         "required": [
           "createDate",
           "id",
-          "likes",
           "membership",
           "postRef",
           "text"
@@ -26927,17 +26923,19 @@
             "description": "ISO timestamp of when the like was created."
           },
           "id": {
+            "description": "Unique identifier of the like.",
+            "nullable": true,
             "type": "string",
-            "format": "uuid",
-            "description": "Unique identifier of the like."
+            "format": "uuid"
           },
           "membership": {
             "type": "object",
             "properties": {
               "id": {
+                "description": "Unique identifier of the membership.",
+                "nullable": true,
                 "type": "string",
-                "format": "uuid",
-                "description": "Unique identifier of the membership."
+                "format": "uuid"
               },
               "user": {
                 "description": "User associated with the membership.",
@@ -26975,9 +26973,6 @@
                 "additionalProperties": false
               }
             },
-            "required": [
-              "id"
-            ],
             "additionalProperties": false,
             "description": "Membership of the user who liked."
           },
@@ -26989,7 +26984,6 @@
         },
         "required": [
           "createDate",
-          "id",
           "membership",
           "postRef"
         ],
@@ -28059,9 +28053,9 @@
                         "maximum": 3650
                       },
                       "id": {
+                        "description": "Unique identifier of the grant. Absent on grants of packages created before grants had IDs.",
                         "type": "string",
-                        "format": "uuid",
-                        "description": "Unique identifier of the grant."
+                        "format": "uuid"
                       },
                       "type": {
                         "type": "string",
@@ -28074,7 +28068,6 @@
                     },
                     "required": [
                       "amount",
-                      "id",
                       "type"
                     ],
                     "additionalProperties": false
@@ -28170,9 +28163,9 @@
                       "maximum": 3650
                     },
                     "id": {
+                      "description": "Unique identifier of the grant. Absent on grants of packages created before grants had IDs.",
                       "type": "string",
-                      "format": "uuid",
-                      "description": "Unique identifier of the grant."
+                      "format": "uuid"
                     },
                     "type": {
                       "type": "string",
@@ -28185,7 +28178,6 @@
                   },
                   "required": [
                     "amount",
-                    "id",
                     "type"
                   ],
                   "additionalProperties": false
@@ -29575,7 +29567,7 @@
             "format": "date-time"
           },
           "locationPermissions": {
-            "description": "Location-scoped admin permissions. Included only for owners or when viewing the current user's registration.",
+            "description": "Location-scoped admin permissions. Included only for owners and super admins or when viewing the current user's registration.",
             "type": "object",
             "properties": {
               "admins": {
@@ -29661,6 +29653,7 @@
             "type": "string",
             "enum": [
               "owner",
+              "superAdmin",
               "admin",
               "member"
             ]

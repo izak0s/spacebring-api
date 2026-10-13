@@ -20,7 +20,7 @@ export type BenefitMedia = NonNullable<operations["createBenefitMedia"]["respons
 export interface GetBenefitApplicationsQuery {
   /** UUID of the benefit. */
   benefitRef?: string;
-  /** Comma-separated benefit category UUIDs, e.g. `uuid1,uuid2`. */
+  /** Filter by the category of the benefit applied for: the IDs of benefit categories. Comma-separated, one or more UUIDs. */
   categoryRef?: string;
   /** Filter applications submitted on or after this date (ISO 8601). Use with createDate[lte] for a range. */
   "createDate[gte]"?: string;
