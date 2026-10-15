@@ -15,34 +15,34 @@ export type Redemption = NonNullable<components["schemas"]["discountRedemption"]
 
 /** Query parameters for `sb.discounts.coupons.list()`. */
 export interface GetCouponsQuery {
-  /** The id of the location */
-  locationRef: string;
-  /** Comma-separated list of coupon types to filter by */
-  type?: "creditPackages" | "desks" | "equipment" | "events" | "products" | "rooms" | "subscriptionItems";
-  /** The number of coupons to retrieve. Default: 25 */
+  /** Maximum number of coupons per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** Token to retrieve the next page of results. */
+  /** UUID of the location whose coupons to list. Omit to list coupons across every location of the network. */
+  locationRef?: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
+  /** Filter by the product types a coupon applies to; a coupon matches when it applies to any of them. Comma-separated, one or more of: roomBookings, eventSpaceBookings, conferenceRoomBookings, meetingRoomBookings, phoneBoothBookings, stationBookings, studioBookings, hotDeskBookings, dedicatedDeskBookings, officeBookings, parkingBookings, equipmentBookings, eventTickets, shopProducts, packages, subscriptionItems. */
+  type?: string;
 }
 
 /** Query parameters for `sb.discounts.listRedemptions()`. */
 export interface GetDiscountRedemptionsQuery {
-  /** The id of the coupon. Either couponRef or promocodeRef is required */
+  /** UUID of the coupon whose redemptions to list. */
   couponRef?: string;
-  /** The id of the promocode. Either couponRef or promocodeRef is required */
-  promocodeRef?: string;
-  /** The number of items to return */
+  /** Maximum number of discount redemptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** Token to retrieve the next page of results. */
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
+  /** UUID of the promocode whose redemptions to list. */
+  promocodeRef?: string;
 }
 
 /** Query parameters for `sb.discounts.promocodes.list()`. */
 export interface GetPromocodesQuery {
-  /** The id of the location. At least one of locationRef or couponRef is required */
-  locationRef?: string;
-  /** The id of the coupon. At least one of locationRef or couponRef is required */
+  /** UUID of the coupon whose promocodes to list. */
   couponRef?: string;
+  /** UUID of the location whose promocodes to list. Omit with couponRef to list promocodes across every location of the network. */
+  locationRef?: string;
 }
 
 /** Request body for `sb.discounts.coupons.create()`. */
@@ -80,17 +80,17 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
       /**
        * Retrieve coupons
        *
-       * Retrieve all coupons in the location.
+       * Retrieve the coupons of a location, or of every location in the network.
        */
-      async list(query: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }> {
+      async list(query?: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }> {
         return unwrap(await client.GET("/discounts/v1/coupons", { params: { query }, signal: options?.signal }), "GET /discounts/v1/coupons");
       },
       /**
        * Retrieve coupons — iterates every item across all pages.
        *
-       * Retrieve all coupons in the location.
+       * Retrieve the coupons of a location, or of every location in the network.
        */
-      iterate(query: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined> {
+      iterate(query?: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/discounts/v1/coupons", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /discounts/v1/coupons"),

@@ -30,7 +30,7 @@ export interface GetBenefitApplicationsQuery {
   customerRef?: string;
   /** Maximum number of applications per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
+  /** UUID of the location. Omit locationRef, benefitRef, customerRef and userRef to list applications across every location of the network. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
@@ -40,8 +40,8 @@ export interface GetBenefitApplicationsQuery {
 
 /** Query parameters for `sb.benefits.categories.list()`. */
 export interface GetBenefitCategoriesQuery {
-  /** UUID of the location whose benefit categories to list. */
-  locationRef: string;
+  /** UUID of the location whose benefit categories to list, in member-facing order. Omit to list the categories of every location of the network. */
+  locationRef?: string;
 }
 
 /** Query parameters for `sb.benefits.list()`. */
@@ -52,7 +52,7 @@ export interface GetBenefitsQuery {
   featured?: boolean;
   /** Maximum number of benefits per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
+  /** UUID of the location. Omit both locationRef and categoryRef to list benefits across every location of the network. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
@@ -181,7 +181,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
        *
        * Retrieve all benefit categories in the location.
        */
-      async list(query: GetBenefitCategoriesQuery, options?: SpacebringRequestOptions): Promise<BenefitCategory[]> {
+      async list(query?: GetBenefitCategoriesQuery, options?: SpacebringRequestOptions): Promise<BenefitCategory[]> {
         return unwrapProp(await client.GET("/benefits/categories/v1", { params: { query }, signal: options?.signal }), "categories", "GET /benefits/categories/v1");
       },
       /**

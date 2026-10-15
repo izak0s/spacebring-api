@@ -33,11 +33,7 @@ export interface GetCreditNotesQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Filter by credit note status. Comma-separated values, e.g. `issued,voided`.
-
-  Supported values:
-  - **issued** — active credit note
-  - **voided** — cancelled and no longer valid */
+  /** Filter by credit note status: issued (in effect) or voided (cancelled and no longer valid). Comma-separated, one or more of: issued, voided. */
   status?: string;
 }
 
@@ -65,13 +61,7 @@ export interface GetInvoicesQuery {
   nextPageToken?: string;
   /** Case-insensitive search by invoice code or number. Requires customerRef or locationRef. */
   q?: string;
-  /** Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
-
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent to the customer but unpaid
-  - **paid** — fully paid
-  - **voided** — cancelled and no longer valid */
+  /** Filter by invoice status: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). Comma-separated, one or more of: draft, issued, paid, voided. */
   status?: string;
 }
 
@@ -109,19 +99,13 @@ export interface ListInvoiceItemsQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.
-
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent to the customer but unpaid
-  - **paid** — fully paid
-  - **voided** — cancelled and no longer valid */
+  /** Filter by the status of the invoice the item is on: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). Items not on an invoice are excluded. Comma-separated, one or more of: draft, issued, paid, voided. */
   status?: string;
   /** UUID of the invoice whose items to list, in place of customerRef or locationRef or with them. Pages and sorts like the rest of the list, and the other filters still apply. */
   invoiceRef?: string;
   /** Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false. */
   pending?: "true" | "false";
-  /** Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
+  /** Filter by invoice item type. Comma-separated, one or more of: creditPackage, custom, booking, eventTicket, subscription, order. */
   type?: string;
 }
 

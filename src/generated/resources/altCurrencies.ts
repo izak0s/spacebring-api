@@ -45,6 +45,15 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
         "altCurrencies",
       );
     },
+    /**
+     * Retrieve an alternative currency
+     *
+     * @param id The id of the alternative currency
+     * @param options Request options (abort signal).
+     */
+    async get(id: string, options?: SpacebringRequestOptions): Promise<AltCurrency> {
+      return unwrapProp(await client.GET("/alt_currencies/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "altCurrency", "GET /alt_currencies/v1/{id}");
+    },
     /** Create an alternative currency */
     async create(altCurrency: CreateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<AltCurrency> {
       return unwrapProp(await client.POST("/alt_currencies/v1", { body: { altCurrency }, signal: options?.signal }), "altCurrency", "POST /alt_currencies/v1");

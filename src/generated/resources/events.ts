@@ -15,14 +15,34 @@ export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
 
 /** Query parameters for `sb.events.list()`. */
 export interface GetEventsByOrganizationQuery {
-  /** The id of the location. */
-  locationRef: string;
-  /** The number of events to retrieve. Default: 25 */
+  /** Filter events whose create date is on or after this date (ISO 8601). */
+  "createDate[gte]"?: string;
+  /** Filter events whose create date is on or before this date (ISO 8601). */
+  "createDate[lte]"?: string;
+  /** Filter events whose end date is after this date (ISO 8601). */
+  "endDate[gt]"?: string;
+  /** Filter events whose end date is on or after this date (ISO 8601). */
+  "endDate[gte]"?: string;
+  /** Filter events whose end date is before this date (ISO 8601). */
+  "endDate[lt]"?: string;
+  /** Filter events whose end date is on or before this date (ISO 8601). */
+  "endDate[lte]"?: string;
+  /** Maximum number of events per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** Token to retrieve the next page of results. */
+  /** UUID of the location whose events to list. */
+  locationRef: string;
+  /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** The order of the events. createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc or relevance */
+  /** Sort order of events. One of relevance, createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc. */
   order?: string;
+  /** Filter events whose start date is after this date (ISO 8601). */
+  "startDate[gt]"?: string;
+  /** Filter events whose start date is on or after this date (ISO 8601). */
+  "startDate[gte]"?: string;
+  /** Filter events whose start date is before this date (ISO 8601). */
+  "startDate[lt]"?: string;
+  /** Filter events whose start date is on or before this date (ISO 8601). */
+  "startDate[lte]"?: string;
 }
 
 /** Query parameters for `sb.events.tickets.list()`. */
@@ -39,11 +59,7 @@ export interface GetEventTicketsQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Filter by event ticket status. Comma-separated values, e.g. `active,canceled`. Defaults to `active` when omitted.
-
-  Supported values:
-  - **active** — the ticket is valid
-  - **canceled** — the ticket was deleted */
+  /** Filter by event ticket status: 'active' the ticket is valid, 'canceled' the ticket was deleted. Defaults to active. Comma-separated, one or more of: active, canceled. */
   status?: string;
   /** UUID of the user whose event tickets to list. */
   userRef?: string;

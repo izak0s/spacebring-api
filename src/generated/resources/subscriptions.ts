@@ -17,13 +17,13 @@ export interface GetSubscriptionsQuery {
   customerRef?: string;
   /** Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose subscriptions to list. */
+  /** UUID of the location whose subscriptions to list. Omit locationRef and customerRef to list subscriptions across every location of the network, grouped by location. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions; defaults to createDate:desc. */
+  /** Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions and needs locationRef. Defaults to createDate:desc. */
   order?: string;
-  /** UUID of the plan to filter subscriptions by. Applies to a location's subscriptions. */
+  /** UUID of the plan to filter subscriptions by. Applies to a location's or the network's subscriptions. */
   planRef?: string;
   /** Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
   status?: string;

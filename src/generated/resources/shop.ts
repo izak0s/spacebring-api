@@ -18,7 +18,7 @@ export type ShopCategory = NonNullable<components["schemas"]["shopCategory"]>;
 
 /** Query parameters for `sb.shop.orders.list()`. */
 export interface GetOrdersQuery {
-  /** Comma-separated shop category UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+  /** Filter by the shop categories of the products in the order. Comma-separated, one or more UUIDs. */
   categoryRef?: string;
   /** Filter orders created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
   "createDate[gte]"?: string;
@@ -32,15 +32,9 @@ export interface GetOrdersQuery {
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Comma-separated product UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+  /** Filter by the products in the order. Comma-separated, one or more UUIDs. */
   productRef?: string;
-  /** Filter by order status. Comma-separated values, e.g. `new,inProgress`. Defaults to `new`, `inProgress`, and `completed` when omitted.
-
-  Supported values:
-  - **new** — placed, awaiting fulfillment
-  - **inProgress** — being fulfilled
-  - **completed** — fulfilled
-  - **canceled** — canceled */
+  /** Filter by order status: 'pending' placed, payment still processing; 'new' placed and paid, awaiting fulfillment; 'inProgress' being fulfilled; 'completed' fulfilled; 'canceled' canceled by the customer or an admin. Defaults to new, inProgress and completed. Comma-separated, one or more of: canceled, completed, inProgress, new, pending. */
   status?: string;
   /** UUID of the user whose orders to list. */
   userRef?: string;
@@ -50,7 +44,7 @@ export interface GetOrdersQuery {
 export interface GetProductsQuery {
   /** UUID of the shop category. */
   categoryRef?: string;
-  /** Comma-separated product UUIDs, e.g. `uuid1,uuid2`. Up to 25 ids per request. */
+  /** Product UUIDs to get, up to 25 per request. Comma-separated, one or more UUIDs. */
   id?: string;
   /** Maximum number of products per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;

@@ -19,15 +19,15 @@ export interface GetContractsQuery {
   "createDate[gte]"?: string;
   /** Filter contracts created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
   "createDate[lte]"?: string;
-  /** UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
+  /** UUID of the customer (membership or company). When set, returns only that customer's contracts. */
   customerRef?: string;
   /** Maximum number of contracts per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. Provide customerRef or locationRef; when set, returns contracts in that location. */
+  /** UUID of the location. When set, returns contracts in that location. Omit both locationRef and customerRef to list contracts across every location of the network. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Case-insensitive search by contract title. Requires customerRef or locationRef to scope the search. */
+  /** Case-insensitive search by contract title, within customerRef or locationRef when given and across the network otherwise. */
   q?: string;
   /** Filter by status: 'draft' created and not sent yet, 'issued' sent and waiting for signatures, 'signed' signed by everyone and active, 'declined' a signer declined it or it expired unsigned, 'terminated' ended by an admin after it was signed. Defaults to every status. Comma-separated, one or more of: draft, issued, signed, declined, terminated. */
   status?: string;
@@ -37,8 +37,8 @@ export interface GetContractsQuery {
 export interface GetTemplatesQuery {
   /** Maximum number of templates per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
-  locationRef: string;
+  /** UUID of the location whose templates to list. Omit to list templates across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
 }
@@ -179,7 +179,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all contract templates in the location.
        */
-      async list(query: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }> {
+      async list(query?: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }> {
         return unwrap(await client.GET("/contracts/templates/v1", { params: { query }, signal: options?.signal }), "GET /contracts/templates/v1");
       },
       /**
@@ -187,7 +187,7 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
        *
        * Retrieve all contract templates in the location.
        */
-      iterate(query: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined> {
+      iterate(query?: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/contracts/templates/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /contracts/templates/v1"),

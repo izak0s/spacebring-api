@@ -11,6 +11,7 @@ export function createAltcurrencies(client: Client<paths>, defaults: SpacebringD
   return {
     async list(query: GetAltCurrenciesQuery, options?: SpacebringRequestOptions): Promise<{ altCurrencies?: AltCurrency[]; nextPageToken?: string; searchQueryNext?: string }>
     iterate(query: Omit<GetAltCurrenciesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<AltCurrency, void, undefined>
+    async get(id: string, options?: SpacebringRequestOptions): Promise<AltCurrency>
     async create(altCurrency: CreateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<AltCurrency>
     async update(id: string, altCurrency: UpdateAltCurrencyBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(id: string, options?: SpacebringRequestOptions): Promise<undefined>
@@ -34,7 +35,7 @@ export interface GetBenefitApplicationsQuery {
   userRef?: string;
 }
 export interface GetBenefitCategoriesQuery {
-  locationRef: string;
+  locationRef?: string;
 }
 export interface GetBenefitsQuery {
   categoryRef?: string;
@@ -65,7 +66,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
       async create(application: ApplyBenefitBody, options?: SpacebringRequestOptions): Promise<Application>
     },
     categories: {
-      async list(query: GetBenefitCategoriesQuery, options?: SpacebringRequestOptions): Promise<BenefitCategory[]>
+      async list(query?: GetBenefitCategoriesQuery, options?: SpacebringRequestOptions): Promise<BenefitCategory[]>
       async get(categoryId: string, options?: SpacebringRequestOptions): Promise<BenefitCategory>
       async create(category: CreateBenefitCategoryBody, options?: SpacebringRequestOptions): Promise<BenefitCategory>
       async update(categoryId: string, category: UpdateBenefitCategoryBody, options?: SpacebringRequestOptions): Promise<BenefitCategory>
@@ -87,9 +88,6 @@ export interface GetCreditNotesQuery {
   limit?: number;
   locationRef?: string;
   nextPageToken?: string;
-  Supported values:
-  - **issued** — active credit note
-  - **voided** — cancelled and no longer valid */
   status?: string;
 }
 export interface GetInvoicesQuery {
@@ -104,11 +102,6 @@ export interface GetInvoicesQuery {
   membershipRef?: string;
   nextPageToken?: string;
   q?: string;
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent to the customer but unpaid
-  - **paid** — fully paid
-  - **voided** — cancelled and no longer valid */
   status?: string;
 }
 export interface GetUpcomingInvoiceItemsQuery {
@@ -128,11 +121,6 @@ export interface ListInvoiceItemsQuery {
   limit?: number;
   locationRef?: string;
   nextPageToken?: string;
-  Supported values:
-  - **draft** — created but not sent
-  - **issued** — sent to the customer but unpaid
-  - **paid** — fully paid
-  - **voided** — cancelled and no longer valid */
   status?: string;
   invoiceRef?: string;
   pending?: "true" | "false";
@@ -279,7 +267,7 @@ export interface GetContractsQuery {
 }
 export interface GetTemplatesQuery {
   limit?: number;
-  locationRef: string;
+  locationRef?: string;
   nextPageToken?: string;
 }
 export type CreateContractBody = NonNullable<NonNullable<operations["createContract"]["requestBody"]>["content"]["application/json"]["contract"]>;
@@ -303,8 +291,8 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
     async signContract(contractId: string, signerId: string, options?: SpacebringRequestOptions): Promise<undefined>
     async terminate(contractId: string, reason: TerminateContractBody, options?: SpacebringRequestOptions): Promise<undefined>
     templates: {
-      async list(query: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }>
-      iterate(query: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined>
+      async list(query?: GetTemplatesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; searchQueryNext?: string; templates: Template[] }>
+      iterate(query?: Omit<GetTemplatesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Template, void, undefined>
       async get(templateId: string, options?: SpacebringRequestOptions): Promise<Template>
       async create(template: CreateTemplateBody, options?: SpacebringRequestOptions): Promise<Template>
       async update(templateId: string, template: UpdateTemplateBody, options?: SpacebringRequestOptions): Promise<undefined>
@@ -320,20 +308,20 @@ export type Coupon = NonNullable<components["schemas"]["coupon"]>;
 export type Promocode = NonNullable<components["schemas"]["promocode"]>;
 export type Redemption = NonNullable<components["schemas"]["discountRedemption"]>;
 export interface GetCouponsQuery {
-  locationRef: string;
-  type?: "creditPackages" | "desks" | "equipment" | "events" | "products" | "rooms" | "subscriptionItems";
   limit?: number;
+  locationRef?: string;
   nextPageToken?: string;
+  type?: string;
 }
 export interface GetDiscountRedemptionsQuery {
   couponRef?: string;
-  promocodeRef?: string;
   limit?: number;
   nextPageToken?: string;
+  promocodeRef?: string;
 }
 export interface GetPromocodesQuery {
-  locationRef?: string;
   couponRef?: string;
+  locationRef?: string;
 }
 export type CreateCouponBody = NonNullable<NonNullable<operations["createCoupon"]["requestBody"]>["content"]["application/json"]["coupon"]>;
 export type CreatePromocodeBody = NonNullable<NonNullable<operations["createPromocode"]["requestBody"]>["content"]["application/json"]["promocode"]>;
@@ -343,8 +331,8 @@ export function createDiscounts(client: Client<paths>, defaults: SpacebringDefau
     iterateRedemptions(query?: Omit<GetDiscountRedemptionsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Redemption, void, undefined>
     async listRedemptions(query?: GetDiscountRedemptionsQuery, options?: SpacebringRequestOptions): Promise<{ redemptions?: Redemption[]; nextPageToken?: string; searchQueryNext?: string }>
     coupons: {
-      async list(query: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }>
-      iterate(query: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined>
+      async list(query?: GetCouponsQuery, options?: SpacebringRequestOptions): Promise<{ coupons?: Coupon[]; nextPageToken?: string; searchQueryNext?: string }>
+      iterate(query?: Omit<GetCouponsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Coupon, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<Coupon>
       async create(coupon: CreateCouponBody, options?: SpacebringRequestOptions): Promise<Coupon>
       async update(id: string, coupon: UpdateCouponBody, options?: SpacebringRequestOptions): Promise<undefined>
@@ -364,10 +352,20 @@ export type Event = NonNullable<components["schemas"]["event"]>;
 export type EventMedia = NonNullable<operations["createEventMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export type EventTicket = NonNullable<components["schemas"]["eventTicket"]>;
 export interface GetEventsByOrganizationQuery {
-  locationRef: string;
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
+  "endDate[gt]"?: string;
+  "endDate[gte]"?: string;
+  "endDate[lt]"?: string;
+  "endDate[lte]"?: string;
   limit?: number;
+  locationRef: string;
   nextPageToken?: string;
   order?: string;
+  "startDate[gt]"?: string;
+  "startDate[gte]"?: string;
+  "startDate[lt]"?: string;
+  "startDate[lte]"?: string;
 }
 export interface GetEventTicketsQuery {
   customerRef?: string;
@@ -376,9 +374,6 @@ export interface GetEventTicketsQuery {
   limit?: number;
   locationRef?: string;
   nextPageToken?: string;
-  Supported values:
-  - **active** — the ticket is valid
-  - **canceled** — the ticket was deleted */
   status?: string;
   userRef?: string;
 }
@@ -466,7 +461,7 @@ export type Guide = NonNullable<components["schemas"]["guide"]>;
 export type GuideMedia = NonNullable<operations["createGuideMedia"]["responses"][201]["content"]["application/json"]["media"]>;
 export interface GetGuidesQuery {
   limit?: number;
-  locationRef: string;
+  locationRef?: string;
   nextPageToken?: string;
 }
 export type CreateGuideAttachmentBody = NonNullable<NonNullable<operations["createGuideAttachment"]["requestBody"]>["content"]["application/json"]["attachment"]>;
@@ -475,8 +470,8 @@ export type CreateGuideMediaBody = NonNullable<NonNullable<operations["createGui
 export type PatchGuideBody = NonNullable<NonNullable<operations["patchGuide"]["requestBody"]>["content"]["application/json"]["guide"]>;
 export function createGuides(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
-    async list(query: GetGuidesQuery, options?: SpacebringRequestOptions): Promise<{ guides: Guide[]; nextPageToken?: string; searchQueryNext?: string }>
-    iterate(query: Omit<GetGuidesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Guide, void, undefined>
+    async list(query?: GetGuidesQuery, options?: SpacebringRequestOptions): Promise<{ guides: Guide[]; nextPageToken?: string; searchQueryNext?: string }>
+    iterate(query?: Omit<GetGuidesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Guide, void, undefined>
     async get(guideId: string, options?: SpacebringRequestOptions): Promise<Guide>
     async create(guide: CreateGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
     async update(guideId: string, guide: PatchGuideBody, options?: SpacebringRequestOptions): Promise<Guide>
@@ -507,15 +502,15 @@ export function createNetworks(client: Client<paths>, defaults: SpacebringDefaul
 export type Package = NonNullable<operations["getPackages"]["responses"][200]["content"]["application/json"]["packages"]>[number];
 export interface GetPackagesQuery {
   limit?: number;
-  locationRef: string;
+  locationRef?: string;
   nextPageToken?: string;
 }
 export type CreatePackageBody = NonNullable<NonNullable<operations["createPackage"]["requestBody"]>["content"]["application/json"]["package"]>;
 export type PatchPackageBody = NonNullable<NonNullable<operations["patchPackage"]["requestBody"]>["content"]["application/json"]["package"]>;
 export function createPackages(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
-    async list(query: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }>
-    iterate(query: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined>
+    async list(query?: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }>
+    iterate(query?: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined>
     async create(packageBody: CreatePackageBody, options?: SpacebringRequestOptions): Promise<Package>
     async update(packageId: string, packageBody: PatchPackageBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(packageId: string, options?: SpacebringRequestOptions): Promise<undefined>
@@ -532,8 +527,6 @@ export interface GetPlansQuery {
   resourceRef?: string;
 }
 export type CreatePlanBody = NonNullable<NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
-export type DeletePlansBody = NonNullable<NonNullable<operations["deletePlans"]["requestBody"]>["content"]["application/json"]["planIds"]>;
-export type PatchPlansBody = NonNullable<NonNullable<operations["patchPlans"]["requestBody"]>["content"]["application/json"]["plans"]>;
 export type UpdatePlanBody = NonNullable<NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
 export function createPlans(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -543,8 +536,6 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
     async create(plan: CreatePlanBody, options?: SpacebringRequestOptions): Promise<Plan>
     async update(planId: string, plan: UpdatePlanBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(planId: string, options?: SpacebringRequestOptions): Promise<undefined>
-    async deletePlans(planIds: DeletePlansBody, options?: SpacebringRequestOptions): Promise<undefined>
-    async patchPlans(plans: PatchPlansBody, options?: SpacebringRequestOptions): Promise<undefined>
   };
 }
 
@@ -601,7 +592,7 @@ export interface GetBookingsQuery {
 }
 export interface GetResourcesQuery {
   limit?: number;
-  locationRef: string;
+  locationRef?: string;
   nextPageToken?: string;
   type?: string;
   types?: string;
@@ -616,8 +607,8 @@ export type PatchBookingBody = NonNullable<operations["patchBooking"]["requestBo
 export type PatchResourceBody = NonNullable<NonNullable<operations["patchResource"]["requestBody"]>["content"]["application/json"]["resource"]>;
 export function createResources(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
-    async list(query: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources: Resource[]; searchQueryNext?: string }>
-    iterate(query: Omit<GetResourcesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined>
+    async list(query?: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources: Resource[]; searchQueryNext?: string }>
+    iterate(query?: Omit<GetResourcesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined>
     async get(resourceId: string, options?: SpacebringRequestOptions): Promise<Resource>
     async create(resource: CreateResourceBody, options?: SpacebringRequestOptions): Promise<Resource>
     async update(resourceId: string, resource: PatchResourceBody, options?: SpacebringRequestOptions): Promise<undefined>
@@ -654,11 +645,6 @@ export interface GetOrdersQuery {
   locationRef?: string;
   nextPageToken?: string;
   productRef?: string;
-  Supported values:
-  - **new** — placed, awaiting fulfillment
-  - **inProgress** — being fulfilled
-  - **completed** — fulfilled
-  - **canceled** — canceled */
   status?: string;
   userRef?: string;
 }

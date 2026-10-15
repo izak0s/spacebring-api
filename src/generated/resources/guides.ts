@@ -17,8 +17,8 @@ export type GuideMedia = NonNullable<operations["createGuideMedia"]["responses"]
 export interface GetGuidesQuery {
   /** Maximum number of guides per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose guides to list. */
-  locationRef: string;
+  /** UUID of the location whose guides to list. Omit to list guides across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
 }
@@ -42,7 +42,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Retrieve all guides for an organization. Requires locationRef. When using bearer token (non-basic auth), results are filtered by the user's access.
      */
-    async list(query: GetGuidesQuery, options?: SpacebringRequestOptions): Promise<{ guides: Guide[]; nextPageToken?: string; searchQueryNext?: string }> {
+    async list(query?: GetGuidesQuery, options?: SpacebringRequestOptions): Promise<{ guides: Guide[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/guides/v1", { params: { query }, signal: options?.signal }), "GET /guides/v1");
     },
     /**
@@ -50,7 +50,7 @@ export function createGuides(client: Client<paths>, defaults: SpacebringDefaults
      *
      * Retrieve all guides for an organization. Requires locationRef. When using bearer token (non-basic auth), results are filtered by the user's access.
      */
-    iterate(query: Omit<GetGuidesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Guide, void, undefined> {
+    iterate(query?: Omit<GetGuidesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Guide, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/guides/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /guides/v1"),

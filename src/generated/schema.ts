@@ -35,7 +35,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Retrieve an alternative currency
+         * @description Retrieve an alternative currency. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["getAltCurrency"];
         put?: never;
         post?: never;
         /**
@@ -1026,7 +1030,7 @@ export interface paths {
         };
         /**
          * Retrieve coupons
-         * @description Retrieve all coupons in the location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description Retrieve the coupons of a location, or of every location in the network. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["getCoupons"];
         put?: never;
@@ -1796,18 +1800,10 @@ export interface paths {
          * @description Create a plan. <h3>OAuth</h3>Required scopes: <code>plans</code>
          */
         post: operations["createPlan"];
-        /**
-         * Delete plans
-         * @description Delete up to 100 plans at once. Plans that are already deleted are skipped. <h3>OAuth</h3>Required scopes: <code>plans</code>
-         */
-        delete: operations["deletePlans"];
+        delete?: never;
         options?: never;
         head?: never;
-        /**
-         * Update plans
-         * @description Turn sign-up on with a type, or off, for up to 100 plans at once. Plans that already have this sign-up are left unchanged. A free plan can't use immediate sign-up. <h3>OAuth</h3>Required scopes: <code>plans</code>
-         */
-        patch: operations["patchPlans"];
+        patch?: never;
         trace?: never;
     };
     "/plans/v1/{planId}": {
@@ -2963,6 +2959,35 @@ export interface components {
         responseError: {
             message?: string;
             type?: string;
+        };
+        getAltCurrency: {
+            /** @description The alt currency. */
+            altCurrency: {
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the alt currency was created.
+                 */
+                createDate: string;
+                /** @description ISO 4217 currency code. */
+                currencyCode: string;
+                /** @description Exchange rate relative to the location main currency. */
+                exchangeRate: number;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the alt currency.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location this alt currency belongs to.
+                 */
+                locationRef: string;
+                /**
+                 * @description Exchange rate provider when auto-update is enabled.
+                 * @enum {string}
+                 */
+                provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+            };
         };
         getBenefitCategories: {
             /** @description List of benefit categories. */
@@ -4949,11 +4974,16 @@ export interface components {
                 promocode?: {
                     /** @description Promocode string. */
                     code: string;
-                    /**
-                     * Format: date-time
-                     * @description Promocode expiration date.
-                     */
-                    expiration?: string;
+                    /** @description Promocode expiration settings, as the promocode had them when it was applied. */
+                    expiration?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp when the promocode expires.
+                         */
+                        date?: string;
+                        /** @description Whether the promocode has an expiration date. */
+                        enabled: boolean;
+                    };
                     /**
                      * Format: uuid
                      * @description Promocode ID.
@@ -5350,11 +5380,16 @@ export interface components {
                     promocode?: {
                         /** @description Promocode string. */
                         code: string;
-                        /**
-                         * Format: date-time
-                         * @description Promocode expiration date.
-                         */
-                        expiration?: string;
+                        /** @description Promocode expiration settings, as the promocode had them when it was applied. */
+                        expiration?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp when the promocode expires.
+                             */
+                            date?: string;
+                            /** @description Whether the promocode has an expiration date. */
+                            enabled: boolean;
+                        };
                         /**
                          * Format: uuid
                          * @description Promocode ID.
@@ -5690,8 +5725,16 @@ export interface components {
                         /** @description Promocode applied. */
                         promocode?: {
                             code: string;
-                            /** Format: date-time */
-                            expiration?: string;
+                            /** @description Promocode expiration settings, as the promocode had them when it was applied. */
+                            expiration?: {
+                                /**
+                                 * Format: date-time
+                                 * @description ISO timestamp when the promocode expires.
+                                 */
+                                date?: string;
+                                /** @description Whether the promocode has an expiration date. */
+                                enabled: boolean;
+                            };
                             /** Format: uuid */
                             id: string;
                             limitByFirstPurchase?: boolean;
@@ -6017,8 +6060,16 @@ export interface components {
                     /** @description Promocode applied. */
                     promocode?: {
                         code: string;
-                        /** Format: date-time */
-                        expiration?: string;
+                        /** @description Promocode expiration settings, as the promocode had them when it was applied. */
+                        expiration?: {
+                            /**
+                             * Format: date-time
+                             * @description ISO timestamp when the promocode expires.
+                             */
+                            date?: string;
+                            /** @description Whether the promocode has an expiration date. */
+                            enabled: boolean;
+                        };
                         /** Format: uuid */
                         id: string;
                         limitByFirstPurchase?: boolean;
@@ -7328,11 +7379,11 @@ export interface components {
                      */
                     id: string;
                     /** @description First name of the user. */
-                    name: string;
+                    name?: string;
                     /** @description Profile photo URL. */
                     photoUrl: string | null;
                     /** @description Surname of the user. */
-                    surname: string;
+                    surname?: string;
                 };
             };
             /**
@@ -7555,6 +7606,8 @@ export interface components {
              * @enum {string}
              */
             ticketAvailability: "soldOut" | "limited" | "available";
+            /** @description Maximum number of tickets one attendee can get for the event. Omitted when unlimited. */
+            ticketsPerAttendee?: number;
             /** @description Display name of the event. */
             title: string;
             /** @description Venue name or address within the location. */
@@ -7779,15 +7832,6 @@ export interface components {
                              */
                             type?: "company" | "user";
                         };
-                        location: {
-                            /**
-                             * Format: uuid
-                             * @description ID of the location.
-                             */
-                            id: string;
-                            /** @description Display name of the location. */
-                            title: string;
-                        };
                     };
                     /** @description Invoice method details. */
                     invoice?: {
@@ -7852,15 +7896,6 @@ export interface components {
                         };
                         /** @description Human-readable label of the payment method (e.g. 'Visa 4242'). */
                         label?: string;
-                        location: {
-                            /**
-                             * Format: uuid
-                             * @description ID of the location.
-                             */
-                            id: string;
-                            /** @description Display name of the location. */
-                            title: string;
-                        };
                         /** @description Masked payment method identifier. */
                         mask?: string;
                         /** @description Payment gateway title. */
@@ -7970,7 +8005,7 @@ export interface components {
                  * @description Payment type.
                  * @enum {string}
                  */
-                type: "authorizenet" | "credits" | "external" | "flow" | "fondy" | "freedompay" | "hyperpay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                type: "authorizenet" | "credits" | "external" | "flow" | "fondy" | "freedompay" | "hyperpay" | "invoice" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
             };
             /** @description Number of tickets included in this purchase. */
             quantity: number;
@@ -9616,14 +9651,14 @@ export interface components {
                  * @enum {string}
                  */
                 bookingUnit: "hour" | "day";
-                /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type. */
+                /** @description How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead. */
                 bookingWindow: {
                     /**
                      * @description How far ahead users can book the resource.
                      * @enum {string}
                      */
                     bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
-                    /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                    /** @description Whether bookings of the resource are limited by this booking window. While it is false, users can book it up to its start and any time ahead. */
                     enabled: boolean;
                     /** @description How many minutes before it starts a booking of the resource has to be made. */
                     minNotice?: number;
@@ -10320,14 +10355,14 @@ export interface components {
                  * @enum {string}
                  */
                 bookingUnit: "hour" | "day";
-                /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type. */
+                /** @description How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead. */
                 bookingWindow: {
                     /**
                      * @description How far ahead users can book the resource.
                      * @enum {string}
                      */
                     bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
-                    /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                    /** @description Whether bookings of the resource are limited by this booking window. While it is false, users can book it up to its start and any time ahead. */
                     enabled: boolean;
                     /** @description How many minutes before it starts a booking of the resource has to be made. */
                     minNotice?: number;
@@ -11531,7 +11566,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -11966,7 +12001,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -12613,7 +12648,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -13048,7 +13083,7 @@ export interface components {
                              * @description Payment gateway that processed the charge.
                              * @enum {string}
                              */
-                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -14222,7 +14257,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -14771,7 +14806,7 @@ export interface components {
                              * @description Payment gateway type.
                              * @enum {string}
                              */
-                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
+                            type?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "mollie" | "xendit";
                         };
                         /**
                          * @description Payment method type.
@@ -17035,7 +17070,7 @@ export interface components {
                 /** @description Profile image URL of the Lem AI assistant. */
                 photoUrl: string;
             };
-            /** @description Membership of the user who performed the action. */
+            /** @description Membership of the user who performed the action. Holds only an empty user when no membership performed it, such as a Lem AI reply. */
             membership?: {
                 /**
                  * Format: uuid
@@ -17066,6 +17101,9 @@ export interface components {
                     /** @description Surname of the user. */
                     surname?: string | null;
                 };
+            } | {
+                /** @description Empty user. */
+                user: Record<string, never>;
             };
             /**
              * Format: uuid
@@ -22023,7 +22061,7 @@ export interface components {
             /** @description Location where the visit takes place. */
             location: {
                 /** @description Street address of the location. */
-                address?: string;
+                address?: string | null;
                 /**
                  * Format: uuid
                  * @description Unique identifier of the location.
@@ -22528,7 +22566,7 @@ export interface components {
                                  * @description Payment gateway provider.
                                  * @enum {string}
                                  */
-                                gateway: "authorizenet" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                                gateway: "authorizenet" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                                 /**
                                  * Format: uuid
                                  * @description ID of the saved payment method.
@@ -22556,7 +22594,7 @@ export interface components {
                          * @description Payment gateway type.
                          * @enum {string}
                          */
-                        type: "authorizenet" | "external" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                        type: "authorizenet" | "external" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
                     };
                     /** @description Whether the user has accepted the payment terms. */
                     termsConsent?: boolean;
@@ -23389,6 +23427,8 @@ export interface components {
                          * @description ISO timestamp of when the event starts.
                          */
                         startDate: string;
+                        /** @description Maximum number of tickets one attendee can get for the event. Omit it for unlimited. */
+                        ticketsPerAttendee?: number;
                         /** @description Display name of the event. */
                         title: string;
                         /** @description Venue name or address within the location. */
@@ -23481,6 +23521,8 @@ export interface components {
                          * @description ISO timestamp of when the event starts.
                          */
                         startDate: string;
+                        /** @description Maximum number of tickets one attendee can get for the event. Omit it for unlimited. */
+                        ticketsPerAttendee?: number;
                         /** @description Display name of the event. */
                         title: string;
                         /** @description Venue name or address within the location. */
@@ -23963,48 +24005,10 @@ export interface components {
                 };
             };
         };
-        deletePlans: {
-            content: {
-                "application/json": {
-                    /** @description Array of IDs of plans to delete. Up to 100 per request. */
-                    planIds: string[];
-                };
-            };
-        };
-        patchPlans: {
-            content: {
-                "application/json": {
-                    /** @description Plans to update and the fields to set on each of them. */
-                    plans: {
-                        /** @description IDs of the plans to update. Up to 100 per request. */
-                        ids: string[];
-                        /** @description Self sign-up settings to set on every plan. */
-                        selfSignup: {
-                            /**
-                             * @description Turn self sign-up on.
-                             * @enum {boolean}
-                             */
-                            enabled: true;
-                            /**
-                             * @description Self sign-up flow type. immediate: customers subscribe at once. request: customers apply and an admin approves.
-                             * @enum {string}
-                             */
-                            type: "immediate" | "request";
-                        } | {
-                            /**
-                             * @description Turn self sign-up off. Each plan keeps its sign-up type.
-                             * @enum {boolean}
-                             */
-                            enabled: false;
-                        };
-                    };
-                };
-            };
-        };
         updatePlan: {
             content: {
                 "application/json": {
-                    /** @description Plan fields to update. */
+                    /** @description Plan fields to change. Omitted fields keep their current values. */
                     plan: {
                         /** @description Third-party access integrations. */
                         access?: {
@@ -24032,15 +24036,9 @@ export interface components {
                             /** Format: uuid */
                             id: string;
                         }[];
-                        /**
-                         * @description Number of billing cycles the member is committed to.
-                         * @default 0
-                         */
+                        /** @description Number of billing cycles the member is committed to. */
                         commitmentCycles?: number;
-                        /**
-                         * @description Credits included in the plan.
-                         * @default 0
-                         */
+                        /** @description Credits included in the plan. */
                         credits?: number;
                         /** @description Custom tax settings. */
                         customTax?: {
@@ -24049,15 +24047,9 @@ export interface components {
                             /** @description Custom tax rate percentage. */
                             rate: number;
                         };
-                        /**
-                         * @description Number of day passes included in the plan.
-                         * @default 0
-                         */
+                        /** @description Number of day passes included in the plan. */
                         dayPasses?: number;
-                        /**
-                         * @description Description of the plan.
-                         * @default
-                         */
+                        /** @description Description of the plan. */
                         description?: string;
                         /**
                          * @deprecated
@@ -24077,12 +24069,7 @@ export interface components {
                             /** @description Discount percentage for shop products. */
                             shop: number;
                         };
-                        /**
-                         * @description Resources and benefits exclusively available to members on this plan.
-                         * @default {
-                         *       "resourceRefs": []
-                         *     }
-                         */
+                        /** @description Resources and benefits exclusively available to members on this plan. */
                         exclusiveAccess?: {
                             /** @description Benefit IDs with exclusive access for this plan. */
                             benefitRefs?: string[];
@@ -24128,10 +24115,7 @@ export interface components {
                              */
                             type: "immediate" | "request";
                         };
-                        /**
-                         * @description One-time setup fee.
-                         * @default 0
-                         */
+                        /** @description One-time setup fee. */
                         setupFee?: number;
                         /** @description Display name of the plan. */
                         title?: string;
@@ -24168,14 +24152,14 @@ export interface components {
                          * @enum {string}
                          */
                         bookingUnit?: "hour" | "day";
-                        /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either. */
+                        /** @description How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead, and the resource keeps its own values for when it is enabled again. Administrators are not limited by it. */
                         bookingWindow?: {
                             /**
-                             * @description How far ahead users can book the resource, the same values the location takes. Required while enabled is true.
+                             * @description How far ahead users can book the resource. Required while enabled is true.
                              * @enum {string}
                              */
                             bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
-                            /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                            /** @description Whether bookings of the resource are limited by this booking window. While it is false, users can book it up to its start and any time ahead. */
                             enabled: boolean;
                             /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
                             minNotice?: number;
@@ -24568,7 +24552,7 @@ export interface components {
                         customerRef?: string;
                         /**
                          * Format: date-time
-                         * @description ISO timestamp when the assignment ends. Omit for an open-ended assignment.
+                         * @description ISO timestamp of the day the assignment ends. The assignment lasts through that day and ends at 23:59 in the time zone of the location. Omit for an open-ended assignment.
                          */
                         endDate?: string;
                         /** @description Whether the assignment grants access to the entire resource. */
@@ -24595,7 +24579,7 @@ export interface components {
                     assignment: {
                         /**
                          * Format: date-time
-                         * @description ISO timestamp when the assignment ends. Send null to make the assignment open-ended.
+                         * @description ISO timestamp of the day the assignment ends. The assignment lasts through that day and ends at 23:59 in the time zone of the location. Send null to make the assignment open-ended.
                          */
                         endDate?: string | null;
                         /** @description Whether the assignment grants access to the entire resource. */
@@ -24661,14 +24645,14 @@ export interface components {
                          * @enum {string}
                          */
                         bookingUnit?: "hour" | "day";
-                        /** @description How soon and how far ahead users can book this resource. While enabled is false, the resource follows the booking window its location sets for the resource type and keeps its own values for when it is enabled again. Administrators are not limited by either. */
+                        /** @description How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead, and the resource keeps its own values for when it is enabled again. Administrators are not limited by it. */
                         bookingWindow?: {
                             /**
-                             * @description How far ahead users can book the resource, the same values the location takes. Required while enabled is true.
+                             * @description How far ahead users can book the resource. Required while enabled is true.
                              * @enum {string}
                              */
                             bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
-                            /** @description Whether the resource uses this booking window instead of the one its location sets for the resource type. */
+                            /** @description Whether bookings of the resource are limited by this booking window. While it is false, users can book it up to its start and any time ahead. */
                             enabled: boolean;
                             /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
                             minNotice?: number;
@@ -26287,7 +26271,7 @@ export interface components {
                         type?: "access" | "accountAndBilling" | "bookings" | "cleaning" | "discriminationAndHarassment" | "internet" | "mailAndPackages" | "noiseAndAcoustics" | "offensiveOrObjectionableContent" | "other" | "printing" | "repairAndMaintenance" | "temperatureAndVentilation" | "websiteAndApp";
                         /**
                          * Format: uuid
-                         * @description ID of the user requesting the ticket. Defaults to the authenticated user when omitted.
+                         * @description ID of the user requesting the ticket. Defaults to the authenticated user when omitted, and is required with Basic authentication.
                          */
                         userRefRequester?: string;
                     };
@@ -26538,7 +26522,7 @@ export interface components {
                                  * @description Payment gateway provider. Only gateways that support saved payment methods can be charged.
                                  * @enum {string}
                                  */
-                                gateway: "hyperpay" | "mollie" | "paypal" | "plata" | "stripe" | "tap" | "wayforpay";
+                                gateway: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
                                 /**
                                  * Format: uuid
                                  * @description ID of the saved payment method to charge.
@@ -26781,6 +26765,41 @@ export interface operations {
             };
         };
     };
+    getAltCurrency: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the alternative currency */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getAltCurrency"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     deleteAltCurrency: {
         parameters: {
             query?: never;
@@ -26849,9 +26868,9 @@ export interface operations {
     };
     getBenefitCategories: {
         parameters: {
-            query: {
-                /** @description UUID of the location whose benefit categories to list. */
-                locationRef: string;
+            query?: {
+                /** @description UUID of the location whose benefit categories to list, in member-facing order. Omit to list the categories of every location of the network. */
+                locationRef?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -27030,7 +27049,7 @@ export interface operations {
                 featured?: boolean;
                 /** @description Maximum number of benefits per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
+                /** @description UUID of the location. Omit both locationRef and categoryRef to list benefits across every location of the network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -27257,7 +27276,7 @@ export interface operations {
                 customerRef?: string;
                 /** @description Maximum number of applications per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
+                /** @description UUID of the location. Omit locationRef, benefitRef, customerRef and userRef to list applications across every location of the network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -27387,15 +27406,7 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Case-insensitive search by invoice code or number. Requires customerRef or locationRef. */
                 q?: string;
-                /**
-                 * @description Filter by invoice status. Comma-separated values, e.g. `draft,issued`.
-                 *
-                 *     Supported values:
-                 *     - **draft** — created but not sent
-                 *     - **issued** — sent to the customer but unpaid
-                 *     - **paid** — fully paid
-                 *     - **voided** — cancelled and no longer valid
-                 */
+                /** @description Filter by invoice status: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). Comma-separated, one or more of: draft, issued, paid, voided. */
                 status?: string;
             };
             header?: {
@@ -27793,21 +27804,13 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /**
-                 * @description Filter by the status of the invoice the item is on. Items not on an invoice are excluded. Comma-separated values, e.g. `draft,issued`.
-                 *
-                 *     Supported values:
-                 *     - **draft** — created but not sent
-                 *     - **issued** — sent to the customer but unpaid
-                 *     - **paid** — fully paid
-                 *     - **voided** — cancelled and no longer valid
-                 */
+                /** @description Filter by the status of the invoice the item is on: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). Items not on an invoice are excluded. Comma-separated, one or more of: draft, issued, paid, voided. */
                 status?: string;
                 /** @description UUID of the invoice whose items to list, in place of customerRef or locationRef or with them. Pages and sorts like the rest of the list, and the other filters still apply. */
                 invoiceRef?: string;
                 /** @description Filter by whether the item is pending: not on an invoice and not part of a subscription. Pass true or false. */
                 pending?: "true" | "false";
-                /** @description Filter by invoice item type. Comma-separated values, e.g. `custom,order`. */
+                /** @description Filter by invoice item type. Comma-separated, one or more of: creditPackage, custom, booking, eventTicket, subscription, order. */
                 type?: string;
             };
             header?: {
@@ -28071,13 +28074,7 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /**
-                 * @description Filter by credit note status. Comma-separated values, e.g. `issued,voided`.
-                 *
-                 *     Supported values:
-                 *     - **issued** — active credit note
-                 *     - **voided** — cancelled and no longer valid
-                 */
+                /** @description Filter by credit note status: issued (in effect) or voided (cancelled and no longer valid). Comma-separated, one or more of: issued, voided. */
                 status?: string;
             };
             header?: {
@@ -29041,15 +29038,15 @@ export interface operations {
                 "createDate[gte]"?: string;
                 /** @description Filter contracts created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
                 "createDate[lte]"?: string;
-                /** @description UUID of the customer (membership or company). Provide customerRef or locationRef; when set, returns only that customer's contracts. */
+                /** @description UUID of the customer (membership or company). When set, returns only that customer's contracts. */
                 customerRef?: string;
                 /** @description Maximum number of contracts per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. Provide customerRef or locationRef; when set, returns contracts in that location. */
+                /** @description UUID of the location. When set, returns contracts in that location. Omit both locationRef and customerRef to list contracts across every location of the network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Case-insensitive search by contract title. Requires customerRef or locationRef to scope the search. */
+                /** @description Case-insensitive search by contract title, within customerRef or locationRef when given and across the network otherwise. */
                 q?: string;
                 /** @description Filter by status: 'draft' created and not sent yet, 'issued' sent and waiting for signatures, 'signed' signed by everyone and active, 'declined' a signer declined it or it expired unsigned, 'terminated' ended by an admin after it was signed. Defaults to every status. Comma-separated, one or more of: draft, issued, signed, declined, terminated. */
                 status?: string;
@@ -29389,11 +29386,11 @@ export interface operations {
     };
     getTemplates: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Maximum number of templates per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
-                locationRef: string;
+                /** @description UUID of the location whose templates to list. Omit to list templates across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
             };
@@ -29646,15 +29643,15 @@ export interface operations {
     };
     getCoupons: {
         parameters: {
-            query: {
-                /** @description The id of the location */
-                locationRef: string;
-                /** @description Comma-separated list of coupon types to filter by */
-                type?: "creditPackages" | "desks" | "equipment" | "events" | "products" | "rooms" | "subscriptionItems";
-                /** @description The number of coupons to retrieve. Default: 25 */
+            query?: {
+                /** @description Maximum number of coupons per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description UUID of the location whose coupons to list. Omit to list coupons across every location of the network. */
+                locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Filter by the product types a coupon applies to; a coupon matches when it applies to any of them. Comma-separated, one or more of: roomBookings, eventSpaceBookings, conferenceRoomBookings, meetingRoomBookings, phoneBoothBookings, stationBookings, studioBookings, hotDeskBookings, dedicatedDeskBookings, officeBookings, parkingBookings, equipmentBookings, eventTickets, shopProducts, packages, subscriptionItems. */
+                type?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -29829,10 +29826,10 @@ export interface operations {
     getPromocodes: {
         parameters: {
             query?: {
-                /** @description The id of the location. At least one of locationRef or couponRef is required */
-                locationRef?: string;
-                /** @description The id of the coupon. At least one of locationRef or couponRef is required */
+                /** @description UUID of the coupon whose promocodes to list. */
                 couponRef?: string;
+                /** @description UUID of the location whose promocodes to list. Omit with couponRef to list promocodes across every location of the network. */
+                locationRef?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -29976,14 +29973,14 @@ export interface operations {
     getDiscountRedemptions: {
         parameters: {
             query?: {
-                /** @description The id of the coupon. Either couponRef or promocodeRef is required */
+                /** @description UUID of the coupon whose redemptions to list. */
                 couponRef?: string;
-                /** @description The id of the promocode. Either couponRef or promocodeRef is required */
-                promocodeRef?: string;
-                /** @description The number of items to return */
+                /** @description Maximum number of discount redemptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description UUID of the promocode whose redemptions to list. */
+                promocodeRef?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -30021,16 +30018,39 @@ export interface operations {
     getEventsByOrganization: {
         parameters: {
             query: {
-                /** @description The id of the location. */
-                locationRef: string;
-                /** @description The number of events to retrieve. Default: 25 */
+                /** @description Filter events whose create date is on or after this date (ISO 8601). */
+                "createDate[gte]"?: string;
+                /** @description Filter events whose create date is on or before this date (ISO 8601). */
+                "createDate[lte]"?: string;
+                /** @description Filter events whose end date is after this date (ISO 8601). */
+                "endDate[gt]"?: string;
+                /** @description Filter events whose end date is on or after this date (ISO 8601). */
+                "endDate[gte]"?: string;
+                /** @description Filter events whose end date is before this date (ISO 8601). */
+                "endDate[lt]"?: string;
+                /** @description Filter events whose end date is on or before this date (ISO 8601). */
+                "endDate[lte]"?: string;
+                /** @description Maximum number of events per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description Token to retrieve the next page of results. */
-                nextPageToken?: components["schemas"]["nextPageToken"];
-                /** @description The order of the events. createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc or relevance */
+                /** @description UUID of the location whose events to list. */
+                locationRef: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Sort order of events. One of relevance, createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc. */
                 order?: string;
+                /** @description Filter events whose start date is after this date (ISO 8601). */
+                "startDate[gt]"?: string;
+                /** @description Filter events whose start date is on or after this date (ISO 8601). */
+                "startDate[gte]"?: string;
+                /** @description Filter events whose start date is before this date (ISO 8601). */
+                "startDate[lt]"?: string;
+                /** @description Filter events whose start date is on or before this date (ISO 8601). */
+                "startDate[lte]"?: string;
             };
-            header?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -30375,13 +30395,7 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /**
-                 * @description Filter by event ticket status. Comma-separated values, e.g. `active,canceled`. Defaults to `active` when omitted.
-                 *
-                 *     Supported values:
-                 *     - **active** — the ticket is valid
-                 *     - **canceled** — the ticket was deleted
-                 */
+                /** @description Filter by event ticket status: 'active' the ticket is valid, 'canceled' the ticket was deleted. Defaults to active. Comma-separated, one or more of: active, canceled. */
                 status?: string;
                 /** @description UUID of the user whose event tickets to list. */
                 userRef?: string;
@@ -31160,11 +31174,11 @@ export interface operations {
     };
     getGuides: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Maximum number of guides per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose guides to list. */
-                locationRef: string;
+                /** @description UUID of the location whose guides to list. Omit to list guides across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
             };
@@ -31594,11 +31608,11 @@ export interface operations {
     };
     getPackages: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Maximum number of packages per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
-                locationRef: string;
+                /** @description UUID of the location whose packages to list. Omit to list packages across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
             };
@@ -31736,7 +31750,7 @@ export interface operations {
                 entire?: string;
                 /** @description Maximum number of plans per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose plans to list. */
+                /** @description UUID of the location whose plans to list. Omit to list plans across every location of the network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -31791,66 +31805,6 @@ export interface operations {
                         plan?: components["schemas"]["plan"];
                     };
                 };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["responseError"];
-                };
-            };
-        };
-    };
-    deletePlans: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description The id of the network. Required when using bearer token authentication */
-                "spacebring-network-id"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: components["requestBodies"]["deletePlans"];
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["responseError"];
-                };
-            };
-        };
-    };
-    patchPlans: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description The id of the network. Required when using bearer token authentication */
-                "spacebring-network-id"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: components["requestBodies"]["patchPlans"];
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Bad Request */
             400: {
@@ -32007,14 +31961,14 @@ export interface operations {
     };
     getResources: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Maximum number of resources per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose resources to list. */
-                locationRef: string;
+                /** @description UUID of the location whose resources to list. Omit to list resources across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+                /** @description Resource types to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. */
                 type?: string;
                 /** @description Deprecated. Use type instead. */
                 types?: string;
@@ -32438,7 +32392,7 @@ export interface operations {
                 includeDeleted?: string;
                 /** @description Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose bookings to list. Required when both resourceRef and userRef are omitted. */
+                /** @description UUID of the location whose bookings to list. Omit to list bookings across every location of the network. */
                 locationRef?: string;
                 /** @description Deprecated. Use customerRef instead. UUID of the customer whose bookings to list. */
                 membershipRefOwner?: string;
@@ -32446,19 +32400,19 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Sort order as `<field>:<direction>`, where field is startDate, endDate, createDate or deleteDate and direction is asc or desc. deleteDate lists only cancelled bookings, by when they were cancelled, and cannot be combined with singleBookings. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
                 order?: string;
-                /** @description UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
+                /** @description UUID of the resource whose bookings to list. */
                 resourceRef?: string;
                 /** @description Set to "true" to expand repeating bookings into single occurrences. */
                 singleBookings?: string;
                 /** @description Deprecated. Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
                 startDate?: string;
-                /** @description Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed, or to canceled when ordering by deleteDate. */
+                /** @description Booking statuses to filter by, e.g. `confirmed,canceled`. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled. */
                 status?: string;
-                /** @description Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
+                /** @description Resource types of the booked resources to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. */
                 type?: string;
-                /** @description UUID of the user whose bookings to list, both made and attended. Can be given on its own, without locationRef or resourceRef, to list the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
+                /** @description UUID of the user whose bookings to list, both made and attended. Without locationRef or resourceRef, lists the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
                 userRef?: string;
-                /** @description UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef, companyRefOwner, or userRef. */
+                /** @description UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Without locationRef or resourceRef, lists the user's own bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRef. */
                 userRefOwner?: string;
                 /** @description Deprecated. Use type instead. */
                 types?: string;
@@ -32806,7 +32760,7 @@ export interface operations {
             query?: {
                 /** @description UUID of the shop category. */
                 categoryRef?: string;
-                /** @description Comma-separated product UUIDs, e.g. `uuid1,uuid2`. Up to 25 ids per request. */
+                /** @description Product UUIDs to get, up to 25 per request. Comma-separated, one or more UUIDs. */
                 id?: string;
                 /** @description Maximum number of products per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
@@ -33030,7 +32984,7 @@ export interface operations {
     getOrders: {
         parameters: {
             query?: {
-                /** @description Comma-separated shop category UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+                /** @description Filter by the shop categories of the products in the order. Comma-separated, one or more UUIDs. */
                 categoryRef?: string;
                 /** @description Filter orders created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
                 "createDate[gte]"?: string;
@@ -33044,17 +32998,9 @@ export interface operations {
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Comma-separated product UUIDs used to filter orders, e.g. `uuid1,uuid2`. */
+                /** @description Filter by the products in the order. Comma-separated, one or more UUIDs. */
                 productRef?: string;
-                /**
-                 * @description Filter by order status. Comma-separated values, e.g. `new,inProgress`. Defaults to `new`, `inProgress`, and `completed` when omitted.
-                 *
-                 *     Supported values:
-                 *     - **new** — placed, awaiting fulfillment
-                 *     - **inProgress** — being fulfilled
-                 *     - **completed** — fulfilled
-                 *     - **canceled** — canceled
-                 */
+                /** @description Filter by order status: 'pending' placed, payment still processing; 'new' placed and paid, awaiting fulfillment; 'inProgress' being fulfilled; 'completed' fulfilled; 'canceled' canceled by the customer or an admin. Defaults to new, inProgress and completed. Comma-separated, one or more of: canceled, completed, inProgress, new, pending. */
                 status?: string;
                 /** @description UUID of the user whose orders to list. */
                 userRef?: string;
@@ -33134,13 +33080,13 @@ export interface operations {
                 customerRef?: string;
                 /** @description Maximum number of subscriptions per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose subscriptions to list. */
+                /** @description UUID of the location whose subscriptions to list. Omit locationRef and customerRef to list subscriptions across every location of the network, grouped by location. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions; defaults to createDate:desc. */
+                /** @description Sort order as field:direction, where field is startDate, endDate, createDate or renewDate and direction is asc or desc, such as startDate:asc. Applies to a location's subscriptions and needs locationRef. Defaults to createDate:desc. */
                 order?: string;
-                /** @description UUID of the plan to filter subscriptions by. Applies to a location's subscriptions. */
+                /** @description UUID of the plan to filter subscriptions by. Applies to a location's or the network's subscriptions. */
                 planRef?: string;
                 /** @description Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
                 status?: string;
