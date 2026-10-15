@@ -57,7 +57,7 @@ export interface GetBookingsQuery {
   includeDeleted?: string;
   /** Maximum number of bookings per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose bookings to list. Required when both resourceRef and userRef are omitted. */
+  /** UUID of the location whose bookings to list. Omit to list bookings across every location of the network. */
   locationRef?: string;
   /** @deprecated Use customerRef instead. UUID of the customer whose bookings to list. */
   membershipRefOwner?: string;
@@ -65,19 +65,19 @@ export interface GetBookingsQuery {
   nextPageToken?: string;
   /** Sort order as `:`, where field is startDate, endDate, createDate or deleteDate and direction is asc or desc. deleteDate lists only cancelled bookings, by when they were cancelled, and cannot be combined with singleBookings. Defaults to startDate:asc when a startDate filter is given, endDate:asc when only an endDate filter is given, and createDate:desc otherwise. */
   order?: string;
-  /** UUID of the resource whose bookings to list. Required when both locationRef and userRef are omitted. */
+  /** UUID of the resource whose bookings to list. */
   resourceRef?: string;
   /** Set to "true" to expand repeating bookings into single occurrences. */
   singleBookings?: string;
   /** @deprecated Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
   startDate?: string;
-  /** Comma-separated list of booking statuses to filter by, e.g. `confirmed,canceled`. Valid values: tentative, confirmed, canceled. Defaults to tentative, confirmed, or to canceled when ordering by deleteDate. */
+  /** Booking statuses to filter by, e.g. `confirmed,canceled`. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled. */
   status?: string;
-  /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. Defaults to all bookable types. */
+  /** Resource types of the booked resources to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. */
   type?: string;
-  /** UUID of the user whose bookings to list, both made and attended. Can be given on its own, without locationRef or resourceRef, to list the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
+  /** UUID of the user whose bookings to list, both made and attended. Without locationRef or resourceRef, lists the user's bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRefOwner. */
   userRef?: string;
-  /** UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Cannot be combined with customerRef, companyRefOwner, or userRef. */
+  /** UUID of the user whose own bookings to list: bookings the user made, not ones they were added to as an attendee. Without locationRef or resourceRef, lists the user's own bookings across every location of the network. Cannot be combined with customerRef, companyRefOwner, or userRef. */
   userRefOwner?: string;
   /** @deprecated Use type instead. */
   types?: string;
@@ -87,11 +87,11 @@ export interface GetBookingsQuery {
 export interface GetResourcesQuery {
   /** Maximum number of resources per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose resources to list. */
-  locationRef: string;
+  /** UUID of the location whose resources to list. Omit to list resources across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
-  /** Comma-separated list of resource types to filter by, e.g. `room,hotDesk`. Valid values: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. Defaults to all bookable types. */
+  /** Resource types to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: dedicatedDesk, equipment, hotDesk, office, parkingLot, room, station, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio. */
   type?: string;
   /** @deprecated Use type instead. */
   types?: string;
@@ -128,7 +128,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    async list(query: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources: Resource[]; searchQueryNext?: string }> {
+    async list(query?: GetResourcesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; resources: Resource[]; searchQueryNext?: string }> {
       return unwrap(await client.GET("/resources/v1", { params: { query }, signal: options?.signal }), "GET /resources/v1");
     },
     /**
@@ -136,7 +136,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
      *
      * Retrieve resources in the location. Resources represent all kind of bookable items like rooms, hot desks, dedicated desks, parking lots.
      */
-    iterate(query: Omit<GetResourcesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined> {
+    iterate(query?: Omit<GetResourcesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Resource, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/resources/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /resources/v1"),

@@ -11,8 +11,8 @@ export type Package = NonNullable<operations["getPackages"]["responses"][200]["c
 export interface GetPackagesQuery {
   /** Maximum number of packages per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
-  locationRef: string;
+  /** UUID of the location whose packages to list. Omit to list packages across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
 }
@@ -30,7 +30,7 @@ export function createPackages(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all packages in the location.
      */
-    async list(query: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }> {
+    async list(query?: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }> {
       return unwrap(await client.GET("/packages/v1", { params: { query }, signal: options?.signal }), "GET /packages/v1");
     },
     /**
@@ -38,7 +38,7 @@ export function createPackages(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve all packages in the location.
      */
-    iterate(query: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined> {
+    iterate(query?: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/packages/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /packages/v1"),
