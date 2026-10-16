@@ -499,7 +499,7 @@ export function createNetworks(client: Client<paths>, defaults: SpacebringDefaul
 }
 
 // packages.ts
-export type Package = NonNullable<operations["getPackages"]["responses"][200]["content"]["application/json"]["packages"]>[number];
+export type Package = NonNullable<operations["getPackage"]["responses"][200]["content"]["application/json"]["package"]>;
 export interface GetPackagesQuery {
   limit?: number;
   locationRef?: string;
@@ -511,6 +511,7 @@ export function createPackages(client: Client<paths>, defaults: SpacebringDefaul
   return {
     async list(query?: GetPackagesQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; packages: Package[]; searchQueryNext?: string }>
     iterate(query?: Omit<GetPackagesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Package, void, undefined>
+    async get(packageId: string, options?: SpacebringRequestOptions): Promise<Package>
     async create(packageBody: CreatePackageBody, options?: SpacebringRequestOptions): Promise<Package>
     async update(packageId: string, packageBody: PatchPackageBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(packageId: string, options?: SpacebringRequestOptions): Promise<undefined>

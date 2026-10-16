@@ -5,7 +5,7 @@ import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringR
 import type { operations, paths } from "../schema.js";
 
 /** A Package entity as returned by the Spacebring API. */
-export type Package = NonNullable<operations["getPackages"]["responses"][200]["content"]["application/json"]["packages"]>[number];
+export type Package = NonNullable<operations["getPackage"]["responses"][200]["content"]["application/json"]["package"]>;
 
 /** Query parameters for `sb.packages.list()`. */
 export interface GetPackagesQuery {
@@ -44,6 +44,15 @@ export function createPackages(client: Client<paths>, defaults: SpacebringDefaul
           unwrap(await client.GET("/packages/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /packages/v1"),
         "packages",
       );
+    },
+    /**
+     * Retrieve a package
+     *
+     * @param packageId The id of the package.
+     * @param options Request options (abort signal).
+     */
+    async get(packageId: string, options?: SpacebringRequestOptions): Promise<Package> {
+      return unwrapProp(await client.GET("/packages/v1/{packageId}", { params: { path: { packageId } }, signal: options?.signal }), "package", "GET /packages/v1/{packageId}");
     },
     /** Create a package */
     async create(packageBody: CreatePackageBody, options?: SpacebringRequestOptions): Promise<Package> {
