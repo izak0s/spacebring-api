@@ -9509,6 +9509,69 @@
       }
     },
     "/packages/v1/{packageId}": {
+      "get": {
+        "tags": [
+          "Packages"
+        ],
+        "summary": "Retrieve a package",
+        "description": "Retrieve a package. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "operationId": "getPackage",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "packageId",
+            "required": true,
+            "description": "The id of the package.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "invoices",
+              "invoices.readonly"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPackage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "tags": [
           "Packages"
@@ -29713,10 +29776,6 @@
             "description": "Location-scoped admin permissions. Included only for owners and super admins or when viewing the current user's registration.",
             "type": "object",
             "properties": {
-              "admins": {
-                "type": "boolean",
-                "description": "Whether the admin can manage other admins."
-              },
               "allLocations": {
                 "type": "boolean",
                 "description": "Whether permissions apply to all locations."
@@ -29734,8 +29793,9 @@
                 "description": "Whether the admin can manage billing."
               },
               "bookings": {
-                "type": "boolean",
-                "description": "Whether the admin can manage bookings."
+                "deprecated": true,
+                "description": "Deprecated. Use resources instead.",
+                "type": "boolean"
               },
               "customers": {
                 "type": "boolean",
@@ -29775,12 +29835,10 @@
               }
             },
             "required": [
-              "admins",
               "allLocations",
               "analytics",
               "benefits",
               "billing",
-              "bookings",
               "customers",
               "events",
               "exclusiveLocations",
@@ -60920,11 +60978,6 @@
                         "id",
                         "twoWaySyncEnabled"
                       ]
-                    },
-                    "id": {
-                      "description": "Optional client-provided resource id.",
-                      "type": "string",
-                      "format": "uuid"
                     },
                     "kisiGroupRef": {
                       "description": "Kisi access group reference.",

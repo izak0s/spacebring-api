@@ -1765,7 +1765,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Retrieve a package
+         * @description Retrieve a package. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         */
+        get: operations["getPackage"];
         put?: never;
         post?: never;
         /**
@@ -9426,8 +9430,6 @@ export interface components {
             lastSeenDate?: string;
             /** @description Location-scoped admin permissions. Included only for owners and super admins or when viewing the current user's registration. */
             locationPermissions?: {
-                /** @description Whether the admin can manage other admins. */
-                admins: boolean;
                 /** @description Whether permissions apply to all locations. */
                 allLocations: boolean;
                 /** @description Whether the admin can access analytics. */
@@ -9436,8 +9438,11 @@ export interface components {
                 benefits: boolean;
                 /** @description Whether the admin can manage billing. */
                 billing: boolean;
-                /** @description Whether the admin can manage bookings. */
-                bookings: boolean;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use resources instead.
+                 */
+                bookings?: boolean;
                 /** @description Whether the admin can manage customers. */
                 customers: boolean;
                 /** @description Whether the admin can manage events. */
@@ -24246,11 +24251,6 @@ export interface components {
                             /** @description Whether two-way sync is enabled. */
                             twoWaySyncEnabled: boolean;
                         } | null;
-                        /**
-                         * Format: uuid
-                         * @description Optional client-provided resource id.
-                         */
-                        id?: string;
                         /** @description Kisi access group reference. */
                         kisiGroupRef?: number | null;
                         /**
@@ -31659,6 +31659,41 @@ export interface operations {
         responses: {
             /** @description Created */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getPackage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getPackage: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the package. */
+                packageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
