@@ -70,6 +70,9 @@ export type CreateBenefitCategoryBody = NonNullable<NonNullable<operations["crea
 /** Request body for `sb.benefits.createMedia()`. */
 export type CreateBenefitMediaBody = NonNullable<NonNullable<operations["createBenefitMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
+/** Request body for `sb.benefits.patch()`. */
+export type PatchBenefitBody = NonNullable<NonNullable<operations["patchBenefit"]["requestBody"]>["content"]["application/json"]["benefit"]>;
+
 /** Request body for `sb.benefits.update()`. */
 export type UpdateBenefitBody = NonNullable<NonNullable<operations["updateBenefit"]["requestBody"]>["content"]["application/json"]["benefit"]>;
 
@@ -137,6 +140,18 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
      */
     async createMedia(media: CreateBenefitMediaBody, options?: SpacebringRequestOptions): Promise<BenefitMedia> {
       return unwrapProp(await client.POST("/benefits/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /benefits/v1/media");
+    },
+    /**
+     * Partially update a benefit
+     *
+     * Update the fields of a benefit that the request sets; omitted fields keep their current values.
+     *
+     * @param benefitId The id of the benefit
+     * @param benefit The `benefit` payload.
+     * @param options Request options (abort signal).
+     */
+    async patch(benefitId: string, benefit: PatchBenefitBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/benefits/v1/{benefitId}", { params: { path: { benefitId } }, body: { benefit }, signal: options?.signal }), "PATCH /benefits/v1/{benefitId}");
     },
     applications: {
       /**

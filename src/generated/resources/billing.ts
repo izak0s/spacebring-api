@@ -196,6 +196,17 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
       async preview(creditNote: PreviewCreditNoteBody, options?: SpacebringRequestOptions): Promise<CreditNote> {
         return unwrapProp(await client.POST("/billing/credit_notes/v1/preview", { body: { creditNote }, signal: options?.signal }), "creditNote", "POST /billing/credit_notes/v1/preview");
       },
+      /**
+       * Void a credit note
+       *
+       * Void a credit note permanently: the amount it took off the invoice is owed again. Only an issued credit note of type `prePayment` can be voided, while its invoice is still issued, unpaid and has no payment in progress.
+       *
+       * @param id The id of the credit note
+       * @param options Request options (abort signal).
+       */
+      async void(id: string, options?: SpacebringRequestOptions): Promise<CreditNote> {
+        return unwrapProp(await client.PUT("/billing/credit_notes/v1/{id}/void", { params: { path: { id } }, signal: options?.signal }), "creditNote", "PUT /billing/credit_notes/v1/{id}/void");
+      },
     },
     invoices: {
       /**

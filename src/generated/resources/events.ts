@@ -29,8 +29,8 @@ export interface GetEventsByOrganizationQuery {
   "endDate[lte]"?: string;
   /** Maximum number of events per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose events to list. */
-  locationRef: string;
+  /** UUID of the location whose events to list. Omit to list events across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
   /** Sort order of events. One of relevance, createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc. */
@@ -55,7 +55,7 @@ export interface GetEventTicketsQuery {
   includeDeleted?: string;
   /** Maximum number of event tickets per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose event tickets to list. */
+  /** UUID of the location whose event tickets to list. Omit locationRef, eventRef, customerRef and userRef to list event tickets across every location of the network. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
@@ -74,6 +74,9 @@ export type CreateEventBody = NonNullable<NonNullable<operations["createEvent"][
 /** Request body for `sb.events.createMedia()`. */
 export type CreateEventMediaBody = NonNullable<NonNullable<operations["createEventMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
+/** Request body for `sb.events.patch()`. */
+export type PatchEventBody = NonNullable<NonNullable<operations["patchEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
+
 /** Request body for `sb.events.update()`. */
 export type UpdateEventBody = NonNullable<NonNullable<operations["updateEvent"]["requestBody"]>["content"]["application/json"]["event"]>;
 
@@ -83,7 +86,7 @@ export type UpdateEventTicketBody = NonNullable<NonNullable<operations["updateEv
 export function createEvents(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /** Retrieve events */
-    async list(query: GetEventsByOrganizationQuery, options?: SpacebringRequestOptions): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]> {
+    async list(query?: GetEventsByOrganizationQuery, options?: SpacebringRequestOptions): Promise<operations["getEventsByOrganization"]["responses"][200]["content"]["application/json"]> {
       return unwrap(await client.GET("/events/v1", { params: { query }, signal: options?.signal }), "GET /events/v1");
     },
     /** Retrieve an event */
@@ -129,6 +132,18 @@ export function createEvents(client: Client<paths>, defaults: SpacebringDefaults
      */
     async createMedia(media: CreateEventMediaBody, options?: SpacebringRequestOptions): Promise<EventMedia> {
       return unwrapProp(await client.POST("/events/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /events/v1/media");
+    },
+    /**
+     * Partially update an event
+     *
+     * Update the fields of an event that the request sets; omitted fields keep their current values.
+     *
+     * @param id The id of the event.
+     * @param event The `event` payload.
+     * @param options Request options (abort signal).
+     */
+    async patch(id: string, event: PatchEventBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/events/v1/{id}", { params: { path: { id } }, body: { event }, signal: options?.signal }), "PATCH /events/v1/{id}");
     },
     tickets: {
       /**

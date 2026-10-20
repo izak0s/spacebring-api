@@ -5,7 +5,7 @@ import { paginate, unwrap, unwrapProp, type SpacebringDefaults, type SpacebringR
 import type { components, operations, paths } from "../schema.js";
 
 /** A Assignment entity as returned by the Spacebring API. */
-export type Assignment = NonNullable<operations["getAssignments"]["responses"][200]["content"]["application/json"]["assignments"]>[number];
+export type Assignment = NonNullable<operations["getAssignment"]["responses"][200]["content"]["application/json"]["assignment"]>;
 
 /** A Booking entity as returned by the Spacebring API. */
 export type Booking = NonNullable<operations["getBooking"]["responses"][200]["content"]["application/json"]["booking"]>;
@@ -175,6 +175,15 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
       return unwrap(await client.PATCH("/resources/v1/{resourceId}", { params: { path: { resourceId } }, body: { resource }, signal: options?.signal }), "PATCH /resources/v1/{resourceId}");
     },
     /**
+     * Delete a resource
+     *
+     * @param resourceId The id of the resource.
+     * @param options Request options (abort signal).
+     */
+    async delete(resourceId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.DELETE("/resources/v1/{resourceId}", { params: { path: { resourceId } }, signal: options?.signal }), "DELETE /resources/v1/{resourceId}");
+    },
+    /**
      * Create a media upload
      *
      * Create a media upload for a resource photo. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, add the returned key to `media` when creating or updating a resource within an hour; an image that is not attached by then is discarded. A resource holds up to 10 photos, the first being its cover.
@@ -216,6 +225,15 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
         );
       },
       /**
+       * Get a resource assignment
+       *
+       * @param assignmentId The id of the assignment.
+       * @param options Request options (abort signal).
+       */
+      async get(assignmentId: string, options?: SpacebringRequestOptions): Promise<Assignment> {
+        return unwrapProp(await client.GET("/resources/v1/assignments/{assignmentId}", { params: { path: { assignmentId } }, signal: options?.signal }), "assignment", "GET /resources/v1/assignments/{assignmentId}");
+      },
+      /**
        * Create a resource assignment
        *
        * Create a resource assignment. An assignment links a resource, or a number of seats in it, to a company or a member.
@@ -234,6 +252,17 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
        */
       async update(assignmentId: string, assignment: PatchAssignmentBody, options?: SpacebringRequestOptions): Promise<undefined> {
         return unwrap(await client.PATCH("/resources/v1/assignments/{assignmentId}", { params: { path: { assignmentId } }, body: { assignment }, signal: options?.signal }), "PATCH /resources/v1/assignments/{assignmentId}");
+      },
+      /**
+       * Delete a resource assignment
+       *
+       * Delete a resource assignment. An assignment created by a subscription is removed with its subscription instead.
+       *
+       * @param assignmentId The id of the assignment.
+       * @param options Request options (abort signal).
+       */
+      async delete(assignmentId: string, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.DELETE("/resources/v1/assignments/{assignmentId}", { params: { path: { assignmentId } }, signal: options?.signal }), "DELETE /resources/v1/assignments/{assignmentId}");
       },
     },
     bookings: {

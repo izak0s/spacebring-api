@@ -157,7 +157,11 @@ export interface paths {
         delete: operations["deleteBenefit"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Partially update a benefit
+         * @description Update the fields of a benefit that the request sets; omitted fields keep their current values. <h3>OAuth</h3>Required scopes: <code>benefits</code>
+         */
+        patch: operations["patchBenefit"];
         trace?: never;
     };
     "/benefits/v1/media": {
@@ -535,6 +539,26 @@ export interface paths {
          * @description Update a credit note. <h3>OAuth</h3>Required scopes: <code>invoices</code>
          */
         patch: operations["updateCreditNote"];
+        trace?: never;
+    };
+    "/billing/credit_notes/v1/{id}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Void a credit note
+         * @description Void a credit note permanently: the amount it took off the invoice is owed again. Only an issued credit note of type <code>prePayment</code> can be voided, while its invoice is still issued, unpaid and has no payment in progress. <h3>OAuth</h3>Required scopes: <code>invoices</code>
+         */
+        put: operations["voidCreditNote"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/billing/credit_notes/v1/preview": {
@@ -1206,7 +1230,11 @@ export interface paths {
         delete: operations["deleteEvent"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Partially update an event
+         * @description Update the fields of an event that the request sets; omitted fields keep their current values. <h3>OAuth</h3>Required scopes: <code>events</code>
+         */
+        patch: operations["patchEvent"];
         trace?: never;
     };
     "/events/v1/{id}/cancel": {
@@ -1407,7 +1435,11 @@ export interface paths {
         delete: operations["deleteFeedPost"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Partially update a post
+         * @description Update the fields of a feed post that the request sets; omitted fields keep their current values. <h3>OAuth</h3>Required scopes: <code>feed</code>
+         */
+        patch: operations["patchFeedPost"];
         trace?: never;
     };
     "/feed/posts/v1/{id}/comments": {
@@ -1913,10 +1945,18 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get a resource assignment
+         * @description Get a resource assignment. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>
+         */
+        get: operations["getAssignment"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete a resource assignment
+         * @description Delete a resource assignment. An assignment created by a subscription is removed with its subscription instead. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        delete: operations["deleteAssignment"];
         options?: never;
         head?: never;
         /**
@@ -1960,7 +2000,11 @@ export interface paths {
         get: operations["getResource"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete a resource
+         * @description Delete a resource. <h3>OAuth</h3>Required scopes: <code>resources</code>
+         */
+        delete: operations["deleteResource"];
         options?: never;
         head?: never;
         /**
@@ -2051,7 +2095,7 @@ export interface paths {
         };
         /**
          * Retrieve categories
-         * @description Retrieve all shop categories in the location. <h3>OAuth</h3>Required scopes: <code>shop.readonly</code> or <code>shop</code>
+         * @description Retrieve the shop categories of a location, or of every location in the network. <h3>OAuth</h3>Required scopes: <code>shop.readonly</code> or <code>shop</code>
          */
         get: operations["getShopCategories"];
         put?: never;
@@ -2143,7 +2187,11 @@ export interface paths {
         delete: operations["deleteProduct"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Partially update a product
+         * @description Update the fields of a product that the request sets; omitted fields keep their current values. <h3>OAuth</h3>Required scopes: <code>shop</code>
+         */
+        patch: operations["patchProduct"];
         trace?: never;
     };
     "/shop/products/v1/media": {
@@ -5099,6 +5147,11 @@ export interface components {
             /** @description Quantity of units. */
             quantity: number;
             /**
+             * @description Status of the invoice the item is on: draft, issued, paid or voided. Absent for an item on no invoice.
+             * @enum {string}
+             */
+            status?: "draft" | "issued" | "paid" | "voided";
+            /**
              * Format: uuid
              * @description ID of the associated subscription.
              */
@@ -5504,6 +5557,11 @@ export interface components {
                 };
                 /** @description Quantity of units. */
                 quantity: number;
+                /**
+                 * @description Status of the invoice the item is on: draft, issued, paid or voided. Absent for an item on no invoice.
+                 * @enum {string}
+                 */
+                status?: "draft" | "issued" | "paid" | "voided";
                 /**
                  * Format: uuid
                  * @description ID of the associated subscription.
@@ -6313,6 +6371,11 @@ export interface components {
                 type: "deskBooking" | "roomBooking" | "eventTicket" | "visit" | "subscription";
                 /** @description The user this check-in is for, read from the users service so the details are current. */
                 user?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the user account was deleted.
+                     */
+                    deleteDate?: string;
                     /** @description Email address of the user. */
                     email?: string | null;
                     /**
@@ -6438,6 +6501,11 @@ export interface components {
                 type: "deskBooking" | "roomBooking" | "eventTicket" | "visit" | "subscription";
                 /** @description The user this check-in is for, read from the users service so the details are current. */
                 user?: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the user account was deleted.
+                     */
+                    deleteDate?: string;
                     /** @description Email address of the user. */
                     email?: string | null;
                     /**
@@ -10100,8 +10168,27 @@ export interface components {
                         }[];
                     };
                 }[];
+                /** @description Rescheduling policy for cancellations and start time changes. */
+                refundPolicy: {
+                    /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
+                    public: {
+                        /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
+                        enabled: boolean;
+                        /**
+                         * @description How long before start a booking of a nonmember remains refundable.
+                         * @enum {string}
+                         */
+                        value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                    };
+                    /**
+                     * @description How long before start a booking remains refundable.
+                     * @enum {string}
+                     */
+                    value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                };
                 /**
-                 * @description Refund threshold for cancellations.
+                 * @deprecated
+                 * @description Deprecated. Use refundPolicy.value instead.
                  * @enum {string}
                  */
                 refundThreshold: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
@@ -10804,8 +10891,27 @@ export interface components {
                         }[];
                     };
                 }[];
+                /** @description Rescheduling policy for cancellations and start time changes. */
+                refundPolicy: {
+                    /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
+                    public: {
+                        /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
+                        enabled: boolean;
+                        /**
+                         * @description How long before start a booking of a nonmember remains refundable.
+                         * @enum {string}
+                         */
+                        value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                    };
+                    /**
+                     * @description How long before start a booking remains refundable.
+                     * @enum {string}
+                     */
+                    value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                };
                 /**
-                 * @description Refund threshold for cancellations.
+                 * @deprecated
+                 * @description Deprecated. Use refundPolicy.value instead.
                  * @enum {string}
                  */
                 refundThreshold: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
@@ -11043,6 +11149,137 @@ export interface components {
         };
         createAssignment: {
             /** @description The created assignment. */
+            assignment: {
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Company assigned to the resource.
+                 */
+                company?: {
+                    /**
+                     * Format: uuid
+                     * @description Company id.
+                     */
+                    id: string;
+                    /** @description Company name. Present only for admin callers and the customer's own assignments. */
+                    title?: string;
+                };
+                /** @description Customer the resource is assigned to. */
+                customer?: {
+                    /**
+                     * Format: uuid
+                     * @description Customer id.
+                     */
+                    id: string;
+                    /** @description Company logo when the customer is a company. */
+                    logo?: {
+                        key: string;
+                        url: string;
+                    };
+                    /** @description Company name when the customer is a company. */
+                    title?: string;
+                    /**
+                     * @description Whether the customer is a user or company.
+                     * @enum {string}
+                     */
+                    type: "user" | "company";
+                    /** @description User details when the customer is a user. */
+                    user?: {
+                        /** @description User email. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description User id.
+                         */
+                        id: string;
+                        /** @description User first name. */
+                        name?: string | null;
+                        /** @description Profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description User last name. */
+                        surname?: string | null;
+                    };
+                };
+                /** @description ISO timestamp when the assignment ends. */
+                endDate?: string;
+                /** @description Whether the assignment grants access to the entire resource. */
+                entire: boolean;
+                /**
+                 * Format: uuid
+                 * @description Assignment id.
+                 */
+                id?: string;
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. Membership linked to the assignment.
+                 */
+                membership?: {
+                    /**
+                     * Format: uuid
+                     * @description Membership id.
+                     */
+                    id: string;
+                };
+                /** @description Assigned quantity when the resource is partially assigned. */
+                quantity?: number;
+                /** @description Resource the assignment belongs to. Present when assignments are listed on their own. */
+                resource?: {
+                    /**
+                     * Format: uuid
+                     * @description Resource id.
+                     */
+                    id: string;
+                    /** @description Resource image URL. */
+                    imageUrl?: string;
+                    /**
+                     * Format: uuid
+                     * @description UUID of the location the resource belongs to.
+                     */
+                    locationRef: string;
+                    /** @description Resource title. */
+                    title: string;
+                    /** @description Resource type. */
+                    type: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description UUID of the resource the assignment belongs to.
+                 */
+                resourceRef: string;
+                /** @description ISO timestamp when the assignment starts. */
+                startDate: string;
+                /** @description Deprecated. Use startDate and endDate instead. Subscription backing this assignment. */
+                subscription: {
+                    /** @description ISO timestamp when the assignment ends. */
+                    endDate?: string;
+                    /**
+                     * Format: uuid
+                     * @description Subscription id. Absent for assignments created directly by an admin.
+                     */
+                    id?: string;
+                    /** @description ISO timestamp when the assignment starts. */
+                    startDate: string;
+                };
+                /**
+                 * @deprecated
+                 * @description Deprecated. Use customer instead. User assigned to the resource.
+                 */
+                user?: {
+                    /** @description User email. */
+                    email?: string | null;
+                    /**
+                     * Format: uuid
+                     * @description User id.
+                     */
+                    id: string;
+                    /** @description User first name. */
+                    name?: string | null;
+                    /** @description User last name. */
+                    surname?: string | null;
+                };
+            };
+        };
+        getAssignment: {
+            /** @description The assignment. */
             assignment: {
                 /**
                  * @deprecated
@@ -22381,6 +22618,60 @@ export interface components {
                 };
             };
         };
+        patchBenefit: {
+            content: {
+                "application/json": {
+                    /** @description Benefit fields to change. Omitted fields keep their current values. */
+                    benefit: {
+                        /** @description Application settings. Pass the whole object; the fields inside it are not merged. */
+                        application?: {
+                            /**
+                             * @description How often a user can apply: 'once' limits to a single use, 'unlimited' allows repeated use.
+                             * @enum {string}
+                             */
+                            allowance: "once" | "unlimited";
+                            /**
+                             * @description Label on the call-to-action button.
+                             * @enum {string}
+                             */
+                            buttonLabel: "apply" | "buy" | "contact" | "get" | "learnMore";
+                            /** @description Confirmation email settings for applications. */
+                            confirmationEmail: {
+                                /** @description Whether a confirmation email is sent after applying. */
+                                enabled: boolean;
+                                /** @description HTML template for the confirmation email. */
+                                template: string;
+                            };
+                            /** @description Whether the application flow is enabled for this benefit. */
+                            enabled: boolean;
+                        };
+                        /**
+                         * Format: uuid
+                         * @description ID of the benefit category this benefit belongs to.
+                         */
+                        categoryRef?: string;
+                        /** @description Full description of the benefit. */
+                        description?: string;
+                        /** @description Whether the benefit is highlighted in listings. */
+                        featured?: boolean;
+                        /** @description Media files to attach, replacing the current ones. The url is generated server-side. */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
+                        /** @description Short tagline displayed below the title. */
+                        subtitle?: string;
+                        /** @description Display name of the benefit. */
+                        title?: string;
+                        /**
+                         * @description Who can see this benefit: 'public' (everyone), 'admins', 'exclusiveMembers', 'members', or 'networkMembers'.
+                         * @enum {string}
+                         */
+                        visibility?: "public" | "admins" | "exclusiveMembers" | "members" | "networkMembers";
+                    };
+                };
+            };
+        };
         createBenefitMedia: {
             content: {
                 "application/json": {
@@ -23541,6 +23832,95 @@ export interface components {
                 };
             };
         };
+        patchEvent: {
+            content: {
+                "application/json": {
+                    /** @description Event fields to change. Omitted fields keep their current values. */
+                    event: {
+                        /**
+                         * @description Event application type. purchase: paid signup (requires price). none: free/RSVP-style.
+                         * @enum {string}
+                         */
+                        applicationType?: "purchase" | "none";
+                        /** @description Confirmation email settings. */
+                        confirmationEmail?: {
+                            /** @description Whether a confirmation email is sent after registration. */
+                            enabled: boolean;
+                            /** @description HTML template for the confirmation email. */
+                            template?: string;
+                        };
+                        /** @description Custom tax settings. */
+                        customTax?: {
+                            /** @description Whether custom tax is enabled. */
+                            enabled: boolean;
+                            /** @description Custom tax rate as a decimal. */
+                            rate: number;
+                        };
+                        /** @description Full description of the event. */
+                        description?: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the event ends.
+                         */
+                        endDate?: string;
+                        /** @description Limited attendees settings. */
+                        limitedAttendees?: {
+                            /** @description Whether attendee capacity is limited. */
+                            enabled: boolean;
+                            /** @description Maximum number of attendees when limited. */
+                            limit?: number;
+                        };
+                        /** @description Media files attached to the event. */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key?: string;
+                            /** @description Public URL of the media file. */
+                            url?: string;
+                        }[];
+                        /** @description Pricing options for the event. Can enable credits, money, or both. */
+                        price?: {
+                            /** @description Credits pricing. */
+                            credits?: {
+                                /** @description Ticket price in credits. */
+                                amount: number;
+                                /** @description Whether credits payment is enabled. */
+                                enabled: boolean;
+                            };
+                            /** @description Money pricing. */
+                            money?: {
+                                /** @description Ticket price in money. */
+                                amount: number;
+                                /** @description Whether money payment is enabled. */
+                                enabled: boolean;
+                            };
+                        };
+                        /**
+                         * @description How far in advance a refund can be requested.
+                         * @enum {string}
+                         */
+                        refundThreshold?: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        /** @description Whether the attendees list is publicly visible. */
+                        showAttendees?: boolean;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the event starts.
+                         */
+                        startDate?: string;
+                        /** @description Maximum number of tickets one attendee can get for the event. Set it to null to make the event unlimited. */
+                        ticketsPerAttendee?: number | null;
+                        /** @description Display name of the event. */
+                        title?: string;
+                        /** @description Venue name or address within the location. */
+                        venue?: string;
+                        /**
+                         * @description Who can see this event.
+                         * @enum {string}
+                         */
+                        visibility?: "public" | "admins" | "networkMembers" | "members";
+                    };
+                };
+            };
+        };
         createEventMedia: {
             content: {
                 "application/json": {
@@ -23604,6 +23984,40 @@ export interface components {
                         /** @description Media files to attach to the post. */
                         media?: {
                             /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
+                        /** @description Open Graph metadata for link previews. */
+                        og?: {
+                            /** @description Open Graph description. */
+                            description?: string | null;
+                            /** @description Open Graph image URL. */
+                            image?: string | null;
+                            /** @description Open Graph title. */
+                            title?: string | null;
+                            /** @description Open Graph type. */
+                            type?: string | null;
+                            /**
+                             * Format: uri
+                             * @description Open Graph URL.
+                             */
+                            url: string;
+                            /** @description Open Graph video URL. */
+                            videoUrl?: string | null;
+                        };
+                        /** @description Post text content. */
+                        text?: string;
+                    };
+                };
+            };
+        };
+        patchFeedPost: {
+            content: {
+                "application/json": {
+                    /** @description Feed post fields to change. Omitted fields keep their current values. */
+                    post: {
+                        /** @description Media files, replacing the ones currently attached to the post. */
+                        media?: {
+                            /** @description Storage key of the media file. */
                             key: string;
                         }[];
                         /** @description Open Graph metadata for link previews. */
@@ -24437,8 +24851,27 @@ export interface components {
                                 }[];
                             };
                         }[];
+                        /** @description Rescheduling policy. A booking takes the policy that applies to its customer when it is made. */
+                        refundPolicy?: {
+                            /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
+                            public: {
+                                /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
+                                enabled: boolean;
+                                /**
+                                 * @description How long before start a booking of a nonmember remains refundable.
+                                 * @enum {string}
+                                 */
+                                value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                            };
+                            /**
+                             * @description How long before start a booking remains refundable.
+                             * @enum {string}
+                             */
+                            value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        };
                         /**
-                         * @description How long before start a booking remains refundable.
+                         * @deprecated
+                         * @description Deprecated. Use refundPolicy.value instead. Ignored when refundPolicy is sent.
                          * @enum {string}
                          */
                         refundThreshold?: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
@@ -24920,8 +25353,27 @@ export interface components {
                                 }[];
                             };
                         }[];
+                        /** @description Rescheduling policy. A booking takes the policy that applies to its customer when it is made. */
+                        refundPolicy?: {
+                            /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
+                            public: {
+                                /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
+                                enabled: boolean;
+                                /**
+                                 * @description How long before start a booking of a nonmember remains refundable.
+                                 * @enum {string}
+                                 */
+                                value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                            };
+                            /**
+                             * @description How long before start a booking remains refundable.
+                             * @enum {string}
+                             */
+                            value: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        };
                         /**
-                         * @description How long before start a booking remains refundable.
+                         * @deprecated
+                         * @description Deprecated. Use refundPolicy.value instead. Ignored when refundPolicy is sent.
                          * @enum {string}
                          */
                         refundThreshold?: "noRefund" | "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
@@ -25505,6 +25957,91 @@ export interface components {
                         /**
                          * @description Who can see this product. public: all. admins: admins only. members: location members. networkMembers: network members.
                          * @default public
+                         * @enum {string}
+                         */
+                        visibility?: "public" | "admins" | "members" | "networkMembers";
+                    };
+                };
+            };
+        };
+        patchProduct: {
+            content: {
+                "application/json": {
+                    /** @description Product fields to change. Omitted fields keep their current values. */
+                    product: {
+                        /**
+                         * Format: uuid
+                         * @description ID of the category this product belongs to.
+                         */
+                        categoryRef?: string;
+                        /** @description Product description. */
+                        description?: string;
+                        /** @description Whether the product is featured. */
+                        featured?: boolean;
+                        /** @description Media files of the product, replacing the current ones. */
+                        media?: {
+                            /** @description Storage key of the media file. */
+                            key: string;
+                        }[];
+                        /** @description Purchasable options, replacing the current ones. Keep the id of every option that should survive; an option keeps the stored value of every field it omits. */
+                        options?: {
+                            /** @description Whether this option is available for purchase. */
+                            available?: boolean;
+                            /** @description Custom tax settings for this option. */
+                            customTax?: {
+                                /** @description Whether custom tax is applied to this option. */
+                                enabled?: boolean;
+                                /** @description Custom tax rate (non-negative). */
+                                rate?: number;
+                            };
+                            /** @description Option description. */
+                            description?: string;
+                            /**
+                             * Format: uuid
+                             * @description UUID of the option to change. Omit to add a new option.
+                             */
+                            id?: string;
+                            /** @description Pricing for this option. */
+                            price?: {
+                                /** @description Credits pricing. */
+                                credits?: {
+                                    /** @description Price in location credits. */
+                                    amount?: number;
+                                    /** @description Whether credits payment is enabled for this option. */
+                                    enabled?: boolean;
+                                };
+                                /** @description Money pricing. */
+                                money?: {
+                                    /** @description Price in money (location currency). */
+                                    amount?: number;
+                                    /** @description Whether money payment is enabled for this option. */
+                                    enabled?: boolean;
+                                };
+                            };
+                            /** @description Stock settings for this option. */
+                            stock?: {
+                                /** @description Whether stock tracking is enabled. */
+                                enabled?: boolean;
+                                /** @description Units on hand when stock is enabled. */
+                                quantity?: number;
+                            };
+                            /** @description Option title. */
+                            title?: string;
+                        }[];
+                        /** @description Checkout availability settings for this product. */
+                        order?: {
+                            /** @description Whether the product can be purchased through checkout. */
+                            enabled: boolean;
+                        };
+                        /**
+                         * @description Refund policy. noRefund: purchases are final. statusNew: refunds allowed while order is in new state.
+                         * @enum {string}
+                         */
+                        refundPolicy?: "noRefund" | "statusNew";
+                        /** @description Product title. */
+                        title?: string;
+                        /**
+                         * @description Who can see this product.
                          * @enum {string}
                          */
                         visibility?: "public" | "admins" | "members" | "networkMembers";
@@ -27229,6 +27766,45 @@ export interface operations {
             };
         };
     };
+    patchBenefit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The id of the benefit */
+                benefitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchBenefit"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     createBenefitMedia: {
         parameters: {
             query?: never;
@@ -28273,6 +28849,70 @@ export interface operations {
             };
         };
     };
+    voidCreditNote: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the credit note */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        creditNote?: components["schemas"]["creditNote"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden - User lacks permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found - Credit note not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict - The credit note cannot be voided in its current state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     previewCreditNote: {
         parameters: {
             query?: never;
@@ -28327,15 +28967,15 @@ export interface operations {
     };
     getCheckIns: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Filter check-ins whose arrival is on or after this date (ISO 8601). Use with checkInDate[lte] for a range. */
                 "checkInDate[gte]"?: string;
                 /** @description Filter check-ins whose arrival is on or before this date (ISO 8601). Use with checkInDate[gte] for a range. */
                 "checkInDate[lte]"?: string;
                 /** @description Maximum number of check-ins per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
-                locationRef: string;
+                /** @description UUID of the location whose check-ins to list. Omit to list check-ins across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
                 /** @description Filter by status: 'scheduled' nobody has arrived yet, 'checkedIn' the person is on site, 'checkedOut' they left, 'expired' the window closed with nobody arriving. Defaults to every status. Comma-separated, one or more of: checkedIn, checkedOut, scheduled, expired. */
@@ -30017,7 +30657,7 @@ export interface operations {
     };
     getEventsByOrganization: {
         parameters: {
-            query: {
+            query?: {
                 /** @description Filter events whose create date is on or after this date (ISO 8601). */
                 "createDate[gte]"?: string;
                 /** @description Filter events whose create date is on or before this date (ISO 8601). */
@@ -30032,8 +30672,8 @@ export interface operations {
                 "endDate[lte]"?: string;
                 /** @description Maximum number of events per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose events to list. */
-                locationRef: string;
+                /** @description UUID of the location whose events to list. Omit to list events across every location of the network. */
+                locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
                 /** @description Sort order of events. One of relevance, createDate:asc, createDate:desc, startDate:asc, startDate:desc, endDate:asc, endDate:desc. */
@@ -30232,6 +30872,48 @@ export interface operations {
             };
         };
     };
+    patchEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the event. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchEvent"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     cancelEvent: {
         parameters: {
             query?: never;
@@ -30391,7 +31073,7 @@ export interface operations {
                 includeDeleted?: string;
                 /** @description Maximum number of event tickets per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose event tickets to list. */
+                /** @description UUID of the location whose event tickets to list. Omit locationRef, eventRef, customerRef and userRef to list event tickets across every location of the network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -30783,6 +31465,48 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchFeedPost: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the post. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchFeedPost"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -32203,6 +32927,110 @@ export interface operations {
             };
         };
     };
+    getAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the assignment. */
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getAssignment"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteAssignment: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the assignment. */
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     patchAssignment: {
         parameters: {
             query?: never;
@@ -32312,6 +33140,57 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteResource: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the resource. */
+                resourceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -32618,9 +33497,9 @@ export interface operations {
     };
     getShopCategories: {
         parameters: {
-            query: {
-                /** @description UUID of the location whose shop categories to list. */
-                locationRef: string;
+            query?: {
+                /** @description UUID of the location whose shop categories to list, in the order the shop shows them. Omit to list the categories of every location of the network, grouped by location. */
+                locationRef?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -32799,7 +33678,7 @@ export interface operations {
                 id?: string;
                 /** @description Maximum number of products per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location. */
+                /** @description UUID of the location whose products to list. Omit locationRef, categoryRef and id to list products across every location of the network, newest first. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -32984,6 +33863,48 @@ export interface operations {
             };
         };
     };
+    patchProduct: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The id of the product. */
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchProduct"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
     createProductMedia: {
         parameters: {
             query?: never;
@@ -33029,7 +33950,7 @@ export interface operations {
                 customerRef?: string;
                 /** @description Maximum number of orders per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose orders to list. */
+                /** @description UUID of the location whose orders to list. Omit locationRef, customerRef and userRef to list orders across every location of the network, newest first. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -34351,13 +35272,13 @@ export interface operations {
     };
     getContacts: {
         parameters: {
-            query: {
+            query?: {
                 /** @description The maximum number of contacts to return. Default is 25. */
                 limit?: number;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
-                /** @description The id of the location. */
-                locationRef: string;
+                /** @description The id of the location. Omit it to list the contacts of every location in the network where the caller is an administrator. */
+                locationRef?: string;
                 /** @description The create date filter of items. */
                 createDate?: {
                     /**
@@ -34478,9 +35399,9 @@ export interface operations {
     };
     getRequests: {
         parameters: {
-            query: {
-                /** @description The id of the location. */
-                locationRef: string;
+            query?: {
+                /** @description The id of the location. Omit it to list the pending requests of every location in the network. */
+                locationRef?: string;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
                 /** @description The number of items to return. */
@@ -34675,9 +35596,9 @@ export interface operations {
     };
     getVisits: {
         parameters: {
-            query: {
-                /** @description The id of the location. */
-                locationRef: string;
+            query?: {
+                /** @description The id of the location. Omit it to list the visits of every location in the network, newest visit date first. */
+                locationRef?: string;
                 /** @description The id of the user, host of the visit. */
                 userRefHost?: string;
                 /** @description The id of the user, visitor of the visit. */
