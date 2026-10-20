@@ -28,7 +28,7 @@ export interface GetOrdersQuery {
   customerRef?: string;
   /** Maximum number of orders per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location whose orders to list. */
+  /** UUID of the location whose orders to list. Omit locationRef, customerRef and userRef to list orders across every location of the network, newest first. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
@@ -48,7 +48,7 @@ export interface GetProductsQuery {
   id?: string;
   /** Maximum number of products per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
+  /** UUID of the location whose products to list. Omit locationRef, categoryRef and id to list products across every location of the network, newest first. */
   locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
@@ -56,8 +56,8 @@ export interface GetProductsQuery {
 
 /** Query parameters for `sb.shop.categories.list()`. */
 export interface GetShopCategoriesQuery {
-  /** UUID of the location whose shop categories to list. */
-  locationRef: string;
+  /** UUID of the location whose shop categories to list, in the order the shop shows them. Omit to list the categories of every location of the network, grouped by location. */
+  locationRef?: string;
 }
 
 /** Request body for `sb.shop.products.create()`. */
@@ -68,6 +68,9 @@ export type CreateProductMediaBody = NonNullable<NonNullable<operations["createP
 
 /** Request body for `sb.shop.categories.create()`. */
 export type CreateShopCategoryBody = NonNullable<NonNullable<operations["createShopCategory"]["requestBody"]>["content"]["application/json"]["category"]>;
+
+/** Request body for `sb.shop.products.patch()`. */
+export type PatchProductBody = NonNullable<NonNullable<operations["patchProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
 
 /** Request body for `sb.shop.products.update()`. */
 export type UpdateProductBody = NonNullable<NonNullable<operations["updateProduct"]["requestBody"]>["content"]["application/json"]["product"]>;
@@ -81,9 +84,9 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
       /**
        * Retrieve categories
        *
-       * Retrieve all shop categories in the location.
+       * Retrieve the shop categories of a location, or of every location in the network.
        */
-      async list(query: GetShopCategoriesQuery, options?: SpacebringRequestOptions): Promise<ShopCategory[]> {
+      async list(query?: GetShopCategoriesQuery, options?: SpacebringRequestOptions): Promise<ShopCategory[]> {
         return unwrapProp(await client.GET("/shop/categories/v1", { params: { query }, signal: options?.signal }), "categories", "GET /shop/categories/v1");
       },
       /**
@@ -232,6 +235,18 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
        */
       async createMedia(media: CreateProductMediaBody, options?: SpacebringRequestOptions): Promise<ProductMedia> {
         return unwrapProp(await client.POST("/shop/products/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /shop/products/v1/media");
+      },
+      /**
+       * Partially update a product
+       *
+       * Update the fields of a product that the request sets; omitted fields keep their current values.
+       *
+       * @param productId The id of the product.
+       * @param product The `product` payload.
+       * @param options Request options (abort signal).
+       */
+      async patch(productId: string, product: PatchProductBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/shop/products/v1/{productId}", { params: { path: { productId } }, body: { product }, signal: options?.signal }), "PATCH /shop/products/v1/{productId}");
       },
     },
   };

@@ -35,6 +35,9 @@ export type CreateFeedPostCommentBody = NonNullable<NonNullable<operations["crea
 /** Request body for `sb.feed.createMedia()`. */
 export type CreateFeedPostMediaBody = NonNullable<NonNullable<operations["createFeedPostMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
+/** Request body for `sb.feed.posts.patch()`. */
+export type PatchFeedPostBody = NonNullable<NonNullable<operations["patchFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
+
 /** Request body for `sb.feed.posts.update()`. */
 export type UpdateFeedPostBody = NonNullable<NonNullable<operations["updateFeedPost"]["requestBody"]>["content"]["application/json"]["post"]>;
 
@@ -183,6 +186,18 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        */
       async getLikes(id: string, options?: SpacebringRequestOptions): Promise<Like[]> {
         return unwrapProp(await client.GET("/feed/posts/v1/{id}/likes", { params: { path: { id } }, signal: options?.signal }), "likes", "GET /feed/posts/v1/{id}/likes");
+      },
+      /**
+       * Partially update a post
+       *
+       * Update the fields of a feed post that the request sets; omitted fields keep their current values.
+       *
+       * @param id The id of the post.
+       * @param post The `post` payload.
+       * @param options Request options (abort signal).
+       */
+      async patch(id: string, post: PatchFeedPostBody, options?: SpacebringRequestOptions): Promise<undefined> {
+        return unwrap(await client.PATCH("/feed/posts/v1/{id}", { params: { path: { id } }, body: { post }, signal: options?.signal }), "PATCH /feed/posts/v1/{id}");
       },
     },
   };

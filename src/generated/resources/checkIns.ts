@@ -15,8 +15,8 @@ export interface GetCheckInsQuery {
   "checkInDate[lte]"?: string;
   /** Maximum number of check-ins per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
   limit?: number;
-  /** UUID of the location. */
-  locationRef: string;
+  /** UUID of the location whose check-ins to list. Omit to list check-ins across every location of the network. */
+  locationRef?: string;
   /** Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
   nextPageToken?: string;
   /** Filter by status: 'scheduled' nobody has arrived yet, 'checkedIn' the person is on site, 'checkedOut' they left, 'expired' the window closed with nobody arriving. Defaults to every status. Comma-separated, one or more of: checkedIn, checkedOut, scheduled, expired. */
@@ -40,7 +40,7 @@ export function createCheckins(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve the check-ins of a location, newest arrival first. With bearer token authentication, the user must be an administrator of the location.
      */
-    async list(query: GetCheckInsQuery, options?: SpacebringRequestOptions): Promise<{ checkIns: CheckIn[]; nextPageToken?: string; searchQueryNext?: string }> {
+    async list(query?: GetCheckInsQuery, options?: SpacebringRequestOptions): Promise<{ checkIns: CheckIn[]; nextPageToken?: string; searchQueryNext?: string }> {
       return unwrap(await client.GET("/check_ins/v1", { params: { query }, signal: options?.signal }), "GET /check_ins/v1");
     },
     /**
@@ -48,7 +48,7 @@ export function createCheckins(client: Client<paths>, defaults: SpacebringDefaul
      *
      * Retrieve the check-ins of a location, newest arrival first. With bearer token authentication, the user must be an administrator of the location.
      */
-    iterate(query: Omit<GetCheckInsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CheckIn, void, undefined> {
+    iterate(query?: Omit<GetCheckInsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CheckIn, void, undefined> {
       return paginate(
         async (nextPageToken: string | undefined) =>
           unwrap(await client.GET("/check_ins/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /check_ins/v1"),
