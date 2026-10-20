@@ -278,6 +278,9 @@ function analyzeEnvelope(op: SpecOperation, namespace: string[]): EnvelopeInfo {
 
 export function methodName(analyzed: AnalyzedOp): string {
   const { rest, method, op, pagination } = analyzed;
+  // PATCH is "update" unless the path also has a PUT (full replace) — then
+  // the partial update becomes "patch" so the two don't clash.
+  const updateVerb = method === "patch" && spec.paths[analyzed.path].put ? "patch" : "update";
   const shape = rest.map((segment) => (isParam(segment) ? "{}" : "lit")).join("/");
   const literal = rest.find((segment) => !isParam(segment));
 
@@ -289,7 +292,7 @@ export function methodName(analyzed: AnalyzedOp): string {
     case "{}":
       if (method === "get") return "get";
       if (method === "delete") return "delete";
-      if (method === "put" || method === "patch") return "update";
+      if (method === "put" || method === "patch") return updateVerb;
       break;
     case "lit":
     case "{}/lit": {
@@ -307,7 +310,7 @@ export function methodName(analyzed: AnalyzedOp): string {
       const lit = literal!;
       if (method === "get") return "get" + pascalCase(singular(lit));
       if (method === "delete") return "delete" + pascalCase(singular(lit));
-      if (method === "put" || method === "patch") return "update" + pascalCase(singular(lit));
+      if (method === "put" || method === "patch") return updateVerb + pascalCase(singular(lit));
       if (method === "post") return "create" + pascalCase(singular(lit));
       break;
     }
