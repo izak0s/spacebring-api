@@ -213,7 +213,7 @@ export function createBenefits(client: Client<paths>, defaults: SpacebringDefaul
       /**
        * Create a category
        *
-       * Create a benefit category.
+       * Create a benefit category. A user needs the Settings permission in the location.
        */
       async create(category: CreateBenefitCategoryBody, options?: SpacebringRequestOptions): Promise<BenefitCategory> {
         return unwrapProp(await client.POST("/benefits/categories/v1", { body: { category }, signal: options?.signal }), "category", "POST /benefits/categories/v1");

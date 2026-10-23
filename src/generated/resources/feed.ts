@@ -18,8 +18,8 @@ export type Post = NonNullable<components["schemas"]["post"]>;
 
 /** Query parameters for `sb.feed.posts.list()`. */
 export interface GetFeedPostsQuery {
-  /** The id of the location. */
-  locationRef: string;
+  /** UUID of the location whose feed posts to list. Omit to list posts across every location of the network. */
+  locationRef?: string;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
   /** The number of items to return. */
@@ -94,7 +94,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get feed posts.
        */
-      async list(query: GetFeedPostsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; posts?: Post[]; searchQueryNext?: string }> {
+      async list(query?: GetFeedPostsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; posts?: Post[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/feed/posts/v1", { params: { query }, signal: options?.signal }), "GET /feed/posts/v1");
       },
       /**
@@ -102,7 +102,7 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
        *
        * Get feed posts.
        */
-      iterate(query: Omit<GetFeedPostsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined> {
+      iterate(query?: Omit<GetFeedPostsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
             unwrap(await client.GET("/feed/posts/v1", { params: { query: { ...query, nextPageToken } }, signal: options?.signal }), "GET /feed/posts/v1"),

@@ -71,7 +71,7 @@ export interface paths {
         put?: never;
         /**
          * Create a category
-         * @description Create a benefit category. <h3>OAuth</h3>Required scopes: <code>benefits</code>
+         * @description Create a benefit category. A user needs the Settings permission in the location. <h3>OAuth</h3>Required scopes: <code>benefits</code>
          */
         post: operations["createBenefitCategory"];
         delete?: never;
@@ -2101,7 +2101,7 @@ export interface paths {
         put?: never;
         /**
          * Create a category
-         * @description Create a shop category. <h3>OAuth</h3>Required scopes: <code>shop</code>
+         * @description Create a shop category. A user needs the Settings permission in the location. <h3>OAuth</h3>Required scopes: <code>shop</code>
          */
         post: operations["createShopCategory"];
         delete?: never;
@@ -17305,12 +17305,17 @@ export interface components {
              * @description Unique identifier of the activity.
              */
             id: string;
-            /** @description Present when the activity was created by Lem AI. */
+            /** @description Present when the activity was created by an agent. */
             lemAI?: {
-                /** @description Display name of the Lem AI assistant. */
+                /**
+                 * Format: uuid
+                 * @description ID of the agent that created the activity. Absent for replies posted before agents.
+                 */
+                agentRef?: string;
+                /** @description Display name of the agent. */
                 name: string;
-                /** @description Profile image URL of the Lem AI assistant. */
-                photoUrl: string;
+                /** @description Profile image URL of the agent, or null when it has none. */
+                photoUrl: string | null;
             };
             /** @description Membership of the user who performed the action. Holds only an empty user when no membership performed it, such as a Lem AI reply. */
             membership?: {
@@ -22386,16 +22391,14 @@ export interface components {
                          * @description ID of the location this alt currency belongs to.
                          */
                         locationRef: string;
-                    } & ({
+                        /** @description Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both. */
+                        exchangeRate?: number;
                         /**
-                         * @description Exchange rate provider when auto-update is enabled.
+                         * @description Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.
                          * @enum {string}
                          */
-                        provider: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
-                    } | {
-                        /** @description Exchange rate relative to the location main currency. */
-                        exchangeRate: number;
-                    });
+                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                    };
                 };
             };
         };
@@ -22403,16 +22406,15 @@ export interface components {
             content: {
                 "application/json": {
                     /** @description Alt currency fields to update */
-                    altCurrency: Record<string, never> & ({
+                    altCurrency: {
+                        /** @description Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both. */
+                        exchangeRate?: number;
                         /**
-                         * @description Exchange rate provider when auto-update is enabled.
+                         * @description Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.
                          * @enum {string}
                          */
-                        provider: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
-                    } | {
-                        /** @description Exchange rate relative to the location main currency. */
-                        exchangeRate: number;
-                    });
+                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                    };
                 };
             };
         };
@@ -31274,9 +31276,9 @@ export interface operations {
     };
     getFeedPosts: {
         parameters: {
-            query: {
-                /** @description The id of the location. */
-                locationRef: string;
+            query?: {
+                /** @description UUID of the location whose feed posts to list. Omit to list posts across every location of the network. */
+                locationRef?: string;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
                 /** @description The number of items to return. */
