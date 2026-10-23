@@ -415,7 +415,7 @@ export type FeedMedia = NonNullable<operations["createFeedPostMedia"]["responses
 export type Like = NonNullable<components["schemas"]["postLike"]>;
 export type Post = NonNullable<components["schemas"]["post"]>;
 export interface GetFeedPostsQuery {
-  locationRef: string;
+  locationRef?: string;
   nextPageToken?: string;
   limit?: number;
 }
@@ -434,8 +434,8 @@ export function createFeed(client: Client<paths>, defaults: SpacebringDefaults) 
       async deleteLike(id: string, options?: SpacebringRequestOptions): Promise<undefined>
     },
     posts: {
-      async list(query: GetFeedPostsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; posts?: Post[]; searchQueryNext?: string }>
-      iterate(query: Omit<GetFeedPostsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined>
+      async list(query?: GetFeedPostsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; posts?: Post[]; searchQueryNext?: string }>
+      iterate(query?: Omit<GetFeedPostsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Post, void, undefined>
       async get(id: string, options?: SpacebringRequestOptions): Promise<Post>
       async create(post: CreateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post>
       async update(id: string, post: UpdateFeedPostBody, options?: SpacebringRequestOptions): Promise<Post>

@@ -103,7 +103,7 @@ export function createShop(client: Client<paths>, defaults: SpacebringDefaults) 
       /**
        * Create a category
        *
-       * Create a shop category.
+       * Create a shop category. A user needs the Settings permission in the location.
        */
       async create(category: CreateShopCategoryBody, options?: SpacebringRequestOptions): Promise<ShopCategory> {
         return unwrapProp(await client.POST("/shop/categories/v1", { body: { category }, signal: options?.signal }), "category", "POST /shop/categories/v1");

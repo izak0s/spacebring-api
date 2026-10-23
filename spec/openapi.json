@@ -419,7 +419,7 @@
           "Benefits"
         ],
         "summary": "Create a category",
-        "description": "Create a benefit category. <h3>OAuth</h3>Required scopes: <code>benefits</code>",
+        "description": "Create a benefit category. A user needs the Settings permission in the location. <h3>OAuth</h3>Required scopes: <code>benefits</code>",
         "operationId": "createBenefitCategory",
         "parameters": [
           {
@@ -7824,12 +7824,12 @@
           {
             "in": "query",
             "name": "locationRef",
-            "description": "The id of the location.",
+            "description": "UUID of the location whose feed posts to list. Omit to list posts across every location of the network.",
             "schema": {
               "type": "string",
               "format": "uuid"
             },
-            "required": true
+            "required": false
           },
           {
             "in": "query",
@@ -11938,7 +11938,7 @@
           "Shop"
         ],
         "summary": "Create a category",
-        "description": "Create a shop category. <h3>OAuth</h3>Required scopes: <code>shop</code>",
+        "description": "Create a shop category. A user needs the Settings permission in the location. <h3>OAuth</h3>Required scopes: <code>shop</code>",
         "operationId": "createShopCategory",
         "parameters": [
           {
@@ -47363,16 +47363,22 @@
             "description": "Unique identifier of the activity."
           },
           "lemAI": {
-            "description": "Present when the activity was created by Lem AI.",
+            "description": "Present when the activity was created by an agent.",
             "type": "object",
             "properties": {
+              "agentRef": {
+                "description": "ID of the agent that created the activity. Absent for replies posted before agents.",
+                "type": "string",
+                "format": "uuid"
+              },
               "name": {
                 "type": "string",
-                "description": "Display name of the Lem AI assistant."
+                "description": "Display name of the agent."
               },
               "photoUrl": {
-                "type": "string",
-                "description": "Profile image URL of the Lem AI assistant."
+                "nullable": true,
+                "description": "Profile image URL of the agent, or null when it has none.",
+                "type": "string"
               }
             },
             "required": [
@@ -57477,63 +57483,39 @@
               "type": "object",
               "properties": {
                 "altCurrency": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "currencyCode": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "ISO 4217 currency code."
-                        },
-                        "locationRef": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the location this alt currency belongs to."
-                        }
-                      },
-                      "required": [
-                        "currencyCode",
-                        "locationRef"
-                      ]
+                  "type": "object",
+                  "properties": {
+                    "currencyCode": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "ISO 4217 currency code."
                     },
-                    {
-                      "oneOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "provider": {
-                              "type": "string",
-                              "enum": [
-                                "nbu",
-                                "bcra",
-                                "nbg",
-                                "bcch",
-                                "ecb"
-                              ],
-                              "description": "Exchange rate provider when auto-update is enabled."
-                            }
-                          },
-                          "required": [
-                            "provider"
-                          ]
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "exchangeRate": {
-                              "type": "number",
-                              "minimum": 0,
-                              "exclusiveMinimum": true,
-                              "description": "Exchange rate relative to the location main currency."
-                            }
-                          },
-                          "required": [
-                            "exchangeRate"
-                          ]
-                        }
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the location this alt currency belongs to."
+                    },
+                    "exchangeRate": {
+                      "description": "Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both.",
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
+                    },
+                    "provider": {
+                      "description": "Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.",
+                      "type": "string",
+                      "enum": [
+                        "nbu",
+                        "bcra",
+                        "nbg",
+                        "bcch",
+                        "ecb"
                       ]
                     }
+                  },
+                  "required": [
+                    "currencyCode",
+                    "locationRef"
                   ],
                   "description": "Alt currency to create."
                 }
@@ -57553,49 +57535,26 @@
               "type": "object",
               "properties": {
                 "altCurrency": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {}
+                  "type": "object",
+                  "properties": {
+                    "exchangeRate": {
+                      "description": "Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both.",
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
                     },
-                    {
-                      "oneOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "provider": {
-                              "type": "string",
-                              "enum": [
-                                "nbu",
-                                "bcra",
-                                "nbg",
-                                "bcch",
-                                "ecb"
-                              ],
-                              "description": "Exchange rate provider when auto-update is enabled."
-                            }
-                          },
-                          "required": [
-                            "provider"
-                          ]
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "exchangeRate": {
-                              "type": "number",
-                              "minimum": 0,
-                              "exclusiveMinimum": true,
-                              "description": "Exchange rate relative to the location main currency."
-                            }
-                          },
-                          "required": [
-                            "exchangeRate"
-                          ]
-                        }
+                    "provider": {
+                      "description": "Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.",
+                      "type": "string",
+                      "enum": [
+                        "nbu",
+                        "bcra",
+                        "nbg",
+                        "bcch",
+                        "ecb"
                       ]
                     }
-                  ],
+                  },
                   "description": "Alt currency fields to update"
                 }
               },
