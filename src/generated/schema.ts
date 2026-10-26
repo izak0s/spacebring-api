@@ -1842,6 +1842,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/plans/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for a plan cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a plan within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>plans</code>
+         */
+        post: operations["createPlanMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/plans/v1/{planId}": {
         parameters: {
             query?: never;
@@ -6878,6 +6898,11 @@ export interface components {
                 status: "draft" | "issued" | "signed" | "declined" | "terminated";
                 /**
                  * Format: uuid
+                 * @description ID of the subscription created when the contract was issued, present when the action is subscription.
+                 */
+                subscriptionRef?: string;
+                /**
+                 * Format: uuid
                  * @description ID of the template used to generate this contract.
                  */
                 templateRef: string;
@@ -7093,6 +7118,11 @@ export interface components {
                  * @enum {string}
                  */
                 status: "draft" | "issued" | "signed" | "declined" | "terminated";
+                /**
+                 * Format: uuid
+                 * @description ID of the subscription created when the contract was issued, present when the action is subscription.
+                 */
+                subscriptionRef?: string;
                 /**
                  * Format: uuid
                  * @description ID of the template used to generate this contract.
@@ -7313,6 +7343,8 @@ export interface components {
             percentOff?: number | null;
             /** @description Product types the coupon applies to. */
             productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+            /** @description Name of the coupon. Absent when the coupon has none and is named after its discount and the products it applies to. */
+            title?: string;
             /**
              * @description Deprecated coupon category.
              * @enum {string}
@@ -9084,6 +9116,13 @@ export interface components {
                  * @description ID of the location this plan belongs to.
                  */
                 locationRef: string;
+                /** @description Media files attached to this plan. The first is its cover image. */
+                media: {
+                    /** @description Storage key of the media file. */
+                    key: string;
+                    /** @description Public URL of the media file. */
+                    url: string;
+                }[];
                 /**
                  * @description Billing period of the plan.
                  * @enum {string}
@@ -9257,6 +9296,13 @@ export interface components {
              * @description ID of the location this plan belongs to.
              */
             locationRef: string;
+            /** @description Media files attached to this plan. The first is its cover image. */
+            media: {
+                /** @description Storage key of the media file. */
+                key: string;
+                /** @description Public URL of the media file. */
+                url: string;
+            }[];
             /**
              * @description Billing period of the plan.
              * @enum {string}
@@ -9286,6 +9332,47 @@ export interface components {
             setupFee: number;
             /** @description Display name of the plan. */
             title: string;
+        };
+        createPlanMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating a plan. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a plan. attached: a plan references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+            };
         };
         getPlan: {
             /** @description The plan. */
@@ -9429,6 +9516,13 @@ export interface components {
                  * @description ID of the location this plan belongs to.
                  */
                 locationRef: string;
+                /** @description Media files attached to this plan. The first is its cover image. */
+                media: {
+                    /** @description Storage key of the media file. */
+                    key: string;
+                    /** @description Public URL of the media file. */
+                    url: string;
+                }[];
                 /**
                  * @description Billing period of the plan.
                  * @enum {string}
@@ -9739,7 +9833,7 @@ export interface components {
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
-                 * @description Buffer time blocked before each booking.
+                 * @description Time kept free before and after each booking of a room or desk. Other resource types ignore it.
                  * @enum {string}
                  */
                 bufferTime: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -10462,7 +10556,7 @@ export interface components {
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
                 /**
-                 * @description Buffer time blocked before each booking.
+                 * @description Time kept free before and after each booking of a room or desk. Other resource types ignore it.
                  * @enum {string}
                  */
                 bufferTime: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -23582,6 +23676,8 @@ export interface components {
                         percentOff?: number;
                         /** @description Product types the coupon applies to. */
                         productTypes: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
+                        /** @description Name of the coupon. An empty title leaves the coupon named after its discount and the products it applies to. */
+                        title?: string;
                     };
                 };
             };
@@ -23589,10 +23685,10 @@ export interface components {
         updateCoupon: {
             content: {
                 "application/json": {
-                    /** @description Coupon fields to update. */
+                    /** @description Coupon fields to update. Fields left out keep their current value. */
                     coupon: {
-                        /** @description Limited items to set on the coupon. */
-                        limitedItems: {
+                        /** @description Limited items to set on the coupon. Only a coupon created with limited items enabled accepts them. */
+                        limitedItems?: {
                             /** @description Replacement list of limited items for the coupon. */
                             values: {
                                 /**
@@ -23607,6 +23703,8 @@ export interface components {
                                 type: "roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems";
                             }[];
                         };
+                        /** @description Name of the coupon. An empty title leaves the coupon named after its discount and the products it applies to. */
+                        title?: string;
                     };
                 };
             };
@@ -24381,6 +24479,14 @@ export interface components {
                          */
                         locationRef: string;
                         /**
+                         * @description Media files to attach. The url is generated server-side.
+                         * @default []
+                         */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
+                        /**
                          * @description Billing period of the plan.
                          * @enum {string}
                          */
@@ -24422,6 +24528,22 @@ export interface components {
                         setupFee?: number;
                         /** @description Display name of the plan. */
                         title: string;
+                    };
+                };
+            };
+        };
+        createPlanMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
                     };
                 };
             };
@@ -24516,6 +24638,11 @@ export interface components {
                                 productTypes?: ("roomBookings" | "eventSpaceBookings" | "conferenceRoomBookings" | "meetingRoomBookings" | "phoneBoothBookings" | "stationBookings" | "studioBookings" | "hotDeskBookings" | "dedicatedDeskBookings" | "officeBookings" | "parkingBookings" | "equipmentBookings" | "eventTickets" | "shopProducts" | "packages" | "subscriptionItems")[];
                             };
                         }[];
+                        /** @description Media files to attach, replacing the current ones. Pass an empty array to remove them. The url is generated server-side. */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
                         /** @description Price of the plan. */
                         price?: number;
                         /** @description Printing integration settings. */
@@ -24588,7 +24715,7 @@ export interface components {
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
-                         * @description Buffer time blocked before each booking.
+                         * @description Time kept free before and after each booking of a room or desk. Other resource types ignore it.
                          * @enum {string}
                          */
                         bufferTime?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -25095,7 +25222,7 @@ export interface components {
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /**
-                         * @description Buffer time blocked before each booking.
+                         * @description Time kept free before and after each booking of a room or desk. Other resource types ignore it.
                          * @enum {string}
                          */
                         bufferTime?: "zeroMinutes" | "fiveMinutes" | "tenMinutes" | "fifteenMinutes" | "thirtyMinutes" | "sixtyMinutes";
@@ -32565,6 +32692,38 @@ export interface operations {
                     "application/json": {
                         plan?: components["schemas"]["plan"];
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createPlanMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createPlanMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createPlanMedia"];
                 };
             };
             /** @description Bad Request */

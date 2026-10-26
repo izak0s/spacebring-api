@@ -7,6 +7,9 @@ import type { components, operations, paths } from "../schema.js";
 /** A Plan entity as returned by the Spacebring API. */
 export type Plan = NonNullable<components["schemas"]["plan"]>;
 
+/** A PlanMedia entity as returned by the Spacebring API. */
+export type PlanMedia = NonNullable<operations["createPlanMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+
 /** Query parameters for `sb.plans.list()`. */
 export interface GetPlansQuery {
   /** @deprecated Only applies together with resourceRef. Filter the plans.tiers of `GET /resources/v1/{resourceId}` by their entire field instead. When listing plans for a resource, filter by entire resource vs partial tiers. Pass true or false. */
@@ -23,6 +26,9 @@ export interface GetPlansQuery {
 
 /** Request body for `sb.plans.create()`. */
 export type CreatePlanBody = NonNullable<NonNullable<operations["createPlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
+
+/** Request body for `sb.plans.createMedia()`. */
+export type CreatePlanMediaBody = NonNullable<NonNullable<operations["createPlanMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
 
 /** Request body for `sb.plans.update()`. */
 export type UpdatePlanBody = NonNullable<NonNullable<operations["updatePlan"]["requestBody"]>["content"]["application/json"]["plan"]>;
@@ -86,6 +92,14 @@ export function createPlans(client: Client<paths>, defaults: SpacebringDefaults)
      */
     async delete(planId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/plans/v1/{planId}", { params: { path: { planId } }, signal: options?.signal }), "DELETE /plans/v1/{planId}");
+    },
+    /**
+     * Create a media upload
+     *
+     * Create a media upload for a plan cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as `media[0].key` when creating or updating a plan within an hour; an image that is not attached by then is discarded.
+     */
+    async createMedia(media: CreatePlanMediaBody, options?: SpacebringRequestOptions): Promise<PlanMedia> {
+      return unwrapProp(await client.POST("/plans/v1/media", { body: { media }, signal: options?.signal }), "media", "POST /plans/v1/media");
     },
   };
 }
