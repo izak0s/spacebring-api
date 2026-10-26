@@ -10133,6 +10133,63 @@
         }
       }
     },
+    "/plans/v1/media": {
+      "post": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for a plan cover image. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a plan within an hour; an image that is not attached by then is discarded. <h3>OAuth</h3>Required scopes: <code>plans</code>",
+        "operationId": "createPlanMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createPlanMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "plans"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createPlanMedia"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/plans/v1/{planId}": {
       "get": {
         "tags": [
@@ -24608,6 +24665,11 @@
                   ],
                   "description": "Current contract status."
                 },
+                "subscriptionRef": {
+                  "description": "ID of the subscription created when the contract was issued, present when the action is subscription.",
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "templateRef": {
                   "type": "string",
                   "format": "uuid",
@@ -25011,6 +25073,11 @@
                   "terminated"
                 ],
                 "description": "Current contract status."
+              },
+              "subscriptionRef": {
+                "description": "ID of the subscription created when the contract was issued, present when the action is subscription.",
+                "type": "string",
+                "format": "uuid"
               },
               "templateRef": {
                 "type": "string",
@@ -25537,6 +25604,10 @@
               ]
             },
             "description": "Product types the coupon applies to."
+          },
+          "title": {
+            "description": "Name of the coupon. Absent when the coupon has none and is named after its discount and the products it applies to.",
+            "type": "string"
           },
           "type": {
             "description": "Deprecated coupon category.",
@@ -29403,6 +29474,28 @@
                   "format": "uuid",
                   "description": "ID of the location this plan belongs to."
                 },
+                "media": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "Storage key of the media file."
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Public URL of the media file."
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Media files attached to this plan. The first is its cover image."
+                },
                 "period": {
                   "type": "string",
                   "enum": [
@@ -29480,6 +29573,7 @@
                 "id",
                 "locale",
                 "locationRef",
+                "media",
                 "period",
                 "price",
                 "selfSignup",
@@ -29830,6 +29924,28 @@
             "format": "uuid",
             "description": "ID of the location this plan belongs to."
           },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Storage key of the media file."
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Public URL of the media file."
+                }
+              },
+              "required": [
+                "key",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Media files attached to this plan. The first is its cover image."
+          },
           "period": {
             "type": "string",
             "enum": [
@@ -29907,11 +30023,112 @@
           "id",
           "locale",
           "locationRef",
+          "media",
           "period",
           "price",
           "selfSignup",
           "setupFee",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "createPlanMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Pass it as media[0].key when creating or updating a plan."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a plan. attached: a plan references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
         ],
         "additionalProperties": false
       },
@@ -30248,6 +30465,28 @@
                 "format": "uuid",
                 "description": "ID of the location this plan belongs to."
               },
+              "media": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Storage key of the media file."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Public URL of the media file."
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Media files attached to this plan. The first is its cover image."
+              },
               "period": {
                 "type": "string",
                 "enum": [
@@ -30325,6 +30564,7 @@
               "id",
               "locale",
               "locationRef",
+              "media",
               "period",
               "price",
               "selfSignup",
@@ -30920,7 +31160,7 @@
                     "thirtyMinutes",
                     "sixtyMinutes"
                   ],
-                  "description": "Buffer time blocked before each booking."
+                  "description": "Time kept free before and after each booking of a room or desk. Other resource types ignore it."
                 },
                 "capacity": {
                   "description": "Maximum capacity per booking.",
@@ -32743,7 +32983,7 @@
                   "thirtyMinutes",
                   "sixtyMinutes"
                 ],
-                "description": "Buffer time blocked before each booking."
+                "description": "Time kept free before and after each booking of a room or desk. Other resource types ignore it."
               },
               "capacity": {
                 "description": "Maximum capacity per booking.",
@@ -59828,6 +60068,10 @@
                         ]
                       },
                       "description": "Product types the coupon applies to."
+                    },
+                    "title": {
+                      "description": "Name of the coupon. An empty title leaves the coupon named after its discount and the products it applies to.",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -59857,6 +60101,7 @@
                   "type": "object",
                   "properties": {
                     "limitedItems": {
+                      "description": "Limited items to set on the coupon. Only a coupon created with limited items enabled accepts them.",
                       "type": "object",
                       "properties": {
                         "values": {
@@ -59903,14 +60148,14 @@
                       },
                       "required": [
                         "values"
-                      ],
-                      "description": "Limited items to set on the coupon."
+                      ]
+                    },
+                    "title": {
+                      "description": "Name of the coupon. An empty title leaves the coupon named after its discount and the products it applies to.",
+                      "type": "string"
                     }
                   },
-                  "required": [
-                    "limitedItems"
-                  ],
-                  "description": "Coupon fields to update."
+                  "description": "Coupon fields to update. Fields left out keep their current value."
                 }
               },
               "required": [
@@ -61666,6 +61911,24 @@
                       "format": "uuid",
                       "description": "ID of the location this plan belongs to."
                     },
+                    "media": {
+                      "default": [],
+                      "description": "Media files to attach. The url is generated server-side.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      }
+                    },
                     "period": {
                       "type": "string",
                       "enum": [
@@ -61742,6 +62005,48 @@
               },
               "required": [
                 "plan"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createPlanMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
               ]
             }
           }
@@ -61995,6 +62300,23 @@
                         ]
                       }
                     },
+                    "media": {
+                      "description": "Media files to attach, replacing the current ones. Pass an empty array to remove them. The url is generated server-side.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      }
+                    },
                     "price": {
                       "description": "Price of the plan.",
                       "type": "number",
@@ -62167,7 +62489,7 @@
                         "thirtyMinutes",
                         "sixtyMinutes"
                       ],
-                      "description": "Buffer time blocked before each booking."
+                      "description": "Time kept free before and after each booking of a room or desk. Other resource types ignore it."
                     },
                     "capacity": {
                       "description": "Maximum capacity per booking.",
@@ -63426,7 +63748,7 @@
                         "thirtyMinutes",
                         "sixtyMinutes"
                       ],
-                      "description": "Buffer time blocked before each booking."
+                      "description": "Time kept free before and after each booking of a room or desk. Other resource types ignore it."
                     },
                     "capacity": {
                       "description": "Maximum capacity per booking.",
