@@ -618,7 +618,11 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update a check-in
+         * @description Change when a customer arrived, or when they left on a check-in that is checked out. Fields left out keep their values. The booking, event ticket, or visit behind the check-in gets the new dates too. The customer and administrators are not notified. With bearer token authentication, the user must be an administrator of the check-in's location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>
+         */
+        patch: operations["patchCheckIn"];
         trace?: never;
     };
     "/check_ins/v1/checkin": {
@@ -3930,7 +3934,13 @@ export interface components {
                     /** @description Payment method used. */
                     method: {
                         /** @description Present when type is external. */
-                        external?: Record<string, never>;
+                        external?: {
+                            /**
+                             * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                             * @enum {string}
+                             */
+                            paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                        };
                         /** @description Present when type is paymentGateway. */
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
@@ -4332,7 +4342,13 @@ export interface components {
                 /** @description Payment method used. */
                 method: {
                     /** @description Present when type is external. */
-                    external?: Record<string, never>;
+                    external?: {
+                        /**
+                         * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                         * @enum {string}
+                         */
+                        paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                    };
                     /** @description Present when type is paymentGateway. */
                     paymentGateway?: {
                         /** @description Payment gateway identifier. */
@@ -4731,7 +4747,13 @@ export interface components {
                     /** @description Payment method used. */
                     method: {
                         /** @description Present when type is external. */
-                        external?: Record<string, never>;
+                        external?: {
+                            /**
+                             * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                             * @enum {string}
+                             */
+                            paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                        };
                         /** @description Present when type is paymentGateway. */
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
@@ -5242,7 +5264,13 @@ export interface components {
             /** @description Payment method used. */
             method: {
                 /** @description Present when type is external. */
-                external?: Record<string, never>;
+                external?: {
+                    /**
+                     * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                     * @enum {string}
+                     */
+                    paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                };
                 /** @description Present when type is paymentGateway. */
                 paymentGateway?: {
                     /** @description Payment gateway identifier. */
@@ -6325,6 +6353,11 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @enum {string}
+                 */
+                checkInMethod?: "agent" | "api" | "manual" | "reception";
+                /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
                  */
@@ -6334,6 +6367,11 @@ export interface components {
                  * @description ISO timestamp of when the user checked out.
                  */
                 checkOutDate?: string;
+                /**
+                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
+                 * @enum {string}
+                 */
+                checkOutMethod?: "agent" | "api" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -6455,6 +6493,11 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @enum {string}
+                 */
+                checkInMethod?: "agent" | "api" | "manual" | "reception";
+                /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
                  */
@@ -6464,6 +6507,11 @@ export interface components {
                  * @description ISO timestamp of when the user checked out.
                  */
                 checkOutDate?: string;
+                /**
+                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
+                 * @enum {string}
+                 */
+                checkOutMethod?: "agent" | "api" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -20427,7 +20475,13 @@ export interface components {
                     /** @description Payment method used. */
                     method: {
                         /** @description Present when type is external. */
-                        external?: Record<string, never>;
+                        external?: {
+                            /**
+                             * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                             * @enum {string}
+                             */
+                            paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                        };
                         /** @description Present when type is paymentGateway. */
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
@@ -21141,7 +21195,13 @@ export interface components {
                     /** @description Payment method used. */
                     method: {
                         /** @description Present when type is external. */
-                        external?: Record<string, never>;
+                        external?: {
+                            /**
+                             * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                             * @enum {string}
+                             */
+                            paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                        };
                         /** @description Present when type is paymentGateway. */
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
@@ -21855,7 +21915,13 @@ export interface components {
                     /** @description Payment method used. */
                     method: {
                         /** @description Present when type is external. */
-                        external?: Record<string, never>;
+                        external?: {
+                            /**
+                             * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.
+                             * @enum {string}
+                             */
+                            paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
+                        };
                         /** @description Present when type is paymentGateway. */
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
@@ -22951,6 +23017,11 @@ export interface components {
                                  * @description ISO timestamp of when the money was received. Defaults to now. Must not be in the future.
                                  */
                                 paymentDate?: string;
+                                /**
+                                 * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Omit it when unknown.
+                                 * @enum {string}
+                                 */
+                                paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
                             };
                             /** @description Payment gateway (card) payment method. */
                             paymentGateway?: {
@@ -23194,6 +23265,25 @@ export interface components {
                              */
                             transactionRef?: string;
                         }[];
+                    };
+                };
+            };
+        };
+        patchCheckIn: {
+            content: {
+                "application/json": {
+                    /** @description Check-in dates to change. Fields left out keep their values. */
+                    checkIn: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the customer arrived. Must be in the past.
+                         */
+                        checkInDate?: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the customer left. Must be in the past and after the check-in date. Accepted only for a check-in that is checked out.
+                         */
+                        checkOutDate?: string;
                     };
                 };
             };
@@ -27181,6 +27271,11 @@ export interface components {
                                  * @description ISO timestamp of when the money was received. Defaults to now. Must not be in the future.
                                  */
                                 paymentDate?: string;
+                                /**
+                                 * @description How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Omit it when unknown.
+                                 * @enum {string}
+                                 */
+                                paidBy?: "bankTransfer" | "card" | "cash" | "check" | "paymentLink";
                             };
                             /** @description Payment gateway (card) payment method. */
                             paymentGateway?: {
@@ -29205,6 +29300,66 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchCheckIn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The ID of the check-in. */
+                checkInId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchCheckIn"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

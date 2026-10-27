@@ -3537,6 +3537,94 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Check-ins"
+        ],
+        "summary": "Update a check-in",
+        "description": "Change when a customer arrived, or when they left on a check-in that is checked out. Fields left out keep their values. The booking, event ticket, or visit behind the check-in gets the new dates too. The customer and administrators are not notified. With bearer token authentication, the user must be an administrator of the check-in's location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>",
+        "operationId": "patchCheckIn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "checkInId",
+            "required": true,
+            "description": "The ID of the check-in.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchCheckIn"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "checkIns"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/check_ins/v1/checkin": {
@@ -18512,7 +18600,19 @@
                           "external": {
                             "description": "Present when type is external.",
                             "type": "object",
-                            "properties": {},
+                            "properties": {
+                              "paidBy": {
+                                "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                                "type": "string",
+                                "enum": [
+                                  "bankTransfer",
+                                  "card",
+                                  "cash",
+                                  "check",
+                                  "paymentLink"
+                                ]
+                              }
+                            },
                             "additionalProperties": false
                           },
                           "paymentGateway": {
@@ -19410,7 +19510,19 @@
                     "external": {
                       "description": "Present when type is external.",
                       "type": "object",
-                      "properties": {},
+                      "properties": {
+                        "paidBy": {
+                          "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                          "type": "string",
+                          "enum": [
+                            "bankTransfer",
+                            "card",
+                            "cash",
+                            "check",
+                            "paymentLink"
+                          ]
+                        }
+                      },
                       "additionalProperties": false
                     },
                     "paymentGateway": {
@@ -20296,7 +20408,19 @@
                         "external": {
                           "description": "Present when type is external.",
                           "type": "object",
-                          "properties": {},
+                          "properties": {
+                            "paidBy": {
+                              "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                              "type": "string",
+                              "enum": [
+                                "bankTransfer",
+                                "card",
+                                "cash",
+                                "check",
+                                "paymentLink"
+                              ]
+                            }
+                          },
                           "additionalProperties": false
                         },
                         "paymentGateway": {
@@ -21341,7 +21465,19 @@
               "external": {
                 "description": "Present when type is external.",
                 "type": "object",
-                "properties": {},
+                "properties": {
+                  "paidBy": {
+                    "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                    "type": "string",
+                    "enum": [
+                      "bankTransfer",
+                      "card",
+                      "cash",
+                      "check",
+                      "paymentLink"
+                    ]
+                  }
+                },
                 "additionalProperties": false
               },
               "paymentGateway": {
@@ -23561,6 +23697,16 @@
                   "type": "string",
                   "format": "date-time"
                 },
+                "checkInMethod": {
+                  "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
+                  "type": "string",
+                  "enum": [
+                    "agent",
+                    "api",
+                    "manual",
+                    "reception"
+                  ]
+                },
                 "checkInScheduleRef": {
                   "description": "ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.",
                   "type": "string",
@@ -23570,6 +23716,17 @@
                   "description": "ISO timestamp of when the user checked out.",
                   "type": "string",
                   "format": "date-time"
+                },
+                "checkOutMethod": {
+                  "description": "How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.",
+                  "type": "string",
+                  "enum": [
+                    "agent",
+                    "api",
+                    "manual",
+                    "reception",
+                    "automatic"
+                  ]
                 },
                 "code": {
                   "description": "Confirmation code of the check-in.",
@@ -23786,6 +23943,16 @@
                 "type": "string",
                 "format": "date-time"
               },
+              "checkInMethod": {
+                "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
+                "type": "string",
+                "enum": [
+                  "agent",
+                  "api",
+                  "manual",
+                  "reception"
+                ]
+              },
               "checkInScheduleRef": {
                 "description": "ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.",
                 "type": "string",
@@ -23795,6 +23962,17 @@
                 "description": "ISO timestamp of when the user checked out.",
                 "type": "string",
                 "format": "date-time"
+              },
+              "checkOutMethod": {
+                "description": "How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.",
+                "type": "string",
+                "enum": [
+                  "agent",
+                  "api",
+                  "manual",
+                  "reception",
+                  "automatic"
+                ]
               },
               "code": {
                 "description": "Confirmation code of the check-in.",
@@ -53556,7 +53734,19 @@
                         "external": {
                           "description": "Present when type is external.",
                           "type": "object",
-                          "properties": {},
+                          "properties": {
+                            "paidBy": {
+                              "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                              "type": "string",
+                              "enum": [
+                                "bankTransfer",
+                                "card",
+                                "cash",
+                                "check",
+                                "paymentLink"
+                              ]
+                            }
+                          },
                           "additionalProperties": false
                         },
                         "paymentGateway": {
@@ -55018,7 +55208,19 @@
                       "external": {
                         "description": "Present when type is external.",
                         "type": "object",
-                        "properties": {},
+                        "properties": {
+                          "paidBy": {
+                            "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                            "type": "string",
+                            "enum": [
+                              "bankTransfer",
+                              "card",
+                              "cash",
+                              "check",
+                              "paymentLink"
+                            ]
+                          }
+                        },
                         "additionalProperties": false
                       },
                       "paymentGateway": {
@@ -56476,7 +56678,19 @@
                       "external": {
                         "description": "Present when type is external.",
                         "type": "object",
-                        "properties": {},
+                        "properties": {
+                          "paidBy": {
+                            "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Absent when the administrator did not record it.",
+                            "type": "string",
+                            "enum": [
+                              "bankTransfer",
+                              "card",
+                              "cash",
+                              "check",
+                              "paymentLink"
+                            ]
+                          }
+                        },
                         "additionalProperties": false
                       },
                       "paymentGateway": {
@@ -58600,6 +58814,17 @@
                               "description": "ISO timestamp of when the money was received. Defaults to now. Must not be in the future.",
                               "type": "string",
                               "format": "date-time"
+                            },
+                            "paidBy": {
+                              "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Omit it when unknown.",
+                              "type": "string",
+                              "enum": [
+                                "bankTransfer",
+                                "card",
+                                "cash",
+                                "check",
+                                "paymentLink"
+                              ]
                             }
                           }
                         },
@@ -59108,6 +59333,37 @@
               },
               "required": [
                 "creditNote"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchCheckIn": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "checkIn": {
+                  "type": "object",
+                  "properties": {
+                    "checkInDate": {
+                      "description": "ISO timestamp of when the customer arrived. Must be in the past.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "checkOutDate": {
+                      "description": "ISO timestamp of when the customer left. Must be in the past and after the check-in date. Accepted only for a check-in that is checked out.",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "description": "Check-in dates to change. Fields left out keep their values."
+                }
+              },
+              "required": [
+                "checkIn"
               ]
             }
           }
@@ -67857,6 +68113,17 @@
                               "description": "ISO timestamp of when the money was received. Defaults to now. Must not be in the future.",
                               "type": "string",
                               "format": "date-time"
+                            },
+                            "paidBy": {
+                              "description": "How the money was collected outside Spacebring: `bankTransfer`, `card` for a card charged on the location's own terminal, `cash`, `check`, or `paymentLink`. Omit it when unknown.",
+                              "type": "string",
+                              "enum": [
+                                "bankTransfer",
+                                "card",
+                                "cash",
+                                "check",
+                                "paymentLink"
+                              ]
                             }
                           }
                         },
