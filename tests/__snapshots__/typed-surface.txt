@@ -189,11 +189,13 @@ export interface GetCheckInsQuery {
 }
 export type CheckInBody = NonNullable<operations["checkIn"]["requestBody"]>["content"]["application/json"];
 export type CheckOutBody = NonNullable<operations["checkOut"]["requestBody"]>["content"]["application/json"];
+export type PatchCheckInBody = NonNullable<NonNullable<operations["patchCheckIn"]["requestBody"]>["content"]["application/json"]["checkIn"]>;
 export function createCheckins(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     async list(query?: GetCheckInsQuery, options?: SpacebringRequestOptions): Promise<{ checkIns: CheckIn[]; nextPageToken?: string; searchQueryNext?: string }>
     iterate(query?: Omit<GetCheckInsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<CheckIn, void, undefined>
     async get(checkInId: string, options?: SpacebringRequestOptions): Promise<CheckIn>
+    async update(checkInId: string, checkIn: PatchCheckInBody, options?: SpacebringRequestOptions): Promise<undefined>
     async checkIn(body: CheckInBody, options?: SpacebringRequestOptions): Promise<CheckIn>
     async checkOut(body: CheckOutBody, options?: SpacebringRequestOptions): Promise<CheckIn>
   };

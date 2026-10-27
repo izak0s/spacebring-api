@@ -33,6 +33,9 @@ export type CheckInBody = NonNullable<operations["checkIn"]["requestBody"]>["con
 /** Request body for `sb.checkIns.checkOut()`. */
 export type CheckOutBody = NonNullable<operations["checkOut"]["requestBody"]>["content"]["application/json"];
 
+/** Request body for `sb.checkIns.update()`. */
+export type PatchCheckInBody = NonNullable<NonNullable<operations["patchCheckIn"]["requestBody"]>["content"]["application/json"]["checkIn"]>;
+
 export function createCheckins(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
     /**
@@ -65,6 +68,18 @@ export function createCheckins(client: Client<paths>, defaults: SpacebringDefaul
      */
     async get(checkInId: string, options?: SpacebringRequestOptions): Promise<CheckIn> {
       return unwrapProp(await client.GET("/check_ins/v1/{checkInId}", { params: { path: { checkInId } }, signal: options?.signal }), "checkIn", "GET /check_ins/v1/{checkInId}");
+    },
+    /**
+     * Update a check-in
+     *
+     * Change when a customer arrived, or when they left on a check-in that is checked out. Fields left out keep their values. The booking, event ticket, or visit behind the check-in gets the new dates too. The customer and administrators are not notified. With bearer token authentication, the user must be an administrator of the check-in's location.
+     *
+     * @param checkInId The ID of the check-in.
+     * @param checkIn The `checkIn` payload.
+     * @param options Request options (abort signal).
+     */
+    async update(checkInId: string, checkIn: PatchCheckInBody, options?: SpacebringRequestOptions): Promise<undefined> {
+      return unwrap(await client.PATCH("/check_ins/v1/{checkInId}", { params: { path: { checkInId } }, body: { checkIn }, signal: options?.signal }), "PATCH /check_ins/v1/{checkInId}");
     },
     /**
      * Check in
