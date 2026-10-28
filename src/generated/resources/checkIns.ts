@@ -84,7 +84,7 @@ export function createCheckins(client: Client<paths>, defaults: SpacebringDefaul
     /**
      * Check in
      *
-     * Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. With bearer token authentication, the user must be an administrator of the location.
+     * Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. Add a past check-in date to a customer ref to record an arrival nobody checked the member in for: the member stays checked in until they check out, or, with a check-out date too, the check-in is created as checked out, without the events and webhooks of a live arrival. With bearer token authentication, the user must be an administrator of the location.
      */
     async checkIn(body: CheckInBody, options?: SpacebringRequestOptions): Promise<CheckIn> {
       return unwrapProp(await client.POST("/check_ins/v1/checkin", { body, signal: options?.signal }), "checkIn", "POST /check_ins/v1/checkin");
