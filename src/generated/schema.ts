@@ -636,7 +636,7 @@ export interface paths {
         put?: never;
         /**
          * Check in
-         * @description Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>
+         * @description Record an arrival for a booking, an event ticket, a visit, or a member's subscription. Identify what to check in with its check-in id, with the location and a six-digit code, or with the location and a customer ref to check a member in without a code. Add a past check-in date to a customer ref to record an arrival nobody checked the member in for: the member stays checked in until they check out, or, with a check-out date too, the check-in is created as checked out, without the events and webhooks of a live arrival. With bearer token authentication, the user must be an administrator of the location. <h3>OAuth</h3>Required scopes: <code>checkIns</code>
          */
         post: operations["checkIn"];
         delete?: never;
@@ -6353,10 +6353,10 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
-                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkInMethod?: "agent" | "api" | "manual" | "reception";
+                checkInMethod?: "agent" | "api" | "backdated" | "manual" | "reception";
                 /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
@@ -6368,10 +6368,10 @@ export interface components {
                  */
                 checkOutDate?: string;
                 /**
-                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
+                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkOutMethod?: "agent" | "api" | "manual" | "reception" | "automatic";
+                checkOutMethod?: "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -6493,10 +6493,10 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
-                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkInMethod?: "agent" | "api" | "manual" | "reception";
+                checkInMethod?: "agent" | "api" | "backdated" | "manual" | "reception";
                 /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
@@ -6508,10 +6508,10 @@ export interface components {
                  */
                 checkOutDate?: string;
                 /**
-                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
+                 * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkOutMethod?: "agent" | "api" | "manual" | "reception" | "automatic";
+                checkOutMethod?: "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -22552,12 +22552,12 @@ export interface components {
                          */
                         locationRef: string;
                         /** @description Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both. */
-                        exchangeRate?: number;
+                        exchangeRate?: number | null;
                         /**
                          * @description Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.
-                         * @enum {string}
+                         * @enum {string|null}
                          */
-                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb" | null;
                     };
                 };
             };
@@ -22568,12 +22568,12 @@ export interface components {
                     /** @description Alt currency fields to update */
                     altCurrency: {
                         /** @description Exchange rate relative to the location main currency. Pass either exchangeRate or provider, never both. */
-                        exchangeRate?: number;
+                        exchangeRate?: number | null;
                         /**
                          * @description Exchange rate provider when auto-update is enabled. Pass either provider or exchangeRate, never both.
-                         * @enum {string}
+                         * @enum {string|null}
                          */
-                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb";
+                        provider?: "nbu" | "bcra" | "nbg" | "bcch" | "ecb" | null;
                     };
                 };
             };
@@ -23303,6 +23303,16 @@ export interface components {
                      * @description UUID of the location the code was issued in. Required when the check-in is resolved by its code or a customer ref.
                      */
                     locationRef?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of a past arrival to record for the member in customerRef, such as a visit nobody checked them in for. Without checkOutDate the member stays checked in until they check out.
+                     */
+                    checkInDate?: string;
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp of when the member left, which creates the check-in as checked out. Requires checkInDate and must be in the past.
+                     */
+                    checkOutDate?: string;
                     /**
                      * Format: uuid
                      * @description ID of a member to check in on their subscription without a code. Only administrators of the location can check a member in this way.
@@ -24842,7 +24852,7 @@ export interface components {
                             tiers: {
                                 /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                 from: number;
                                 /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
@@ -24906,7 +24916,7 @@ export interface components {
                             tiers: {
                                 /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                 from: number;
                                 /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
@@ -25034,7 +25044,7 @@ export interface components {
                                 tiers: {
                                     /** @description Fixed fee added once to bookings in this tier. */
                                     flatAmount: number;
-                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                     from: number;
                                     /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                     unitAmount: number;
@@ -25063,7 +25073,7 @@ export interface components {
                                 tiers: {
                                     /** @description Fixed fee added once to bookings in this tier. */
                                     flatAmount: number;
-                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                     from: number;
                                     /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                     unitAmount: number;
@@ -25349,7 +25359,7 @@ export interface components {
                             tiers: {
                                 /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                 from: number;
                                 /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
@@ -25408,7 +25418,7 @@ export interface components {
                             tiers: {
                                 /** @description Fixed fee added once to bookings in this tier. */
                                 flatAmount: number;
-                                /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                 from: number;
                                 /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                 unitAmount: number;
@@ -25536,7 +25546,7 @@ export interface components {
                                 tiers: {
                                     /** @description Fixed fee added once to bookings in this tier. */
                                     flatAmount: number;
-                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                     from: number;
                                     /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                     unitAmount: number;
@@ -25565,7 +25575,7 @@ export interface components {
                                 tiers: {
                                     /** @description Fixed fee added once to bookings in this tier. */
                                     flatAmount: number;
-                                    /** @description Booking length in minutes at which this tier starts, for example 480 for 8 hours. */
+                                    /** @description Booking length in minutes at which this tier starts, 0 for the first tier and for example 480 for 8 hours. */
                                     from: number;
                                     /** @description Price per hour of booking within this tier, not per minute, for example 40 for 40 per hour. */
                                     unitAmount: number;
