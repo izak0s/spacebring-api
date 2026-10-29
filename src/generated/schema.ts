@@ -237,7 +237,7 @@ export interface paths {
         };
         /**
          * Retrieve invoices
-         * @description Retrieve all invoices based on certain parameters. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description Retrieve the invoices of a customer, a location, or the whole network when neither customerRef nor locationRef is set. An administrator limited to some locations needs customerRef or locationRef. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["getInvoices"];
         put?: never;
@@ -409,7 +409,7 @@ export interface paths {
         };
         /**
          * List invoice items
-         * @description List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. Without customerRef, invoiceRef or locationRef, lists the items of the whole network; an administrator limited to some locations needs one of them. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["listInvoiceItems"];
         put?: never;
@@ -502,7 +502,7 @@ export interface paths {
         };
         /**
          * Retrieve credit notes
-         * @description Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
+         * @description Retrieve the credit notes of an invoice, a location, or the whole network when neither invoiceRef nor locationRef is set. An administrator limited to some locations needs invoiceRef or locationRef. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>
          */
         get: operations["getCreditNotes"];
         put?: never;
@@ -28200,7 +28200,7 @@ export interface operations {
                 "createDate[gte]"?: string;
                 /** @description Filter invoices created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
                 "createDate[lte]"?: string;
-                /** @description UUID of the customer whose invoices to list. */
+                /** @description UUID of the customer whose invoices to list. Without customerRef or locationRef, lists the invoices of the whole network. */
                 customerRef?: string;
                 /** @description Filter invoices issued on or after this date (ISO 8601). Use with issueDate[lte] for a range. */
                 "issueDate[gte]"?: string;
@@ -28214,7 +28214,7 @@ export interface operations {
                 membershipRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
-                /** @description Case-insensitive search by invoice code or number. Requires customerRef or locationRef. */
+                /** @description Case-insensitive search by invoice code or number. */
                 q?: string;
                 /** @description Filter by invoice status: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). Comma-separated, one or more of: draft, issued, paid, voided. */
                 status?: string;
@@ -28610,7 +28610,7 @@ export interface operations {
                 "issueDate[lte]"?: string;
                 /** @description Maximum number of invoice items per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose invoice items to list. */
+                /** @description UUID of the location whose invoice items to list. Without customerRef, invoiceRef or locationRef, lists the invoice items of the whole network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;
@@ -28880,7 +28880,7 @@ export interface operations {
                 invoiceRef?: string;
                 /** @description Maximum number of credit notes per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
                 limit?: number;
-                /** @description UUID of the location whose credit notes to list. */
+                /** @description UUID of the location whose credit notes to list. Without invoiceRef or locationRef, lists the credit notes of the whole network. */
                 locationRef?: string;
                 /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
                 nextPageToken?: string;

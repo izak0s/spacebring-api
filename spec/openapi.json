@@ -1392,7 +1392,7 @@
           "Billing"
         ],
         "summary": "Retrieve invoices",
-        "description": "Retrieve all invoices based on certain parameters. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "Retrieve the invoices of a customer, a location, or the whole network when neither customerRef nor locationRef is set. An administrator limited to some locations needs customerRef or locationRef. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "getInvoices",
         "parameters": [
           {
@@ -1428,7 +1428,7 @@
             "in": "query",
             "name": "customerRef",
             "required": false,
-            "description": "UUID of the customer whose invoices to list.",
+            "description": "UUID of the customer whose invoices to list. Without customerRef or locationRef, lists the invoices of the whole network.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1497,7 +1497,7 @@
             "in": "query",
             "name": "q",
             "required": false,
-            "description": "Case-insensitive search by invoice code or number. Requires customerRef or locationRef.",
+            "description": "Case-insensitive search by invoice code or number.",
             "schema": {
               "type": "string"
             }
@@ -2170,7 +2170,7 @@
           "Billing"
         ],
         "summary": "List invoice items",
-        "description": "List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "List invoice items filtered by customer, location, invoice, type, status, pending, or date range. Pass invoiceRef for the items of one invoice; they page like the rest of the list. The createDate filter matches when the item was created; the status and issueDate filters match the invoice the item is on, so they return only items connected to an invoice. Pending items are not on an invoice and not part of a subscription: pass pending=true with customerRef for one customer's pending items, or with locationRef for every pending item at a location. Without customerRef, invoiceRef or locationRef, lists the items of the whole network; an administrator limited to some locations needs one of them. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "listInvoiceItems",
         "parameters": [
           {
@@ -2234,7 +2234,7 @@
             "in": "query",
             "name": "locationRef",
             "required": false,
-            "description": "UUID of the location whose invoice items to list.",
+            "description": "UUID of the location whose invoice items to list. Without customerRef, invoiceRef or locationRef, lists the invoice items of the whole network.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -2748,7 +2748,7 @@
           "Billing"
         ],
         "summary": "Retrieve credit notes",
-        "description": "Retrieve all credit notes for a specific invoice or location. One of invoiceRef or locationRef is required. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
+        "description": "Retrieve the credit notes of an invoice, a location, or the whole network when neither invoiceRef nor locationRef is set. An administrator limited to some locations needs invoiceRef or locationRef. <h3>OAuth</h3>Required scopes: <code>invoices.readonly</code> or <code>invoices</code>",
         "operationId": "getCreditNotes",
         "parameters": [
           {
@@ -2794,7 +2794,7 @@
             "in": "query",
             "name": "locationRef",
             "required": false,
-            "description": "UUID of the location whose credit notes to list.",
+            "description": "UUID of the location whose credit notes to list. Without invoiceRef or locationRef, lists the credit notes of the whole network.",
             "schema": {
               "type": "string",
               "format": "uuid"
