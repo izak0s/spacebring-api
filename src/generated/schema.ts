@@ -6353,10 +6353,10 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
-                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'accessControl' by unlocking a door through an access control integration, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkInMethod?: "agent" | "api" | "backdated" | "manual" | "reception";
+                checkInMethod?: "accessControl" | "agent" | "api" | "backdated" | "manual" | "reception";
                 /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
@@ -6371,7 +6371,7 @@ export interface components {
                  * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkOutMethod?: "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
+                checkOutMethod?: "accessControl" | "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -6381,7 +6381,7 @@ export interface components {
                 createDate: string;
                 /**
                  * Format: date-time
-                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.
+                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or for a subscription.
                  */
                 endDate?: string;
                 /** @description Event ticket this check-in was created for, if any. */
@@ -6452,6 +6452,16 @@ export interface components {
                 };
                 /** @description Visit this check-in was created for, if any. */
                 visit?: {
+                    /** @description The company the host belongs to, read from the customers service so the name is current. */
+                    companyHost?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the host's company.
+                         */
+                        id: string;
+                        /** @description Name of the host's company. */
+                        title: string;
+                    };
                     /**
                      * Format: uuid
                      * @description ID of the visit.
@@ -6459,6 +6469,8 @@ export interface components {
                     id: string;
                     /** @description The host the visit is with, read from the users service so the details are current. */
                     userHost?: {
+                        /** @description Email address of the host. */
+                        email?: string | null;
                         /**
                          * Format: uuid
                          * @description Unique identifier of the host.
@@ -6493,10 +6505,10 @@ export interface components {
                  */
                 checkInDate?: string;
                 /**
-                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
+                 * @description How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'accessControl' by unlocking a door through an access control integration, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkInMethod?: "agent" | "api" | "backdated" | "manual" | "reception";
+                checkInMethod?: "accessControl" | "agent" | "api" | "backdated" | "manual" | "reception";
                 /**
                  * Format: uuid
                  * @description ID of the schedule this check-in was opened under. Absent on check-ins created before schedules were introduced.
@@ -6511,7 +6523,7 @@ export interface components {
                  * @description How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.
                  * @enum {string}
                  */
-                checkOutMethod?: "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
+                checkOutMethod?: "accessControl" | "agent" | "api" | "backdated" | "manual" | "reception" | "automatic";
                 /** @description Confirmation code of the check-in. */
                 code?: string;
                 /**
@@ -6521,7 +6533,7 @@ export interface components {
                 createDate: string;
                 /**
                  * Format: date-time
-                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.
+                 * @description ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or for a subscription.
                  */
                 endDate?: string;
                 /** @description Event ticket this check-in was created for, if any. */
@@ -6592,6 +6604,16 @@ export interface components {
                 };
                 /** @description Visit this check-in was created for, if any. */
                 visit?: {
+                    /** @description The company the host belongs to, read from the customers service so the name is current. */
+                    companyHost?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the host's company.
+                         */
+                        id: string;
+                        /** @description Name of the host's company. */
+                        title: string;
+                    };
                     /**
                      * Format: uuid
                      * @description ID of the visit.
@@ -6599,6 +6621,8 @@ export interface components {
                     id: string;
                     /** @description The host the visit is with, read from the users service so the details are current. */
                     userHost?: {
+                        /** @description Email address of the host. */
+                        email?: string | null;
                         /**
                          * Format: uuid
                          * @description Unique identifier of the host.
@@ -25731,7 +25755,7 @@ export interface components {
             content: {
                 "application/json": {
                     booking: {
-                        /** @description Attendees to invite to the booking, each an existing user by id or a person by email. Supported for room resources. A person invited by email joins the network without a membership in the location. The owner is left out, and so are all attendees when the owner is not a member of the location. */
+                        /** @description Attendees to invite to the booking, each an existing user by id or a person by email. Supported for room resources. A person invited by email joins the network without a membership in the location. The owner is left out, and so are all attendees when the owner is not a member of the location, unless an API key or an administrator makes the booking. */
                         attendees?: {
                             user: {
                                 /**
@@ -29214,7 +29238,7 @@ export interface operations {
                 nextPageToken?: string;
                 /** @description Filter by status: 'scheduled' nobody has arrived yet, 'checkedIn' the person is on site, 'checkedOut' they left, 'expired' the window closed with nobody arriving. Defaults to every status. Comma-separated, one or more of: checkedIn, checkedOut, scheduled, expired. */
                 status?: string;
-                /** @description Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving with their personal code. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription. */
+                /** @description Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving on their subscription, with their personal code or by unlocking a door. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription. */
                 type?: string;
                 /** @description UUID of the user to filter check-ins by. Defaults to check-ins of every user. */
                 userRef?: string;
@@ -33606,6 +33630,14 @@ export interface operations {
     getBookings: {
         parameters: {
             query?: {
+                /** @description Matches bookings with createDate strictly after this date (ISO 8601). */
+                "createDate[gt]"?: string;
+                /** @description Matches bookings with createDate on or after this date (ISO 8601). */
+                "createDate[gte]"?: string;
+                /** @description Matches bookings with createDate strictly before this date (ISO 8601). */
+                "createDate[lt]"?: string;
+                /** @description Matches bookings with createDate on or before this date (ISO 8601). */
+                "createDate[lte]"?: string;
                 /** @description Matches bookings with endDate strictly after this date (ISO 8601). */
                 "endDate[gt]"?: string;
                 /** @description Matches bookings with endDate on or after this date (ISO 8601). */

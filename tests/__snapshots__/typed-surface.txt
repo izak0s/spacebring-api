@@ -577,6 +577,10 @@ export interface GetAssignmentsQuery {
   nextPageToken?: string;
 }
 export interface GetBookingsQuery {
+  "createDate[gt]"?: string;
+  "createDate[gte]"?: string;
+  "createDate[lt]"?: string;
+  "createDate[lte]"?: string;
   "endDate[gt]"?: string;
   "endDate[gte]"?: string;
   "endDate[lt]"?: string;
