@@ -31,6 +31,14 @@ export interface GetAssignmentsQuery {
 
 /** Query parameters for `sb.resources.bookings.list()`. */
 export interface GetBookingsQuery {
+  /** Matches bookings with createDate strictly after this date (ISO 8601). */
+  "createDate[gt]"?: string;
+  /** Matches bookings with createDate on or after this date (ISO 8601). */
+  "createDate[gte]"?: string;
+  /** Matches bookings with createDate strictly before this date (ISO 8601). */
+  "createDate[lt]"?: string;
+  /** Matches bookings with createDate on or before this date (ISO 8601). */
+  "createDate[lte]"?: string;
   /** Matches bookings with endDate strictly after this date (ISO 8601). */
   "endDate[gt]"?: string;
   /** Matches bookings with endDate on or after this date (ISO 8601). */

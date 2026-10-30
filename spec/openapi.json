@@ -3373,7 +3373,7 @@
             "in": "query",
             "name": "type",
             "required": false,
-            "description": "Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving with their personal code. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription.",
+            "description": "Filter by what the check-in is for: 'deskBooking' and 'roomBooking' a booking, 'eventTicket' an event ticket, 'visit' a visit, 'subscription' a member arriving on their subscription, with their personal code or by unlocking a door. Defaults to every type. Comma-separated, one or more of: deskBooking, roomBooking, eventTicket, visit, subscription.",
             "schema": {
               "type": "string"
             }
@@ -11492,6 +11492,42 @@
         "description": "Retrieve all bookings of resources. <h3>OAuth</h3>Required scopes: <code>resources.readonly</code> or <code>resources</code>",
         "operationId": "getBookings",
         "parameters": [
+          {
+            "in": "query",
+            "name": "createDate[gt]",
+            "required": false,
+            "description": "Matches bookings with createDate strictly after this date (ISO 8601).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Matches bookings with createDate on or after this date (ISO 8601).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lt]",
+            "required": false,
+            "description": "Matches bookings with createDate strictly before this date (ISO 8601).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Matches bookings with createDate on or before this date (ISO 8601).",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "in": "query",
             "name": "endDate[gt]",
@@ -23698,9 +23734,10 @@
                   "format": "date-time"
                 },
                 "checkInMethod": {
-                  "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
+                  "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'accessControl' by unlocking a door through an access control integration, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
                   "type": "string",
                   "enum": [
+                    "accessControl",
                     "agent",
                     "api",
                     "backdated",
@@ -23722,6 +23759,7 @@
                   "description": "How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.",
                   "type": "string",
                   "enum": [
+                    "accessControl",
                     "agent",
                     "api",
                     "backdated",
@@ -23740,7 +23778,7 @@
                   "description": "ISO timestamp of when the check-in was created."
                 },
                 "endDate": {
-                  "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.",
+                  "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or for a subscription.",
                   "type": "string",
                   "format": "date-time"
                 },
@@ -23855,6 +23893,26 @@
                   "description": "Visit this check-in was created for, if any.",
                   "type": "object",
                   "properties": {
+                    "companyHost": {
+                      "description": "The company the host belongs to, read from the customers service so the name is current.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the host's company."
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Name of the host's company."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
                     "id": {
                       "type": "string",
                       "format": "uuid",
@@ -23864,6 +23922,11 @@
                       "description": "The host the visit is with, read from the users service so the details are current.",
                       "type": "object",
                       "properties": {
+                        "email": {
+                          "description": "Email address of the host.",
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "id": {
                           "type": "string",
                           "format": "uuid",
@@ -23946,9 +24009,10 @@
                 "format": "date-time"
               },
               "checkInMethod": {
-                "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
+                "description": "How the customer was checked in: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in from the admin app, 'accessControl' by unlocking a door through an access control integration, 'agent' by the AI agent, and 'api' through the API. Absent on check-ins made before methods were recorded.",
                 "type": "string",
                 "enum": [
+                  "accessControl",
                   "agent",
                   "api",
                   "backdated",
@@ -23970,6 +24034,7 @@
                 "description": "How the customer was checked out: 'reception' with their code on the Reception app, 'manual' by an administrator, 'backdated' by an administrator adding a past check-in with its check-out date from the admin app, 'automatic' by the automatic check-out, 'agent' by the AI agent, and 'api' through the API. Absent while the customer is checked in, and on check-ins made before methods were recorded.",
                 "type": "string",
                 "enum": [
+                  "accessControl",
                   "agent",
                   "api",
                   "backdated",
@@ -23988,7 +24053,7 @@
                 "description": "ISO timestamp of when the check-in was created."
               },
               "endDate": {
-                "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or with a personal code.",
+                "description": "ISO timestamp of when the check-in expires. Absent when it was opened under a schedule without an end date, or for a subscription.",
                 "type": "string",
                 "format": "date-time"
               },
@@ -24103,6 +24168,26 @@
                 "description": "Visit this check-in was created for, if any.",
                 "type": "object",
                 "properties": {
+                  "companyHost": {
+                    "description": "The company the host belongs to, read from the customers service so the name is current.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the host's company."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Name of the host's company."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
                   "id": {
                     "type": "string",
                     "format": "uuid",
@@ -24112,6 +24197,11 @@
                     "description": "The host the visit is with, read from the users service so the details are current.",
                     "type": "object",
                     "properties": {
+                      "email": {
+                        "description": "Email address of the host.",
+                        "nullable": true,
+                        "type": "string"
+                      },
                       "id": {
                         "type": "string",
                         "format": "uuid",
@@ -65069,7 +65159,7 @@
                   "type": "object",
                   "properties": {
                     "attendees": {
-                      "description": "Attendees to invite to the booking, each an existing user by id or a person by email. Supported for room resources. A person invited by email joins the network without a membership in the location. The owner is left out, and so are all attendees when the owner is not a member of the location.",
+                      "description": "Attendees to invite to the booking, each an existing user by id or a person by email. Supported for room resources. A person invited by email joins the network without a membership in the location. The owner is left out, and so are all attendees when the owner is not a member of the location, unless an API key or an administrator makes the booking.",
                       "type": "array",
                       "items": {
                         "type": "object",
