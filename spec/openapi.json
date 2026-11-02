@@ -30933,6 +30933,10 @@
                 "description": "Deprecated. Use resources instead.",
                 "type": "boolean"
               },
+              "campaigns": {
+                "description": "Whether the admin can manage campaigns.",
+                "type": "boolean"
+              },
               "customers": {
                 "type": "boolean",
                 "description": "Whether the admin can manage customers."
@@ -31409,10 +31413,46 @@
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 43200
+                    },
+                    "public": {
+                      "type": "object",
+                      "properties": {
+                        "bookAhead": {
+                          "description": "How far ahead nonmembers can book the resource.",
+                          "type": "string",
+                          "enum": [
+                            "oneDay",
+                            "twoDays",
+                            "oneWeek",
+                            "twoWeeks",
+                            "oneMonth",
+                            "threeMonths",
+                            "sixMonths",
+                            "oneYear",
+                            "unlimited"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "Whether bookings of nonmembers follow a separate booking window."
+                        },
+                        "minNotice": {
+                          "description": "How many minutes before it starts a booking of a nonmember has to be made.",
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 43200
+                        }
+                      },
+                      "required": [
+                        "enabled"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off."
                     }
                   },
                   "required": [
-                    "enabled"
+                    "enabled",
+                    "public"
                   ],
                   "additionalProperties": false,
                   "description": "How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead."
@@ -33232,10 +33272,46 @@
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 43200
+                  },
+                  "public": {
+                    "type": "object",
+                    "properties": {
+                      "bookAhead": {
+                        "description": "How far ahead nonmembers can book the resource.",
+                        "type": "string",
+                        "enum": [
+                          "oneDay",
+                          "twoDays",
+                          "oneWeek",
+                          "twoWeeks",
+                          "oneMonth",
+                          "threeMonths",
+                          "sixMonths",
+                          "oneYear",
+                          "unlimited"
+                        ]
+                      },
+                      "enabled": {
+                        "type": "boolean",
+                        "description": "Whether bookings of nonmembers follow a separate booking window."
+                      },
+                      "minNotice": {
+                        "description": "How many minutes before it starts a booking of a nonmember has to be made.",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 43200
+                      }
+                    },
+                    "required": [
+                      "enabled"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off."
                   }
                 },
                 "required": [
-                  "enabled"
+                  "enabled",
+                  "public"
                 ],
                 "additionalProperties": false,
                 "description": "How soon and how far ahead users can book this resource. While enabled is false, users can book it up to its start and any time ahead."
@@ -54170,7 +54246,7 @@
                   "additionalProperties": false
                 },
                 "receiptPdfUrl": {
-                  "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication.",
+                  "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it.",
                   "type": "string"
                 },
                 "refund": {
@@ -55644,7 +55720,7 @@
                 "additionalProperties": false
               },
               "receiptPdfUrl": {
-                "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication.",
+                "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it.",
                 "type": "string"
               },
               "refund": {
@@ -57114,7 +57190,7 @@
                 "additionalProperties": false
               },
               "receiptPdfUrl": {
-                "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication.",
+                "description": "URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it.",
                 "type": "string"
               },
               "refund": {
@@ -62832,6 +62908,40 @@
                           "type": "integer",
                           "minimum": 0,
                           "maximum": 43200
+                        },
+                        "public": {
+                          "description": "Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off.",
+                          "type": "object",
+                          "properties": {
+                            "bookAhead": {
+                              "description": "How far ahead nonmembers can book the resource. Required while enabled is true.",
+                              "type": "string",
+                              "enum": [
+                                "oneDay",
+                                "twoDays",
+                                "oneWeek",
+                                "twoWeeks",
+                                "oneMonth",
+                                "threeMonths",
+                                "sixMonths",
+                                "oneYear",
+                                "unlimited"
+                              ]
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Whether bookings of nonmembers follow a separate booking window. While it is false, they follow the booking window above."
+                            },
+                            "minNotice": {
+                              "description": "How many minutes before it starts a booking of a nonmember has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true.",
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 43200
+                            }
+                          },
+                          "required": [
+                            "enabled"
+                          ]
                         }
                       },
                       "required": [
@@ -64091,6 +64201,40 @@
                           "type": "integer",
                           "minimum": 0,
                           "maximum": 43200
+                        },
+                        "public": {
+                          "description": "Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off.",
+                          "type": "object",
+                          "properties": {
+                            "bookAhead": {
+                              "description": "How far ahead nonmembers can book the resource. Required while enabled is true.",
+                              "type": "string",
+                              "enum": [
+                                "oneDay",
+                                "twoDays",
+                                "oneWeek",
+                                "twoWeeks",
+                                "oneMonth",
+                                "threeMonths",
+                                "sixMonths",
+                                "oneYear",
+                                "unlimited"
+                              ]
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Whether bookings of nonmembers follow a separate booking window. While it is false, they follow the booking window above."
+                            },
+                            "minNotice": {
+                              "description": "How many minutes before it starts a booking of a nonmember has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true.",
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 43200
+                            }
+                          },
+                          "required": [
+                            "enabled"
+                          ]
                         }
                       },
                       "required": [

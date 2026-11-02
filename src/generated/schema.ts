@@ -9677,6 +9677,8 @@ export interface components {
                  * @description Deprecated. Use resources instead.
                  */
                 bookings?: boolean;
+                /** @description Whether the admin can manage campaigns. */
+                campaigns?: boolean;
                 /** @description Whether the admin can manage customers. */
                 customers: boolean;
                 /** @description Whether the admin can manage events. */
@@ -9901,6 +9903,18 @@ export interface components {
                     enabled: boolean;
                     /** @description How many minutes before it starts a booking of the resource has to be made. */
                     minNotice?: number;
+                    /** @description Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off. */
+                    public: {
+                        /**
+                         * @description How far ahead nonmembers can book the resource.
+                         * @enum {string}
+                         */
+                        bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                        /** @description Whether bookings of nonmembers follow a separate booking window. */
+                        enabled: boolean;
+                        /** @description How many minutes before it starts a booking of a nonmember has to be made. */
+                        minNotice?: number;
+                    };
                 };
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
@@ -10624,6 +10638,18 @@ export interface components {
                     enabled: boolean;
                     /** @description How many minutes before it starts a booking of the resource has to be made. */
                     minNotice?: number;
+                    /** @description Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off. */
+                    public: {
+                        /**
+                         * @description How far ahead nonmembers can book the resource.
+                         * @enum {string}
+                         */
+                        bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                        /** @description Whether bookings of nonmembers follow a separate booking window. */
+                        enabled: boolean;
+                        /** @description How many minutes before it starts a booking of a nonmember has to be made. */
+                        minNotice?: number;
+                    };
                 };
                 /** @description Brivo access group reference. */
                 brivoGroupRef?: number | null;
@@ -20654,7 +20680,7 @@ export interface components {
                      */
                     type: "booking" | "custom" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
                 };
-                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. */
+                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it. */
                 receiptPdfUrl?: string;
                 /**
                  * @deprecated
@@ -21374,7 +21400,7 @@ export interface components {
                      */
                     type: "booking" | "custom" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
                 };
-                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. */
+                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it. */
                 receiptPdfUrl?: string;
                 /**
                  * @deprecated
@@ -22094,7 +22120,7 @@ export interface components {
                      */
                     type: "booking" | "custom" | "creditPackage" | "eventTicket" | "invoice" | "order" | "subscription";
                 };
-                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. */
+                /** @description URL to download the receipt PDF. The URL carries a receipt token, so it can be opened without authentication. The link stops working 190 days after it was issued, whether or not the transaction is fetched again. Fetching the transaction 180 days or more after the link was issued returns a new one, so fetch the transaction again for the current link rather than storing it. */
                 receiptPdfUrl?: string;
                 /**
                  * @deprecated
@@ -24835,6 +24861,18 @@ export interface components {
                             enabled: boolean;
                             /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
                             minNotice?: number;
+                            /** @description Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off. */
+                            public?: {
+                                /**
+                                 * @description How far ahead nonmembers can book the resource. Required while enabled is true.
+                                 * @enum {string}
+                                 */
+                                bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                                /** @description Whether bookings of nonmembers follow a separate booking window. While it is false, they follow the booking window above. */
+                                enabled: boolean;
+                                /** @description How many minutes before it starts a booking of a nonmember has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
+                                minNotice?: number;
+                            };
                         };
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
@@ -25342,6 +25380,18 @@ export interface components {
                             enabled: boolean;
                             /** @description How many minutes before it starts a booking of the resource has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
                             minNotice?: number;
+                            /** @description Booking window for nonmembers. A booking of a nonmember follows it instead of the booking window above while it is enabled, even when that one is off. */
+                            public?: {
+                                /**
+                                 * @description How far ahead nonmembers can book the resource. Required while enabled is true.
+                                 * @enum {string}
+                                 */
+                                bookAhead?: "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "oneMonth" | "threeMonths" | "sixMonths" | "oneYear" | "unlimited";
+                                /** @description Whether bookings of nonmembers follow a separate booking window. While it is false, they follow the booking window above. */
+                                enabled: boolean;
+                                /** @description How many minutes before it starts a booking of a nonmember has to be made, up to 30 days. 0 accepts bookings up to the start time. Required while enabled is true. */
+                                minNotice?: number;
+                            };
                         };
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
