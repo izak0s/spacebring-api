@@ -1142,7 +1142,7 @@
             "in": "query",
             "name": "categoryRef",
             "required": false,
-            "description": "Filter by the category of the benefit applied for: the IDs of benefit categories. Comma-separated, one or more UUIDs.",
+            "description": "Filter by the category of the benefit applied for: the IDs of benefit categories, or none for benefits without a category. Comma-separated, one or more UUIDs or \"none\".",
             "schema": {
               "type": "string"
             }
@@ -12855,7 +12855,7 @@
             "in": "query",
             "name": "categoryRef",
             "required": false,
-            "description": "Filter by the shop categories of the products in the order. Comma-separated, one or more UUIDs.",
+            "description": "Filter by the shop categories of the products in the order. Use none for products without a category. Comma-separated, one or more UUIDs or \"none\".",
             "schema": {
               "type": "string"
             }
@@ -17115,9 +17115,10 @@
                   "description": "Settings controlling how users apply for this benefit."
                 },
                 "categoryRef": {
+                  "nullable": true,
+                  "description": "ID of the benefit category this benefit belongs to, or null when the benefit has no category.",
                   "type": "string",
-                  "format": "uuid",
-                  "description": "ID of the benefit category this benefit belongs to."
+                  "format": "uuid"
                 },
                 "createDate": {
                   "type": "string",
@@ -17290,9 +17291,10 @@
             "description": "Settings controlling how users apply for this benefit."
           },
           "categoryRef": {
+            "nullable": true,
+            "description": "ID of the benefit category this benefit belongs to, or null when the benefit has no category.",
             "type": "string",
-            "format": "uuid",
-            "description": "ID of the benefit category this benefit belongs to."
+            "format": "uuid"
           },
           "createDate": {
             "type": "string",
@@ -17452,9 +17454,10 @@
                 "description": "Settings controlling how users apply for this benefit."
               },
               "categoryRef": {
+                "nullable": true,
+                "description": "ID of the benefit category this benefit belongs to, or null when the benefit has no category.",
                 "type": "string",
-                "format": "uuid",
-                "description": "ID of the benefit category this benefit belongs to."
+                "format": "uuid"
               },
               "createDate": {
                 "type": "string",
@@ -30989,6 +30992,123 @@
             ],
             "additionalProperties": false
           },
+          "locationPermissionLevels": {
+            "description": "Access level of the admin in each area of the locations in locationPermissions: none hides the area, read shows it without changes, and write manages it. Included whenever locationPermissions is.",
+            "type": "object",
+            "properties": {
+              "analytics": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read"
+                ],
+                "description": "Access level of the admin in the analytics area."
+              },
+              "benefits": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the benefits area."
+              },
+              "billing": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the billing area."
+              },
+              "campaigns": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the campaigns area."
+              },
+              "customers": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the customers area."
+              },
+              "events": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the events area."
+              },
+              "feed": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the feed area."
+              },
+              "resources": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the resources area."
+              },
+              "settings": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "write"
+                ],
+                "description": "Access level of the admin in the settings area."
+              },
+              "shop": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the shop area."
+              },
+              "support": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the support area."
+              }
+            },
+            "required": [
+              "analytics",
+              "benefits",
+              "billing",
+              "campaigns",
+              "customers",
+              "events",
+              "feed",
+              "resources",
+              "settings",
+              "shop",
+              "support"
+            ],
+            "additionalProperties": false
+          },
           "role": {
             "description": "Role of the user in the network.",
             "type": "string",
@@ -40311,9 +40431,10 @@
               "type": "object",
               "properties": {
                 "categoryRef": {
+                  "nullable": true,
+                  "description": "ID of the category this product belongs to, or null when the product has no category.",
                   "type": "string",
-                  "format": "uuid",
-                  "description": "ID of the category this product belongs to."
+                  "format": "uuid"
                 },
                 "createDate": {
                   "type": "string",
@@ -40595,9 +40716,10 @@
         "type": "object",
         "properties": {
           "categoryRef": {
+            "nullable": true,
+            "description": "ID of the category this product belongs to, or null when the product has no category.",
             "type": "string",
-            "format": "uuid",
-            "description": "ID of the category this product belongs to."
+            "format": "uuid"
           },
           "createDate": {
             "type": "string",
@@ -40870,9 +40992,10 @@
             "type": "object",
             "properties": {
               "categoryRef": {
+                "nullable": true,
+                "description": "ID of the category this product belongs to, or null when the product has no category.",
                 "type": "string",
-                "format": "uuid",
-                "description": "ID of the category this product belongs to."
+                "format": "uuid"
               },
               "createDate": {
                 "type": "string",
@@ -58327,9 +58450,10 @@
                       ]
                     },
                     "categoryRef": {
+                      "description": "ID of the benefit category this benefit belongs to. Omit or send null to leave the benefit without a category.",
+                      "nullable": true,
                       "type": "string",
-                      "format": "uuid",
-                      "description": "ID of the benefit category this benefit belongs to."
+                      "format": "uuid"
                     },
                     "description": {
                       "default": "",
@@ -58386,7 +58510,6 @@
                     }
                   },
                   "required": [
-                    "categoryRef",
                     "locationRef",
                     "title"
                   ],
@@ -58470,9 +58593,10 @@
                       ]
                     },
                     "categoryRef": {
+                      "description": "ID of the benefit category this benefit belongs to. Omit or send null to leave the benefit without a category.",
+                      "nullable": true,
                       "type": "string",
-                      "format": "uuid",
-                      "description": "ID of the benefit category this benefit belongs to."
+                      "format": "uuid"
                     },
                     "description": {
                       "default": "",
@@ -58524,7 +58648,6 @@
                     }
                   },
                   "required": [
-                    "categoryRef",
                     "title"
                   ],
                   "description": "Benefit to update."
@@ -58601,7 +58724,8 @@
                       ]
                     },
                     "categoryRef": {
-                      "description": "ID of the benefit category this benefit belongs to.",
+                      "description": "ID of the benefit category this benefit belongs to. Send null to remove the benefit from its category.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
@@ -65686,9 +65810,10 @@
                   "type": "object",
                   "properties": {
                     "categoryRef": {
+                      "description": "ID of the category this product belongs to. Omit or send null to leave the product without a category.",
+                      "nullable": true,
                       "type": "string",
-                      "format": "uuid",
-                      "description": "ID of the category this product belongs to."
+                      "format": "uuid"
                     },
                     "description": {
                       "default": "",
@@ -65877,7 +66002,6 @@
                     }
                   },
                   "required": [
-                    "categoryRef",
                     "locationRef",
                     "options",
                     "title"
@@ -65903,9 +66027,10 @@
                   "type": "object",
                   "properties": {
                     "categoryRef": {
+                      "description": "ID of the category this product belongs to. Omit or send null to leave the product without a category.",
+                      "nullable": true,
                       "type": "string",
-                      "format": "uuid",
-                      "description": "ID of the category this product belongs to."
+                      "format": "uuid"
                     },
                     "description": {
                       "default": "",
@@ -66090,7 +66215,6 @@
                     }
                   },
                   "required": [
-                    "categoryRef",
                     "options",
                     "title"
                   ],
@@ -66115,7 +66239,8 @@
                   "type": "object",
                   "properties": {
                     "categoryRef": {
-                      "description": "ID of the category this product belongs to.",
+                      "description": "ID of the category this product belongs to. Send null to remove the product from its category.",
+                      "nullable": true,
                       "type": "string",
                       "format": "uuid"
                     },
