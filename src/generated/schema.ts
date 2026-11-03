@@ -3170,9 +3170,9 @@ export interface components {
                 };
                 /**
                  * Format: uuid
-                 * @description ID of the benefit category this benefit belongs to.
+                 * @description ID of the benefit category this benefit belongs to, or null when the benefit has no category.
                  */
-                categoryRef: string;
+                categoryRef: string | null;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the benefit was created.
@@ -3251,9 +3251,9 @@ export interface components {
             };
             /**
              * Format: uuid
-             * @description ID of the benefit category this benefit belongs to.
+             * @description ID of the benefit category this benefit belongs to, or null when the benefit has no category.
              */
-            categoryRef: string;
+            categoryRef: string | null;
             /**
              * Format: date-time
              * @description ISO timestamp of when the benefit was created.
@@ -3329,9 +3329,9 @@ export interface components {
                 };
                 /**
                  * Format: uuid
-                 * @description ID of the benefit category this benefit belongs to.
+                 * @description ID of the benefit category this benefit belongs to, or null when the benefit has no category.
                  */
-                categoryRef: string;
+                categoryRef: string | null;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the benefit was created.
@@ -9696,6 +9696,64 @@ export interface components {
                 /** @description Whether the admin can access support tools. */
                 support: boolean;
             };
+            /** @description Access level of the admin in each area of the locations in locationPermissions: none hides the area, read shows it without changes, and write manages it. Included whenever locationPermissions is. */
+            locationPermissionLevels?: {
+                /**
+                 * @description Access level of the admin in the analytics area.
+                 * @enum {string}
+                 */
+                analytics: "none" | "read";
+                /**
+                 * @description Access level of the admin in the benefits area.
+                 * @enum {string}
+                 */
+                benefits: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the billing area.
+                 * @enum {string}
+                 */
+                billing: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the campaigns area.
+                 * @enum {string}
+                 */
+                campaigns: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the customers area.
+                 * @enum {string}
+                 */
+                customers: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the events area.
+                 * @enum {string}
+                 */
+                events: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the feed area.
+                 * @enum {string}
+                 */
+                feed: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the resources area.
+                 * @enum {string}
+                 */
+                resources: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the settings area.
+                 * @enum {string}
+                 */
+                settings: "none" | "write";
+                /**
+                 * @description Access level of the admin in the shop area.
+                 * @enum {string}
+                 */
+                shop: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the support area.
+                 * @enum {string}
+                 */
+                support: "none" | "read" | "write";
+            };
             /**
              * @description Role of the user in the network.
              * @enum {string}
@@ -13898,9 +13956,9 @@ export interface components {
             products: {
                 /**
                  * Format: uuid
-                 * @description ID of the category this product belongs to.
+                 * @description ID of the category this product belongs to, or null when the product has no category.
                  */
-                categoryRef: string;
+                categoryRef: string | null;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the product was created.
@@ -14030,9 +14088,9 @@ export interface components {
         product: {
             /**
              * Format: uuid
-             * @description ID of the category this product belongs to.
+             * @description ID of the category this product belongs to, or null when the product has no category.
              */
-            categoryRef: string;
+            categoryRef: string | null;
             /**
              * Format: date-time
              * @description ISO timestamp of when the product was created.
@@ -14161,9 +14219,9 @@ export interface components {
             product: {
                 /**
                  * Format: uuid
-                 * @description ID of the category this product belongs to.
+                 * @description ID of the category this product belongs to, or null when the product has no category.
                  */
-                categoryRef: string;
+                categoryRef: string | null;
                 /**
                  * Format: date-time
                  * @description ISO timestamp of when the product was created.
@@ -22705,9 +22763,9 @@ export interface components {
                         };
                         /**
                          * Format: uuid
-                         * @description ID of the benefit category this benefit belongs to.
+                         * @description ID of the benefit category this benefit belongs to. Omit or send null to leave the benefit without a category.
                          */
-                        categoryRef: string;
+                        categoryRef?: string | null;
                         /**
                          * @description Full description of the benefit.
                          * @default
@@ -22795,9 +22853,9 @@ export interface components {
                         };
                         /**
                          * Format: uuid
-                         * @description ID of the benefit category this benefit belongs to.
+                         * @description ID of the benefit category this benefit belongs to. Omit or send null to leave the benefit without a category.
                          */
-                        categoryRef: string;
+                        categoryRef?: string | null;
                         /**
                          * @description Full description of the benefit.
                          * @default
@@ -22859,9 +22917,9 @@ export interface components {
                         };
                         /**
                          * Format: uuid
-                         * @description ID of the benefit category this benefit belongs to.
+                         * @description ID of the benefit category this benefit belongs to. Send null to remove the benefit from its category.
                          */
-                        categoryRef?: string;
+                        categoryRef?: string | null;
                         /** @description Full description of the benefit. */
                         description?: string;
                         /** @description Whether the benefit is highlighted in listings. */
@@ -25994,9 +26052,9 @@ export interface components {
                     product: {
                         /**
                          * Format: uuid
-                         * @description ID of the category this product belongs to.
+                         * @description ID of the category this product belongs to. Omit or send null to leave the product without a category.
                          */
-                        categoryRef: string;
+                        categoryRef?: string | null;
                         /**
                          * @description Product description.
                          * @default
@@ -26135,9 +26193,9 @@ export interface components {
                     product: {
                         /**
                          * Format: uuid
-                         * @description ID of the category this product belongs to.
+                         * @description ID of the category this product belongs to. Omit or send null to leave the product without a category.
                          */
-                        categoryRef: string;
+                        categoryRef?: string | null;
                         /**
                          * @description Product description.
                          * @default
@@ -26274,9 +26332,9 @@ export interface components {
                     product: {
                         /**
                          * Format: uuid
-                         * @description ID of the category this product belongs to.
+                         * @description ID of the category this product belongs to. Send null to remove the product from its category.
                          */
-                        categoryRef?: string;
+                        categoryRef?: string | null;
                         /** @description Product description. */
                         description?: string;
                         /** @description Whether the product is featured. */
@@ -28150,7 +28208,7 @@ export interface operations {
             query?: {
                 /** @description UUID of the benefit. */
                 benefitRef?: string;
-                /** @description Filter by the category of the benefit applied for: the IDs of benefit categories. Comma-separated, one or more UUIDs. */
+                /** @description Filter by the category of the benefit applied for: the IDs of benefit categories, or none for benefits without a category. Comma-separated, one or more UUIDs or "none". */
                 categoryRef?: string;
                 /** @description Filter applications submitted on or after this date (ISO 8601). Use with createDate[lte] for a range. */
                 "createDate[gte]"?: string;
@@ -34348,7 +34406,7 @@ export interface operations {
     getOrders: {
         parameters: {
             query?: {
-                /** @description Filter by the shop categories of the products in the order. Comma-separated, one or more UUIDs. */
+                /** @description Filter by the shop categories of the products in the order. Use none for products without a category. Comma-separated, one or more UUIDs or "none". */
                 categoryRef?: string;
                 /** @description Filter orders created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
                 "createDate[gte]"?: string;

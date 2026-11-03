@@ -18,7 +18,7 @@ export type ShopCategory = NonNullable<components["schemas"]["shopCategory"]>;
 
 /** Query parameters for `sb.shop.orders.list()`. */
 export interface GetOrdersQuery {
-  /** Filter by the shop categories of the products in the order. Comma-separated, one or more UUIDs. */
+  /** Filter by the shop categories of the products in the order. Use none for products without a category. Comma-separated, one or more UUIDs or "none". */
   categoryRef?: string;
   /** Filter orders created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
   "createDate[gte]"?: string;
