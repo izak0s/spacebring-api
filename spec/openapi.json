@@ -30940,6 +30940,10 @@
                 "description": "Whether the admin can manage campaigns.",
                 "type": "boolean"
               },
+              "checkIns": {
+                "type": "boolean",
+                "description": "Whether the admin can check people in and out and change check-ins."
+              },
               "customers": {
                 "type": "boolean",
                 "description": "Whether the admin can manage customers."
@@ -30975,6 +30979,10 @@
               "support": {
                 "type": "boolean",
                 "description": "Whether the admin can access support tools."
+              },
+              "visitors": {
+                "type": "boolean",
+                "description": "Whether the admin can invite visitors, check them in and out, and manage visitor contacts."
               }
             },
             "required": [
@@ -30982,13 +30990,15 @@
               "analytics",
               "benefits",
               "billing",
+              "checkIns",
               "customers",
               "events",
               "exclusiveLocations",
               "feed",
               "settings",
               "shop",
-              "support"
+              "support",
+              "visitors"
             ],
             "additionalProperties": false
           },
@@ -31030,6 +31040,15 @@
                   "write"
                 ],
                 "description": "Access level of the admin in the campaigns area."
+              },
+              "checkIns": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the checkIns area."
               },
               "customers": {
                 "type": "string",
@@ -31092,6 +31111,15 @@
                   "write"
                 ],
                 "description": "Access level of the admin in the support area."
+              },
+              "visitors": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the visitors area."
               }
             },
             "required": [
@@ -31099,13 +31127,15 @@
               "benefits",
               "billing",
               "campaigns",
+              "checkIns",
               "customers",
               "events",
               "feed",
               "resources",
               "settings",
               "shop",
-              "support"
+              "support",
+              "visitors"
             ],
             "additionalProperties": false
           },

@@ -9679,6 +9679,8 @@ export interface components {
                 bookings?: boolean;
                 /** @description Whether the admin can manage campaigns. */
                 campaigns?: boolean;
+                /** @description Whether the admin can check people in and out and change check-ins. */
+                checkIns: boolean;
                 /** @description Whether the admin can manage customers. */
                 customers: boolean;
                 /** @description Whether the admin can manage events. */
@@ -9695,6 +9697,8 @@ export interface components {
                 shop: boolean;
                 /** @description Whether the admin can access support tools. */
                 support: boolean;
+                /** @description Whether the admin can invite visitors, check them in and out, and manage visitor contacts. */
+                visitors: boolean;
             };
             /** @description Access level of the admin in each area of the locations in locationPermissions: none hides the area, read shows it without changes, and write manages it. Included whenever locationPermissions is. */
             locationPermissionLevels?: {
@@ -9718,6 +9722,11 @@ export interface components {
                  * @enum {string}
                  */
                 campaigns: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the checkIns area.
+                 * @enum {string}
+                 */
+                checkIns: "none" | "read" | "write";
                 /**
                  * @description Access level of the admin in the customers area.
                  * @enum {string}
@@ -9753,6 +9762,11 @@ export interface components {
                  * @enum {string}
                  */
                 support: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the visitors area.
+                 * @enum {string}
+                 */
+                visitors: "none" | "read" | "write";
             };
             /**
              * @description Role of the user in the network.
