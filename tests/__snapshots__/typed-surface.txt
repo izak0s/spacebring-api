@@ -175,6 +175,29 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
   };
 }
 
+// campaigns.ts
+export type Campaign = NonNullable<operations["getCampaign"]["responses"][200]["content"]["application/json"]["campaign"]>;
+export interface GetCampaignsQuery {
+  channel?: string;
+  id?: string;
+  limit?: number;
+  locationRef?: string;
+  nextPageToken?: string;
+  status?: string;
+}
+export type CreateCampaignBody = NonNullable<NonNullable<operations["createCampaign"]["requestBody"]>["content"]["application/json"]["campaign"]>;
+export type PatchCampaignBody = NonNullable<NonNullable<operations["patchCampaign"]["requestBody"]>["content"]["application/json"]["campaign"]>;
+export function createCampaigns(client: Client<paths>, defaults: SpacebringDefaults) {
+  return {
+    async list(query?: GetCampaignsQuery, options?: SpacebringRequestOptions): Promise<{ campaigns: Campaign[]; nextPageToken?: string; searchQueryNext?: string }>
+    iterate(query?: Omit<GetCampaignsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Campaign, void, undefined>
+    async get(campaignId: string, options?: SpacebringRequestOptions): Promise<Campaign>
+    async create(campaign: CreateCampaignBody, options?: SpacebringRequestOptions): Promise<Campaign>
+    async update(campaignId: string, campaign: PatchCampaignBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async delete(campaignId: string, options?: SpacebringRequestOptions): Promise<undefined>
+  };
+}
+
 // checkIns.ts
 export type CheckIn = NonNullable<operations["getCheckIn"]["responses"][200]["content"]["application/json"]["checkIn"]>;
 export interface GetCheckInsQuery {
@@ -749,6 +772,7 @@ export type TicketMedia = NonNullable<operations["createSupportTicketMedia"]["re
 export interface GetSupportTicketsQuery {
   locationRef: string;
   limit?: number;
+  companyRefRequester?: string;
   membershipRefRequester?: string;
   nextPageToken?: string;
   order?: string;

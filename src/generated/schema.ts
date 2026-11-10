@@ -581,6 +581,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/campaigns/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve campaigns
+         * @description Retrieve the campaigns of the network, newest first, or only those whose audience includes a location. A campaign belongs to the network and reaches the members of the locations in its audience. With bearer token authentication, the user must be an administrator, and the list leaves out campaigns in none of whose locations they can view campaigns. <h3>OAuth</h3>Required scopes: <code>campaigns.readonly</code> or <code>campaigns</code>
+         */
+        get: operations["getCampaigns"];
+        put?: never;
+        /**
+         * Create a campaign
+         * @description Create a campaign as a draft, which an administrator sends from the admin web portal: the API cannot send, test, or schedule a campaign. A draft can be saved before its content is complete. A campaign created with basic authentication has no <code>createdBy</code>. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>
+         */
+        post: operations["createCampaign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/campaigns/v1/{campaignId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a campaign
+         * @description Get a campaign by its id, with its delivery statistics once sending starts. With bearer token authentication, the user must be an administrator who can view campaigns in one of the campaign's locations. <h3>OAuth</h3>Required scopes: <code>campaigns.readonly</code> or <code>campaigns</code>
+         */
+        get: operations["getCampaign"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a campaign
+         * @description Delete a draft or cancelled campaign. A campaign that is scheduled, sending, sent, or failed cannot be deleted. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>
+         */
+        delete: operations["deleteCampaign"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a campaign
+         * @description Update the fields of a draft campaign that the request sets; omitted fields keep their current values. Only a draft can be updated. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience, both the current one and a new one the request sets. <h3>OAuth</h3>Required scopes: <code>campaigns</code>
+         */
+        patch: operations["patchCampaign"];
+        trace?: never;
+    };
     "/check_ins/v1": {
         parameters: {
             query?: never;
@@ -6336,6 +6388,308 @@ export interface components {
              */
             voidDate?: string;
         };
+        getCampaigns: {
+            /** @description List of campaigns, newest first. */
+            campaigns: {
+                /** @description Who receives the campaign. */
+                audience: {
+                    /** @description IDs of the locations whose active members the rules choose from. */
+                    locationRefs: string[];
+                    /** @description Rules a member or nonmember of the locations has to match at least one of. A person who matches several rules gets one message. With no rules, every active member of the locations matches, and no nonmember. */
+                    rules: ({
+                        /** @description IDs of the companies whose people match. */
+                        companyRefs: string[];
+                        /**
+                         * @description Members of the given companies.
+                         * @enum {string}
+                         */
+                        type: "companies";
+                    } | {
+                        /** @description IDs of the events whose attendees match. */
+                        eventRefs: string[];
+                        /**
+                         * @description Attendees of the given events.
+                         * @enum {string}
+                         */
+                        type: "eventAttendees";
+                    } | {
+                        /** @description Membership types whose customers match. */
+                        membershipTypes: ("member" | "nonmember")[];
+                        /**
+                         * @description Everyone at the locations with one of the given membership types.
+                         * @enum {string}
+                         */
+                        type: "membershipTypes";
+                    } | {
+                        /**
+                         * @description The given people.
+                         * @enum {string}
+                         */
+                        type: "people";
+                        /** @description IDs of the users who match. */
+                        userRefs: string[];
+                    } | {
+                        /** @description IDs of the plans whose holders match. */
+                        planRefs: string[];
+                        /**
+                         * @description People holding an active subscription to one of the given plans, personally or through their company.
+                         * @enum {string}
+                         */
+                        type: "plans";
+                    } | {
+                        /** @description IDs of the resource tiers whose holders match. */
+                        tierRefs: string[];
+                        /**
+                         * @description People holding an active subscription to one of the given resource tiers, personally or through their company.
+                         * @enum {string}
+                         */
+                        type: "resourceTiers";
+                    })[];
+                };
+                /**
+                 * @description Channel the campaign is sent through.
+                 * @enum {string}
+                 */
+                channel: "email" | "push";
+                /** @description What sending cost, debited from the network balance when sending started. Present for sent email campaigns. */
+                charge?: {
+                    /** @description Amount debited, in minor units of the currency. */
+                    amount: number;
+                    /** @description ISO 4217 currency code of the amount. */
+                    currencyCode: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign was created.
+                 */
+                createDate: string;
+                /** @description Admin who created the campaign. Absent for a campaign created with client credentials. */
+                createdBy?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the admin who created the campaign.
+                     */
+                    id: string;
+                };
+                /** @description Email content, used when the channel is email. */
+                email?: {
+                    /** @description Body of the email, in the same markdown as a Feed post. */
+                    body: string;
+                    /** @description Label of the button below the body. */
+                    buttonLabel?: string;
+                    /** @description Link the button opens. */
+                    buttonUrl?: string;
+                    /** @description Address replies go to. Defaults to the network's email when omitted. */
+                    replyTo?: string;
+                    /** @description Subject of the email. */
+                    subject: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the campaign.
+                 */
+                id: string;
+                /** @description Name of the campaign, shown to admins only. */
+                name: string;
+                /** @description Push content, used when the channel is push. */
+                push?: {
+                    /** @description Body of the push notification. */
+                    body: string;
+                    /** @description Link to the member web portal page the notification opens in the member app. The member app home when omitted. */
+                    link?: string;
+                    /** @description Title of the push notification. */
+                    title: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign is scheduled to be sent.
+                 */
+                scheduleDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when sending started.
+                 */
+                sendDate?: string;
+                /** @description Delivery statistics of the campaign. */
+                stats: {
+                    /** @description Number of recipients whose email bounced. */
+                    bounced: number;
+                    /** @description Number of recipients who clicked a link in the email at least once. */
+                    clicked: number;
+                    /** @description Number of recipients who marked the email as spam. */
+                    complained: number;
+                    /** @description Number of recipients whose mail server accepted the email. */
+                    delivered: number;
+                    /** @description Number of recipients who opened the email at least once. */
+                    opened: number;
+                    /** @description Number of people the campaign was sent to. Zero until sending starts. */
+                    recipients: number;
+                };
+                /**
+                 * @description Stage of the campaign.
+                 * @enum {string}
+                 */
+                status: "draft" | "scheduled" | "sending" | "sent" | "canceled" | "failed";
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign was last changed.
+                 */
+                updateDate: string;
+            }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getCampaign: {
+            /** @description The campaign. */
+            campaign: {
+                /** @description Who receives the campaign. */
+                audience: {
+                    /** @description IDs of the locations whose active members the rules choose from. */
+                    locationRefs: string[];
+                    /** @description Rules a member or nonmember of the locations has to match at least one of. A person who matches several rules gets one message. With no rules, every active member of the locations matches, and no nonmember. */
+                    rules: ({
+                        /** @description IDs of the companies whose people match. */
+                        companyRefs: string[];
+                        /**
+                         * @description Members of the given companies.
+                         * @enum {string}
+                         */
+                        type: "companies";
+                    } | {
+                        /** @description IDs of the events whose attendees match. */
+                        eventRefs: string[];
+                        /**
+                         * @description Attendees of the given events.
+                         * @enum {string}
+                         */
+                        type: "eventAttendees";
+                    } | {
+                        /** @description Membership types whose customers match. */
+                        membershipTypes: ("member" | "nonmember")[];
+                        /**
+                         * @description Everyone at the locations with one of the given membership types.
+                         * @enum {string}
+                         */
+                        type: "membershipTypes";
+                    } | {
+                        /**
+                         * @description The given people.
+                         * @enum {string}
+                         */
+                        type: "people";
+                        /** @description IDs of the users who match. */
+                        userRefs: string[];
+                    } | {
+                        /** @description IDs of the plans whose holders match. */
+                        planRefs: string[];
+                        /**
+                         * @description People holding an active subscription to one of the given plans, personally or through their company.
+                         * @enum {string}
+                         */
+                        type: "plans";
+                    } | {
+                        /** @description IDs of the resource tiers whose holders match. */
+                        tierRefs: string[];
+                        /**
+                         * @description People holding an active subscription to one of the given resource tiers, personally or through their company.
+                         * @enum {string}
+                         */
+                        type: "resourceTiers";
+                    })[];
+                };
+                /**
+                 * @description Channel the campaign is sent through.
+                 * @enum {string}
+                 */
+                channel: "email" | "push";
+                /** @description What sending cost, debited from the network balance when sending started. Present for sent email campaigns. */
+                charge?: {
+                    /** @description Amount debited, in minor units of the currency. */
+                    amount: number;
+                    /** @description ISO 4217 currency code of the amount. */
+                    currencyCode: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign was created.
+                 */
+                createDate: string;
+                /** @description Admin who created the campaign. Absent for a campaign created with client credentials. */
+                createdBy?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the admin who created the campaign.
+                     */
+                    id: string;
+                };
+                /** @description Email content, used when the channel is email. */
+                email?: {
+                    /** @description Body of the email, in the same markdown as a Feed post. */
+                    body: string;
+                    /** @description Label of the button below the body. */
+                    buttonLabel?: string;
+                    /** @description Link the button opens. */
+                    buttonUrl?: string;
+                    /** @description Address replies go to. Defaults to the network's email when omitted. */
+                    replyTo?: string;
+                    /** @description Subject of the email. */
+                    subject: string;
+                };
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the campaign.
+                 */
+                id: string;
+                /** @description Name of the campaign, shown to admins only. */
+                name: string;
+                /** @description Push content, used when the channel is push. */
+                push?: {
+                    /** @description Body of the push notification. */
+                    body: string;
+                    /** @description Link to the member web portal page the notification opens in the member app. The member app home when omitted. */
+                    link?: string;
+                    /** @description Title of the push notification. */
+                    title: string;
+                };
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign is scheduled to be sent.
+                 */
+                scheduleDate?: string;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when sending started.
+                 */
+                sendDate?: string;
+                /** @description Delivery statistics of the campaign. */
+                stats: {
+                    /** @description Number of recipients whose email bounced. */
+                    bounced: number;
+                    /** @description Number of recipients who clicked a link in the email at least once. */
+                    clicked: number;
+                    /** @description Number of recipients who marked the email as spam. */
+                    complained: number;
+                    /** @description Number of recipients whose mail server accepted the email. */
+                    delivered: number;
+                    /** @description Number of recipients who opened the email at least once. */
+                    opened: number;
+                    /** @description Number of people the campaign was sent to. Zero until sending starts. */
+                    recipients: number;
+                };
+                /**
+                 * @description Stage of the campaign.
+                 * @enum {string}
+                 */
+                status: "draft" | "scheduled" | "sending" | "sent" | "canceled" | "failed";
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the campaign was last changed.
+                 */
+                updateDate: string;
+            };
+        };
         getCheckIns: {
             /** @description List of check-ins. */
             checkIns: {
@@ -9683,6 +10037,8 @@ export interface components {
                 checkIns: boolean;
                 /** @description Whether the admin can manage customers. */
                 customers: boolean;
+                /** @description Whether the admin can manage deliveries. */
+                deliveries: boolean;
                 /** @description Whether the admin can manage events. */
                 events: boolean;
                 /** @description Location IDs where permissions are limited. */
@@ -9732,6 +10088,11 @@ export interface components {
                  * @enum {string}
                  */
                 customers: "none" | "read" | "write";
+                /**
+                 * @description Access level of the admin in the deliveries area.
+                 * @enum {string}
+                 */
+                deliveries: "none" | "read" | "write";
                 /**
                  * @description Access level of the admin in the events area.
                  * @enum {string}
@@ -10017,13 +10378,13 @@ export interface components {
                 }[];
                 /** @description Confirmation email settings. */
                 confirmationEmail: {
-                    /** @description Send confirmation when an admin creates a booking. */
+                    /** @description Send confirmation when the booking is for an admin. */
                     bookingCreatedByAdmin: boolean;
-                    /** @description Send confirmation when a member creates a booking. */
+                    /** @description Send confirmation when the booking is for a member. */
                     bookingCreatedByMember: boolean;
-                    /** @description Send confirmation when a network member creates a booking. */
+                    /** @description Send confirmation when the booking is for a network member. */
                     bookingCreatedByNetworkMember: boolean;
-                    /** @description Send confirmation when a public user creates a booking. */
+                    /** @description Send confirmation when the booking is for a public user. */
                     bookingCreatedByPublic: boolean;
                     /** @description Email template id for confirmation emails. */
                     template: string;
@@ -10752,13 +11113,13 @@ export interface components {
                 }[];
                 /** @description Confirmation email settings. */
                 confirmationEmail: {
-                    /** @description Send confirmation when an admin creates a booking. */
+                    /** @description Send confirmation when the booking is for an admin. */
                     bookingCreatedByAdmin: boolean;
-                    /** @description Send confirmation when a member creates a booking. */
+                    /** @description Send confirmation when the booking is for a member. */
                     bookingCreatedByMember: boolean;
-                    /** @description Send confirmation when a network member creates a booking. */
+                    /** @description Send confirmation when the booking is for a network member. */
                     bookingCreatedByNetworkMember: boolean;
-                    /** @description Send confirmation when a public user creates a booking. */
+                    /** @description Send confirmation when the booking is for a public user. */
                     bookingCreatedByPublic: boolean;
                     /** @description Email template id for confirmation emails. */
                     template: string;
@@ -17239,6 +17600,30 @@ export interface components {
         };
         ticket: {
             /**
+             * Format: uuid
+             * @description ID of the company the ticket is requested for. Members of the company can read and comment on it, and userRequester is the member who opened it.
+             */
+            companyRefRequester?: string;
+            /** @description Company the ticket is requested for. */
+            companyRequester?: {
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the company.
+                 */
+                id: string;
+                /** @description Company logo uploaded by an administrator. */
+                logo?: {
+                    /** @description Storage key of the company logo. */
+                    key: string;
+                    /** @description Public URL of the company logo. */
+                    url: string;
+                };
+                /** @description Public logo URL derived from the company website. */
+                publicLogoUrl?: string;
+                /** @description Company name. */
+                title: string;
+            };
+            /**
              * Format: date-time
              * @description ISO timestamp of when the ticket was created.
              */
@@ -23391,6 +23776,228 @@ export interface components {
                 };
             };
         };
+        createCampaign: {
+            content: {
+                "application/json": {
+                    /** @description The campaign to create as a draft. */
+                    campaign: {
+                        /** @description Who receives the campaign. An update replaces the whole audience with this one. */
+                        audience: {
+                            /** @description IDs of the locations whose active members the rules choose from. */
+                            locationRefs: string[];
+                            /** @description Rules a member or nonmember of the locations has to match at least one of. Defaults to none, which reaches every active member of the locations. */
+                            rules?: ({
+                                /** @description IDs of the companies whose people match. */
+                                companyRefs: string[];
+                                /**
+                                 * @description People of the given companies.
+                                 * @enum {string}
+                                 */
+                                type: "companies";
+                            } | {
+                                /** @description IDs of the events whose attendees match. */
+                                eventRefs: string[];
+                                /**
+                                 * @description Attendees of the given events, not their hosts.
+                                 * @enum {string}
+                                 */
+                                type: "eventAttendees";
+                            } | {
+                                /** @description Membership types whose customers match: member, nonmember, or both. */
+                                membershipTypes: ("member" | "nonmember")[];
+                                /**
+                                 * @description Everyone at the locations with one of the given membership types.
+                                 * @enum {string}
+                                 */
+                                type: "membershipTypes";
+                            } | {
+                                /**
+                                 * @description The given people.
+                                 * @enum {string}
+                                 */
+                                type: "people";
+                                /** @description IDs of the users who match, the user IDs of user customers. */
+                                userRefs: string[];
+                            } | {
+                                /** @description IDs of the plans whose holders match. */
+                                planRefs: string[];
+                                /**
+                                 * @description People holding an active subscription to one of the given plans, personally or through their company.
+                                 * @enum {string}
+                                 */
+                                type: "plans";
+                            } | {
+                                /** @description IDs of the resource tiers whose holders match. */
+                                tierRefs: string[];
+                                /**
+                                 * @description People holding an active subscription to one of the given resource tiers, personally or through their company.
+                                 * @enum {string}
+                                 */
+                                type: "resourceTiers";
+                            })[];
+                        };
+                        /**
+                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns.
+                         * @enum {string}
+                         */
+                        channel: "email" | "push";
+                        /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
+                        email?: {
+                            /**
+                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
+                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. */
+                            buttonLabel?: string;
+                            /**
+                             * Format: uri
+                             * @description https link the button opens, given together with buttonLabel.
+                             */
+                            buttonUrl?: string;
+                            /**
+                             * Format: email
+                             * @description Address replies go to. Defaults to the network's email when omitted.
+                             */
+                            replyTo?: string;
+                            /**
+                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            subject?: string;
+                        };
+                        /** @description Name of the campaign, shown to admins only. */
+                        name: string;
+                        /** @description Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep. */
+                        push?: {
+                            /**
+                             * @description Body of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
+                            /** @description Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted. */
+                            link?: string;
+                            /**
+                             * @description Title of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            title?: string;
+                        };
+                    };
+                };
+            };
+        };
+        patchCampaign: {
+            content: {
+                "application/json": {
+                    /** @description Campaign fields to change. Omitted fields keep their current values. */
+                    campaign: {
+                        /** @description Who receives the campaign. An update replaces the whole audience with this one. */
+                        audience?: {
+                            /** @description IDs of the locations whose active members the rules choose from. */
+                            locationRefs: string[];
+                            /** @description Rules a member or nonmember of the locations has to match at least one of. Defaults to none, which reaches every active member of the locations. */
+                            rules?: ({
+                                /** @description IDs of the companies whose people match. */
+                                companyRefs: string[];
+                                /**
+                                 * @description People of the given companies.
+                                 * @enum {string}
+                                 */
+                                type: "companies";
+                            } | {
+                                /** @description IDs of the events whose attendees match. */
+                                eventRefs: string[];
+                                /**
+                                 * @description Attendees of the given events, not their hosts.
+                                 * @enum {string}
+                                 */
+                                type: "eventAttendees";
+                            } | {
+                                /** @description Membership types whose customers match: member, nonmember, or both. */
+                                membershipTypes: ("member" | "nonmember")[];
+                                /**
+                                 * @description Everyone at the locations with one of the given membership types.
+                                 * @enum {string}
+                                 */
+                                type: "membershipTypes";
+                            } | {
+                                /**
+                                 * @description The given people.
+                                 * @enum {string}
+                                 */
+                                type: "people";
+                                /** @description IDs of the users who match, the user IDs of user customers. */
+                                userRefs: string[];
+                            } | {
+                                /** @description IDs of the plans whose holders match. */
+                                planRefs: string[];
+                                /**
+                                 * @description People holding an active subscription to one of the given plans, personally or through their company.
+                                 * @enum {string}
+                                 */
+                                type: "plans";
+                            } | {
+                                /** @description IDs of the resource tiers whose holders match. */
+                                tierRefs: string[];
+                                /**
+                                 * @description People holding an active subscription to one of the given resource tiers, personally or through their company.
+                                 * @enum {string}
+                                 */
+                                type: "resourceTiers";
+                            })[];
+                        };
+                        /**
+                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns.
+                         * @enum {string}
+                         */
+                        channel?: "email" | "push";
+                        /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
+                        email?: {
+                            /**
+                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
+                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. */
+                            buttonLabel?: string;
+                            /**
+                             * Format: uri
+                             * @description https link the button opens, given together with buttonLabel.
+                             */
+                            buttonUrl?: string;
+                            /**
+                             * Format: email
+                             * @description Address replies go to. Defaults to the network's email when omitted.
+                             */
+                            replyTo?: string;
+                            /**
+                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            subject?: string;
+                        };
+                        /** @description Name of the campaign, shown to admins only. */
+                        name?: string;
+                        /** @description Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep. */
+                        push?: {
+                            /**
+                             * @description Body of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
+                            /** @description Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted. */
+                            link?: string;
+                            /**
+                             * @description Title of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            title?: string;
+                        };
+                    };
+                };
+            };
+        };
         patchCheckIn: {
             content: {
                 "application/json": {
@@ -24965,13 +25572,13 @@ export interface components {
                         };
                         /** @description Confirmation email settings. */
                         confirmationEmail?: {
-                            /** @description Send confirmation when an admin creates a booking. */
+                            /** @description Send confirmation when the booking is for an admin. */
                             bookingCreatedByAdmin: boolean;
-                            /** @description Send confirmation when a member creates a booking. */
+                            /** @description Send confirmation when the booking is for a member. */
                             bookingCreatedByMember: boolean;
-                            /** @description Send confirmation when a network member creates a booking. */
+                            /** @description Send confirmation when the booking is for a network member. */
                             bookingCreatedByNetworkMember: boolean;
-                            /** @description Send confirmation when a public user creates a booking. */
+                            /** @description Send confirmation when the booking is for a public user. */
                             bookingCreatedByPublic: boolean;
                             /** @description Email template id for confirmation emails. */
                             template: string;
@@ -25484,13 +26091,13 @@ export interface components {
                         };
                         /** @description Confirmation email settings. */
                         confirmationEmail?: {
-                            /** @description Send confirmation when an admin creates a booking. */
+                            /** @description Send confirmation when the booking is for an admin. */
                             bookingCreatedByAdmin: boolean;
-                            /** @description Send confirmation when a member creates a booking. */
+                            /** @description Send confirmation when the booking is for a member. */
                             bookingCreatedByMember: boolean;
-                            /** @description Send confirmation when a network member creates a booking. */
+                            /** @description Send confirmation when the booking is for a network member. */
                             bookingCreatedByNetworkMember: boolean;
-                            /** @description Send confirmation when a public user creates a booking. */
+                            /** @description Send confirmation when the booking is for a public user. */
                             bookingCreatedByPublic: boolean;
                             /** @description Email template id for confirmation emails. */
                             template: string;
@@ -27169,6 +27776,11 @@ export interface components {
                 "application/json": {
                     /** @description Support ticket to create. */
                     ticket: {
+                        /**
+                         * Format: uuid
+                         * @description ID of the requester's company to request the ticket for, so the company's members can read and comment on it. When omitted, only the requester sees the ticket. A discriminationAndHarassment ticket cannot be requested for a company.
+                         */
+                        companyRefRequester?: string;
                         /**
                          * Format: uuid
                          * @description ID of the location where the ticket is created.
@@ -29336,6 +29948,283 @@ export interface operations {
             };
             /** @description Not Found - Invoice or invoice item not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getCampaigns: {
+        parameters: {
+            query?: {
+                /** @description Filter by channel. Comma-separated, one or more of: email, push. */
+                channel?: string;
+                /** @description IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs. */
+                id?: string;
+                /** @description Maximum number of campaigns per page. Defaults to 25. */
+                limit?: number;
+                /** @description ID of a location whose campaigns to list: those whose audience includes it. Lists the campaigns of every location when omitted. */
+                locationRef?: string;
+                /** @description Token of the page to read next. */
+                nextPageToken?: string;
+                /** @description Filter by stage. Comma-separated, one or more of: draft, scheduled, sending, sent, canceled, failed. */
+                status?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCampaigns"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createCampaign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createCampaign"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCampaign"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getCampaign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description ID of the campaign. */
+                campaignId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCampaign"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteCampaign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description ID of the campaign. */
+                campaignId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchCampaign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description ID of the campaign. */
+                campaignId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchCampaign"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -33800,7 +34689,7 @@ export interface operations {
                 singleBookings?: string;
                 /** @description Deprecated. Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
                 startDate?: string;
-                /** @description Booking statuses to filter by, e.g. `confirmed,canceled`. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled. */
+                /** @description Booking statuses to filter by, e.g. `confirmed,canceled`. `requested` lists the booking requests waiting for an administrator, and `declined` the ones an administrator declined or nobody answered before they started. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled, requested, declined. */
                 status?: string;
                 /** @description Resource types of the booked resources to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. */
                 type?: string;
@@ -34799,6 +35688,8 @@ export interface operations {
                 locationRef: string;
                 /** @description The number of items to return */
                 limit?: number;
+                /** @description Filter tickets by the ids of the companies they are requested for. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The companies must exist in the location. Support admins of the location can filter by any company; other users only by a company they are a member of. With membershipRefRequester, lists the tickets that match either filter. */
+                companyRefRequester?: string;
                 /** @description Filter tickets by requester membership ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The memberships must exist in the location. Admins can filter by any requester; other users only by their own membership. */
                 membershipRefRequester?: string;
                 /** @description Token to retrieve the next page of results. */
