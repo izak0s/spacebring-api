@@ -79,7 +79,7 @@ export interface GetBookingsQuery {
   singleBookings?: string;
   /** @deprecated Use bracket-notation fields startDate[gt], startDate[gte], startDate[lt], startDate[lte] instead. */
   startDate?: string;
-  /** Booking statuses to filter by, e.g. `confirmed,canceled`. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled. */
+  /** Booking statuses to filter by, e.g. `confirmed,canceled`. `requested` lists the booking requests waiting for an administrator, and `declined` the ones an administrator declined or nobody answered before they started. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled, requested, declined. */
   status?: string;
   /** Resource types of the booked resources to filter by, e.g. `room,hotDesk`. Defaults to all bookable types. Comma-separated, one or more of: hotDesk, dedicatedDesk, office, parkingLot, room, conferenceRoom, eventSpace, meetingRoom, phoneBooth, studio, equipment, station. */
   type?: string;

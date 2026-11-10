@@ -3303,6 +3303,461 @@
         }
       }
     },
+    "/campaigns/v1": {
+      "get": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Retrieve campaigns",
+        "description": "Retrieve the campaigns of the network, newest first, or only those whose audience includes a location. A campaign belongs to the network and reaches the members of the locations in its audience. With bearer token authentication, the user must be an administrator, and the list leaves out campaigns in none of whose locations they can view campaigns. <h3>OAuth</h3>Required scopes: <code>campaigns.readonly</code> or <code>campaigns</code>",
+        "operationId": "getCampaigns",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "channel",
+            "required": false,
+            "description": "Filter by channel. Comma-separated, one or more of: email, push.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "required": false,
+            "description": "IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of campaigns per page. Defaults to 25.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": false,
+            "description": "ID of a location whose campaigns to list: those whose audience includes it. Lists the campaigns of every location when omitted.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Token of the page to read next.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "description": "Filter by stage. Comma-separated, one or more of: draft, scheduled, sending, sent, canceled, failed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns.readonly",
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCampaigns"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Create a campaign",
+        "description": "Create a campaign as a draft, which an administrator sends from the admin web portal: the API cannot send, test, or schedule a campaign. A draft can be saved before its content is complete. A campaign created with basic authentication has no <code>createdBy</code>. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>",
+        "operationId": "createCampaign",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createCampaign"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campaigns/v1/{campaignId}": {
+      "get": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Get a campaign",
+        "description": "Get a campaign by its id, with its delivery statistics once sending starts. With bearer token authentication, the user must be an administrator who can view campaigns in one of the campaign's locations. <h3>OAuth</h3>Required scopes: <code>campaigns.readonly</code> or <code>campaigns</code>",
+        "operationId": "getCampaign",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaignId",
+            "required": true,
+            "description": "ID of the campaign.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns.readonly",
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Update a campaign",
+        "description": "Update the fields of a draft campaign that the request sets; omitted fields keep their current values. Only a draft can be updated. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience, both the current one and a new one the request sets. <h3>OAuth</h3>Required scopes: <code>campaigns</code>",
+        "operationId": "patchCampaign",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaignId",
+            "required": true,
+            "description": "ID of the campaign.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchCampaign"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Delete a campaign",
+        "description": "Delete a draft or cancelled campaign. A campaign that is scheduled, sending, sent, or failed cannot be deleted. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>",
+        "operationId": "deleteCampaign",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaignId",
+            "required": true,
+            "description": "ID of the campaign.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check_ins/v1": {
       "get": {
         "tags": [
@@ -11723,7 +12178,7 @@
             "in": "query",
             "name": "status",
             "required": false,
-            "description": "Booking statuses to filter by, e.g. `confirmed,canceled`. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled.",
+            "description": "Booking statuses to filter by, e.g. `confirmed,canceled`. `requested` lists the booking requests waiting for an administrator, and `declined` the ones an administrator declined or nobody answered before they started. Defaults to tentative and confirmed, or to canceled when ordering by deleteDate. Comma-separated, one or more of: tentative, confirmed, canceled, requested, declined.",
             "schema": {
               "type": "string"
             }
@@ -13653,6 +14108,15 @@
               "default": 25
             },
             "description": "The number of items to return"
+          },
+          {
+            "in": "query",
+            "name": "companyRefRequester",
+            "description": "Filter tickets by the ids of the companies they are requested for. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The companies must exist in the location. Support admins of the location can filter by any company; other users only by a company they are a member of. With membershipRefRequester, lists the tickets that match either filter.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "in": "query",
@@ -16762,6 +17226,8 @@
             "scopes": {
               "benefits.readonly": "Read benefits and applications",
               "benefits": "Read and write benefits and applications",
+              "campaigns.readonly": "Read campaigns",
+              "campaigns": "Read and write campaigns",
               "checkIns.readonly": "Read check-ins",
               "checkIns": "Read and write check-ins",
               "community.readonly": "Read community companies and memberships",
@@ -23707,6 +24173,809 @@
           "type",
           "updateDate"
         ]
+      },
+      "getCampaigns": {
+        "type": "object",
+        "properties": {
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "audience": {
+                  "type": "object",
+                  "properties": {
+                    "locationRefs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "description": "IDs of the locations whose active members the rules choose from."
+                    },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "companyRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "IDs of the companies whose people match."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "companies"
+                                ],
+                                "description": "Members of the given companies."
+                              }
+                            },
+                            "required": [
+                              "companyRefs",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "eventRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "IDs of the events whose attendees match."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "eventAttendees"
+                                ],
+                                "description": "Attendees of the given events."
+                              }
+                            },
+                            "required": [
+                              "eventRefs",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "membershipTypes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "member",
+                                    "nonmember"
+                                  ]
+                                },
+                                "description": "Membership types whose customers match."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "membershipTypes"
+                                ],
+                                "description": "Everyone at the locations with one of the given membership types."
+                              }
+                            },
+                            "required": [
+                              "membershipTypes",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "people"
+                                ],
+                                "description": "The given people."
+                              },
+                              "userRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "IDs of the users who match."
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "userRefs"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "planRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "IDs of the plans whose holders match."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "plans"
+                                ],
+                                "description": "People holding an active subscription to one of the given plans, personally or through their company."
+                              }
+                            },
+                            "required": [
+                              "planRefs",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "tierRefs": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "description": "IDs of the resource tiers whose holders match."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "resourceTiers"
+                                ],
+                                "description": "People holding an active subscription to one of the given resource tiers, personally or through their company."
+                              }
+                            },
+                            "required": [
+                              "tierRefs",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "description": "Rules a member or nonmember of the locations has to match at least one of. A person who matches several rules gets one message. With no rules, every active member of the locations matches, and no nonmember."
+                    }
+                  },
+                  "required": [
+                    "locationRefs",
+                    "rules"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Who receives the campaign."
+                },
+                "channel": {
+                  "type": "string",
+                  "enum": [
+                    "email",
+                    "push"
+                  ],
+                  "description": "Channel the campaign is sent through."
+                },
+                "charge": {
+                  "description": "What sending cost, debited from the network balance when sending started. Present for sent email campaigns.",
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Amount debited, in minor units of the currency."
+                    },
+                    "currencyCode": {
+                      "type": "string",
+                      "description": "ISO 4217 currency code of the amount."
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "currencyCode"
+                  ],
+                  "additionalProperties": false
+                },
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the campaign was created."
+                },
+                "createdBy": {
+                  "description": "Admin who created the campaign. Absent for a campaign created with client credentials.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the admin who created the campaign."
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "email": {
+                  "description": "Email content, used when the channel is email.",
+                  "type": "object",
+                  "properties": {
+                    "body": {
+                      "type": "string",
+                      "description": "Body of the email, in the same markdown as a Feed post."
+                    },
+                    "buttonLabel": {
+                      "description": "Label of the button below the body.",
+                      "type": "string"
+                    },
+                    "buttonUrl": {
+                      "description": "Link the button opens.",
+                      "type": "string"
+                    },
+                    "replyTo": {
+                      "description": "Address replies go to. Defaults to the network's email when omitted.",
+                      "type": "string"
+                    },
+                    "subject": {
+                      "type": "string",
+                      "description": "Subject of the email."
+                    }
+                  },
+                  "required": [
+                    "body",
+                    "subject"
+                  ],
+                  "additionalProperties": false
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the campaign."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the campaign, shown to admins only."
+                },
+                "push": {
+                  "description": "Push content, used when the channel is push.",
+                  "type": "object",
+                  "properties": {
+                    "body": {
+                      "type": "string",
+                      "description": "Body of the push notification."
+                    },
+                    "link": {
+                      "description": "Link to the member web portal page the notification opens in the member app. The member app home when omitted.",
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Title of the push notification."
+                    }
+                  },
+                  "required": [
+                    "body",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                },
+                "scheduleDate": {
+                  "description": "ISO timestamp of when the campaign is scheduled to be sent.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "sendDate": {
+                  "description": "ISO timestamp of when sending started.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "stats": {
+                  "type": "object",
+                  "properties": {
+                    "bounced": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of recipients whose email bounced."
+                    },
+                    "clicked": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of recipients who clicked a link in the email at least once."
+                    },
+                    "complained": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of recipients who marked the email as spam."
+                    },
+                    "delivered": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of recipients whose mail server accepted the email."
+                    },
+                    "opened": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of recipients who opened the email at least once."
+                    },
+                    "recipients": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Number of people the campaign was sent to. Zero until sending starts."
+                    }
+                  },
+                  "required": [
+                    "bounced",
+                    "clicked",
+                    "complained",
+                    "delivered",
+                    "opened",
+                    "recipients"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Delivery statistics of the campaign."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "scheduled",
+                    "sending",
+                    "sent",
+                    "canceled",
+                    "failed"
+                  ],
+                  "description": "Stage of the campaign."
+                },
+                "updateDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the campaign was last changed."
+                }
+              },
+              "required": [
+                "audience",
+                "channel",
+                "createDate",
+                "id",
+                "name",
+                "stats",
+                "status",
+                "updateDate"
+              ],
+              "additionalProperties": false
+            },
+            "description": "List of campaigns, newest first."
+          },
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "campaigns"
+        ],
+        "additionalProperties": false
+      },
+      "getCampaign": {
+        "type": "object",
+        "properties": {
+          "campaign": {
+            "type": "object",
+            "properties": {
+              "audience": {
+                "type": "object",
+                "properties": {
+                  "locationRefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of the locations whose active members the rules choose from."
+                  },
+                  "rules": {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "companyRefs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "description": "IDs of the companies whose people match."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "companies"
+                              ],
+                              "description": "Members of the given companies."
+                            }
+                          },
+                          "required": [
+                            "companyRefs",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "eventRefs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "description": "IDs of the events whose attendees match."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "eventAttendees"
+                              ],
+                              "description": "Attendees of the given events."
+                            }
+                          },
+                          "required": [
+                            "eventRefs",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "membershipTypes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "member",
+                                  "nonmember"
+                                ]
+                              },
+                              "description": "Membership types whose customers match."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "membershipTypes"
+                              ],
+                              "description": "Everyone at the locations with one of the given membership types."
+                            }
+                          },
+                          "required": [
+                            "membershipTypes",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "people"
+                              ],
+                              "description": "The given people."
+                            },
+                            "userRefs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "description": "IDs of the users who match."
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "userRefs"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "planRefs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "description": "IDs of the plans whose holders match."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "plans"
+                              ],
+                              "description": "People holding an active subscription to one of the given plans, personally or through their company."
+                            }
+                          },
+                          "required": [
+                            "planRefs",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "tierRefs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "description": "IDs of the resource tiers whose holders match."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "resourceTiers"
+                              ],
+                              "description": "People holding an active subscription to one of the given resource tiers, personally or through their company."
+                            }
+                          },
+                          "required": [
+                            "tierRefs",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "description": "Rules a member or nonmember of the locations has to match at least one of. A person who matches several rules gets one message. With no rules, every active member of the locations matches, and no nonmember."
+                  }
+                },
+                "required": [
+                  "locationRefs",
+                  "rules"
+                ],
+                "additionalProperties": false,
+                "description": "Who receives the campaign."
+              },
+              "channel": {
+                "type": "string",
+                "enum": [
+                  "email",
+                  "push"
+                ],
+                "description": "Channel the campaign is sent through."
+              },
+              "charge": {
+                "description": "What sending cost, debited from the network balance when sending started. Present for sent email campaigns.",
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Amount debited, in minor units of the currency."
+                  },
+                  "currencyCode": {
+                    "type": "string",
+                    "description": "ISO 4217 currency code of the amount."
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currencyCode"
+                ],
+                "additionalProperties": false
+              },
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the campaign was created."
+              },
+              "createdBy": {
+                "description": "Admin who created the campaign. Absent for a campaign created with client credentials.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the admin who created the campaign."
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "email": {
+                "description": "Email content, used when the channel is email.",
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "description": "Body of the email, in the same markdown as a Feed post."
+                  },
+                  "buttonLabel": {
+                    "description": "Label of the button below the body.",
+                    "type": "string"
+                  },
+                  "buttonUrl": {
+                    "description": "Link the button opens.",
+                    "type": "string"
+                  },
+                  "replyTo": {
+                    "description": "Address replies go to. Defaults to the network's email when omitted.",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Subject of the email."
+                  }
+                },
+                "required": [
+                  "body",
+                  "subject"
+                ],
+                "additionalProperties": false
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the campaign."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the campaign, shown to admins only."
+              },
+              "push": {
+                "description": "Push content, used when the channel is push.",
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "description": "Body of the push notification."
+                  },
+                  "link": {
+                    "description": "Link to the member web portal page the notification opens in the member app. The member app home when omitted.",
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the push notification."
+                  }
+                },
+                "required": [
+                  "body",
+                  "title"
+                ],
+                "additionalProperties": false
+              },
+              "scheduleDate": {
+                "description": "ISO timestamp of when the campaign is scheduled to be sent.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "sendDate": {
+                "description": "ISO timestamp of when sending started.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "stats": {
+                "type": "object",
+                "properties": {
+                  "bounced": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of recipients whose email bounced."
+                  },
+                  "clicked": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of recipients who clicked a link in the email at least once."
+                  },
+                  "complained": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of recipients who marked the email as spam."
+                  },
+                  "delivered": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of recipients whose mail server accepted the email."
+                  },
+                  "opened": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of recipients who opened the email at least once."
+                  },
+                  "recipients": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Number of people the campaign was sent to. Zero until sending starts."
+                  }
+                },
+                "required": [
+                  "bounced",
+                  "clicked",
+                  "complained",
+                  "delivered",
+                  "opened",
+                  "recipients"
+                ],
+                "additionalProperties": false,
+                "description": "Delivery statistics of the campaign."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "draft",
+                  "scheduled",
+                  "sending",
+                  "sent",
+                  "canceled",
+                  "failed"
+                ],
+                "description": "Stage of the campaign."
+              },
+              "updateDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the campaign was last changed."
+              }
+            },
+            "required": [
+              "audience",
+              "channel",
+              "createDate",
+              "id",
+              "name",
+              "stats",
+              "status",
+              "updateDate"
+            ],
+            "additionalProperties": false,
+            "description": "The campaign."
+          }
+        },
+        "required": [
+          "campaign"
+        ],
+        "additionalProperties": false
       },
       "getCheckIns": {
         "type": "object",
@@ -30948,6 +32217,10 @@
                 "type": "boolean",
                 "description": "Whether the admin can manage customers."
               },
+              "deliveries": {
+                "type": "boolean",
+                "description": "Whether the admin can manage deliveries."
+              },
               "events": {
                 "type": "boolean",
                 "description": "Whether the admin can manage events."
@@ -30992,6 +32265,7 @@
               "billing",
               "checkIns",
               "customers",
+              "deliveries",
               "events",
               "exclusiveLocations",
               "feed",
@@ -31058,6 +32332,15 @@
                   "write"
                 ],
                 "description": "Access level of the admin in the customers area."
+              },
+              "deliveries": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read",
+                  "write"
+                ],
+                "description": "Access level of the admin in the deliveries area."
               },
               "events": {
                 "type": "string",
@@ -31129,6 +32412,7 @@
               "campaigns",
               "checkIns",
               "customers",
+              "deliveries",
               "events",
               "feed",
               "resources",
@@ -31677,19 +32961,19 @@
                   "properties": {
                     "bookingCreatedByAdmin": {
                       "type": "boolean",
-                      "description": "Send confirmation when an admin creates a booking."
+                      "description": "Send confirmation when the booking is for an admin."
                     },
                     "bookingCreatedByMember": {
                       "type": "boolean",
-                      "description": "Send confirmation when a member creates a booking."
+                      "description": "Send confirmation when the booking is for a member."
                     },
                     "bookingCreatedByNetworkMember": {
                       "type": "boolean",
-                      "description": "Send confirmation when a network member creates a booking."
+                      "description": "Send confirmation when the booking is for a network member."
                     },
                     "bookingCreatedByPublic": {
                       "type": "boolean",
-                      "description": "Send confirmation when a public user creates a booking."
+                      "description": "Send confirmation when the booking is for a public user."
                     },
                     "template": {
                       "type": "string",
@@ -33536,19 +34820,19 @@
                 "properties": {
                   "bookingCreatedByAdmin": {
                     "type": "boolean",
-                    "description": "Send confirmation when an admin creates a booking."
+                    "description": "Send confirmation when the booking is for an admin."
                   },
                   "bookingCreatedByMember": {
                     "type": "boolean",
-                    "description": "Send confirmation when a member creates a booking."
+                    "description": "Send confirmation when the booking is for a member."
                   },
                   "bookingCreatedByNetworkMember": {
                     "type": "boolean",
-                    "description": "Send confirmation when a network member creates a booking."
+                    "description": "Send confirmation when the booking is for a network member."
                   },
                   "bookingCreatedByPublic": {
                     "type": "boolean",
-                    "description": "Send confirmation when a public user creates a booking."
+                    "description": "Send confirmation when the booking is for a public user."
                   },
                   "template": {
                     "type": "string",
@@ -47429,7 +48713,56 @@
       },
       "ticket": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
+          "companyRefRequester": {
+            "description": "ID of the company the ticket is requested for. Members of the company can read and comment on it, and userRequester is the member who opened it.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "companyRequester": {
+            "description": "Company the ticket is requested for.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the company."
+              },
+              "logo": {
+                "description": "Company logo uploaded by an administrator.",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "Storage key of the company logo."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Public URL of the company logo."
+                  }
+                },
+                "required": [
+                  "key",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "publicLogoUrl": {
+                "description": "Public logo URL derived from the company website.",
+                "type": "string"
+              },
+              "title": {
+                "type": "string",
+                "description": "Company name."
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "createDate": {
             "type": "string",
             "format": "date-time",
@@ -47762,8 +49095,7 @@
           "status",
           "type",
           "updateDate"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ticketActivity": {
         "type": "object",
@@ -59667,6 +60999,563 @@
         },
         "required": true
       },
+      "createCampaign": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "campaign": {
+                  "type": "object",
+                  "properties": {
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "locationRefs": {
+                          "description": "IDs of the locations whose active members the rules choose from.",
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "rules": {
+                          "description": "Rules a member or nonmember of the locations has to match at least one of. Defaults to none, which reaches every active member of the locations.",
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "companyRefs": {
+                                    "description": "IDs of the companies whose people match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "companies"
+                                    ],
+                                    "description": "People of the given companies."
+                                  }
+                                },
+                                "required": [
+                                  "companyRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "eventRefs": {
+                                    "description": "IDs of the events whose attendees match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "eventAttendees"
+                                    ],
+                                    "description": "Attendees of the given events, not their hosts."
+                                  }
+                                },
+                                "required": [
+                                  "eventRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "membershipTypes": {
+                                    "description": "Membership types whose customers match: member, nonmember, or both.",
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "member",
+                                        "nonmember"
+                                      ]
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "membershipTypes"
+                                    ],
+                                    "description": "Everyone at the locations with one of the given membership types."
+                                  }
+                                },
+                                "required": [
+                                  "membershipTypes",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "people"
+                                    ],
+                                    "description": "The given people."
+                                  },
+                                  "userRefs": {
+                                    "description": "IDs of the users who match, the user IDs of user customers.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "userRefs"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "planRefs": {
+                                    "description": "IDs of the plans whose holders match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "plans"
+                                    ],
+                                    "description": "People holding an active subscription to one of the given plans, personally or through their company."
+                                  }
+                                },
+                                "required": [
+                                  "planRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "tierRefs": {
+                                    "description": "IDs of the resource tiers whose holders match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "resourceTiers"
+                                    ],
+                                    "description": "People holding an active subscription to one of the given resource tiers, personally or through their company."
+                                  }
+                                },
+                                "required": [
+                                  "tierRefs",
+                                  "type"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "locationRefs"
+                      ],
+                      "description": "Who receives the campaign. An update replaces the whole audience with this one."
+                    },
+                    "channel": {
+                      "type": "string",
+                      "enum": [
+                        "email",
+                        "push"
+                      ],
+                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns."
+                    },
+                    "email": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 20000
+                        },
+                        "buttonLabel": {
+                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient.",
+                          "type": "string",
+                          "maxLength": 60
+                        },
+                        "buttonUrl": {
+                          "description": "https link the button opens, given together with buttonLabel.",
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "replyTo": {
+                          "description": "Address replies go to. Defaults to the network's email when omitted.",
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "subject": {
+                          "default": "",
+                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "description": "Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep."
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "description": "Name of the campaign, shown to admins only."
+                    },
+                    "push": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Body of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 1000
+                        },
+                        "link": {
+                          "description": "Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted.",
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "title": {
+                          "default": "",
+                          "description": "Title of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 100
+                        }
+                      },
+                      "description": "Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep."
+                    }
+                  },
+                  "required": [
+                    "audience",
+                    "channel",
+                    "name"
+                  ],
+                  "description": "The campaign to create as a draft."
+                }
+              },
+              "required": [
+                "campaign"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchCampaign": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "campaign": {
+                  "type": "object",
+                  "properties": {
+                    "audience": {
+                      "type": "object",
+                      "properties": {
+                        "locationRefs": {
+                          "description": "IDs of the locations whose active members the rules choose from.",
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "rules": {
+                          "description": "Rules a member or nonmember of the locations has to match at least one of. Defaults to none, which reaches every active member of the locations.",
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "companyRefs": {
+                                    "description": "IDs of the companies whose people match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "companies"
+                                    ],
+                                    "description": "People of the given companies."
+                                  }
+                                },
+                                "required": [
+                                  "companyRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "eventRefs": {
+                                    "description": "IDs of the events whose attendees match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "eventAttendees"
+                                    ],
+                                    "description": "Attendees of the given events, not their hosts."
+                                  }
+                                },
+                                "required": [
+                                  "eventRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "membershipTypes": {
+                                    "description": "Membership types whose customers match: member, nonmember, or both.",
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "member",
+                                        "nonmember"
+                                      ]
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "membershipTypes"
+                                    ],
+                                    "description": "Everyone at the locations with one of the given membership types."
+                                  }
+                                },
+                                "required": [
+                                  "membershipTypes",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "people"
+                                    ],
+                                    "description": "The given people."
+                                  },
+                                  "userRefs": {
+                                    "description": "IDs of the users who match, the user IDs of user customers.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "userRefs"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "planRefs": {
+                                    "description": "IDs of the plans whose holders match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "plans"
+                                    ],
+                                    "description": "People holding an active subscription to one of the given plans, personally or through their company."
+                                  }
+                                },
+                                "required": [
+                                  "planRefs",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "tierRefs": {
+                                    "description": "IDs of the resource tiers whose holders match.",
+                                    "minItems": 1,
+                                    "maxItems": 500,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "resourceTiers"
+                                    ],
+                                    "description": "People holding an active subscription to one of the given resource tiers, personally or through their company."
+                                  }
+                                },
+                                "required": [
+                                  "tierRefs",
+                                  "type"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "locationRefs"
+                      ],
+                      "description": "Who receives the campaign. An update replaces the whole audience with this one."
+                    },
+                    "channel": {
+                      "type": "string",
+                      "enum": [
+                        "email",
+                        "push"
+                      ],
+                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns."
+                    },
+                    "email": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 20000
+                        },
+                        "buttonLabel": {
+                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient.",
+                          "type": "string",
+                          "maxLength": 60
+                        },
+                        "buttonUrl": {
+                          "description": "https link the button opens, given together with buttonLabel.",
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "replyTo": {
+                          "description": "Address replies go to. Defaults to the network's email when omitted.",
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "subject": {
+                          "default": "",
+                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "description": "Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep."
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "description": "Name of the campaign, shown to admins only."
+                    },
+                    "push": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Body of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 1000
+                        },
+                        "link": {
+                          "description": "Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted.",
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "title": {
+                          "default": "",
+                          "description": "Title of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 100
+                        }
+                      },
+                      "description": "Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep."
+                    }
+                  },
+                  "description": "Campaign fields to change. Omitted fields keep their current values."
+                }
+              },
+              "required": [
+                "campaign"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "patchCheckIn": {
         "content": {
           "application/json": {
@@ -63149,19 +65038,19 @@
                       "properties": {
                         "bookingCreatedByAdmin": {
                           "type": "boolean",
-                          "description": "Send confirmation when an admin creates a booking."
+                          "description": "Send confirmation when the booking is for an admin."
                         },
                         "bookingCreatedByMember": {
                           "type": "boolean",
-                          "description": "Send confirmation when a member creates a booking."
+                          "description": "Send confirmation when the booking is for a member."
                         },
                         "bookingCreatedByNetworkMember": {
                           "type": "boolean",
-                          "description": "Send confirmation when a network member creates a booking."
+                          "description": "Send confirmation when the booking is for a network member."
                         },
                         "bookingCreatedByPublic": {
                           "type": "boolean",
-                          "description": "Send confirmation when a public user creates a booking."
+                          "description": "Send confirmation when the booking is for a public user."
                         },
                         "template": {
                           "type": "string",
@@ -64442,19 +66331,19 @@
                       "properties": {
                         "bookingCreatedByAdmin": {
                           "type": "boolean",
-                          "description": "Send confirmation when an admin creates a booking."
+                          "description": "Send confirmation when the booking is for an admin."
                         },
                         "bookingCreatedByMember": {
                           "type": "boolean",
-                          "description": "Send confirmation when a member creates a booking."
+                          "description": "Send confirmation when the booking is for a member."
                         },
                         "bookingCreatedByNetworkMember": {
                           "type": "boolean",
-                          "description": "Send confirmation when a network member creates a booking."
+                          "description": "Send confirmation when the booking is for a network member."
                         },
                         "bookingCreatedByPublic": {
                           "type": "boolean",
-                          "description": "Send confirmation when a public user creates a booking."
+                          "description": "Send confirmation when the booking is for a public user."
                         },
                         "template": {
                           "type": "string",
@@ -67966,6 +69855,11 @@
                 "ticket": {
                   "type": "object",
                   "properties": {
+                    "companyRefRequester": {
+                      "description": "ID of the requester's company to request the ticket for, so the company's members can read and comment on it. When omitted, only the requester sees the ticket. A discriminationAndHarassment ticket cannot be requested for a company.",
+                      "type": "string",
+                      "format": "uuid"
+                    },
                     "locationRef": {
                       "type": "string",
                       "format": "uuid",

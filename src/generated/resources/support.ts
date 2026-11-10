@@ -19,6 +19,8 @@ export interface GetSupportTicketsQuery {
   locationRef: string;
   /** The number of items to return */
   limit?: number;
+  /** Filter tickets by the ids of the companies they are requested for. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The companies must exist in the location. Support admins of the location can filter by any company; other users only by a company they are a member of. With membershipRefRequester, lists the tickets that match either filter. */
+  companyRefRequester?: string;
   /** Filter tickets by requester membership ids. Pass one UUID or multiple unique comma-separated UUIDs without spaces, e.g. `id` or `id1,id2,id3`, up to 100. The memberships must exist in the location. Admins can filter by any requester; other users only by their own membership. */
   membershipRefRequester?: string;
   /** Token to retrieve the next page of results. */
