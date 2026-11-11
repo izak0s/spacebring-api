@@ -16382,10 +16382,10 @@ export interface components {
                 /** @description Whether the start date is fixed. */
                 startFixed: boolean;
                 /**
-                 * @description Subscription status.
+                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
                  * @enum {string}
                  */
-                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled";
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
                 /**
                  * @description Whether the subscription belongs to a company or user.
                  * @enum {string}
@@ -16959,10 +16959,10 @@ export interface components {
             /** @description Whether the start date is fixed. */
             startFixed: boolean;
             /**
-             * @description Subscription status.
+             * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
              * @enum {string}
              */
-            status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled";
+            status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
             /**
              * @description Whether the subscription belongs to a company or user.
              * @enum {string}
@@ -17537,10 +17537,10 @@ export interface components {
                 /** @description Whether the start date is fixed. */
                 startFixed: boolean;
                 /**
-                 * @description Subscription status.
+                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
                  * @enum {string}
                  */
-                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled";
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
                 /**
                  * @description Whether the subscription belongs to a company or user.
                  * @enum {string}
@@ -35413,7 +35413,7 @@ export interface operations {
                 order?: string;
                 /** @description UUID of the plan to filter subscriptions by. Applies to a location's or the network's subscriptions. */
                 planRef?: string;
-                /** @description Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
+                /** @description Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended, 'requested' asked for by a person and not approved by an administrator yet, 'declined' a request an administrator declined or nobody answered in time, 'withdrawn' a request the person took back. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled, requested, declined, withdrawn. */
                 status?: string;
             };
             header?: {
