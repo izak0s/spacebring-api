@@ -25,7 +25,7 @@ export interface GetSubscriptionsQuery {
   order?: string;
   /** UUID of the plan to filter subscriptions by. Applies to a location's or the network's subscriptions. */
   planRef?: string;
-  /** Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled. */
+  /** Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended, 'requested' asked for by a person and not approved by an administrator yet, 'declined' a request an administrator declined or nobody answered in time, 'withdrawn' a request the person took back. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled, requested, declined, withdrawn. */
   status?: string;
 }
 

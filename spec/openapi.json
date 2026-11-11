@@ -13602,7 +13602,7 @@
             "in": "query",
             "name": "status",
             "required": false,
-            "description": "Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled.",
+            "description": "Filter by status: 'active' started and not ended or canceled, 'scheduled' starts in the future, 'incomplete' setup not finished (such as an unsigned contract or an unpaid purchase), 'incompleteExpired' setup was never finished (the contract was declined or the payment canceled), 'canceled' canceled or ended, 'requested' asked for by a person and not approved by an administrator yet, 'declined' a request an administrator declined or nobody answered in time, 'withdrawn' a request the person took back. Defaults to active, scheduled and incomplete. Comma-separated, one or more of: active, scheduled, incomplete, incompleteExpired, canceled, requested, declined, withdrawn.",
             "schema": {
               "type": "string"
             }
@@ -42693,6 +42693,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "comment": {
                   "description": "Optional comment left by the customer.",
@@ -43897,8 +43898,7 @@
                 "number",
                 "status",
                 "user"
-              ],
-              "additionalProperties": false
+              ]
             },
             "description": "List of orders."
           },
@@ -43917,6 +43917,8 @@
         "properties": {
           "order": {
             "type": "object",
+            "additionalProperties": false,
+            "description": "The order.",
             "properties": {
               "comment": {
                 "description": "Optional comment left by the customer.",
@@ -45121,9 +45123,7 @@
               "number",
               "status",
               "user"
-            ],
-            "additionalProperties": false,
-            "description": "The order."
+            ]
           }
         },
         "required": [
@@ -45146,6 +45146,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "addPendingItemsToInvoice": {
                   "type": "boolean",
@@ -46189,9 +46190,12 @@
                     "scheduled",
                     "incomplete",
                     "incompleteExpired",
-                    "canceled"
+                    "canceled",
+                    "requested",
+                    "declined",
+                    "withdrawn"
                   ],
-                  "description": "Subscription status."
+                  "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
                 },
                 "subscriptionType": {
                   "type": "string",
@@ -46324,8 +46328,7 @@
                 "status",
                 "subscriptionType",
                 "timezoneId"
-              ],
-              "additionalProperties": false
+              ]
             },
             "description": "List of subscriptions."
           }
@@ -46337,6 +46340,7 @@
       },
       "subscription": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "addPendingItemsToInvoice": {
             "type": "boolean",
@@ -47380,9 +47384,12 @@
               "scheduled",
               "incomplete",
               "incompleteExpired",
-              "canceled"
+              "canceled",
+              "requested",
+              "declined",
+              "withdrawn"
             ],
-            "description": "Subscription status."
+            "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
           },
           "subscriptionType": {
             "type": "string",
@@ -47515,14 +47522,15 @@
           "status",
           "subscriptionType",
           "timezoneId"
-        ],
-        "additionalProperties": false
+        ]
       },
       "getSubscription": {
         "type": "object",
         "properties": {
           "subscription": {
             "type": "object",
+            "additionalProperties": false,
+            "description": "The subscription.",
             "properties": {
               "addPendingItemsToInvoice": {
                 "type": "boolean",
@@ -48566,9 +48574,12 @@
                   "scheduled",
                   "incomplete",
                   "incompleteExpired",
-                  "canceled"
+                  "canceled",
+                  "requested",
+                  "declined",
+                  "withdrawn"
                 ],
-                "description": "Subscription status."
+                "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
               },
               "subscriptionType": {
                 "type": "string",
@@ -48701,9 +48712,7 @@
               "status",
               "subscriptionType",
               "timezoneId"
-            ],
-            "additionalProperties": false,
-            "description": "The subscription."
+            ]
           }
         },
         "required": [
