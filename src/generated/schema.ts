@@ -16330,6 +16330,19 @@ export interface components {
                      */
                     resumesAt?: string;
                 };
+                /** @description Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged. */
+                paymentMethod?: {
+                    /**
+                     * Format: uuid
+                     * @description Payment method ID.
+                     */
+                    id: string;
+                    /**
+                     * @description Payment gateway of the payment method.
+                     * @enum {string}
+                     */
+                    pgType: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
+                };
                 /** @description Payment status for subscriptions created by the current user. */
                 payment?: {
                     /** @description Pending payment request details. */
@@ -16382,10 +16395,10 @@ export interface components {
                 /** @description Whether the start date is fixed. */
                 startFixed: boolean;
                 /**
-                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
+                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription.
                  * @enum {string}
                  */
-                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn" | "approved";
                 /**
                  * @description Whether the subscription belongs to a company or user.
                  * @enum {string}
@@ -16907,6 +16920,19 @@ export interface components {
                  */
                 resumesAt?: string;
             };
+            /** @description Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged. */
+            paymentMethod?: {
+                /**
+                 * Format: uuid
+                 * @description Payment method ID.
+                 */
+                id: string;
+                /**
+                 * @description Payment gateway of the payment method.
+                 * @enum {string}
+                 */
+                pgType: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
+            };
             /** @description Payment status for subscriptions created by the current user. */
             payment?: {
                 /** @description Pending payment request details. */
@@ -16959,10 +16985,10 @@ export interface components {
             /** @description Whether the start date is fixed. */
             startFixed: boolean;
             /**
-             * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
+             * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription.
              * @enum {string}
              */
-            status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
+            status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn" | "approved";
             /**
              * @description Whether the subscription belongs to a company or user.
              * @enum {string}
@@ -17485,6 +17511,19 @@ export interface components {
                      */
                     resumesAt?: string;
                 };
+                /** @description Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged. */
+                paymentMethod?: {
+                    /**
+                     * Format: uuid
+                     * @description Payment method ID.
+                     */
+                    id: string;
+                    /**
+                     * @description Payment gateway of the payment method.
+                     * @enum {string}
+                     */
+                    pgType: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
+                };
                 /** @description Payment status for subscriptions created by the current user. */
                 payment?: {
                     /** @description Pending payment request details. */
@@ -17537,10 +17576,10 @@ export interface components {
                 /** @description Whether the start date is fixed. */
                 startFixed: boolean;
                 /**
-                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back.
+                 * @description Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription.
                  * @enum {string}
                  */
-                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn";
+                status: "active" | "scheduled" | "incomplete" | "incompleteExpired" | "canceled" | "requested" | "declined" | "withdrawn" | "approved";
                 /**
                  * @description Whether the subscription belongs to a company or user.
                  * @enum {string}
@@ -27229,6 +27268,19 @@ export interface components {
                             /** @description UniFi Access policy reference. */
                             unifiAccessGroupRef?: string | null;
                         }[];
+                        /** @description Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged. */
+                        paymentMethod?: {
+                            /**
+                             * Format: uuid
+                             * @description Payment method ID.
+                             */
+                            id: string;
+                            /**
+                             * @description Payment gateway of the payment method.
+                             * @enum {string}
+                             */
+                            pgType: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
+                        };
                         /**
                          * @description Billing period.
                          * @enum {string}
@@ -27440,6 +27492,19 @@ export interface components {
                              * @description ISO timestamp when payment collection resumes.
                              */
                             resumesAt?: string;
+                        } | null;
+                        /** @description Payment method this subscription's invoices are charged to. Set to null to charge the customer's default payment method. */
+                        paymentMethod?: {
+                            /**
+                             * Format: uuid
+                             * @description Payment method ID.
+                             */
+                            id: string;
+                            /**
+                             * @description Payment gateway of the payment method.
+                             * @enum {string}
+                             */
+                            pgType: "hyperpay" | "mollie" | "paypal" | "paytabs" | "plata" | "stripe" | "tap" | "wayforpay";
                         } | null;
                         /** @description Invoice payment settings by product type. */
                         payWithInvoice?: {
