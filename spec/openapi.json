@@ -46077,6 +46077,36 @@
                   ],
                   "additionalProperties": false
                 },
+                "paymentMethod": {
+                  "description": "Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Payment method ID."
+                    },
+                    "pgType": {
+                      "type": "string",
+                      "enum": [
+                        "hyperpay",
+                        "mollie",
+                        "paypal",
+                        "paytabs",
+                        "plata",
+                        "stripe",
+                        "tap",
+                        "wayforpay"
+                      ],
+                      "description": "Payment gateway of the payment method."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "pgType"
+                  ],
+                  "additionalProperties": false
+                },
                 "payment": {
                   "description": "Payment status for subscriptions created by the current user.",
                   "type": "object",
@@ -46193,9 +46223,10 @@
                     "canceled",
                     "requested",
                     "declined",
-                    "withdrawn"
+                    "withdrawn",
+                    "approved"
                   ],
-                  "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
+                  "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription."
                 },
                 "subscriptionType": {
                   "type": "string",
@@ -47271,6 +47302,36 @@
             ],
             "additionalProperties": false
           },
+          "paymentMethod": {
+            "description": "Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Payment method ID."
+              },
+              "pgType": {
+                "type": "string",
+                "enum": [
+                  "hyperpay",
+                  "mollie",
+                  "paypal",
+                  "paytabs",
+                  "plata",
+                  "stripe",
+                  "tap",
+                  "wayforpay"
+                ],
+                "description": "Payment gateway of the payment method."
+              }
+            },
+            "required": [
+              "id",
+              "pgType"
+            ],
+            "additionalProperties": false
+          },
           "payment": {
             "description": "Payment status for subscriptions created by the current user.",
             "type": "object",
@@ -47387,9 +47448,10 @@
               "canceled",
               "requested",
               "declined",
-              "withdrawn"
+              "withdrawn",
+              "approved"
             ],
-            "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
+            "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription."
           },
           "subscriptionType": {
             "type": "string",
@@ -48461,6 +48523,36 @@
                 ],
                 "additionalProperties": false
               },
+              "paymentMethod": {
+                "description": "Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged.",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Payment method ID."
+                  },
+                  "pgType": {
+                    "type": "string",
+                    "enum": [
+                      "hyperpay",
+                      "mollie",
+                      "paypal",
+                      "paytabs",
+                      "plata",
+                      "stripe",
+                      "tap",
+                      "wayforpay"
+                    ],
+                    "description": "Payment gateway of the payment method."
+                  }
+                },
+                "required": [
+                  "id",
+                  "pgType"
+                ],
+                "additionalProperties": false
+              },
               "payment": {
                 "description": "Payment status for subscriptions created by the current user.",
                 "type": "object",
@@ -48577,9 +48669,10 @@
                   "canceled",
                   "requested",
                   "declined",
-                  "withdrawn"
+                  "withdrawn",
+                  "approved"
                 ],
-                "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, and `withdrawn` when the person takes it back."
+                "description": "Subscription status. A `requested` subscription is one a person asked for that an administrator has not approved yet: it bills nothing, grants nothing and holds no resource. It becomes `declined` when an administrator declines it or nobody answers it in time, `withdrawn` when the person takes it back, and `approved` when an administrator approves it, which creates a separate subscription."
               },
               "subscriptionType": {
                 "type": "string",
@@ -68742,6 +68835,35 @@
                             }
                           }
                         },
+                        "paymentMethod": {
+                          "description": "Payment method this subscription's invoices are charged to. When missing, the customer's default payment method is charged.",
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "description": "Payment method ID."
+                            },
+                            "pgType": {
+                              "type": "string",
+                              "enum": [
+                                "hyperpay",
+                                "mollie",
+                                "paypal",
+                                "paytabs",
+                                "plata",
+                                "stripe",
+                                "tap",
+                                "wayforpay"
+                              ],
+                              "description": "Payment gateway of the payment method."
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "pgType"
+                          ]
+                        },
                         "period": {
                           "type": "string",
                           "enum": [
@@ -69176,6 +69298,36 @@
                       },
                       "required": [
                         "behavior"
+                      ]
+                    },
+                    "paymentMethod": {
+                      "description": "Payment method this subscription's invoices are charged to. Set to null to charge the customer's default payment method.",
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Payment method ID."
+                        },
+                        "pgType": {
+                          "type": "string",
+                          "enum": [
+                            "hyperpay",
+                            "mollie",
+                            "paypal",
+                            "paytabs",
+                            "plata",
+                            "stripe",
+                            "tap",
+                            "wayforpay"
+                          ],
+                          "description": "Payment gateway of the payment method."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "pgType"
                       ]
                     },
                     "payWithInvoice": {
