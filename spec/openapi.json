@@ -6370,6 +6370,548 @@
         }
       }
     },
+    "/deliveries/v1": {
+      "get": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Retrieve deliveries",
+        "description": "Retrieve the deliveries of the network, the most recently added first, or only those of a location, a customer, or a user. A delivery is a parcel, letter, or other item kept at a location until its customer picks it up; deleted deliveries are left out. With bearer token authentication, the user must be an administrator, and the list leaves out deliveries at locations where they cannot view deliveries; a user can also list their own with their <code>userRef</code>. <h3>OAuth</h3>Required scopes: <code>deliveries.readonly</code> or <code>deliveries</code>",
+        "operationId": "getDeliveries",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter deliveries added on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter deliveries added on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "customerRef",
+            "required": false,
+            "description": "UUID of the customer, a person's or a company's, whose deliveries to list. Cannot be combined with userRef.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of deliveries per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationRef",
+            "required": false,
+            "description": "UUID of the location whose deliveries to list. Omit to list deliveries across every location of the network.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "description": "Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "description": "Filter by status. Defaults to every status. Comma-separated, one or more of: pending, pickedUp.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userRef",
+            "required": false,
+            "description": "UUID of the user whose deliveries to list: those for the user and for the companies the user manages. Users can list their own; administrators see those in the locations they manage.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries.readonly",
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getDeliveries"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Create a delivery",
+        "description": "Record a delivery that arrived at a location for one of its customers, a person or a company. The delivery starts out <code>pending</code>, and the customer is notified about it and reminded to pick it up. To attach a photo, create a media upload first and pass its key as <code>media[0].key</code>. With bearer token authentication, the user must be an administrator who can manage deliveries in the location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
+        "operationId": "createDelivery",
+        "parameters": [
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createDelivery"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getDelivery"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deliveries/v1/{deliveryId}": {
+      "get": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Get a delivery",
+        "description": "Get a delivery by its id. A deleted delivery is not found. With bearer token authentication, the user must be an administrator who can view deliveries in the delivery's location, the person the delivery is for, or a manager of the company it is for. <h3>OAuth</h3>Required scopes: <code>deliveries.readonly</code> or <code>deliveries</code>",
+        "operationId": "getDelivery",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deliveryId",
+            "required": true,
+            "description": "The ID of the delivery.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries.readonly",
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getDelivery"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Update a delivery",
+        "description": "Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
+        "operationId": "patchDelivery",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deliveryId",
+            "required": true,
+            "description": "The ID of the delivery.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/patchDelivery"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Delete a delivery",
+        "description": "Delete a delivery, such as one that was never picked up and went back to the carrier. A deleted delivery leaves the lists and cannot be read again. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
+        "operationId": "deleteDelivery",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deliveryId",
+            "required": true,
+            "description": "The ID of the delivery.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deliveries/v1/media": {
+      "post": {
+        "tags": [
+          "Deliveries"
+        ],
+        "summary": "Create a media upload",
+        "description": "Create a media upload for a photo of a delivery. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a delivery within an hour; an image that is not attached by then is discarded. With bearer token authentication, the user must be an administrator in the network. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
+        "operationId": "createDeliveryMedia",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "spacebring-network-id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "description": "The id of the network. Required when using bearer token authentication"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createDeliveryMedia"
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "deliveries"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createDeliveryMedia"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/discounts/v1/coupons": {
       "get": {
         "tags": [
@@ -17232,6 +17774,8 @@
               "checkIns": "Read and write check-ins",
               "community.readonly": "Read community companies and memberships",
               "community": "Read and write community companies and memberships",
+              "deliveries.readonly": "Read deliveries",
+              "deliveries": "Read and write deliveries",
               "events.readonly": "Read events and tickets",
               "events": "Read and write events and tickets",
               "feed.readonly": "Read feed posts",
@@ -26976,6 +27520,505 @@
         ],
         "additionalProperties": false
       },
+      "getDeliveries": {
+        "type": "object",
+        "properties": {
+          "deliveries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "comment": {
+                  "nullable": true,
+                  "description": "Comment about the delivery for the customer, such as the carrier or how to handle the item.",
+                  "type": "string"
+                },
+                "createDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO timestamp of when the delivery was added."
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier of the delivery."
+                },
+                "locationRef": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the location where the delivery is kept."
+                },
+                "media": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "Storage key of the media file."
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Public URL of the media file."
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Photo of the delivery, or an empty list when it has none."
+                },
+                "pickupDate": {
+                  "nullable": true,
+                  "description": "ISO timestamp of when the delivery was picked up.",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "customer": {
+                  "type": "object",
+                  "properties": {
+                    "company": {
+                      "description": "The company the delivery is for, read from the customers service so the name is current.",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the company."
+                        },
+                        "logo": {
+                          "description": "Company logo, when the company has one.",
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "description": "Storage key of the logo."
+                            },
+                            "url": {
+                              "type": "string",
+                              "description": "Public URL of the logo."
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "url"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "publicLogoUrl": {
+                          "description": "Logo found from the company website, to show when the company has no logo of its own.",
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Name of the company."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the customer the delivery is for."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "company",
+                        "user"
+                      ],
+                      "description": "Whether the delivery is for a person or for a whole company."
+                    },
+                    "user": {
+                      "description": "The person the delivery is for, read from the users service so the details are current.",
+                      "type": "object",
+                      "properties": {
+                        "deleteDate": {
+                          "description": "ISO timestamp of when the user account was deleted.",
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "email": {
+                          "description": "Email address of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier of the user."
+                        },
+                        "name": {
+                          "description": "First name of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "description": "Phone number of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "description": "User profile photo URL.",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "surname": {
+                          "description": "Surname of the user.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "description": "The customer the delivery is for."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "pickedUp"
+                  ],
+                  "description": "Whether the delivery is still kept at the location or was picked up."
+                }
+              },
+              "required": [
+                "comment",
+                "createDate",
+                "id",
+                "locationRef",
+                "media",
+                "pickupDate",
+                "customer",
+                "status"
+              ]
+            },
+            "description": "List of deliveries, the most recently added first."
+          },
+          "nextPageToken": {
+            "description": "Pagination token to fetch the next page of results.",
+            "type": "string"
+          },
+          "searchQueryNext": {
+            "description": "Search query parameters for the next page of results. Includes all filters used to fetch the current page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "deliveries"
+        ],
+        "additionalProperties": false
+      },
+      "getDelivery": {
+        "type": "object",
+        "properties": {
+          "delivery": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "The delivery.",
+            "properties": {
+              "comment": {
+                "nullable": true,
+                "description": "Comment about the delivery for the customer, such as the carrier or how to handle the item.",
+                "type": "string"
+              },
+              "createDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO timestamp of when the delivery was added."
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the delivery."
+              },
+              "locationRef": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the location where the delivery is kept."
+              },
+              "media": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Storage key of the media file."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Public URL of the media file."
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Photo of the delivery, or an empty list when it has none."
+              },
+              "pickupDate": {
+                "nullable": true,
+                "description": "ISO timestamp of when the delivery was picked up.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "customer": {
+                "type": "object",
+                "properties": {
+                  "company": {
+                    "description": "The company the delivery is for, read from the customers service so the name is current.",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the company."
+                      },
+                      "logo": {
+                        "description": "Company logo, when the company has one.",
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the logo."
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "Public URL of the logo."
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "publicLogoUrl": {
+                        "description": "Logo found from the company website, to show when the company has no logo of its own.",
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Name of the company."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the customer the delivery is for."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "company",
+                      "user"
+                    ],
+                    "description": "Whether the delivery is for a person or for a whole company."
+                  },
+                  "user": {
+                    "description": "The person the delivery is for, read from the users service so the details are current.",
+                    "type": "object",
+                    "properties": {
+                      "deleteDate": {
+                        "description": "ISO timestamp of when the user account was deleted.",
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "email": {
+                        "description": "Email address of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier of the user."
+                      },
+                      "name": {
+                        "description": "First name of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "phoneNumber": {
+                        "description": "Phone number of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "photoUrl": {
+                        "description": "User profile photo URL.",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "surname": {
+                        "description": "Surname of the user.",
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "additionalProperties": false,
+                "description": "The customer the delivery is for."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "pickedUp"
+                ],
+                "description": "Whether the delivery is still kept at the location or was picked up."
+              }
+            },
+            "required": [
+              "comment",
+              "createDate",
+              "id",
+              "locationRef",
+              "media",
+              "pickupDate",
+              "customer",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "delivery"
+        ],
+        "additionalProperties": false
+      },
+      "createDeliveryMedia": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Storage key of the media file. Pass it as media[0].key when creating or updating a delivery."
+              },
+              "mimeType": {
+                "type": "string",
+                "enum": [
+                  "image/gif",
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp"
+                ],
+                "description": "MIME type of the image file."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Size of the image file in bytes."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "uploaded",
+                  "attached"
+                ],
+                "description": "Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a delivery. attached: a delivery references the file."
+              },
+              "upload": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO timestamp after which the upload URL is rejected."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "properties": {
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "Must equal the size declared when the upload was created."
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Must equal the mimeType declared when the upload was created."
+                      }
+                    },
+                    "required": [
+                      "Content-Length",
+                      "Content-Type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Headers the PUT request must send exactly as given; the signature covers them."
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "PUT"
+                    ],
+                    "description": "HTTP method of the upload request."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Presigned URL to send the raw file bytes to."
+                  }
+                },
+                "required": [
+                  "expirationDate",
+                  "headers",
+                  "method",
+                  "url"
+                ],
+                "additionalProperties": false,
+                "description": "How to upload the file. Send the raw bytes as the request body, not a multipart form."
+              }
+            },
+            "required": [
+              "key",
+              "mimeType",
+              "size",
+              "status",
+              "upload"
+            ],
+            "additionalProperties": false,
+            "description": "The created media upload."
+          }
+        },
+        "required": [
+          "media"
+        ],
+        "additionalProperties": false
+      },
       "coupon": {
         "type": "object",
         "properties": {
@@ -31074,6 +32117,21 @@
                 "selfSignup": {
                   "type": "object",
                   "properties": {
+                    "contract": {
+                      "description": "Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required.",
+                      "type": "object",
+                      "properties": {
+                        "templateRef": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the contract template."
+                        }
+                      },
+                      "required": [
+                        "templateRef"
+                      ],
+                      "additionalProperties": false
+                    },
                     "enabled": {
                       "type": "boolean",
                       "description": "Whether members can self-sign up to this plan."
@@ -31524,6 +32582,21 @@
           "selfSignup": {
             "type": "object",
             "properties": {
+              "contract": {
+                "description": "Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required.",
+                "type": "object",
+                "properties": {
+                  "templateRef": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the contract template."
+                  }
+                },
+                "required": [
+                  "templateRef"
+                ],
+                "additionalProperties": false
+              },
               "enabled": {
                 "type": "boolean",
                 "description": "Whether members can self-sign up to this plan."
@@ -32065,6 +33138,21 @@
               "selfSignup": {
                 "type": "object",
                 "properties": {
+                  "contract": {
+                    "description": "Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required.",
+                    "type": "object",
+                    "properties": {
+                      "templateRef": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the contract template."
+                      }
+                    },
+                    "required": [
+                      "templateRef"
+                    ],
+                    "additionalProperties": false
+                  },
                   "enabled": {
                     "type": "boolean",
                     "description": "Whether members can self-sign up to this plan."
@@ -33766,6 +34854,21 @@
                           "selfSignup": {
                             "type": "object",
                             "properties": {
+                              "contract": {
+                                "description": "Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required.",
+                                "type": "object",
+                                "properties": {
+                                  "templateRef": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the contract template."
+                                  }
+                                },
+                                "required": [
+                                  "templateRef"
+                                ],
+                                "additionalProperties": false
+                              },
                               "enabled": {
                                 "type": "boolean",
                                 "description": "Whether members may self-enroll into the tier."
@@ -33986,12 +35089,92 @@
                 "refundPolicy": {
                   "type": "object",
                   "properties": {
+                    "partialRefunds": {
+                      "maxItems": 5,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "percent": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 99,
+                            "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "zeroMinutes",
+                              "fifteenMinutes",
+                              "thirtyMinutes",
+                              "oneHour",
+                              "twoHours",
+                              "fourHours",
+                              "sixHours",
+                              "twelveHours",
+                              "oneDay",
+                              "twoDays",
+                              "oneWeek",
+                              "twoWeeks",
+                              "fourWeeks"
+                            ],
+                            "description": "How long before start the booking must be canceled to get this share back."
+                          }
+                        },
+                        "required": [
+                          "percent",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. Ordered from the longest threshold to the shortest."
+                    },
                     "public": {
                       "type": "object",
                       "properties": {
                         "enabled": {
                           "type": "boolean",
                           "description": "Whether bookings of nonmembers follow a separate rescheduling policy."
+                        },
+                        "partialRefunds": {
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "percent": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 99,
+                                "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "zeroMinutes",
+                                  "fifteenMinutes",
+                                  "thirtyMinutes",
+                                  "oneHour",
+                                  "twoHours",
+                                  "fourHours",
+                                  "sixHours",
+                                  "twelveHours",
+                                  "oneDay",
+                                  "twoDays",
+                                  "oneWeek",
+                                  "twoWeeks",
+                                  "fourWeeks"
+                                ],
+                                "description": "How long before start the booking must be canceled to get this share back."
+                              }
+                            },
+                            "required": [
+                              "percent",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "Partial refunds for bookings of nonmembers."
                         },
                         "value": {
                           "type": "string",
@@ -34016,6 +35199,7 @@
                       },
                       "required": [
                         "enabled",
+                        "partialRefunds",
                         "value"
                       ],
                       "additionalProperties": false,
@@ -34043,6 +35227,7 @@
                     }
                   },
                   "required": [
+                    "partialRefunds",
                     "public",
                     "value"
                   ],
@@ -35625,6 +36810,21 @@
                         "selfSignup": {
                           "type": "object",
                           "properties": {
+                            "contract": {
+                              "description": "Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required.",
+                              "type": "object",
+                              "properties": {
+                                "templateRef": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "description": "ID of the contract template."
+                                }
+                              },
+                              "required": [
+                                "templateRef"
+                              ],
+                              "additionalProperties": false
+                            },
                             "enabled": {
                               "type": "boolean",
                               "description": "Whether members may self-enroll into the tier."
@@ -35845,12 +37045,92 @@
               "refundPolicy": {
                 "type": "object",
                 "properties": {
+                  "partialRefunds": {
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "percent": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 99,
+                          "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                        },
+                        "value": {
+                          "type": "string",
+                          "enum": [
+                            "zeroMinutes",
+                            "fifteenMinutes",
+                            "thirtyMinutes",
+                            "oneHour",
+                            "twoHours",
+                            "fourHours",
+                            "sixHours",
+                            "twelveHours",
+                            "oneDay",
+                            "twoDays",
+                            "oneWeek",
+                            "twoWeeks",
+                            "fourWeeks"
+                          ],
+                          "description": "How long before start the booking must be canceled to get this share back."
+                        }
+                      },
+                      "required": [
+                        "percent",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. Ordered from the longest threshold to the shortest."
+                  },
                   "public": {
                     "type": "object",
                     "properties": {
                       "enabled": {
                         "type": "boolean",
                         "description": "Whether bookings of nonmembers follow a separate rescheduling policy."
+                      },
+                      "partialRefunds": {
+                        "maxItems": 5,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "percent": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 99,
+                              "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                            },
+                            "value": {
+                              "type": "string",
+                              "enum": [
+                                "zeroMinutes",
+                                "fifteenMinutes",
+                                "thirtyMinutes",
+                                "oneHour",
+                                "twoHours",
+                                "fourHours",
+                                "sixHours",
+                                "twelveHours",
+                                "oneDay",
+                                "twoDays",
+                                "oneWeek",
+                                "twoWeeks",
+                                "fourWeeks"
+                              ],
+                              "description": "How long before start the booking must be canceled to get this share back."
+                            }
+                          },
+                          "required": [
+                            "percent",
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Partial refunds for bookings of nonmembers."
                       },
                       "value": {
                         "type": "string",
@@ -35875,6 +37155,7 @@
                     },
                     "required": [
                       "enabled",
+                      "partialRefunds",
                       "value"
                     ],
                     "additionalProperties": false,
@@ -35902,6 +37183,7 @@
                   }
                 },
                 "required": [
+                  "partialRefunds",
                   "public",
                   "value"
                 ],
@@ -62508,6 +63790,197 @@
         },
         "required": true
       },
+      "createDelivery": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "delivery": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "description": "Comment about the delivery for the customer, such as the carrier or how to handle the item.",
+                      "nullable": true,
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    "locationRef": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the location where the delivery is kept."
+                    },
+                    "media": {
+                      "description": "Photo of the delivery to attach. The url is generated server-side.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      }
+                    },
+                    "customer": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the customer the delivery is for. The customer must belong to the delivery's location."
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "company",
+                            "user"
+                          ],
+                          "description": "Whether the customer is a person or a whole company."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "description": "The customer the delivery is for: a person's customer ID with type user, or a company's with type company."
+                    }
+                  },
+                  "required": [
+                    "locationRef",
+                    "customer"
+                  ]
+                }
+              },
+              "required": [
+                "delivery"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "patchDelivery": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "delivery": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "description": "Comment about the delivery for the customer, such as the carrier or how to handle the item.",
+                      "nullable": true,
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    "media": {
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "Storage key of the media file, as returned by the media upload endpoint."
+                          }
+                        },
+                        "required": [
+                          "key"
+                        ]
+                      },
+                      "description": "Photo of the delivery, replacing the current one. Pass an empty array to remove it. The url is generated server-side."
+                    },
+                    "customer": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the customer the delivery is for. The customer must belong to the delivery's location."
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "company",
+                            "user"
+                          ],
+                          "description": "Whether the customer is a person or a whole company."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "description": "The customer the delivery is for: a person's customer ID with type user, or a company's with type company."
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "pickedUp"
+                      ],
+                      "description": "The new status of the delivery. 'pickedUp' records when the delivery was picked up. A picked up delivery cannot move back to 'pending'."
+                    }
+                  }
+                }
+              },
+              "required": [
+                "delivery"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      "createDeliveryMedia": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                      ],
+                      "description": "MIME type of the file to upload."
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "maximum": 5242880,
+                      "description": "Size of the file in bytes. The upload is rejected when the body length differs."
+                    }
+                  },
+                  "required": [
+                    "mimeType",
+                    "size"
+                  ],
+                  "description": "File to upload."
+                }
+              },
+              "required": [
+                "media"
+              ]
+            }
+          }
+        },
+        "required": true
+      },
       "createCoupon": {
         "content": {
           "application/json": {
@@ -64550,6 +66023,21 @@
                       "description": "Self sign-up settings.",
                       "type": "object",
                       "properties": {
+                        "contract": {
+                          "description": "Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required.",
+                          "type": "object",
+                          "properties": {
+                            "templateRef": {
+                              "type": "string",
+                              "format": "uuid",
+                              "description": "ID of a contract template of the plan's location."
+                            }
+                          },
+                          "required": [
+                            "templateRef"
+                          ],
+                          "additionalProperties": false
+                        },
                         "enabled": {
                           "default": false,
                           "description": "Whether members can self-sign up.",
@@ -64923,6 +66411,21 @@
                       "description": "Self sign-up settings.",
                       "type": "object",
                       "properties": {
+                        "contract": {
+                          "description": "Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required.",
+                          "type": "object",
+                          "properties": {
+                            "templateRef": {
+                              "type": "string",
+                              "format": "uuid",
+                              "description": "ID of a contract template of the plan's location."
+                            }
+                          },
+                          "required": [
+                            "templateRef"
+                          ],
+                          "additionalProperties": false
+                        },
                         "enabled": {
                           "type": "boolean",
                           "description": "Whether members can self-sign up."
@@ -65573,6 +67076,21 @@
                                 "description": "Self sign-up settings of the tier.",
                                 "type": "object",
                                 "properties": {
+                                  "contract": {
+                                    "description": "Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required.",
+                                    "type": "object",
+                                    "properties": {
+                                      "templateRef": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "ID of a contract template of the resource's location."
+                                      }
+                                    },
+                                    "required": [
+                                      "templateRef"
+                                    ],
+                                    "additionalProperties": false
+                                  },
                                   "enabled": {
                                     "type": "boolean",
                                     "description": "Whether members may self-enroll into the tier."
@@ -65762,12 +67280,90 @@
                       "description": "Rescheduling policy. A booking takes the policy that applies to its customer when it is made.",
                       "type": "object",
                       "properties": {
+                        "partialRefunds": {
+                          "description": "Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. On update, leave it out to keep the current partial refunds, or send an empty list to remove them.",
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "percent": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 99,
+                                "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "zeroMinutes",
+                                  "fifteenMinutes",
+                                  "thirtyMinutes",
+                                  "oneHour",
+                                  "twoHours",
+                                  "fourHours",
+                                  "sixHours",
+                                  "twelveHours",
+                                  "oneDay",
+                                  "twoDays",
+                                  "oneWeek",
+                                  "twoWeeks",
+                                  "fourWeeks"
+                                ],
+                                "description": "How long before start the booking must be canceled to get this share back."
+                              }
+                            },
+                            "required": [
+                              "percent",
+                              "value"
+                            ]
+                          }
+                        },
                         "public": {
                           "type": "object",
                           "properties": {
                             "enabled": {
                               "type": "boolean",
                               "description": "Whether bookings of nonmembers follow a separate rescheduling policy."
+                            },
+                            "partialRefunds": {
+                              "description": "Partial refunds for bookings of nonmembers. On update, leave it out to keep the current partial refunds, or send an empty list to remove them.",
+                              "maxItems": 5,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "percent": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 99,
+                                    "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "enum": [
+                                      "zeroMinutes",
+                                      "fifteenMinutes",
+                                      "thirtyMinutes",
+                                      "oneHour",
+                                      "twoHours",
+                                      "fourHours",
+                                      "sixHours",
+                                      "twelveHours",
+                                      "oneDay",
+                                      "twoDays",
+                                      "oneWeek",
+                                      "twoWeeks",
+                                      "fourWeeks"
+                                    ],
+                                    "description": "How long before start the booking must be canceled to get this share back."
+                                  }
+                                },
+                                "required": [
+                                  "percent",
+                                  "value"
+                                ]
+                              }
                             },
                             "value": {
                               "type": "string",
@@ -66861,6 +68457,21 @@
                                 "description": "Self sign-up settings of the tier.",
                                 "type": "object",
                                 "properties": {
+                                  "contract": {
+                                    "description": "Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required.",
+                                    "type": "object",
+                                    "properties": {
+                                      "templateRef": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "description": "ID of a contract template of the resource's location."
+                                      }
+                                    },
+                                    "required": [
+                                      "templateRef"
+                                    ],
+                                    "additionalProperties": false
+                                  },
                                   "enabled": {
                                     "type": "boolean",
                                     "description": "Whether members may self-enroll into the tier."
@@ -67050,12 +68661,90 @@
                       "description": "Rescheduling policy. A booking takes the policy that applies to its customer when it is made.",
                       "type": "object",
                       "properties": {
+                        "partialRefunds": {
+                          "description": "Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. On update, leave it out to keep the current partial refunds, or send an empty list to remove them.",
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "percent": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 99,
+                                "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "zeroMinutes",
+                                  "fifteenMinutes",
+                                  "thirtyMinutes",
+                                  "oneHour",
+                                  "twoHours",
+                                  "fourHours",
+                                  "sixHours",
+                                  "twelveHours",
+                                  "oneDay",
+                                  "twoDays",
+                                  "oneWeek",
+                                  "twoWeeks",
+                                  "fourWeeks"
+                                ],
+                                "description": "How long before start the booking must be canceled to get this share back."
+                              }
+                            },
+                            "required": [
+                              "percent",
+                              "value"
+                            ]
+                          }
+                        },
                         "public": {
                           "type": "object",
                           "properties": {
                             "enabled": {
                               "type": "boolean",
                               "description": "Whether bookings of nonmembers follow a separate rescheduling policy."
+                            },
+                            "partialRefunds": {
+                              "description": "Partial refunds for bookings of nonmembers. On update, leave it out to keep the current partial refunds, or send an empty list to remove them.",
+                              "maxItems": 5,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "percent": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 99,
+                                    "description": "Share of what the booking was paid with that is refunded, from 1 to 99."
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "enum": [
+                                      "zeroMinutes",
+                                      "fifteenMinutes",
+                                      "thirtyMinutes",
+                                      "oneHour",
+                                      "twoHours",
+                                      "fourHours",
+                                      "sixHours",
+                                      "twelveHours",
+                                      "oneDay",
+                                      "twoDays",
+                                      "oneWeek",
+                                      "twoWeeks",
+                                      "fourWeeks"
+                                    ],
+                                    "description": "How long before start the booking must be canceled to get this share back."
+                                  }
+                                },
+                                "required": [
+                                  "percent",
+                                  "value"
+                                ]
+                              }
                             },
                             "value": {
                               "type": "string",
@@ -67568,7 +69257,7 @@
                   ]
                 },
                 "paymentMethod": {
-                  "description": "Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. Omit the field to create a free booking.",
+                  "description": "Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. With Basic authentication, also pass the `membershipRefOwner` of the customer the booking is paid for. Omit the field to create a free booking.",
                   "oneOf": [
                     {
                       "type": "object",

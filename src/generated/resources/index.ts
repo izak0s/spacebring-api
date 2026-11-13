@@ -10,6 +10,7 @@ import { createCampaigns as campaignsGroup } from "./campaigns.js";
 import { createCheckins as checkInsGroup } from "./checkIns.js";
 import { createCommunity as communityGroup } from "./community.js";
 import { createContracts as contractsGroup } from "./contracts.js";
+import { createDeliveries as deliveriesGroup } from "./deliveries.js";
 import { createDiscounts as discountsGroup } from "./discounts.js";
 import { createEvents as eventsGroup } from "./events.js";
 import { createFeed as feedGroup } from "./feed.js";
@@ -36,6 +37,7 @@ export function createResources(client: Client<paths>, defaults: SpacebringDefau
     checkIns: checkInsGroup(client, defaults),
     community: communityGroup(client, defaults),
     contracts: contractsGroup(client, defaults),
+    deliveries: deliveriesGroup(client, defaults),
     discounts: discountsGroup(client, defaults),
     events: eventsGroup(client, defaults),
     feed: feedGroup(client, defaults),

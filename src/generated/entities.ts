@@ -7,6 +7,7 @@ export type { Campaign, CreateCampaignBody, GetCampaignsQuery, PatchCampaignBody
 export type { CheckIn, CheckInBody, CheckOutBody, GetCheckInsQuery, PatchCheckInBody } from "./resources/checkIns.js";
 export type { Company, CompanyMedia, CreateCompanyBody, CreateCompanyMediaBody, CreateMembershipBody, GetCompaniesQuery, GetMembershipsDeletedQuery, GetMembershipsQuery, Membership, UpdateCompanyBody, UpdateMembershipBody } from "./resources/community.js";
 export type { Contract, CreateContractBody, CreateTemplateBody, CreateTemplateMediaBody, GetContractsQuery, GetTemplatesQuery, IssueContractBody, Template, TemplateMedia, TerminateContractBody, UpdateContractBody, UpdateTemplateBody } from "./resources/contracts.js";
+export type { CreateDeliveryBody, CreateDeliveryMediaBody, Delivery, DeliveryMedia, GetDeliveriesQuery, PatchDeliveryBody } from "./resources/deliveries.js";
 export type { Coupon, CreateCouponBody, CreatePromocodeBody, GetCouponsQuery, GetDiscountRedemptionsQuery, GetPromocodesQuery, Promocode, Redemption, UpdateCouponBody } from "./resources/discounts.js";
 export type { AddEventHostsBody, CreateEventBody, CreateEventMediaBody, Event, EventMedia, EventTicket, GetEventTicketsQuery, GetEventsByOrganizationQuery, PatchEventBody, UpdateEventBody, UpdateEventTicketBody } from "./resources/events.js";
 export type { Comment, CreateFeedPostBody, CreateFeedPostCommentBody, CreateFeedPostMediaBody, FeedMedia, GetFeedPostsQuery, Like, PatchFeedPostBody, Post, UpdateFeedPostBody } from "./resources/feed.js";
