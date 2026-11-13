@@ -1101,6 +1101,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/deliveries/v1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve deliveries
+         * @description Retrieve the deliveries of the network, the most recently added first, or only those of a location, a customer, or a user. A delivery is a parcel, letter, or other item kept at a location until its customer picks it up; deleted deliveries are left out. With bearer token authentication, the user must be an administrator, and the list leaves out deliveries at locations where they cannot view deliveries; a user can also list their own with their <code>userRef</code>. <h3>OAuth</h3>Required scopes: <code>deliveries.readonly</code> or <code>deliveries</code>
+         */
+        get: operations["getDeliveries"];
+        put?: never;
+        /**
+         * Create a delivery
+         * @description Record a delivery that arrived at a location for one of its customers, a person or a company. The delivery starts out <code>pending</code>, and the customer is notified about it and reminded to pick it up. To attach a photo, create a media upload first and pass its key as <code>media[0].key</code>. With bearer token authentication, the user must be an administrator who can manage deliveries in the location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
+         */
+        post: operations["createDelivery"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/deliveries/v1/{deliveryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a delivery
+         * @description Get a delivery by its id. A deleted delivery is not found. With bearer token authentication, the user must be an administrator who can view deliveries in the delivery's location, the person the delivery is for, or a manager of the company it is for. <h3>OAuth</h3>Required scopes: <code>deliveries.readonly</code> or <code>deliveries</code>
+         */
+        get: operations["getDelivery"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a delivery
+         * @description Delete a delivery, such as one that was never picked up and went back to the carrier. A deleted delivery leaves the lists and cannot be read again. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
+         */
+        delete: operations["deleteDelivery"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a delivery
+         * @description Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
+         */
+        patch: operations["patchDelivery"];
+        trace?: never;
+    };
+    "/deliveries/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a media upload
+         * @description Create a media upload for a photo of a delivery. The response carries a presigned URL: send the raw file bytes with a PUT request within a minute, using exactly the headers returned. Once the file is stored, pass the returned key as <code>media[0].key</code> when creating or updating a delivery within an hour; an image that is not attached by then is discarded. With bearer token authentication, the user must be an administrator in the network. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
+         */
+        post: operations["createDeliveryMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/discounts/v1/coupons": {
         parameters: {
             query?: never;
@@ -7697,6 +7769,239 @@ export interface components {
                 url: string;
             };
         };
+        getDeliveries: {
+            /** @description List of deliveries, the most recently added first. */
+            deliveries: {
+                /** @description Comment about the delivery for the customer, such as the carrier or how to handle the item. */
+                comment: string | null;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the delivery was added.
+                 */
+                createDate: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the delivery.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location where the delivery is kept.
+                 */
+                locationRef: string;
+                /** @description Photo of the delivery, or an empty list when it has none. */
+                media: {
+                    /** @description Storage key of the media file. */
+                    key: string;
+                    /** @description Public URL of the media file. */
+                    url: string;
+                }[];
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the delivery was picked up.
+                 */
+                pickupDate: string | null;
+                /** @description The customer the delivery is for. */
+                customer: {
+                    /** @description The company the delivery is for, read from the customers service so the name is current. */
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the company.
+                         */
+                        id: string;
+                        /** @description Company logo, when the company has one. */
+                        logo?: {
+                            /** @description Storage key of the logo. */
+                            key: string;
+                            /** @description Public URL of the logo. */
+                            url: string;
+                        };
+                        /** @description Logo found from the company website, to show when the company has no logo of its own. */
+                        publicLogoUrl?: string;
+                        /** @description Name of the company. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the customer the delivery is for.
+                     */
+                    id: string;
+                    /**
+                     * @description Whether the delivery is for a person or for a whole company.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description The person the delivery is for, read from the users service so the details are current. */
+                    user?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the user account was deleted.
+                         */
+                        deleteDate?: string;
+                        /** @description Email address of the user. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description User profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description Surname of the user. */
+                        surname?: string | null;
+                    };
+                };
+                /**
+                 * @description Whether the delivery is still kept at the location or was picked up.
+                 * @enum {string}
+                 */
+                status: "pending" | "pickedUp";
+            }[];
+            /** @description Pagination token to fetch the next page of results. */
+            nextPageToken?: string;
+            /** @description Search query parameters for the next page of results. Includes all filters used to fetch the current page. */
+            searchQueryNext?: string;
+        };
+        getDelivery: {
+            /** @description The delivery. */
+            delivery: {
+                /** @description Comment about the delivery for the customer, such as the carrier or how to handle the item. */
+                comment: string | null;
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the delivery was added.
+                 */
+                createDate: string;
+                /**
+                 * Format: uuid
+                 * @description Unique identifier of the delivery.
+                 */
+                id: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the location where the delivery is kept.
+                 */
+                locationRef: string;
+                /** @description Photo of the delivery, or an empty list when it has none. */
+                media: {
+                    /** @description Storage key of the media file. */
+                    key: string;
+                    /** @description Public URL of the media file. */
+                    url: string;
+                }[];
+                /**
+                 * Format: date-time
+                 * @description ISO timestamp of when the delivery was picked up.
+                 */
+                pickupDate: string | null;
+                /** @description The customer the delivery is for. */
+                customer: {
+                    /** @description The company the delivery is for, read from the customers service so the name is current. */
+                    company?: {
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the company.
+                         */
+                        id: string;
+                        /** @description Company logo, when the company has one. */
+                        logo?: {
+                            /** @description Storage key of the logo. */
+                            key: string;
+                            /** @description Public URL of the logo. */
+                            url: string;
+                        };
+                        /** @description Logo found from the company website, to show when the company has no logo of its own. */
+                        publicLogoUrl?: string;
+                        /** @description Name of the company. */
+                        title: string;
+                    };
+                    /**
+                     * Format: uuid
+                     * @description ID of the customer the delivery is for.
+                     */
+                    id: string;
+                    /**
+                     * @description Whether the delivery is for a person or for a whole company.
+                     * @enum {string}
+                     */
+                    type: "company" | "user";
+                    /** @description The person the delivery is for, read from the users service so the details are current. */
+                    user?: {
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the user account was deleted.
+                         */
+                        deleteDate?: string;
+                        /** @description Email address of the user. */
+                        email?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description Unique identifier of the user.
+                         */
+                        id: string;
+                        /** @description First name of the user. */
+                        name?: string | null;
+                        /** @description Phone number of the user. */
+                        phoneNumber?: string | null;
+                        /** @description User profile photo URL. */
+                        photoUrl?: string | null;
+                        /** @description Surname of the user. */
+                        surname?: string | null;
+                    };
+                };
+                /**
+                 * @description Whether the delivery is still kept at the location or was picked up.
+                 * @enum {string}
+                 */
+                status: "pending" | "pickedUp";
+            };
+        };
+        createDeliveryMedia: {
+            /** @description The created media upload. */
+            media: {
+                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating a delivery. */
+                key: string;
+                /**
+                 * @description MIME type of the image file.
+                 * @enum {string}
+                 */
+                mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                /** @description Size of the image file in bytes. */
+                size: number;
+                /**
+                 * @description Upload status. pending: the file has not been received yet. uploaded: the file is stored and can be attached to a delivery. attached: a delivery references the file.
+                 * @enum {string}
+                 */
+                status: "pending" | "uploaded" | "attached";
+                /** @description How to upload the file. Send the raw bytes as the request body, not a multipart form. */
+                upload: {
+                    /**
+                     * Format: date-time
+                     * @description ISO timestamp after which the upload URL is rejected.
+                     */
+                    expirationDate: string;
+                    /** @description Headers the PUT request must send exactly as given; the signature covers them. */
+                    headers: {
+                        /** @description Must equal the size declared when the upload was created. */
+                        "Content-Length": string;
+                        /** @description Must equal the mimeType declared when the upload was created. */
+                        "Content-Type": string;
+                    };
+                    /**
+                     * @description HTTP method of the upload request.
+                     * @enum {string}
+                     */
+                    method: "PUT";
+                    /** @description Presigned URL to send the raw file bytes to. */
+                    url: string;
+                };
+            };
+        };
         coupon: {
             /** @description Fixed discount amount. */
             amountOff?: number | null;
@@ -9566,6 +9871,14 @@ export interface components {
                 };
                 /** @description Self sign-up settings. */
                 selfSignup: {
+                    /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
+                    contract?: {
+                        /**
+                         * Format: uuid
+                         * @description ID of the contract template.
+                         */
+                        templateRef: string;
+                    };
                     /** @description Whether members can self-sign up to this plan. */
                     enabled: boolean;
                     /**
@@ -9746,6 +10059,14 @@ export interface components {
             };
             /** @description Self sign-up settings. */
             selfSignup: {
+                /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
+                contract?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the contract template.
+                     */
+                    templateRef: string;
+                };
                 /** @description Whether members can self-sign up to this plan. */
                 enabled: boolean;
                 /**
@@ -9966,6 +10287,14 @@ export interface components {
                 };
                 /** @description Self sign-up settings. */
                 selfSignup: {
+                    /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
+                    contract?: {
+                        /**
+                         * Format: uuid
+                         * @description ID of the contract template.
+                         */
+                        templateRef: string;
+                    };
                     /** @description Whether members can self-sign up to this plan. */
                     enabled: boolean;
                     /**
@@ -10705,6 +11034,14 @@ export interface components {
                         price: number;
                         /** @description Self sign-up settings of the tier. */
                         selfSignup: {
+                            /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
+                            contract?: {
+                                /**
+                                 * Format: uuid
+                                 * @description ID of the contract template.
+                                 */
+                                templateRef: string;
+                            };
                             /** @description Whether members may self-enroll into the tier. */
                             enabled: boolean;
                             /** @description Self sign-up flow type for the tier. */
@@ -10783,10 +11120,30 @@ export interface components {
                 }[];
                 /** @description Rescheduling policy for cancellations and start time changes. */
                 refundPolicy: {
+                    /** @description Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. Ordered from the longest threshold to the shortest. */
+                    partialRefunds: {
+                        /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                        percent: number;
+                        /**
+                         * @description How long before start the booking must be canceled to get this share back.
+                         * @enum {string}
+                         */
+                        value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                    }[];
                     /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
                     public: {
                         /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
                         enabled: boolean;
+                        /** @description Partial refunds for bookings of nonmembers. */
+                        partialRefunds: {
+                            /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                            percent: number;
+                            /**
+                             * @description How long before start the booking must be canceled to get this share back.
+                             * @enum {string}
+                             */
+                            value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        }[];
                         /**
                          * @description How long before start a booking of a nonmember remains refundable.
                          * @enum {string}
@@ -11440,6 +11797,14 @@ export interface components {
                         price: number;
                         /** @description Self sign-up settings of the tier. */
                         selfSignup: {
+                            /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
+                            contract?: {
+                                /**
+                                 * Format: uuid
+                                 * @description ID of the contract template.
+                                 */
+                                templateRef: string;
+                            };
                             /** @description Whether members may self-enroll into the tier. */
                             enabled: boolean;
                             /** @description Self sign-up flow type for the tier. */
@@ -11518,10 +11883,30 @@ export interface components {
                 }[];
                 /** @description Rescheduling policy for cancellations and start time changes. */
                 refundPolicy: {
+                    /** @description Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. Ordered from the longest threshold to the shortest. */
+                    partialRefunds: {
+                        /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                        percent: number;
+                        /**
+                         * @description How long before start the booking must be canceled to get this share back.
+                         * @enum {string}
+                         */
+                        value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                    }[];
                     /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
                     public: {
                         /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
                         enabled: boolean;
+                        /** @description Partial refunds for bookings of nonmembers. */
+                        partialRefunds: {
+                            /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                            percent: number;
+                            /**
+                             * @description How long before start the booking must be canceled to get this share back.
+                             * @enum {string}
+                             */
+                            value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                        }[];
                         /**
                          * @description How long before start a booking of a nonmember remains refundable.
                          * @enum {string}
@@ -24494,6 +24879,88 @@ export interface components {
                 };
             };
         };
+        createDelivery: {
+            content: {
+                "application/json": {
+                    delivery: {
+                        /** @description Comment about the delivery for the customer, such as the carrier or how to handle the item. */
+                        comment?: string | null;
+                        /**
+                         * Format: uuid
+                         * @description ID of the location where the delivery is kept.
+                         */
+                        locationRef: string;
+                        /** @description Photo of the delivery to attach. The url is generated server-side. */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
+                        /** @description The customer the delivery is for: a person's customer ID with type user, or a company's with type company. */
+                        customer: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the customer the delivery is for. The customer must belong to the delivery's location.
+                             */
+                            id: string;
+                            /**
+                             * @description Whether the customer is a person or a whole company.
+                             * @enum {string}
+                             */
+                            type: "company" | "user";
+                        };
+                    };
+                };
+            };
+        };
+        patchDelivery: {
+            content: {
+                "application/json": {
+                    delivery: {
+                        /** @description Comment about the delivery for the customer, such as the carrier or how to handle the item. */
+                        comment?: string | null;
+                        /** @description Photo of the delivery, replacing the current one. Pass an empty array to remove it. The url is generated server-side. */
+                        media?: {
+                            /** @description Storage key of the media file, as returned by the media upload endpoint. */
+                            key: string;
+                        }[];
+                        /** @description The customer the delivery is for: a person's customer ID with type user, or a company's with type company. */
+                        customer?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the customer the delivery is for. The customer must belong to the delivery's location.
+                             */
+                            id: string;
+                            /**
+                             * @description Whether the customer is a person or a whole company.
+                             * @enum {string}
+                             */
+                            type: "company" | "user";
+                        };
+                        /**
+                         * @description The new status of the delivery. 'pickedUp' records when the delivery was picked up. A picked up delivery cannot move back to 'pending'.
+                         * @enum {string}
+                         */
+                        status?: "pending" | "pickedUp";
+                    };
+                };
+            };
+        };
+        createDeliveryMedia: {
+            content: {
+                "application/json": {
+                    /** @description File to upload. */
+                    media: {
+                        /**
+                         * @description MIME type of the file to upload.
+                         * @enum {string}
+                         */
+                        mimeType: "image/gif" | "image/jpeg" | "image/png" | "image/webp";
+                        /** @description Size of the file in bytes. The upload is rejected when the body length differs. */
+                        size: number;
+                    };
+                };
+            };
+        };
         createCoupon: {
             content: {
                 "application/json": {
@@ -25377,6 +25844,14 @@ export interface components {
                          *     }
                          */
                         selfSignup?: {
+                            /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
+                            contract?: {
+                                /**
+                                 * Format: uuid
+                                 * @description ID of a contract template of the plan's location.
+                                 */
+                                templateRef: string;
+                            };
                             /**
                              * @description Whether members can self-sign up.
                              * @default false
@@ -25523,6 +25998,14 @@ export interface components {
                         };
                         /** @description Self sign-up settings. */
                         selfSignup?: {
+                            /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
+                            contract?: {
+                                /**
+                                 * Format: uuid
+                                 * @description ID of a contract template of the plan's location.
+                                 */
+                                templateRef: string;
+                            };
                             /** @description Whether members can self-sign up. */
                             enabled: boolean;
                             /**
@@ -25794,6 +26277,14 @@ export interface components {
                                 price: number;
                                 /** @description Self sign-up settings of the tier. */
                                 selfSignup?: {
+                                    /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
+                                    contract?: {
+                                        /**
+                                         * Format: uuid
+                                         * @description ID of a contract template of the resource's location.
+                                         */
+                                        templateRef: string;
+                                    };
                                     /** @description Whether members may self-enroll into the tier. */
                                     enabled: boolean;
                                     /** @description Self sign-up flow type. */
@@ -25862,10 +26353,30 @@ export interface components {
                         }[];
                         /** @description Rescheduling policy. A booking takes the policy that applies to its customer when it is made. */
                         refundPolicy?: {
+                            /** @description Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. On update, leave it out to keep the current partial refunds, or send an empty list to remove them. */
+                            partialRefunds?: {
+                                /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                                percent: number;
+                                /**
+                                 * @description How long before start the booking must be canceled to get this share back.
+                                 * @enum {string}
+                                 */
+                                value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                            }[];
                             /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
                             public: {
                                 /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
                                 enabled: boolean;
+                                /** @description Partial refunds for bookings of nonmembers. On update, leave it out to keep the current partial refunds, or send an empty list to remove them. */
+                                partialRefunds?: {
+                                    /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                                    percent: number;
+                                    /**
+                                     * @description How long before start the booking must be canceled to get this share back.
+                                     * @enum {string}
+                                     */
+                                    value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                                }[];
                                 /**
                                  * @description How long before start a booking of a nonmember remains refundable.
                                  * @enum {string}
@@ -26308,6 +26819,14 @@ export interface components {
                                 price: number;
                                 /** @description Self sign-up settings of the tier. */
                                 selfSignup?: {
+                                    /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
+                                    contract?: {
+                                        /**
+                                         * Format: uuid
+                                         * @description ID of a contract template of the resource's location.
+                                         */
+                                        templateRef: string;
+                                    };
                                     /** @description Whether members may self-enroll into the tier. */
                                     enabled: boolean;
                                     /** @description Self sign-up flow type. */
@@ -26376,10 +26895,30 @@ export interface components {
                         }[];
                         /** @description Rescheduling policy. A booking takes the policy that applies to its customer when it is made. */
                         refundPolicy?: {
+                            /** @description Shares refunded when a booking is canceled after the full refund period has ended. A cancellation gets the share of the longest threshold it still meets, and nothing once every threshold has passed. Each threshold is shorter than value, and a shorter threshold refunds a smaller share. On update, leave it out to keep the current partial refunds, or send an empty list to remove them. */
+                            partialRefunds?: {
+                                /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                                percent: number;
+                                /**
+                                 * @description How long before start the booking must be canceled to get this share back.
+                                 * @enum {string}
+                                 */
+                                value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                            }[];
                             /** @description Rescheduling policy for bookings of nonmembers. A booking follows it instead of value when it is enabled. */
                             public: {
                                 /** @description Whether bookings of nonmembers follow a separate rescheduling policy. */
                                 enabled: boolean;
+                                /** @description Partial refunds for bookings of nonmembers. On update, leave it out to keep the current partial refunds, or send an empty list to remove them. */
+                                partialRefunds?: {
+                                    /** @description Share of what the booking was paid with that is refunded, from 1 to 99. */
+                                    percent: number;
+                                    /**
+                                     * @description How long before start the booking must be canceled to get this share back.
+                                     * @enum {string}
+                                     */
+                                    value: "zeroMinutes" | "fifteenMinutes" | "thirtyMinutes" | "oneHour" | "twoHours" | "fourHours" | "sixHours" | "twelveHours" | "oneDay" | "twoDays" | "oneWeek" | "twoWeeks" | "fourWeeks";
+                                }[];
                                 /**
                                  * @description How long before start a booking of a nonmember remains refundable.
                                  * @enum {string}
@@ -26584,7 +27123,7 @@ export interface components {
                         /** @description Custom title for the booking. */
                         title?: string;
                     };
-                    /** @description Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. Omit the field to create a free booking. */
+                    /** @description Payment method the booking is paid with. Pass the `external` method to record a payment collected outside Spacebring: `succeeded` confirms the booking, `pending` keeps it tentative until the payment is marked as paid. With Basic authentication, also pass the `membershipRefOwner` of the customer the booking is paid for. Omit the field to create a free booking. */
                     paymentMethod?: {
                         /** @description Discounts to apply, echoed from the payment method. An empty array applies none; omitting it picks the best suited coupon. */
                         discounts?: {
@@ -31666,6 +32205,328 @@ export interface operations {
             };
             /** @description Bad Request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getDeliveries: {
+        parameters: {
+            query?: {
+                /** @description Filter deliveries added on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+                "createDate[gte]"?: string;
+                /** @description Filter deliveries added on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+                "createDate[lte]"?: string;
+                /** @description UUID of the customer, a person's or a company's, whose deliveries to list. Cannot be combined with userRef. */
+                customerRef?: string;
+                /** @description Maximum number of deliveries per page. Defaults to 25 when omitted or invalid; values above 100 are capped at 100. */
+                limit?: number;
+                /** @description UUID of the location whose deliveries to list. Omit to list deliveries across every location of the network. */
+                locationRef?: string;
+                /** @description Pagination token from nextPageToken in a previous response. Keep the same filters when fetching the next page. */
+                nextPageToken?: string;
+                /** @description Filter by status. Defaults to every status. Comma-separated, one or more of: pending, pickedUp. */
+                status?: string;
+                /** @description UUID of the user whose deliveries to list: those for the user and for the companies the user manages. Users can list their own; administrators see those in the locations they manage. */
+                userRef?: string;
+            };
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getDeliveries"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createDelivery"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getDelivery"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    getDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The ID of the delivery. */
+                deliveryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getDelivery"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    deleteDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The ID of the delivery. */
+                deliveryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    patchDelivery: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description The ID of the delivery. */
+                deliveryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["patchDelivery"];
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    createDeliveryMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: components["requestBodies"]["createDeliveryMedia"];
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["createDeliveryMedia"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

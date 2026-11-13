@@ -331,6 +331,34 @@ export function createContracts(client: Client<paths>, defaults: SpacebringDefau
   };
 }
 
+// deliveries.ts
+export type Delivery = NonNullable<operations["getDelivery"]["responses"][200]["content"]["application/json"]["delivery"]>;
+export type DeliveryMedia = NonNullable<operations["createDeliveryMedia"]["responses"][201]["content"]["application/json"]["media"]>;
+export interface GetDeliveriesQuery {
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
+  customerRef?: string;
+  limit?: number;
+  locationRef?: string;
+  nextPageToken?: string;
+  status?: string;
+  userRef?: string;
+}
+export type CreateDeliveryBody = NonNullable<NonNullable<operations["createDelivery"]["requestBody"]>["content"]["application/json"]["delivery"]>;
+export type CreateDeliveryMediaBody = NonNullable<NonNullable<operations["createDeliveryMedia"]["requestBody"]>["content"]["application/json"]["media"]>;
+export type PatchDeliveryBody = NonNullable<NonNullable<operations["patchDelivery"]["requestBody"]>["content"]["application/json"]["delivery"]>;
+export function createDeliveries(client: Client<paths>, defaults: SpacebringDefaults) {
+  return {
+    async list(query?: GetDeliveriesQuery, options?: SpacebringRequestOptions): Promise<{ deliveries: Delivery[]; nextPageToken?: string; searchQueryNext?: string }>
+    iterate(query?: Omit<GetDeliveriesQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Delivery, void, undefined>
+    async get(deliveryId: string, options?: SpacebringRequestOptions): Promise<Delivery>
+    async create(delivery: CreateDeliveryBody, options?: SpacebringRequestOptions): Promise<Delivery>
+    async update(deliveryId: string, delivery: PatchDeliveryBody, options?: SpacebringRequestOptions): Promise<undefined>
+    async delete(deliveryId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async createMedia(media: CreateDeliveryMediaBody, options?: SpacebringRequestOptions): Promise<DeliveryMedia>
+  };
+}
+
 // discounts.ts
 export type Coupon = NonNullable<components["schemas"]["coupon"]>;
 export type Promocode = NonNullable<components["schemas"]["promocode"]>;
