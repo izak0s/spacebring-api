@@ -27527,7 +27527,6 @@
             "type": "array",
             "items": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "comment": {
                   "nullable": true,
@@ -27569,7 +27568,7 @@
                     ],
                     "additionalProperties": false
                   },
-                  "description": "Photo of the delivery, or an empty list when it has none."
+                  "description": "Photos of the delivery in display order, or an empty list when it has none."
                 },
                 "pickupDate": {
                   "nullable": true,
@@ -27707,7 +27706,8 @@
                 "pickupDate",
                 "customer",
                 "status"
-              ]
+              ],
+              "additionalProperties": false
             },
             "description": "List of deliveries, the most recently added first."
           },
@@ -27730,8 +27730,6 @@
         "properties": {
           "delivery": {
             "type": "object",
-            "additionalProperties": false,
-            "description": "The delivery.",
             "properties": {
               "comment": {
                 "nullable": true,
@@ -27773,7 +27771,7 @@
                   ],
                   "additionalProperties": false
                 },
-                "description": "Photo of the delivery, or an empty list when it has none."
+                "description": "Photos of the delivery in display order, or an empty list when it has none."
               },
               "pickupDate": {
                 "nullable": true,
@@ -27911,7 +27909,9 @@
               "pickupDate",
               "customer",
               "status"
-            ]
+            ],
+            "additionalProperties": false,
+            "description": "The delivery."
           }
         },
         "required": [
@@ -27927,7 +27927,7 @@
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Storage key of the media file. Pass it as media[0].key when creating or updating a delivery."
+                "description": "Storage key of the media file. Pass it as a key in media when creating or updating a delivery."
               },
               "mimeType": {
                 "type": "string",
@@ -34135,7 +34135,7 @@
                   "description": "Credit pricing settings."
                 },
                 "dayPassesEnabled": {
-                  "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes.",
+                  "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                   "type": "boolean"
                 },
                 "description": {
@@ -36091,7 +36091,7 @@
                 "description": "Credit pricing settings."
               },
               "dayPassesEnabled": {
-                "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes.",
+                "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                 "type": "boolean"
               },
               "description": {
@@ -46437,13 +46437,18 @@
                 "advanceInvoicing": {
                   "type": "object",
                   "properties": {
+                    "dayOfMonth": {
+                      "description": "Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day.",
+                      "type": "number"
+                    },
                     "days": {
-                      "type": "number",
-                      "description": "Number of days before renewal to issue an invoice."
+                      "description": "Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal.",
+                      "type": "number"
                     },
                     "type": {
                       "type": "string",
                       "enum": [
+                        "dayOfMonth",
                         "days",
                         "default"
                       ],
@@ -46451,7 +46456,6 @@
                     }
                   },
                   "required": [
-                    "days",
                     "type"
                   ],
                   "additionalProperties": false,
@@ -47662,13 +47666,18 @@
           "advanceInvoicing": {
             "type": "object",
             "properties": {
+              "dayOfMonth": {
+                "description": "Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day.",
+                "type": "number"
+              },
               "days": {
-                "type": "number",
-                "description": "Number of days before renewal to issue an invoice."
+                "description": "Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal.",
+                "type": "number"
               },
               "type": {
                 "type": "string",
                 "enum": [
+                  "dayOfMonth",
                   "days",
                   "default"
                 ],
@@ -47676,7 +47685,6 @@
               }
             },
             "required": [
-              "days",
               "type"
             ],
             "additionalProperties": false,
@@ -48883,13 +48891,18 @@
               "advanceInvoicing": {
                 "type": "object",
                 "properties": {
+                  "dayOfMonth": {
+                    "description": "Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day.",
+                    "type": "number"
+                  },
                   "days": {
-                    "type": "number",
-                    "description": "Number of days before renewal to issue an invoice."
+                    "description": "Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal.",
+                    "type": "number"
                   },
                   "type": {
                     "type": "string",
                     "enum": [
+                      "dayOfMonth",
                       "days",
                       "default"
                     ],
@@ -48897,7 +48910,6 @@
                   }
                 },
                 "required": [
-                  "days",
                   "type"
                 ],
                 "additionalProperties": false,
@@ -63811,8 +63823,7 @@
                       "description": "ID of the location where the delivery is kept."
                     },
                     "media": {
-                      "description": "Photo of the delivery to attach. The url is generated server-side.",
-                      "maxItems": 1,
+                      "description": "Photos of the delivery to attach, in display order. The url is generated server-side.",
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -63881,7 +63892,6 @@
                       "maxLength": 1000
                     },
                     "media": {
-                      "maxItems": 1,
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -63895,7 +63905,7 @@
                           "key"
                         ]
                       },
-                      "description": "Photo of the delivery, replacing the current one. Pass an empty array to remove it. The url is generated server-side."
+                      "description": "Photos of the delivery in display order, replacing the current ones. Pass an empty array to remove them all. The url is generated server-side."
                     },
                     "customer": {
                       "type": "object",
@@ -66715,7 +66725,7 @@
                       ]
                     },
                     "dayPassesEnabled": {
-                      "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected.",
+                      "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                       "type": "boolean"
                     },
                     "description": {
@@ -68101,7 +68111,7 @@
                       ]
                     },
                     "dayPassesEnabled": {
-                      "description": "Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected.",
+                      "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                       "type": "boolean"
                     },
                     "description": {
@@ -70191,6 +70201,12 @@
                           "description": "Advance invoicing settings.",
                           "type": "object",
                           "properties": {
+                            "dayOfMonth": {
+                              "description": "Day of the month, from 1 to 28, to issue an invoice before renewal. Required when type is dayOfMonth.",
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 28
+                            },
                             "days": {
                               "description": "Number of days before renewal to issue an invoice.",
                               "type": "number",
@@ -70199,6 +70215,7 @@
                             "type": {
                               "type": "string",
                               "enum": [
+                                "dayOfMonth",
                                 "days",
                                 "default"
                               ],
@@ -70637,6 +70654,12 @@
                       "description": "Advance invoicing settings.",
                       "type": "object",
                       "properties": {
+                        "dayOfMonth": {
+                          "description": "Day of the month, from 1 to 28, to issue an invoice before renewal. Required when type is dayOfMonth.",
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 28
+                        },
                         "days": {
                           "description": "Number of days before renewal to issue an invoice.",
                           "type": "number"
@@ -70644,6 +70667,7 @@
                         "type": {
                           "type": "string",
                           "enum": [
+                            "dayOfMonth",
                             "days",
                             "default"
                           ],
