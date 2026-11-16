@@ -7789,7 +7789,7 @@ export interface components {
                  * @description ID of the location where the delivery is kept.
                  */
                 locationRef: string;
-                /** @description Photo of the delivery, or an empty list when it has none. */
+                /** @description Photos of the delivery in display order, or an empty list when it has none. */
                 media: {
                     /** @description Storage key of the media file. */
                     key: string;
@@ -7887,7 +7887,7 @@ export interface components {
                  * @description ID of the location where the delivery is kept.
                  */
                 locationRef: string;
-                /** @description Photo of the delivery, or an empty list when it has none. */
+                /** @description Photos of the delivery in display order, or an empty list when it has none. */
                 media: {
                     /** @description Storage key of the media file. */
                     key: string;
@@ -7964,7 +7964,7 @@ export interface components {
         createDeliveryMedia: {
             /** @description The created media upload. */
             media: {
-                /** @description Storage key of the media file. Pass it as media[0].key when creating or updating a delivery. */
+                /** @description Storage key of the media file. Pass it as a key in media when creating or updating a delivery. */
                 key: string;
                 /**
                  * @description MIME type of the image file.
@@ -10742,7 +10742,7 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
-                /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes. */
+                /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
                 description: string;
@@ -11505,7 +11505,7 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
-                /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes. */
+                /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
                 description: string;
@@ -16256,13 +16256,15 @@ export interface components {
                 addPendingItemsToInvoice: boolean;
                 /** @description Advance invoicing settings. */
                 advanceInvoicing: {
-                    /** @description Number of days before renewal to issue an invoice. */
-                    days: number;
+                    /** @description Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day. */
+                    dayOfMonth?: number;
+                    /** @description Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal. */
+                    days?: number;
                     /**
                      * @description Advance invoicing mode.
                      * @enum {string}
                      */
-                    type: "days" | "default";
+                    type: "dayOfMonth" | "days" | "default";
                 };
                 /** @description Resource assignments for this subscription. */
                 assignments: {
@@ -16846,13 +16848,15 @@ export interface components {
             addPendingItemsToInvoice: boolean;
             /** @description Advance invoicing settings. */
             advanceInvoicing: {
-                /** @description Number of days before renewal to issue an invoice. */
-                days: number;
+                /** @description Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day. */
+                dayOfMonth?: number;
+                /** @description Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal. */
+                days?: number;
                 /**
                  * @description Advance invoicing mode.
                  * @enum {string}
                  */
-                type: "days" | "default";
+                type: "dayOfMonth" | "days" | "default";
             };
             /** @description Resource assignments for this subscription. */
             assignments: {
@@ -17437,13 +17441,15 @@ export interface components {
                 addPendingItemsToInvoice: boolean;
                 /** @description Advance invoicing settings. */
                 advanceInvoicing: {
-                    /** @description Number of days before renewal to issue an invoice. */
-                    days: number;
+                    /** @description Day of the month, from 1 to 28, to issue an invoice before renewal. Present when invoices are issued on a fixed day. */
+                    dayOfMonth?: number;
+                    /** @description Number of days before renewal to issue an invoice. Present when invoices are issued a number of days before renewal. */
+                    days?: number;
                     /**
                      * @description Advance invoicing mode.
                      * @enum {string}
                      */
-                    type: "days" | "default";
+                    type: "dayOfMonth" | "days" | "default";
                 };
                 /** @description Resource assignments for this subscription. */
                 assignments: {
@@ -24890,7 +24896,7 @@ export interface components {
                          * @description ID of the location where the delivery is kept.
                          */
                         locationRef: string;
-                        /** @description Photo of the delivery to attach. The url is generated server-side. */
+                        /** @description Photos of the delivery to attach, in display order. The url is generated server-side. */
                         media?: {
                             /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
@@ -24918,7 +24924,7 @@ export interface components {
                     delivery: {
                         /** @description Comment about the delivery for the customer, such as the carrier or how to handle the item. */
                         comment?: string | null;
-                        /** @description Photo of the delivery, replacing the current one. Pass an empty array to remove it. The url is generated server-side. */
+                        /** @description Photos of the delivery in display order, replacing the current ones. Pass an empty array to remove them all. The url is generated server-side. */
                         media?: {
                             /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
@@ -26121,7 +26127,7 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
-                        /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected. */
+                        /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
                         description?: string;
@@ -26668,7 +26674,7 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
-                        /** @description Whether members can book this resource with day passes. Only hotDesk resources support day passes; enabling it for any other type is rejected. */
+                        /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
                         description?: string;
@@ -27643,13 +27649,15 @@ export interface components {
                         addPendingItemsToInvoice?: boolean;
                         /** @description Advance invoicing settings. */
                         advanceInvoicing?: {
+                            /** @description Day of the month, from 1 to 28, to issue an invoice before renewal. Required when type is dayOfMonth. */
+                            dayOfMonth?: number;
                             /** @description Number of days before renewal to issue an invoice. */
                             days?: number;
                             /**
                              * @description Advance invoicing mode.
                              * @enum {string}
                              */
-                            type: "days" | "default";
+                            type: "dayOfMonth" | "days" | "default";
                         };
                         /**
                          * @description Billing cycle anchor mode.
@@ -27855,13 +27863,15 @@ export interface components {
                         addPendingItemsToInvoice?: boolean;
                         /** @description Advance invoicing settings. */
                         advanceInvoicing?: {
+                            /** @description Day of the month, from 1 to 28, to issue an invoice before renewal. Required when type is dayOfMonth. */
+                            dayOfMonth?: number;
                             /** @description Number of days before renewal to issue an invoice. */
                             days?: number;
                             /**
                              * @description Advance invoicing mode.
                              * @enum {string}
                              */
-                            type: "days" | "default";
+                            type: "dayOfMonth" | "days" | "default";
                         };
                         /**
                          * Format: date-time
