@@ -9,7 +9,7 @@ export type Campaign = NonNullable<operations["getCampaign"]["responses"][200]["
 
 /** Query parameters for `sb.campaigns.list()`. */
 export interface GetCampaignsQuery {
-  /** Filter by channel. Comma-separated, one or more of: email, push. */
+  /** Filter by channel. Comma-separated, one or more of: email, push, sms. */
   channel?: string;
   /** IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs. */
   id?: string;

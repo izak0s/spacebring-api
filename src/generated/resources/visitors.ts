@@ -47,8 +47,10 @@ export interface GetVisitsQuery {
   userRefVisitor?: string;
   /** The date filter of items. */
   createDate?: { lte?: string; gte?: string };
-  /** The visit date filter of items. */
-  date?: { lte?: string; gte?: string };
+  /** The visit date filter of items. It compares the date a visit starts. To list the visits that overlap a period, such as visitors who are still on a visit that started earlier, combine date[lt] with the end of the period and endDate[gt] with its start. */
+  date?: { lt?: string; lte?: string; gt?: string; gte?: string };
+  /** The visit end date filter of items. It compares the date a visit ends and its code expires. */
+  endDate?: { lt?: string; lte?: string; gt?: string; gte?: string };
   /** The number of items to return */
   limit?: number;
   /** Token to retrieve the next page of results. */
