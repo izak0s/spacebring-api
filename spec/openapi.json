@@ -28642,6 +28642,12 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "invoiceRef": {
+                "description": "ID of the invoice the discounted item is on.",
+                "nullable": true,
+                "type": "string",
+                "format": "uuid"
+              },
               "optionRef": {
                 "description": "ID of the related shop product option.",
                 "nullable": true,
@@ -28756,6 +28762,14 @@
             "nullable": true,
             "type": "string",
             "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved"
+            ],
+            "description": "Status of the redemption: pending while the purchase is not completed yet, approved once it is."
           }
         },
         "required": [
@@ -28764,7 +28778,8 @@
           "customer",
           "locationRef",
           "networkRef",
-          "product"
+          "product",
+          "status"
         ],
         "additionalProperties": false
       },
@@ -29572,6 +29587,10 @@
                           }
                         },
                         "additionalProperties": false
+                      },
+                      "inPerson": {
+                        "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                        "type": "boolean"
                       },
                       "label": {
                         "description": "Human-readable label of the payment method (e.g. 'Visa 4242').",
@@ -39180,6 +39199,10 @@
                                 "xendit"
                               ]
                             },
+                            "inPerson": {
+                              "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                              "type": "boolean"
+                            },
                             "label": {
                               "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
                               "type": "string"
@@ -40084,6 +40107,10 @@
                                   "wayforpay",
                                   "xendit"
                                 ]
+                              },
+                              "inPerson": {
+                                "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                                "type": "boolean"
                               },
                               "label": {
                                 "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
@@ -41420,6 +41447,10 @@
                               "xendit"
                             ]
                           },
+                          "inPerson": {
+                            "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                            "type": "boolean"
+                          },
                           "label": {
                             "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
                             "type": "string"
@@ -42324,6 +42355,10 @@
                                 "wayforpay",
                                 "xendit"
                               ]
+                            },
+                            "inPerson": {
+                              "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                              "type": "boolean"
                             },
                             "label": {
                               "description": "Saved payment method label, e.g. `Visa •••• 4242`.",
@@ -44758,6 +44793,10 @@
                               "additionalProperties": false,
                               "description": "Customer who paid via payment gateway."
                             },
+                            "inPerson": {
+                              "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                              "type": "boolean"
+                            },
                             "label": {
                               "description": "Human-readable payment method label (e.g. Visa **** 4242).",
                               "type": "string"
@@ -45982,6 +46021,10 @@
                             },
                             "additionalProperties": false,
                             "description": "Customer who paid via payment gateway."
+                          },
+                          "inPerson": {
+                            "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                            "type": "boolean"
                           },
                           "label": {
                             "description": "Human-readable payment method label (e.g. Visa **** 4242).",
@@ -56880,6 +56923,10 @@
                               "type": "string",
                               "description": "Payment gateway identifier."
                             },
+                            "inPerson": {
+                              "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                              "type": "boolean"
+                            },
                             "label": {
                               "description": "Display label for the payment method.",
                               "type": "string"
@@ -58354,6 +58401,10 @@
                             "type": "string",
                             "description": "Payment gateway identifier."
                           },
+                          "inPerson": {
+                            "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                            "type": "boolean"
+                          },
                           "label": {
                             "description": "Display label for the payment method.",
                             "type": "string"
@@ -59823,6 +59874,10 @@
                           "gateway": {
                             "type": "string",
                             "description": "Payment gateway identifier."
+                          },
+                          "inPerson": {
+                            "description": "Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete.",
+                            "type": "boolean"
                           },
                           "label": {
                             "description": "Display label for the payment method.",

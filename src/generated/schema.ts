@@ -8260,6 +8260,11 @@ export interface components {
                 eventTicketRef?: string | null;
                 /**
                  * Format: uuid
+                 * @description ID of the invoice the discounted item is on.
+                 */
+                invoiceRef?: string | null;
+                /**
+                 * Format: uuid
                  * @description ID of the related shop product option.
                  */
                 optionRef?: string | null;
@@ -8317,6 +8322,11 @@ export interface components {
              * @description ID of the promocode that was redeemed.
              */
             promocodeRef?: string | null;
+            /**
+             * @description Status of the redemption: pending while the purchase is not completed yet, approved once it is.
+             * @enum {string}
+             */
+            status: "pending" | "approved";
         };
         event: {
             /**
@@ -8739,6 +8749,8 @@ export interface components {
                              */
                             type?: "company" | "user";
                         };
+                        /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                        inPerson?: boolean;
                         /** @description Human-readable label of the payment method (e.g. 'Visa 4242'). */
                         label?: string;
                         /** @description Masked payment method identifier. */
@@ -12805,6 +12817,8 @@ export interface components {
                              * @enum {string}
                              */
                             gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -13240,6 +13254,8 @@ export interface components {
                              * @enum {string}
                              */
                             gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -13887,6 +13903,8 @@ export interface components {
                              * @enum {string}
                              */
                             gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -14322,6 +14340,8 @@ export interface components {
                              * @enum {string}
                              */
                             gateway?: "authorizenet" | "flow" | "fondy" | "freedompay" | "hyperpay" | "kakaopay" | "maya" | "mercadopago" | "mollie" | "paypal" | "paystack" | "paytabs" | "payway" | "plata" | "stripe" | "tap" | "wayforpay" | "xendit";
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Saved payment method label, e.g. `Visa •••• 4242`. */
                             label?: string;
                             /** @description Masked payment method identifier. */
@@ -15475,6 +15495,8 @@ export interface components {
                                  */
                                 type?: "company" | "user";
                             };
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Human-readable payment method label (e.g. Visa **** 4242). */
                             label?: string;
                             /** @description Location associated with the payment gateway. */
@@ -16024,6 +16046,8 @@ export interface components {
                                  */
                                 type?: "company" | "user";
                             };
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Human-readable payment method label (e.g. Visa **** 4242). */
                             label?: string;
                             /** @description Location associated with the payment gateway. */
@@ -21409,6 +21433,8 @@ export interface components {
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
                             gateway: string;
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Display label for the payment method. */
                             label?: string;
                             /** @description Masked card or account identifier. */
@@ -22129,6 +22155,8 @@ export interface components {
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
                             gateway: string;
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Display label for the payment method. */
                             label?: string;
                             /** @description Masked card or account identifier. */
@@ -22849,6 +22877,8 @@ export interface components {
                         paymentGateway?: {
                             /** @description Payment gateway identifier. */
                             gateway: string;
+                            /** @description Present and true when an administrator took the payment in person with Tap to Pay on their phone, which has no checkout page to complete. */
+                            inPerson?: boolean;
                             /** @description Display label for the payment method. */
                             label?: string;
                             /** @description Masked card or account identifier. */
