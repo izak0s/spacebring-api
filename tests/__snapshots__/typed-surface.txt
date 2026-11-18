@@ -949,7 +949,8 @@ export interface GetVisitsQuery {
   userRefHost?: string;
   userRefVisitor?: string;
   createDate?: { lte?: string; gte?: string };
-  date?: { lte?: string; gte?: string };
+  date?: { lt?: string; lte?: string; gt?: string; gte?: string };
+  endDate?: { lt?: string; lte?: string; gt?: string; gte?: string };
   limit?: number;
   nextPageToken?: string;
 }

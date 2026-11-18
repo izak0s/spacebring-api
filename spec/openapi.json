@@ -3316,7 +3316,7 @@
             "in": "query",
             "name": "channel",
             "required": false,
-            "description": "Filter by channel. Comma-separated, one or more of: email, push.",
+            "description": "Filter by channel. Comma-separated, one or more of: email, push, sms.",
             "schema": {
               "type": "string"
             }
@@ -17294,19 +17294,59 @@
           {
             "in": "query",
             "name": "date",
-            "description": "The visit date filter of items.",
+            "description": "The visit date filter of items. It compares the date a visit starts. To list the visits that overlap a period, such as visitors who are still on a visit that started earlier, combine date[lt] with the end of the period and endDate[gt] with its start.",
             "schema": {
               "type": "object",
               "properties": {
+                "lt": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that start before this date. Example: date[lt]=2021-05-22T00:00:00Z"
+                },
                 "lte": {
                   "format": "date-time",
                   "type": "string",
                   "description": "Get visits with less or equal visit date. Example: date[lte]=2021-05-21T10:00:00Z"
                 },
+                "gt": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that start after this date. Example: date[gt]=2021-05-21T10:00:00Z"
+                },
                 "gte": {
                   "format": "date-time",
                   "type": "string",
-                  "description": "Get visits with greater or equal visit date. Example: date[gte]=2021-05-21T10:00:00Z"
+                  "description": "Get visits with greater or equal visit date. Visits that started earlier and have not ended are not included. Example: date[gte]=2021-05-21T10:00:00Z"
+                }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "description": "The visit end date filter of items. It compares the date a visit ends and its code expires.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lt": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that end before this date. Example: endDate[lt]=2021-05-22T00:00:00Z"
+                },
+                "lte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that end on or before this date. Example: endDate[lte]=2021-05-22T00:00:00Z"
+                },
+                "gt": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that end after this date. Example: endDate[gt]=2021-05-21T00:00:00Z"
+                },
+                "gte": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "Get visits that end on or after this date. Example: endDate[gte]=2021-05-21T00:00:00Z"
                 }
               }
             }
@@ -24910,12 +24950,13 @@
                   "type": "string",
                   "enum": [
                     "email",
-                    "push"
+                    "push",
+                    "sms"
                   ],
                   "description": "Channel the campaign is sent through."
                 },
                 "charge": {
-                  "description": "What sending cost, debited from the network balance when sending started. Present for sent email campaigns.",
+                  "description": "What sending cost, debited from the network balance when sending started. Present for sent email and SMS campaigns.",
                   "type": "object",
                   "properties": {
                     "amount": {
@@ -25027,6 +25068,20 @@
                   "description": "ISO timestamp of when sending started.",
                   "type": "string",
                   "format": "date-time"
+                },
+                "sms": {
+                  "description": "SMS content, used when the channel is sms.",
+                  "type": "object",
+                  "properties": {
+                    "body": {
+                      "type": "string",
+                      "description": "Text of the SMS. A text longer than one SMS goes out as several, each charged."
+                    }
+                  },
+                  "required": [
+                    "body"
+                  ],
+                  "additionalProperties": false
                 },
                 "stats": {
                   "type": "object",
@@ -25315,12 +25370,13 @@
                 "type": "string",
                 "enum": [
                   "email",
-                  "push"
+                  "push",
+                  "sms"
                 ],
                 "description": "Channel the campaign is sent through."
               },
               "charge": {
-                "description": "What sending cost, debited from the network balance when sending started. Present for sent email campaigns.",
+                "description": "What sending cost, debited from the network balance when sending started. Present for sent email and SMS campaigns.",
                 "type": "object",
                 "properties": {
                   "amount": {
@@ -25432,6 +25488,20 @@
                 "description": "ISO timestamp of when sending started.",
                 "type": "string",
                 "format": "date-time"
+              },
+              "sms": {
+                "description": "SMS content, used when the channel is sms.",
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "description": "Text of the SMS. A text longer than one SMS goes out as several, each charged."
+                  }
+                },
+                "required": [
+                  "body"
+                ],
+                "additionalProperties": false
               },
               "stats": {
                 "type": "object",
@@ -31767,25 +31837,6 @@
                   },
                   "additionalProperties": false
                 },
-                "addons": {
-                  "default": [],
-                  "description": "Addons included in the plan.",
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Unique identifier of the addon."
-                      }
-                    },
-                    "required": [
-                      "id"
-                    ],
-                    "additionalProperties": false
-                  }
-                },
                 "commitmentCycles": {
                   "type": "number",
                   "description": "Number of billing cycles the member is committed to."
@@ -31798,6 +31849,25 @@
                 "credits": {
                   "type": "number",
                   "description": "Credits included in the plan."
+                },
+                "crossSells": {
+                  "type": "object",
+                  "properties": {
+                    "plans": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Plan id."
+                      },
+                      "description": "Plans offered with this plan, in order."
+                    }
+                  },
+                  "required": [
+                    "plans"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Plans members can buy together with this plan."
                 },
                 "customTax": {
                   "type": "object",
@@ -32162,10 +32232,10 @@
                 }
               },
               "required": [
-                "addons",
                 "commitmentCycles",
                 "createDate",
                 "credits",
+                "crossSells",
                 "customTax",
                 "dayPasses",
                 "description",
@@ -32232,25 +32302,6 @@
             },
             "additionalProperties": false
           },
-          "addons": {
-            "default": [],
-            "description": "Addons included in the plan.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "uuid",
-                  "description": "Unique identifier of the addon."
-                }
-              },
-              "required": [
-                "id"
-              ],
-              "additionalProperties": false
-            }
-          },
           "commitmentCycles": {
             "type": "number",
             "description": "Number of billing cycles the member is committed to."
@@ -32263,6 +32314,25 @@
           "credits": {
             "type": "number",
             "description": "Credits included in the plan."
+          },
+          "crossSells": {
+            "type": "object",
+            "properties": {
+              "plans": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Plan id."
+                },
+                "description": "Plans offered with this plan, in order."
+              }
+            },
+            "required": [
+              "plans"
+            ],
+            "additionalProperties": false,
+            "description": "Plans members can buy together with this plan."
           },
           "customTax": {
             "type": "object",
@@ -32627,10 +32697,10 @@
           }
         },
         "required": [
-          "addons",
           "commitmentCycles",
           "createDate",
           "credits",
+          "crossSells",
           "customTax",
           "dayPasses",
           "description",
@@ -32788,25 +32858,6 @@
                 },
                 "additionalProperties": false
               },
-              "addons": {
-                "default": [],
-                "description": "Addons included in the plan.",
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "format": "uuid",
-                      "description": "Unique identifier of the addon."
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ],
-                  "additionalProperties": false
-                }
-              },
               "commitmentCycles": {
                 "type": "number",
                 "description": "Number of billing cycles the member is committed to."
@@ -32819,6 +32870,25 @@
               "credits": {
                 "type": "number",
                 "description": "Credits included in the plan."
+              },
+              "crossSells": {
+                "type": "object",
+                "properties": {
+                  "plans": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Plan id."
+                    },
+                    "description": "Plans offered with this plan, in order."
+                  }
+                },
+                "required": [
+                  "plans"
+                ],
+                "additionalProperties": false,
+                "description": "Plans members can buy together with this plan."
               },
               "customTax": {
                 "type": "object",
@@ -33183,10 +33253,10 @@
               }
             },
             "required": [
-              "addons",
               "commitmentCycles",
               "createDate",
               "credits",
+              "crossSells",
               "customTax",
               "dayPasses",
               "description",
@@ -34366,24 +34436,6 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "addons": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "description": "Addon id."
-                                }
-                              },
-                              "required": [
-                                "id"
-                              ],
-                              "additionalProperties": false
-                            },
-                            "description": "Addons included in the tier."
-                          },
                           "commitmentCycles": {
                             "type": "number",
                             "description": "Number of billing cycles in the tier."
@@ -34391,6 +34443,25 @@
                           "credits": {
                             "type": "number",
                             "description": "Credits included in the tier."
+                          },
+                          "crossSells": {
+                            "type": "object",
+                            "properties": {
+                              "plans": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "description": "Plan id."
+                                },
+                                "description": "Plans offered with the tier, in order."
+                              }
+                            },
+                            "required": [
+                              "plans"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Plans members can buy together with this tier."
                           },
                           "dayPasses": {
                             "description": "Day passes included in the tier.",
@@ -34900,9 +34971,9 @@
                           }
                         },
                         "required": [
-                          "addons",
                           "commitmentCycles",
                           "credits",
+                          "crossSells",
                           "entire",
                           "grantedDiscounts",
                           "id",
@@ -36322,24 +36393,6 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "addons": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "Addon id."
-                              }
-                            },
-                            "required": [
-                              "id"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "description": "Addons included in the tier."
-                        },
                         "commitmentCycles": {
                           "type": "number",
                           "description": "Number of billing cycles in the tier."
@@ -36347,6 +36400,25 @@
                         "credits": {
                           "type": "number",
                           "description": "Credits included in the tier."
+                        },
+                        "crossSells": {
+                          "type": "object",
+                          "properties": {
+                            "plans": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Plan id."
+                              },
+                              "description": "Plans offered with the tier, in order."
+                            }
+                          },
+                          "required": [
+                            "plans"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Plans members can buy together with this tier."
                         },
                         "dayPasses": {
                           "description": "Day passes included in the tier.",
@@ -36856,9 +36928,9 @@
                         }
                       },
                       "required": [
-                        "addons",
                         "commitmentCycles",
                         "credits",
+                        "crossSells",
                         "entire",
                         "grantedDiscounts",
                         "id",
@@ -60833,6 +60905,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp of when the visit ends and its code expires. For a visit created without an end date, the end of the visit date's day in the location timezone."
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -60968,6 +61045,7 @@
           "createDate",
           "customer",
           "date",
+          "endDate",
           "id",
           "location",
           "locationRef",
@@ -62593,9 +62671,10 @@
                       "type": "string",
                       "enum": [
                         "email",
-                        "push"
+                        "push",
+                        "sms"
                       ],
-                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns."
+                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people through more than one channel, create a campaign for each."
                     },
                     "email": {
                       "type": "object",
@@ -62658,6 +62737,18 @@
                         }
                       },
                       "description": "Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep."
+                    },
+                    "sms": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Text of the SMS. A text longer than one SMS, 160 characters or 70 with a character outside the GSM-7 alphabet such as an emoji, goes out as several, each charged. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "description": "SMS content, used when the channel is sms. An update replaces the whole SMS with this one, so send every field to keep."
                     }
                   },
                   "required": [
@@ -62874,9 +62965,10 @@
                       "type": "string",
                       "enum": [
                         "email",
-                        "push"
+                        "push",
+                        "sms"
                       ],
-                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns."
+                      "description": "Channel the campaign is sent through. It is sent with the content of its channel only. To reach people through more than one channel, create a campaign for each."
                     },
                     "email": {
                       "type": "object",
@@ -62939,6 +63031,18 @@
                         }
                       },
                       "description": "Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep."
+                    },
+                    "sms": {
+                      "type": "object",
+                      "properties": {
+                        "body": {
+                          "default": "",
+                          "description": "Text of the SMS. A text longer than one SMS, 160 characters or 70 with a character outside the GSM-7 alphabet such as an emoji, goes out as several, each charged. Can be empty in a draft, but is needed to send it.",
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "description": "SMS content, used when the channel is sms. An update replaces the whole SMS with this one, so send every field to keep."
                     }
                   },
                   "description": "Campaign fields to change. Omitted fields keep their current values."
@@ -65757,23 +65861,6 @@
                         }
                       }
                     },
-                    "addons": {
-                      "default": [],
-                      "description": "Addons included in the plan.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid"
-                          }
-                        },
-                        "required": [
-                          "id"
-                        ]
-                      }
-                    },
                     "commitmentCycles": {
                       "default": 0,
                       "description": "Number of billing cycles the member is committed to.",
@@ -65787,6 +65874,23 @@
                       "type": "number",
                       "minimum": 0,
                       "maximum": 1000000000
+                    },
+                    "crossSells": {
+                      "description": "Plans members can buy together with this plan.",
+                      "type": "object",
+                      "properties": {
+                        "plans": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "description": "Plans of the same location and cycle, in the order they are offered."
+                        }
+                      },
+                      "required": [
+                        "plans"
+                      ]
                     },
                     "customTax": {
                       "default": {
@@ -66183,22 +66287,6 @@
                         }
                       }
                     },
-                    "addons": {
-                      "description": "Addons included in the plan.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid"
-                          }
-                        },
-                        "required": [
-                          "id"
-                        ]
-                      }
-                    },
                     "commitmentCycles": {
                       "description": "Number of billing cycles the member is committed to.",
                       "type": "integer",
@@ -66210,6 +66298,23 @@
                       "type": "number",
                       "minimum": 0,
                       "maximum": 1000000000
+                    },
+                    "crossSells": {
+                      "description": "Plans members can buy together with this plan. Kept as stored when omitted.",
+                      "type": "object",
+                      "properties": {
+                        "plans": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "description": "Plans of the same location and cycle, in the order they are offered."
+                        }
+                      },
+                      "required": [
+                        "plans"
+                      ]
                     },
                     "customTax": {
                       "description": "Custom tax settings.",
@@ -66925,24 +67030,6 @@
                           "items": {
                             "type": "object",
                             "properties": {
-                              "addons": {
-                                "default": [],
-                                "description": "Addons included in the tier.",
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string",
-                                      "format": "uuid",
-                                      "description": "Addon id."
-                                    }
-                                  },
-                                  "required": [
-                                    "id"
-                                  ]
-                                }
-                              },
                               "commitmentCycles": {
                                 "type": "number",
                                 "description": "Number of billing cycles the member commits to for this tier."
@@ -66950,6 +67037,24 @@
                               "credits": {
                                 "type": "number",
                                 "description": "Credits included per period in this membership tier."
+                              },
+                              "crossSells": {
+                                "description": "Plans members can buy together with this tier. Kept as stored when omitted.",
+                                "type": "object",
+                                "properties": {
+                                  "plans": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Plan id."
+                                    },
+                                    "description": "Plans of the same location and cycle, in the order they are offered."
+                                  }
+                                },
+                                "required": [
+                                  "plans"
+                                ]
                               },
                               "dayPasses": {
                                 "description": "Optional number of day passes bundled with the tier.",
@@ -68306,24 +68411,6 @@
                           "items": {
                             "type": "object",
                             "properties": {
-                              "addons": {
-                                "default": [],
-                                "description": "Addons included in the tier.",
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string",
-                                      "format": "uuid",
-                                      "description": "Addon id."
-                                    }
-                                  },
-                                  "required": [
-                                    "id"
-                                  ]
-                                }
-                              },
                               "commitmentCycles": {
                                 "type": "number",
                                 "description": "Number of billing cycles the member commits to for this tier."
@@ -68331,6 +68418,24 @@
                               "credits": {
                                 "type": "number",
                                 "description": "Credits included per period in this membership tier."
+                              },
+                              "crossSells": {
+                                "description": "Plans members can buy together with this tier. Kept as stored when omitted.",
+                                "type": "object",
+                                "properties": {
+                                  "plans": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "format": "uuid",
+                                      "description": "Plan id."
+                                    },
+                                    "description": "Plans of the same location and cycle, in the order they are offered."
+                                  }
+                                },
+                                "required": [
+                                  "plans"
+                                ]
                               },
                               "dayPasses": {
                                 "description": "Optional number of day passes bundled with the tier.",
@@ -72560,6 +72665,11 @@
                       "format": "date-time",
                       "description": "ISO timestamp of the scheduled visit date."
                     },
+                    "endDate": {
+                      "description": "ISO timestamp of when the visit ends, after the visit date. The visitor can check in with the same code until then, on every day of the visit. A visit lasts up to 31 days. Defaults to the end of the visit date's day in the location timezone.",
+                      "type": "string",
+                      "format": "date-time"
+                    },
                     "locationRef": {
                       "type": "string",
                       "format": "uuid",
@@ -72627,6 +72737,11 @@
                       "type": "string",
                       "format": "date-time",
                       "description": "ISO timestamp of the scheduled visit date."
+                    },
+                    "endDate": {
+                      "description": "ISO timestamp of when the visit ends, after the visit date. The visitor can check in with the same code until then, on every day of the visit. A visit lasts up to 31 days. Omit it, or send the current end date, to keep the end date, moved by as many days as the visit date moves.",
+                      "type": "string",
+                      "format": "date-time"
                     }
                   },
                   "required": [

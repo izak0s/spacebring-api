@@ -6522,8 +6522,8 @@ export interface components {
                  * @description Channel the campaign is sent through.
                  * @enum {string}
                  */
-                channel: "email" | "push";
-                /** @description What sending cost, debited from the network balance when sending started. Present for sent email campaigns. */
+                channel: "email" | "push" | "sms";
+                /** @description What sending cost, debited from the network balance when sending started. Present for sent email and SMS campaigns. */
                 charge?: {
                     /** @description Amount debited, in minor units of the currency. */
                     amount: number;
@@ -6582,6 +6582,11 @@ export interface components {
                  * @description ISO timestamp of when sending started.
                  */
                 sendDate?: string;
+                /** @description SMS content, used when the channel is sms. */
+                sms?: {
+                    /** @description Text of the SMS. A text longer than one SMS goes out as several, each charged. */
+                    body: string;
+                };
                 /** @description Delivery statistics of the campaign. */
                 stats: {
                     /** @description Number of recipients whose email bounced. */
@@ -6675,8 +6680,8 @@ export interface components {
                  * @description Channel the campaign is sent through.
                  * @enum {string}
                  */
-                channel: "email" | "push";
-                /** @description What sending cost, debited from the network balance when sending started. Present for sent email campaigns. */
+                channel: "email" | "push" | "sms";
+                /** @description What sending cost, debited from the network balance when sending started. Present for sent email and SMS campaigns. */
                 charge?: {
                     /** @description Amount debited, in minor units of the currency. */
                     amount: number;
@@ -6735,6 +6740,11 @@ export interface components {
                  * @description ISO timestamp of when sending started.
                  */
                 sendDate?: string;
+                /** @description SMS content, used when the channel is sms. */
+                sms?: {
+                    /** @description Text of the SMS. A text longer than one SMS goes out as several, each charged. */
+                    body: string;
+                };
                 /** @description Delivery statistics of the campaign. */
                 stats: {
                     /** @description Number of recipients whose email bounced. */
@@ -9729,17 +9739,6 @@ export interface components {
                     /** @description UniFi Access policy reference. */
                     unifiAccessGroupRef?: string;
                 };
-                /**
-                 * @description Addons included in the plan.
-                 * @default []
-                 */
-                addons: {
-                    /**
-                     * Format: uuid
-                     * @description Unique identifier of the addon.
-                     */
-                    id: string;
-                }[];
                 /** @description Number of billing cycles the member is committed to. */
                 commitmentCycles: number;
                 /**
@@ -9749,6 +9748,11 @@ export interface components {
                 createDate: string;
                 /** @description Credits included in the plan. */
                 credits: number;
+                /** @description Plans members can buy together with this plan. */
+                crossSells: {
+                    /** @description Plans offered with this plan, in order. */
+                    plans: string[];
+                };
                 /** @description Custom tax settings. */
                 customTax: {
                     /** @description Whether custom tax is enabled for the plan. */
@@ -9917,17 +9921,6 @@ export interface components {
                 /** @description UniFi Access policy reference. */
                 unifiAccessGroupRef?: string;
             };
-            /**
-             * @description Addons included in the plan.
-             * @default []
-             */
-            addons: {
-                /**
-                 * Format: uuid
-                 * @description Unique identifier of the addon.
-                 */
-                id: string;
-            }[];
             /** @description Number of billing cycles the member is committed to. */
             commitmentCycles: number;
             /**
@@ -9937,6 +9930,11 @@ export interface components {
             createDate: string;
             /** @description Credits included in the plan. */
             credits: number;
+            /** @description Plans members can buy together with this plan. */
+            crossSells: {
+                /** @description Plans offered with this plan, in order. */
+                plans: string[];
+            };
             /** @description Custom tax settings. */
             customTax: {
                 /** @description Whether custom tax is enabled for the plan. */
@@ -10145,17 +10143,6 @@ export interface components {
                     /** @description UniFi Access policy reference. */
                     unifiAccessGroupRef?: string;
                 };
-                /**
-                 * @description Addons included in the plan.
-                 * @default []
-                 */
-                addons: {
-                    /**
-                     * Format: uuid
-                     * @description Unique identifier of the addon.
-                     */
-                    id: string;
-                }[];
                 /** @description Number of billing cycles the member is committed to. */
                 commitmentCycles: number;
                 /**
@@ -10165,6 +10152,11 @@ export interface components {
                 createDate: string;
                 /** @description Credits included in the plan. */
                 credits: number;
+                /** @description Plans members can buy together with this plan. */
+                crossSells: {
+                    /** @description Plans offered with this plan, in order. */
+                    plans: string[];
+                };
                 /** @description Custom tax settings. */
                 customTax: {
                     /** @description Whether custom tax is enabled for the plan. */
@@ -10843,18 +10835,15 @@ export interface components {
                     enabled: boolean;
                     /** @description Plan tiers configured on the resource. */
                     tiers: {
-                        /** @description Addons included in the tier. */
-                        addons: {
-                            /**
-                             * Format: uuid
-                             * @description Addon id.
-                             */
-                            id: string;
-                        }[];
                         /** @description Number of billing cycles in the tier. */
                         commitmentCycles: number;
                         /** @description Credits included in the tier. */
                         credits: number;
+                        /** @description Plans members can buy together with this tier. */
+                        crossSells: {
+                            /** @description Plans offered with the tier, in order. */
+                            plans: string[];
+                        };
                         /** @description Day passes included in the tier. */
                         dayPasses?: number;
                         /** @description Description of the tier. */
@@ -11606,18 +11595,15 @@ export interface components {
                     enabled: boolean;
                     /** @description Plan tiers configured on the resource. */
                     tiers: {
-                        /** @description Addons included in the tier. */
-                        addons: {
-                            /**
-                             * Format: uuid
-                             * @description Addon id.
-                             */
-                            id: string;
-                        }[];
                         /** @description Number of billing cycles in the tier. */
                         commitmentCycles: number;
                         /** @description Credits included in the tier. */
                         credits: number;
+                        /** @description Plans members can buy together with this tier. */
+                        crossSells: {
+                            /** @description Plans offered with the tier, in order. */
+                            plans: string[];
+                        };
                         /** @description Day passes included in the tier. */
                         dayPasses?: number;
                         /** @description Description of the tier. */
@@ -23398,6 +23384,11 @@ export interface components {
              */
             deleteDate?: string;
             /**
+             * Format: date-time
+             * @description ISO timestamp of when the visit ends and its code expires. For a visit created without an end date, the end of the visit date's day in the location timezone.
+             */
+            endDate: string;
+            /**
              * Format: uuid
              * @description Unique identifier of the visit.
              */
@@ -24267,10 +24258,10 @@ export interface components {
                             })[];
                         };
                         /**
-                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns.
+                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people through more than one channel, create a campaign for each.
                          * @enum {string}
                          */
-                        channel: "email" | "push";
+                        channel: "email" | "push" | "sms";
                         /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
                         email?: {
                             /**
@@ -24312,6 +24303,14 @@ export interface components {
                              * @default
                              */
                             title?: string;
+                        };
+                        /** @description SMS content, used when the channel is sms. An update replaces the whole SMS with this one, so send every field to keep. */
+                        sms?: {
+                            /**
+                             * @description Text of the SMS. A text longer than one SMS, 160 characters or 70 with a character outside the GSM-7 alphabet such as an emoji, goes out as several, each charged. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
                         };
                     };
                 };
@@ -24378,10 +24377,10 @@ export interface components {
                             })[];
                         };
                         /**
-                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people by email and push, create two campaigns.
+                         * @description Channel the campaign is sent through. It is sent with the content of its channel only. To reach people through more than one channel, create a campaign for each.
                          * @enum {string}
                          */
-                        channel?: "email" | "push";
+                        channel?: "email" | "push" | "sms";
                         /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
                         email?: {
                             /**
@@ -24423,6 +24422,14 @@ export interface components {
                              * @default
                              */
                             title?: string;
+                        };
+                        /** @description SMS content, used when the channel is sms. An update replaces the whole SMS with this one, so send every field to keep. */
+                        sms?: {
+                            /**
+                             * @description Text of the SMS. A text longer than one SMS, 160 characters or 70 with a character outside the GSM-7 alphabet such as an emoji, goes out as several, each charged. Can be empty in a draft, but is needed to send it.
+                             * @default
+                             */
+                            body?: string;
                         };
                     };
                 };
@@ -25693,14 +25700,6 @@ export interface components {
                             unifiAccessGroupRef?: string;
                         };
                         /**
-                         * @description Addons included in the plan.
-                         * @default []
-                         */
-                        addons?: {
-                            /** Format: uuid */
-                            id: string;
-                        }[];
-                        /**
                          * @description Number of billing cycles the member is committed to.
                          * @default 0
                          */
@@ -25710,6 +25709,11 @@ export interface components {
                          * @default 0
                          */
                         credits?: number;
+                        /** @description Plans members can buy together with this plan. */
+                        crossSells?: {
+                            /** @description Plans of the same location and cycle, in the order they are offered. */
+                            plans: string[];
+                        };
                         /**
                          * @description Custom tax settings.
                          * @default {
@@ -25923,15 +25927,15 @@ export interface components {
                             /** @description UniFi Access policy reference. */
                             unifiAccessGroupRef?: string | null;
                         };
-                        /** @description Addons included in the plan. */
-                        addons?: {
-                            /** Format: uuid */
-                            id: string;
-                        }[];
                         /** @description Number of billing cycles the member is committed to. */
                         commitmentCycles?: number;
                         /** @description Credits included in the plan. */
                         credits?: number;
+                        /** @description Plans members can buy together with this plan. Kept as stored when omitted. */
+                        crossSells?: {
+                            /** @description Plans of the same location and cycle, in the order they are offered. */
+                            plans: string[];
+                        };
                         /** @description Custom tax settings. */
                         customTax?: {
                             /** @description Whether custom tax is enabled. */
@@ -26209,21 +26213,15 @@ export interface components {
                             enabled: boolean;
                             /** @description Sellable membership options for this resource. */
                             tiers: {
-                                /**
-                                 * @description Addons included in the tier.
-                                 * @default []
-                                 */
-                                addons?: {
-                                    /**
-                                     * Format: uuid
-                                     * @description Addon id.
-                                     */
-                                    id: string;
-                                }[];
                                 /** @description Number of billing cycles the member commits to for this tier. */
                                 commitmentCycles: number;
                                 /** @description Credits included per period in this membership tier. */
                                 credits: number;
+                                /** @description Plans members can buy together with this tier. Kept as stored when omitted. */
+                                crossSells?: {
+                                    /** @description Plans of the same location and cycle, in the order they are offered. */
+                                    plans: string[];
+                                };
                                 /** @description Optional number of day passes bundled with the tier. */
                                 dayPasses?: number;
                                 /** @description Marketing or internal description of the tier. */
@@ -26751,21 +26749,15 @@ export interface components {
                             enabled: boolean;
                             /** @description Sellable membership options for this resource. */
                             tiers: {
-                                /**
-                                 * @description Addons included in the tier.
-                                 * @default []
-                                 */
-                                addons?: {
-                                    /**
-                                     * Format: uuid
-                                     * @description Addon id.
-                                     */
-                                    id: string;
-                                }[];
                                 /** @description Number of billing cycles the member commits to for this tier. */
                                 commitmentCycles: number;
                                 /** @description Credits included per period in this membership tier. */
                                 credits: number;
+                                /** @description Plans members can buy together with this tier. Kept as stored when omitted. */
+                                crossSells?: {
+                                    /** @description Plans of the same location and cycle, in the order they are offered. */
+                                    plans: string[];
+                                };
                                 /** @description Optional number of day passes bundled with the tier. */
                                 dayPasses?: number;
                                 /** @description Marketing or internal description of the tier. */
@@ -28777,6 +28769,11 @@ export interface components {
                          */
                         date: string;
                         /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the visit ends, after the visit date. The visitor can check in with the same code until then, on every day of the visit. A visit lasts up to 31 days. Defaults to the end of the visit date's day in the location timezone.
+                         */
+                        endDate?: string;
+                        /**
                          * Format: uuid
                          * @description ID of the location where the visit takes place.
                          */
@@ -28808,6 +28805,11 @@ export interface components {
                          * @description ISO timestamp of the scheduled visit date.
                          */
                         date: string;
+                        /**
+                         * Format: date-time
+                         * @description ISO timestamp of when the visit ends, after the visit date. The visitor can check in with the same code until then, on every day of the visit. A visit lasts up to 31 days. Omit it, or send the current end date, to keep the end date, moved by as many days as the visit date moves.
+                         */
+                        endDate?: string;
                     };
                 };
             };
@@ -30574,7 +30576,7 @@ export interface operations {
     getCampaigns: {
         parameters: {
             query?: {
-                /** @description Filter by channel. Comma-separated, one or more of: email, push. */
+                /** @description Filter by channel. Comma-separated, one or more of: email, push, sms. */
                 channel?: string;
                 /** @description IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs. */
                 id?: string;
@@ -37923,8 +37925,13 @@ export interface operations {
                      */
                     gte?: string;
                 };
-                /** @description The visit date filter of items. */
+                /** @description The visit date filter of items. It compares the date a visit starts. To list the visits that overlap a period, such as visitors who are still on a visit that started earlier, combine date[lt] with the end of the period and endDate[gt] with its start. */
                 date?: {
+                    /**
+                     * Format: date-time
+                     * @description Get visits that start before this date. Example: date[lt]=2021-05-22T00:00:00Z
+                     */
+                    lt?: string;
                     /**
                      * Format: date-time
                      * @description Get visits with less or equal visit date. Example: date[lte]=2021-05-21T10:00:00Z
@@ -37932,7 +37939,35 @@ export interface operations {
                     lte?: string;
                     /**
                      * Format: date-time
-                     * @description Get visits with greater or equal visit date. Example: date[gte]=2021-05-21T10:00:00Z
+                     * @description Get visits that start after this date. Example: date[gt]=2021-05-21T10:00:00Z
+                     */
+                    gt?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get visits with greater or equal visit date. Visits that started earlier and have not ended are not included. Example: date[gte]=2021-05-21T10:00:00Z
+                     */
+                    gte?: string;
+                };
+                /** @description The visit end date filter of items. It compares the date a visit ends and its code expires. */
+                endDate?: {
+                    /**
+                     * Format: date-time
+                     * @description Get visits that end before this date. Example: endDate[lt]=2021-05-22T00:00:00Z
+                     */
+                    lt?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get visits that end on or before this date. Example: endDate[lte]=2021-05-22T00:00:00Z
+                     */
+                    lte?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get visits that end after this date. Example: endDate[gt]=2021-05-21T00:00:00Z
+                     */
+                    gt?: string;
+                    /**
+                     * Format: date-time
+                     * @description Get visits that end on or after this date. Example: endDate[gte]=2021-05-21T00:00:00Z
                      */
                     gte?: string;
                 };
