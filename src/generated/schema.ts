@@ -9062,6 +9062,10 @@ export interface components {
                 /** @description User last name. */
                 surname?: string | null;
             };
+            /** @description Whether the current user has viewed the post. */
+            viewed?: boolean;
+            /** @description Number of members who viewed the post. Missing on posts nobody has viewed since views were introduced. */
+            views?: number;
         };
         postComment: {
             /**
@@ -18977,6 +18981,8 @@ export interface components {
                      */
                     subscriptionId?: string;
                 }[];
+                /** @description Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date. */
+                endingBalance?: number;
                 /**
                  * @deprecated
                  * @description Deprecated. Use amounts instead.
@@ -19378,6 +19384,8 @@ export interface components {
                      */
                     subscriptionId?: string;
                 }[];
+                /** @description Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date. */
+                endingBalance?: number;
                 /**
                  * @deprecated
                  * @description Deprecated. Use amounts instead.
@@ -19777,6 +19785,8 @@ export interface components {
                  */
                 subscriptionId?: string;
             }[];
+            /** @description Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date. */
+            endingBalance?: number;
             /**
              * @deprecated
              * @description Deprecated. Use amounts instead.

@@ -30359,6 +30359,14 @@
               "id"
             ],
             "additionalProperties": false
+          },
+          "viewed": {
+            "description": "Whether the current user has viewed the post.",
+            "type": "boolean"
+          },
+          "views": {
+            "description": "Number of members who viewed the post. Missing on posts nobody has viewed since views were introduced.",
+            "type": "number"
           }
         },
         "required": [
@@ -52142,6 +52150,10 @@
                     "additionalProperties": false
                   }
                 },
+                "endingBalance": {
+                  "description": "Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date.",
+                  "type": "number"
+                },
                 "expiringAmount": {
                   "deprecated": true,
                   "description": "Deprecated. Use amounts instead.",
@@ -52898,6 +52910,10 @@
                   "additionalProperties": false
                 }
               },
+              "endingBalance": {
+                "description": "Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date.",
+                "type": "number"
+              },
               "expiringAmount": {
                 "deprecated": true,
                 "description": "Deprecated. Use amounts instead.",
@@ -53649,6 +53665,10 @@
               ],
               "additionalProperties": false
             }
+          },
+          "endingBalance": {
+            "description": "Total credits balance of the customer right after the transaction. Not returned for transactions created before the field was introduced, or for the expiration of credits that lapsed on their expiration date.",
+            "type": "number"
           },
           "expiringAmount": {
             "deprecated": true,
