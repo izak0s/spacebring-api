@@ -179,6 +179,8 @@ export function createBilling(client: Client<paths>, defaults: SpacebringDefault
 export type Campaign = NonNullable<operations["getCampaign"]["responses"][200]["content"]["application/json"]["campaign"]>;
 export interface GetCampaignsQuery {
   channel?: string;
+  "createDate[gte]"?: string;
+  "createDate[lte]"?: string;
   id?: string;
   limit?: number;
   locationRef?: string;

@@ -11,6 +11,10 @@ export type Campaign = NonNullable<operations["getCampaign"]["responses"][200]["
 export interface GetCampaignsQuery {
   /** Filter by channel. Comma-separated, one or more of: email, push, sms. */
   channel?: string;
+  /** Filter campaigns created on or after this date (ISO 8601). Use with createDate[lte] for a range. */
+  "createDate[gte]"?: string;
+  /** Filter campaigns created on or before this date (ISO 8601). Use with createDate[gte] for a range. */
+  "createDate[lte]"?: string;
   /** IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs. */
   id?: string;
   /** Maximum number of campaigns per page. Defaults to 25. */
