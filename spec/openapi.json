@@ -3323,6 +3323,24 @@
           },
           {
             "in": "query",
+            "name": "createDate[gte]",
+            "required": false,
+            "description": "Filter campaigns created on or after this date (ISO 8601). Use with createDate[lte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createDate[lte]",
+            "required": false,
+            "description": "Filter campaigns created on or before this date (ISO 8601). Use with createDate[gte] for a range.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "id",
             "required": false,
             "description": "IDs of the campaigns to get, up to 25. The campaigns found are returned on one page, newest first. Comma-separated, one or more UUIDs.",
