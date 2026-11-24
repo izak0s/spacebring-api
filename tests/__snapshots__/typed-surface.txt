@@ -197,6 +197,7 @@ export function createCampaigns(client: Client<paths>, defaults: SpacebringDefau
     async create(campaign: CreateCampaignBody, options?: SpacebringRequestOptions): Promise<Campaign>
     async update(campaignId: string, campaign: PatchCampaignBody, options?: SpacebringRequestOptions): Promise<undefined>
     async delete(campaignId: string, options?: SpacebringRequestOptions): Promise<undefined>
+    async duplicate(campaignId: string, options?: SpacebringRequestOptions): Promise<Campaign>
   };
 }
 

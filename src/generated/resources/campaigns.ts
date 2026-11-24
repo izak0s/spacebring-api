@@ -97,5 +97,16 @@ export function createCampaigns(client: Client<paths>, defaults: SpacebringDefau
     async delete(campaignId: string, options?: SpacebringRequestOptions): Promise<undefined> {
       return unwrap(await client.DELETE("/campaigns/v1/{campaignId}", { params: { path: { campaignId } }, signal: options?.signal }), "DELETE /campaigns/v1/{campaignId}");
     },
+    /**
+     * Duplicate a campaign
+     *
+     * Copy a campaign in any status into a new draft with the same name, channel, content, and audience, to send it again or through another channel. The copy starts with no schedule and empty statistics. A copy made with basic authentication has no `createdBy`. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience.
+     *
+     * @param campaignId ID of the campaign.
+     * @param options Request options (abort signal).
+     */
+    async duplicate(campaignId: string, options?: SpacebringRequestOptions): Promise<Campaign> {
+      return unwrapProp(await client.POST("/campaigns/v1/{campaignId}/duplicate", { params: { path: { campaignId } }, signal: options?.signal }), "campaign", "POST /campaigns/v1/{campaignId}/duplicate");
+    },
   };
 }
