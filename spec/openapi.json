@@ -3776,6 +3776,90 @@
         }
       }
     },
+    "/campaigns/v1/{campaignId}/duplicate": {
+      "post": {
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Duplicate a campaign",
+        "description": "Copy a campaign in any status into a new draft with the same name, channel, content, and audience, to send it again or through another channel. The copy starts with no schedule and empty statistics. A copy made with basic authentication has no <code>createdBy</code>. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>",
+        "operationId": "duplicateCampaign",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaignId",
+            "required": true,
+            "description": "ID of the campaign.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "description": "The id of the network. Required when using bearer token authentication",
+            "in": "header",
+            "name": "spacebring-network-id",
+            "required": false,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "OAuth2": [
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check_ins/v1": {
       "get": {
         "tags": [

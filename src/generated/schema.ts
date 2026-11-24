@@ -633,6 +633,26 @@ export interface paths {
         patch: operations["patchCampaign"];
         trace?: never;
     };
+    "/campaigns/v1/{campaignId}/duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Duplicate a campaign
+         * @description Copy a campaign in any status into a new draft with the same name, channel, content, and audience, to send it again or through another channel. The copy starts with no schedule and empty statistics. A copy made with basic authentication has no <code>createdBy</code>. With bearer token authentication, the user must be an administrator who can manage campaigns in every location of the audience. <h3>OAuth</h3>Required scopes: <code>campaigns</code>
+         */
+        post: operations["duplicateCampaign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/check_ins/v1": {
         parameters: {
             query?: never;
@@ -30885,6 +30905,59 @@ export interface operations {
             };
             /** @description Conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+        };
+    };
+    duplicateCampaign: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description The id of the network. Required when using bearer token authentication */
+                "spacebring-network-id"?: string;
+            };
+            path: {
+                /** @description ID of the campaign. */
+                campaignId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["getCampaign"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["responseError"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
