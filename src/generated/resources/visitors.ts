@@ -55,6 +55,8 @@ export interface GetVisitsQuery {
   limit?: number;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+  /** Comma-separated statuses of the visits to list: `request` a visitor arrived without an invitation and waits for their host to approve, `scheduled` the visitor has not arrived yet, `checkedIn` the visitor is on site, `checkedOut` they left, `rejected` the host turned the request down, `canceled` the visit was canceled. Defaults to `scheduled,checkedIn,checkedOut`. `request` lists visit requests on their own, by the date they were made, and can't be combined with other statuses. Example: status=checkedIn,checkedOut */
+  status?: string;
 }
 
 /** Request body for `sb.visitors.visits.checkIn()`. */
@@ -105,11 +107,23 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
       },
     },
     requests: {
-      /** Get requests */
+      /**
+       * Get requests
+       *
+       * Get requests. Deprecated: use Retrieve visits with `status=request` instead, since a visit request is a visit with the `request` status.
+       *
+       * @deprecated Marked as deprecated in the OpenAPI spec.
+       */
       async list(query?: GetRequestsQuery, options?: SpacebringRequestOptions): Promise<{ nextPageToken?: string; requests?: Request[]; searchQueryNext?: string }> {
         return unwrap(await client.GET("/visitors/requests/v1", { params: { query }, signal: options?.signal }), "GET /visitors/requests/v1");
       },
-      /** Get requests — iterates every item across all pages. */
+      /**
+       * Get requests — iterates every item across all pages.
+       *
+       * Get requests. Deprecated: use Retrieve visits with `status=request` instead, since a visit request is a visit with the `request` status.
+       *
+       * @deprecated Marked as deprecated in the OpenAPI spec.
+       */
       iterate(query?: Omit<GetRequestsQuery, "nextPageToken">, options?: SpacebringRequestOptions): AsyncGenerator<Request, void, undefined> {
         return paginate(
           async (nextPageToken: string | undefined) =>
@@ -120,8 +134,12 @@ export function createVisitors(client: Client<paths>, defaults: SpacebringDefaul
       /**
        * Retrieve a request
        *
+       * Retrieve a request. Deprecated: use Retrieve a visit instead, since a visit request is a visit with the `request` status and the same id.
+       *
        * @param id The id of the request.
        * @param options Request options (abort signal).
+       *
+       * @deprecated Marked as deprecated in the OpenAPI spec.
        */
       async get(id: string, options?: SpacebringRequestOptions): Promise<Request> {
         return unwrapProp(await client.GET("/visitors/requests/v1/{id}", { params: { path: { id } }, signal: options?.signal }), "request", "GET /visitors/requests/v1/{id}");

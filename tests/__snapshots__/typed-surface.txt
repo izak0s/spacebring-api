@@ -611,6 +611,7 @@ export type Registration = NonNullable<components["schemas"]["registration"]>;
 export interface GetRegistrationsQuery {
   limit?: number;
   nextPageToken?: string;
+  email?: string;
 }
 export function createRegistrations(client: Client<paths>, defaults: SpacebringDefaults) {
   return {
@@ -956,6 +957,7 @@ export interface GetVisitsQuery {
   endDate?: { lt?: string; lte?: string; gt?: string; gte?: string };
   limit?: number;
   nextPageToken?: string;
+  status?: string;
 }
 export type CheckInVisitBody = NonNullable<operations["checkInVisit"]["requestBody"]>["content"]["application/json"];
 export type CheckOutVisitBody = NonNullable<operations["checkOutVisit"]["requestBody"]>["content"]["application/json"];

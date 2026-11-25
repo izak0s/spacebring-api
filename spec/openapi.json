@@ -11586,6 +11586,15 @@
             "required": false
           },
           {
+            "in": "query",
+            "name": "email",
+            "schema": {
+              "type": "string"
+            },
+            "description": "List only the registration of the user with this email address, matched regardless of case. Returns no registrations when nobody in the network uses it.",
+            "required": false
+          },
+          {
             "in": "header",
             "name": "spacebring-network-id",
             "schema": {
@@ -16969,8 +16978,9 @@
           "Visitors"
         ],
         "summary": "Get requests",
-        "description": "Get requests. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>",
+        "description": "Get requests. Deprecated: use <a href=\"/developer/api/visitors/retrieve-visits\">Retrieve visits</a> with <code>status=request</code> instead, since a visit request is a visit with the <code>request</code> status. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>",
         "operationId": "getRequests",
+        "deprecated": true,
         "parameters": [
           {
             "in": "query",
@@ -17150,8 +17160,9 @@
           "Visitors"
         ],
         "summary": "Retrieve a request",
-        "description": "Retrieve a request. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>",
+        "description": "Retrieve a request. Deprecated: use <a href=\"/developer/api/visitors/retrieve-a-visit\">Retrieve a visit</a> instead, since a visit request is a visit with the <code>request</code> status and the same id. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>",
         "operationId": "getRequest",
+        "deprecated": true,
         "parameters": [
           {
             "in": "header",
@@ -17472,6 +17483,15 @@
               "$ref": "#/components/schemas/nextPageToken"
             },
             "description": "Token to retrieve the next page of results."
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Comma-separated statuses of the visits to list: `request` a visitor arrived without an invitation and waits for their host to approve, `scheduled` the visitor has not arrived yet, `checkedIn` the visitor is on site, `checkedOut` they left, `rejected` the host turned the request down, `canceled` the visit was canceled. Defaults to `scheduled,checkedIn,checkedOut`. `request` lists visit requests on their own, by the date they were made, and can't be combined with other statuses. Example: status=checkedIn,checkedOut",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
           },
           {
             "in": "header",
@@ -26817,6 +26837,16 @@
                   "format": "uuid",
                   "description": "ID of the location this contract belongs to."
                 },
+                "renewedByContractRef": {
+                  "description": "ID of the renewal contract of this contract, present while the renewal is issued and after it is signed. It is removed when the renewal is declined or expires.",
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "renewsContractRef": {
+                  "description": "ID of the signed contract that this contract renews, present on a renewal contract.",
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "signatureMethod": {
                   "description": "How the contract will be signed.",
                   "type": "string",
@@ -26926,7 +26956,7 @@
                   "description": "Current contract status."
                 },
                 "subscriptionRef": {
-                  "description": "ID of the subscription created when the contract was issued, present when the action is subscription.",
+                  "description": "ID of the subscription of the contract, present when the action is subscription. An issued contract has the pending subscription created at issue. A signed renewal contract has the subscription that it renewed.",
                   "type": "string",
                   "format": "uuid"
                 },
@@ -27226,6 +27256,16 @@
                 "format": "uuid",
                 "description": "ID of the location this contract belongs to."
               },
+              "renewedByContractRef": {
+                "description": "ID of the renewal contract of this contract, present while the renewal is issued and after it is signed. It is removed when the renewal is declined or expires.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "renewsContractRef": {
+                "description": "ID of the signed contract that this contract renews, present on a renewal contract.",
+                "type": "string",
+                "format": "uuid"
+              },
               "signatureMethod": {
                 "description": "How the contract will be signed.",
                 "type": "string",
@@ -27335,7 +27375,7 @@
                 "description": "Current contract status."
               },
               "subscriptionRef": {
-                "description": "ID of the subscription created when the contract was issued, present when the action is subscription.",
+                "description": "ID of the subscription of the contract, present when the action is subscription. An issued contract has the pending subscription created at issue. A signed renewal contract has the subscription that it renewed.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -30349,10 +30389,19 @@
                     "description": "User last name.",
                     "nullable": true,
                     "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "agent"
+                    ],
+                    "description": "Whether the user is a person or an AI agent."
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "type"
                 ],
                 "additionalProperties": false
               }
@@ -30455,10 +30504,19 @@
                 "description": "User last name.",
                 "nullable": true,
                 "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "agent"
+                ],
+                "description": "Whether the user is a person or an AI agent."
               }
             },
             "required": [
-              "id"
+              "id",
+              "type"
             ],
             "additionalProperties": false
           },
@@ -30539,10 +30597,19 @@
                     "description": "User last name.",
                     "nullable": true,
                     "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "agent"
+                    ],
+                    "description": "Whether the user is a person or an AI agent."
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "type"
                 ],
                 "additionalProperties": false
               }
@@ -30652,10 +30719,19 @@
                     "description": "User last name.",
                     "nullable": true,
                     "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "agent"
+                    ],
+                    "description": "Whether the user is a person or an AI agent."
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "type"
                 ],
                 "additionalProperties": false
               }
@@ -31936,6 +32012,7 @@
                 "access": {
                   "description": "Third-party access integrations configured for the plan.",
                   "type": "object",
+                  "additionalProperties": false,
                   "properties": {
                     "avigilonAltaGroupRef": {
                       "type": "number",
@@ -31963,8 +32040,7 @@
                       "type": "string",
                       "description": "UniFi Access policy reference."
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "commitmentCycles": {
                   "type": "number",
@@ -32401,6 +32477,7 @@
           "access": {
             "description": "Third-party access integrations configured for the plan.",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
               "avigilonAltaGroupRef": {
                 "type": "number",
@@ -32428,8 +32505,7 @@
                 "type": "string",
                 "description": "UniFi Access policy reference."
               }
-            },
-            "additionalProperties": false
+            }
           },
           "commitmentCycles": {
             "type": "number",
@@ -32957,6 +33033,7 @@
               "access": {
                 "description": "Third-party access integrations configured for the plan.",
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                   "avigilonAltaGroupRef": {
                     "type": "number",
@@ -32984,8 +33061,7 @@
                     "type": "string",
                     "description": "UniFi Access policy reference."
                   }
-                },
-                "additionalProperties": false
+                }
               },
               "commitmentCycles": {
                 "type": "number",
@@ -47033,6 +47109,7 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                       "autoUpdateFromProduct": {
                         "type": "boolean",
@@ -47519,8 +47596,7 @@
                       "setupFee",
                       "startFixed",
                       "type"
-                    ],
-                    "additionalProperties": false
+                    ]
                   },
                   "description": "Subscription line items."
                 },
@@ -48262,6 +48338,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "autoUpdateFromProduct": {
                   "type": "boolean",
@@ -48748,8 +48825,7 @@
                 "setupFee",
                 "startFixed",
                 "type"
-              ],
-              "additionalProperties": false
+              ]
             },
             "description": "Subscription line items."
           },
@@ -49487,6 +49563,7 @@
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "additionalProperties": false,
                   "properties": {
                     "autoUpdateFromProduct": {
                       "type": "boolean",
@@ -49973,8 +50050,7 @@
                     "setupFee",
                     "startFixed",
                     "type"
-                  ],
-                  "additionalProperties": false
+                  ]
                 },
                 "description": "Subscription line items."
               },
@@ -60979,8 +61055,8 @@
             "format": "date-time"
           },
           "code": {
-            "type": "string",
-            "description": "Visit access code."
+            "description": "Visit access code. Absent while the visit is a request, and after it was rejected.",
+            "type": "string"
           },
           "comment": {
             "description": "Optional comment on the visit.",
@@ -60989,7 +61065,7 @@
           "createDate": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO timestamp of when the visit was created."
+            "description": "ISO timestamp of when the visit was created, or requested."
           },
           "customer": {
             "type": "object",
@@ -61075,7 +61151,7 @@
           "date": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO timestamp of the scheduled visit date."
+            "description": "ISO timestamp of the scheduled visit date. For a visit request, when the visitor arrived and asked their host to approve."
           },
           "deleteDate": {
             "description": "ISO timestamp of when the visit was canceled.",
@@ -61132,6 +61208,18 @@
             "format": "uuid",
             "deprecated": true,
             "description": "Deprecated. Use customer.id instead."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "request",
+              "scheduled",
+              "checkedIn",
+              "checkedOut",
+              "rejected",
+              "canceled"
+            ],
+            "description": "Status of the visit: 'request' a visitor arrived without an invitation and waits for their host to approve, 'scheduled' the visitor has not arrived yet, 'checkedIn' the visitor is on site, 'checkedOut' they left, 'rejected' the host turned the request down, 'canceled' the visit was canceled."
           },
           "userHost": {
             "type": "object",
@@ -61218,7 +61306,6 @@
           }
         },
         "required": [
-          "code",
           "createDate",
           "customer",
           "date",
@@ -61227,6 +61314,7 @@
           "location",
           "locationRef",
           "membershipRefHost",
+          "status",
           "userHost",
           "userRefHost",
           "userRefVisitor",
@@ -63686,6 +63774,11 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "renewsContractRef": {
+                      "description": "ID of a signed contract of the same customer to renew. The contract must be actionable, have a plan or resource item, and start after the subscription of the renewed contract ends, the next day or later. When the renewal is signed, its items replace the items of that subscription from the start date.",
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "signers": {
                       "type": "array",
@@ -69487,7 +69580,7 @@
                       "description": "ISO timestamp when the booking ends."
                     },
                     "entire": {
-                      "description": "Set to true to book the entire resource instead of individual seats. Supported for office resources.",
+                      "description": "Set to true to book the entire resource instead of individual seats. Required for an office, unless the owner of the booking rents it.",
                       "type": "boolean"
                     },
                     "membershipRefOwner": {
@@ -69518,7 +69611,7 @@
                       "description": "ID of the resource to book."
                     },
                     "seats": {
-                      "description": "Number of seats to reserve. Required for desk and office resources.",
+                      "description": "Number of seats to reserve. Required for desk resources, and for an office the owner of the booking rents.",
                       "type": "integer",
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
@@ -71384,6 +71477,7 @@
               "properties": {
                 "item": {
                   "type": "object",
+                  "description": "Subscription item to create.",
                   "properties": {
                     "autoUpdateFromProduct": {
                       "description": "Whether the item syncs from its linked product.",
@@ -71677,8 +71771,7 @@
                       "nullable": true,
                       "type": "string"
                     }
-                  },
-                  "description": "Subscription item to create."
+                  }
                 }
               },
               "required": [
@@ -71697,6 +71790,7 @@
               "properties": {
                 "item": {
                   "type": "object",
+                  "description": "Subscription item fields to update.",
                   "properties": {
                     "autoUpdateFromProduct": {
                       "description": "Whether the item syncs from its linked product.",
@@ -71990,8 +72084,7 @@
                       "nullable": true,
                       "type": "string"
                     }
-                  },
-                  "description": "Subscription item fields to update."
+                  }
                 }
               },
               "required": [

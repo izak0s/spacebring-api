@@ -13,6 +13,8 @@ export interface GetRegistrationsQuery {
   limit?: number;
   /** Token to retrieve the next page of results. */
   nextPageToken?: string;
+  /** List only the registration of the user with this email address, matched regardless of case. Returns no registrations when nobody in the network uses it. */
+  email?: string;
 }
 
 export function createRegistrations(client: Client<paths>, defaults: SpacebringDefaults) {
