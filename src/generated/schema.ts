@@ -2975,7 +2975,8 @@ export interface paths {
         };
         /**
          * Get requests
-         * @description Get requests. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>
+         * @deprecated
+         * @description Get requests. Deprecated: use <a href="/developer/api/visitors/retrieve-visits">Retrieve visits</a> with <code>status=request</code> instead, since a visit request is a visit with the <code>request</code> status. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>
          */
         get: operations["getRequests"];
         put?: never;
@@ -2999,7 +3000,8 @@ export interface paths {
         };
         /**
          * Retrieve a request
-         * @description Retrieve a request. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>
+         * @deprecated
+         * @description Retrieve a request. Deprecated: use <a href="/developer/api/visitors/retrieve-a-visit">Retrieve a visit</a> instead, since a visit request is a visit with the <code>request</code> status and the same id. <h3>OAuth</h3>Required scopes: <code>visitors</code> or <code>visitors.readonly</code>
          */
         get: operations["getRequest"];
         put?: never;
@@ -7368,6 +7370,16 @@ export interface components {
                  */
                 locationRef: string;
                 /**
+                 * Format: uuid
+                 * @description ID of the renewal contract of this contract, present while the renewal is issued and after it is signed. It is removed when the renewal is declined or expires.
+                 */
+                renewedByContractRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the signed contract that this contract renews, present on a renewal contract.
+                 */
+                renewsContractRef?: string;
+                /**
                  * @description How the contract will be signed.
                  * @enum {string}
                  */
@@ -7426,7 +7438,7 @@ export interface components {
                 status: "draft" | "issued" | "signed" | "declined" | "terminated";
                 /**
                  * Format: uuid
-                 * @description ID of the subscription created when the contract was issued, present when the action is subscription.
+                 * @description ID of the subscription of the contract, present when the action is subscription. An issued contract has the pending subscription created at issue. A signed renewal contract has the subscription that it renewed.
                  */
                 subscriptionRef?: string;
                 /**
@@ -7590,6 +7602,16 @@ export interface components {
                  */
                 locationRef: string;
                 /**
+                 * Format: uuid
+                 * @description ID of the renewal contract of this contract, present while the renewal is issued and after it is signed. It is removed when the renewal is declined or expires.
+                 */
+                renewedByContractRef?: string;
+                /**
+                 * Format: uuid
+                 * @description ID of the signed contract that this contract renews, present on a renewal contract.
+                 */
+                renewsContractRef?: string;
+                /**
                  * @description How the contract will be signed.
                  * @enum {string}
                  */
@@ -7648,7 +7670,7 @@ export interface components {
                 status: "draft" | "issued" | "signed" | "declined" | "terminated";
                 /**
                  * Format: uuid
-                 * @description ID of the subscription created when the contract was issued, present when the action is subscription.
+                 * @description ID of the subscription of the contract, present when the action is subscription. An issued contract has the pending subscription created at issue. A signed renewal contract has the subscription that it renewed.
                  */
                 subscriptionRef?: string;
                 /**
@@ -9031,6 +9053,11 @@ export interface components {
                     photoUrl?: string | null;
                     /** @description User last name. */
                     surname?: string | null;
+                    /**
+                     * @description Whether the user is a person or an AI agent.
+                     * @enum {string}
+                     */
+                    type: "user" | "agent";
                 };
             };
             /**
@@ -9081,6 +9108,11 @@ export interface components {
                 photoUrl?: string | null;
                 /** @description User last name. */
                 surname?: string | null;
+                /**
+                 * @description Whether the user is a person or an AI agent.
+                 * @enum {string}
+                 */
+                type: "user" | "agent";
             };
             /** @description Whether the current user has viewed the post. */
             viewed?: boolean;
@@ -9127,6 +9159,11 @@ export interface components {
                     photoUrl?: string | null;
                     /** @description User last name. */
                     surname?: string | null;
+                    /**
+                     * @description Whether the user is a person or an AI agent.
+                     * @enum {string}
+                     */
+                    type: "user" | "agent";
                 };
             };
             /** @description User mentions in the comment text. */
@@ -9193,6 +9230,11 @@ export interface components {
                     photoUrl?: string | null;
                     /** @description User last name. */
                     surname?: string | null;
+                    /**
+                     * @description Whether the user is a person or an AI agent.
+                     * @enum {string}
+                     */
+                    type: "user" | "agent";
                 };
             };
             /**
@@ -23386,13 +23428,13 @@ export interface components {
              * @description ISO timestamp when the visitor checked out.
              */
             checkOutDate?: string;
-            /** @description Visit access code. */
-            code: string;
+            /** @description Visit access code. Absent while the visit is a request, and after it was rejected. */
+            code?: string;
             /** @description Optional comment on the visit. */
             comment?: string;
             /**
              * Format: date-time
-             * @description ISO timestamp of when the visit was created.
+             * @description ISO timestamp of when the visit was created, or requested.
              */
             createDate: string;
             /** @description Host customer. */
@@ -23435,7 +23477,7 @@ export interface components {
             };
             /**
              * Format: date-time
-             * @description ISO timestamp of the scheduled visit date.
+             * @description ISO timestamp of the scheduled visit date. For a visit request, when the visitor arrived and asked their host to approve.
              */
             date: string;
             /**
@@ -23478,6 +23520,11 @@ export interface components {
              * @description Deprecated. Use customer.id instead.
              */
             membershipRefHost: string;
+            /**
+             * @description Status of the visit: 'request' a visitor arrived without an invitation and waits for their host to approve, 'scheduled' the visitor has not arrived yet, 'checkedIn' the visitor is on site, 'checkedOut' they left, 'rejected' the host turned the request down, 'canceled' the visit was canceled.
+             * @enum {string}
+             */
+            status: "request" | "scheduled" | "checkedIn" | "checkedOut" | "rejected" | "canceled";
             /**
              * @deprecated
              * @description Deprecated. Use customer.user instead.
@@ -24749,6 +24796,11 @@ export interface components {
                              */
                             type: "plan" | "resource" | "oneOff";
                         }[];
+                        /**
+                         * Format: uuid
+                         * @description ID of a signed contract of the same customer to renew. The contract must be actionable, have a plan or resource item, and start after the subscription of the renewed contract ends, the next day or later. When the renewal is signed, its items replace the items of that subscription from the start date.
+                         */
+                        renewsContractRef?: string;
                         /** @description People required to sign this contract. */
                         signers: {
                             /** @description Signer email address. */
@@ -27144,7 +27196,7 @@ export interface components {
                          * @description ISO timestamp when the booking ends.
                          */
                         endDate: string;
-                        /** @description Set to true to book the entire resource instead of individual seats. Supported for office resources. */
+                        /** @description Set to true to book the entire resource instead of individual seats. Required for an office, unless the owner of the booking rents it. */
                         entire?: boolean;
                         /**
                          * Format: uuid
@@ -27165,7 +27217,7 @@ export interface components {
                          * @description ID of the resource to book.
                          */
                         resourceRef: string;
-                        /** @description Number of seats to reserve. Required for desk and office resources. */
+                        /** @description Number of seats to reserve. Required for desk resources, and for an office the owner of the booking rents. */
                         seats?: number;
                         /**
                          * @description Whether to notify the owner and the attendees about the booking. Defaults to `all`.
@@ -35100,6 +35152,8 @@ export interface operations {
                 limit?: number;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description List only the registration of the user with this email address, matched regardless of case. Returns no registrations when nobody in the network uses it. */
+                email?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
@@ -38092,6 +38146,8 @@ export interface operations {
                 limit?: number;
                 /** @description Token to retrieve the next page of results. */
                 nextPageToken?: components["schemas"]["nextPageToken"];
+                /** @description Comma-separated statuses of the visits to list: `request` a visitor arrived without an invitation and waits for their host to approve, `scheduled` the visitor has not arrived yet, `checkedIn` the visitor is on site, `checkedOut` they left, `rejected` the host turned the request down, `canceled` the visit was canceled. Defaults to `scheduled,checkedIn,checkedOut`. `request` lists visit requests on their own, by the date they were made, and can't be combined with other statuses. Example: status=checkedIn,checkedOut */
+                status?: string;
             };
             header?: {
                 /** @description The id of the network. Required when using bearer token authentication */
