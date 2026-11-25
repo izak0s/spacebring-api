@@ -30628,6 +30628,14 @@
                   "format": "uuid",
                   "description": "Unique identifier of the mention."
                 },
+                "type": {
+                  "description": "Whether the mentioned user is a person or an AI agent. Absent when the users service no longer knows the user.",
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "agent"
+                  ]
+                },
                 "value": {
                   "description": "Full name of the mentioned user. Absent when the users service no longer knows the user.",
                   "type": "string"
@@ -70630,6 +70638,10 @@
                                 "nullable": true,
                                 "type": "number"
                               },
+                              "billCurrentPeriod": {
+                                "description": "Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period.",
+                                "type": "boolean"
+                              },
                               "brivoGroupRef": {
                                 "description": "Brivo access group reference.",
                                 "nullable": true,
@@ -71074,6 +71086,10 @@
                             "nullable": true,
                             "type": "number"
                           },
+                          "billCurrentPeriod": {
+                            "description": "Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period.",
+                            "type": "boolean"
+                          },
                           "brivoGroupRef": {
                             "description": "Brivo access group reference.",
                             "nullable": true,
@@ -71488,6 +71504,10 @@
                       "nullable": true,
                       "type": "number"
                     },
+                    "billCurrentPeriod": {
+                      "description": "Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period.",
+                      "type": "boolean"
+                    },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",
                       "nullable": true,
@@ -71800,6 +71820,10 @@
                       "description": "Avigilon Alta access group reference.",
                       "nullable": true,
                       "type": "number"
+                    },
+                    "billCurrentPeriod": {
+                      "description": "Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period.",
+                      "type": "boolean"
                     },
                     "brivoGroupRef": {
                       "description": "Brivo access group reference.",

@@ -9173,6 +9173,11 @@ export interface components {
                  * @description Unique identifier of the mention.
                  */
                 id: string;
+                /**
+                 * @description Whether the mentioned user is a person or an AI agent. Absent when the users service no longer knows the user.
+                 * @enum {string}
+                 */
+                type?: "user" | "agent";
                 /** @description Full name of the mentioned user. Absent when the users service no longer knows the user. */
                 value?: string;
             }[];
@@ -27779,6 +27784,8 @@ export interface components {
                             autoUpdateFromProduct?: boolean;
                             /** @description Avigilon Alta access group reference. */
                             avigilonAltaGroupRef?: number | null;
+                            /** @description Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period. */
+                            billCurrentPeriod?: boolean;
                             /** @description Brivo access group reference. */
                             brivoGroupRef?: number | null;
                             /** @description Number of billing cycles in the commitment period. */
@@ -27988,6 +27995,8 @@ export interface components {
                             autoUpdateFromProduct?: boolean;
                             /** @description Avigilon Alta access group reference. */
                             avigilonAltaGroupRef?: number | null;
+                            /** @description Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period. */
+                            billCurrentPeriod?: boolean;
                             /** @description Brivo access group reference. */
                             brivoGroupRef?: number | null;
                             /** @description Number of billing cycles in the commitment period. */
@@ -28194,6 +28203,8 @@ export interface components {
                         autoUpdateFromProduct?: boolean;
                         /** @description Avigilon Alta access group reference. */
                         avigilonAltaGroupRef?: number | null;
+                        /** @description Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period. */
+                        billCurrentPeriod?: boolean;
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /** @description Number of billing cycles in the commitment period. */
@@ -28346,6 +28357,8 @@ export interface components {
                         autoUpdateFromProduct?: boolean;
                         /** @description Avigilon Alta access group reference. */
                         avigilonAltaGroupRef?: number | null;
+                        /** @description Write-only, for a new item. Whether to invoice the item for the part of the current billing period it covers. Requires a recurring item with customStart and a startDate inside the current period. */
+                        billCurrentPeriod?: boolean;
                         /** @description Brivo access group reference. */
                         brivoGroupRef?: number | null;
                         /** @description Number of billing cycles in the commitment period. */
