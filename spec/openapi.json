@@ -28971,6 +28971,53 @@
             "format": "date-time",
             "description": "ISO timestamp of when the event was created."
           },
+          "customFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the custom field."
+                },
+                "options": {
+                  "description": "Choices an attendee picks from, in the order they are shown. Present for select and multiSelect fields.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title attendees see."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "number",
+                    "checkbox",
+                    "select",
+                    "multiSelect"
+                  ],
+                  "description": "Type of the field."
+                }
+              },
+              "required": [
+                "id",
+                "required",
+                "title",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Fields attendees fill in when they get a ticket for the event, in the order they are shown."
+          },
           "customTax": {
             "type": "object",
             "properties": {
@@ -29221,6 +29268,7 @@
         "required": [
           "confirmationEmail",
           "createDate",
+          "customFields",
           "customTax",
           "endDate",
           "id",
@@ -29260,13 +29308,70 @@
             "type": "string"
           },
           "comment": {
-            "description": "Note the attendee left when purchasing the ticket. Visible to the ticket owner and location admins only.",
+            "deprecated": true,
+            "description": "Deprecated. Use customFields instead.",
             "type": "string"
           },
           "createDate": {
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp of when the ticket was created."
+          },
+          "customFields": {
+            "description": "The event's custom fields as they were filled in when the ticket was purchased, each with its title and type at that time. Omitted when none were filled in. Visible to the ticket owner and location admins only.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the event's custom field."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title of the field when the ticket was purchased."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "number",
+                    "checkbox",
+                    "select",
+                    "multiSelect"
+                  ],
+                  "description": "Type of the field when the ticket was purchased."
+                },
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "description": "Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field."
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "type",
+                "value"
+              ],
+              "additionalProperties": false
+            }
           },
           "deleteDate": {
             "description": "ISO timestamp of when the ticket was deleted.",
@@ -32366,6 +32471,10 @@
                   },
                   "description": "Media files attached to this plan. The first is its cover image."
                 },
+                "noticeDays": {
+                  "type": "number",
+                  "description": "Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created."
+                },
                 "period": {
                   "type": "string",
                   "enum": [
@@ -32396,6 +32505,14 @@
                     "ezeepBlueGroupRef"
                   ],
                   "additionalProperties": false
+                },
+                "selfCancellationType": {
+                  "type": "string",
+                  "enum": [
+                    "immediate",
+                    "request"
+                  ],
+                  "description": "How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it."
                 },
                 "selfSignup": {
                   "type": "object",
@@ -32459,8 +32576,10 @@
                 "locale",
                 "locationRef",
                 "media",
+                "noticeDays",
                 "period",
                 "price",
+                "selfCancellationType",
                 "selfSignup",
                 "setupFee",
                 "title"
@@ -32831,6 +32950,10 @@
             },
             "description": "Media files attached to this plan. The first is its cover image."
           },
+          "noticeDays": {
+            "type": "number",
+            "description": "Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created."
+          },
           "period": {
             "type": "string",
             "enum": [
@@ -32861,6 +32984,14 @@
               "ezeepBlueGroupRef"
             ],
             "additionalProperties": false
+          },
+          "selfCancellationType": {
+            "type": "string",
+            "enum": [
+              "immediate",
+              "request"
+            ],
+            "description": "How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it."
           },
           "selfSignup": {
             "type": "object",
@@ -32924,8 +33055,10 @@
           "locale",
           "locationRef",
           "media",
+          "noticeDays",
           "period",
           "price",
+          "selfCancellationType",
           "selfSignup",
           "setupFee",
           "title"
@@ -33387,6 +33520,10 @@
                 },
                 "description": "Media files attached to this plan. The first is its cover image."
               },
+              "noticeDays": {
+                "type": "number",
+                "description": "Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created."
+              },
               "period": {
                 "type": "string",
                 "enum": [
@@ -33417,6 +33554,14 @@
                   "ezeepBlueGroupRef"
                 ],
                 "additionalProperties": false
+              },
+              "selfCancellationType": {
+                "type": "string",
+                "enum": [
+                  "immediate",
+                  "request"
+                ],
+                "description": "How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it."
               },
               "selfSignup": {
                 "type": "object",
@@ -33480,8 +33625,10 @@
               "locale",
               "locationRef",
               "media",
+              "noticeDays",
               "period",
               "price",
+              "selfCancellationType",
               "selfSignup",
               "setupFee",
               "title"
@@ -34417,6 +34564,53 @@
                   "additionalProperties": false,
                   "description": "Credit pricing settings."
                 },
+                "customFields": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the custom field."
+                      },
+                      "options": {
+                        "description": "Choices a member picks from, in the order they are shown. Present for select and multiSelect fields.",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "required": {
+                        "type": "boolean",
+                        "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Title members see."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "text",
+                          "number",
+                          "checkbox",
+                          "select",
+                          "multiSelect"
+                        ],
+                        "description": "Type of the field."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "required",
+                      "title",
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Fields members fill in when they book or request the resource, in the order they are shown."
+                },
                 "dayPassesEnabled": {
                   "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                   "type": "boolean"
@@ -34879,6 +35073,10 @@
                             "format": "uuid",
                             "description": "Unique identifier of the tier."
                           },
+                          "noticeDays": {
+                            "type": "number",
+                            "description": "Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created."
+                          },
                           "period": {
                             "type": "string",
                             "enum": [
@@ -35135,6 +35333,14 @@
                             "type": "number",
                             "description": "Price of the tier."
                           },
+                          "selfCancellationType": {
+                            "type": "string",
+                            "enum": [
+                              "immediate",
+                              "request"
+                            ],
+                            "description": "How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it."
+                          },
                           "selfSignup": {
                             "type": "object",
                             "properties": {
@@ -35190,9 +35396,11 @@
                           "entire",
                           "grantedDiscounts",
                           "id",
+                          "noticeDays",
                           "period",
                           "plan",
                           "price",
+                          "selfCancellationType",
                           "selfSignup",
                           "setupFee",
                           "title"
@@ -35811,6 +36019,7 @@
                 "confirmationEmail",
                 "createDate",
                 "credits",
+                "customFields",
                 "description",
                 "duration",
                 "dynamicPricing",
@@ -36374,6 +36583,53 @@
                 "additionalProperties": false,
                 "description": "Credit pricing settings."
               },
+              "customFields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the custom field."
+                    },
+                    "options": {
+                      "description": "Choices a member picks from, in the order they are shown. Present for select and multiSelect fields.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Title members see."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "number",
+                        "checkbox",
+                        "select",
+                        "multiSelect"
+                      ],
+                      "description": "Type of the field."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "required",
+                    "title",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Fields members fill in when they book or request the resource, in the order they are shown."
+              },
               "dayPassesEnabled": {
                 "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                 "type": "boolean"
@@ -36836,6 +37092,10 @@
                           "format": "uuid",
                           "description": "Unique identifier of the tier."
                         },
+                        "noticeDays": {
+                          "type": "number",
+                          "description": "Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created."
+                        },
                         "period": {
                           "type": "string",
                           "enum": [
@@ -37092,6 +37352,14 @@
                           "type": "number",
                           "description": "Price of the tier."
                         },
+                        "selfCancellationType": {
+                          "type": "string",
+                          "enum": [
+                            "immediate",
+                            "request"
+                          ],
+                          "description": "How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it."
+                        },
                         "selfSignup": {
                           "type": "object",
                           "properties": {
@@ -37147,9 +37415,11 @@
                         "entire",
                         "grantedDiscounts",
                         "id",
+                        "noticeDays",
                         "period",
                         "plan",
                         "price",
+                        "selfCancellationType",
                         "selfSignup",
                         "setupFee",
                         "title"
@@ -37768,6 +38038,7 @@
               "confirmationEmail",
               "createDate",
               "credits",
+              "customFields",
               "description",
               "duration",
               "dynamicPricing",
@@ -38783,6 +39054,62 @@
                   "type": "string",
                   "format": "date-time",
                   "description": "ISO timestamp when the booking was created."
+                },
+                "customFields": {
+                  "description": "The resource's custom fields as they were filled in when the booking was made or requested, each with its title and type at that time. Omitted when none were filled in or the caller has no access to booking details.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the resource's custom field."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Title of the field when the booking was made."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "text",
+                          "number",
+                          "checkbox",
+                          "select",
+                          "multiSelect"
+                        ],
+                        "description": "Type of the field when the booking was made."
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        ],
+                        "description": "Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "type",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 },
                 "customer": {
                   "description": "Customer the booking belongs to. Omitted when the caller has no access.",
@@ -41031,6 +41358,62 @@
                 "type": "string",
                 "format": "date-time",
                 "description": "ISO timestamp when the booking was created."
+              },
+              "customFields": {
+                "description": "The resource's custom fields as they were filled in when the booking was made or requested, each with its title and type at that time. Omitted when none were filled in or the caller has no access to booking details.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "ID of the resource's custom field."
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Title of the field when the booking was made."
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "number",
+                        "checkbox",
+                        "select",
+                        "multiSelect"
+                      ],
+                      "description": "Type of the field when the booking was made."
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ],
+                      "description": "Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "customer": {
                 "description": "Customer the booking belongs to. Omitted when the caller has no access.",
@@ -64729,6 +65112,58 @@
                         "enabled"
                       ]
                     },
+                    "customFields": {
+                      "description": "Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "options": {
+                            "description": "Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types.",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            }
+                          },
+                          "required": {
+                            "default": false,
+                            "description": "Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Title attendees see, such as Dietary requirements."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "number",
+                              "checkbox",
+                              "select",
+                              "multiSelect"
+                            ],
+                            "description": "Type of the field: free text, a number, a checkbox, one option, or several options."
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "type"
+                        ]
+                      }
+                    },
                     "customTax": {
                       "description": "Custom tax settings.",
                       "type": "object",
@@ -64949,6 +65384,58 @@
                         "enabled"
                       ]
                     },
+                    "customFields": {
+                      "description": "Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "options": {
+                            "description": "Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types.",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            }
+                          },
+                          "required": {
+                            "default": false,
+                            "description": "Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Title attendees see, such as Dietary requirements."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "number",
+                              "checkbox",
+                              "select",
+                              "multiSelect"
+                            ],
+                            "description": "Type of the field: free text, a number, a checkbox, one option, or several options."
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "type"
+                        ]
+                      }
+                    },
                     "customTax": {
                       "description": "Custom tax settings.",
                       "type": "object",
@@ -65167,6 +65654,58 @@
                       "required": [
                         "enabled"
                       ]
+                    },
+                    "customFields": {
+                      "description": "Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "options": {
+                            "description": "Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types.",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            }
+                          },
+                          "required": {
+                            "default": false,
+                            "description": "Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Title attendees see, such as Dietary requirements."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "number",
+                              "checkbox",
+                              "select",
+                              "multiSelect"
+                            ],
+                            "description": "Type of the field: free text, a number, a checkbox, one option, or several options."
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "type"
+                        ]
+                      }
                     },
                     "customTax": {
                       "description": "Custom tax settings.",
@@ -66379,6 +66918,13 @@
                         ]
                       }
                     },
+                    "noticeDays": {
+                      "default": 0,
+                      "description": "Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 365
+                    },
                     "period": {
                       "type": "string",
                       "enum": [
@@ -66406,6 +66952,15 @@
                           "format": "uuid"
                         }
                       }
+                    },
+                    "selfCancellationType": {
+                      "default": "request",
+                      "description": "How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.",
+                      "type": "string",
+                      "enum": [
+                        "immediate",
+                        "request"
+                      ]
                     },
                     "selfSignup": {
                       "default": {
@@ -66783,6 +67338,12 @@
                         ]
                       }
                     },
+                    "noticeDays": {
+                      "description": "Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created.",
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 365
+                    },
                     "price": {
                       "description": "Price of the plan.",
                       "type": "number",
@@ -66799,6 +67360,14 @@
                           "format": "uuid"
                         }
                       }
+                    },
+                    "selfCancellationType": {
+                      "description": "How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted.",
+                      "type": "string",
+                      "enum": [
+                        "immediate",
+                        "request"
+                      ]
                     },
                     "selfSignup": {
                       "description": "Self sign-up settings.",
@@ -67106,6 +67675,58 @@
                         "enabled",
                         "tiers"
                       ]
+                    },
+                    "customFields": {
+                      "description": "Fields members fill in when they book or request the resource, in the order they are shown. On update the list replaces the current fields, and an empty list removes them all.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "options": {
+                            "description": "Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types.",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            }
+                          },
+                          "required": {
+                            "default": false,
+                            "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Title members see, such as Number of guests."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "number",
+                              "checkbox",
+                              "select",
+                              "multiSelect"
+                            ],
+                            "description": "Type of the field: free text, a number, a checkbox, one option, or several options."
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "type"
+                        ]
+                      }
                     },
                     "dayPassesEnabled": {
                       "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
@@ -67449,6 +68070,12 @@
                                 "format": "uuid",
                                 "description": "Unique identifier of the tier."
                               },
+                              "noticeDays": {
+                                "description": "Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. Kept as stored when omitted; a new tier needs no notice.",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 365
+                              },
                               "period": {
                                 "type": "string",
                                 "enum": [
@@ -67464,6 +68091,14 @@
                               "price": {
                                 "type": "number",
                                 "description": "Recurring price for this tier in the location currency."
+                              },
+                              "selfCancellationType": {
+                                "description": "How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted; a new tier uses `request`.",
+                                "type": "string",
+                                "enum": [
+                                  "immediate",
+                                  "request"
+                                ]
                               },
                               "selfSignup": {
                                 "description": "Self sign-up settings of the tier.",
@@ -68493,6 +69128,58 @@
                         "tiers"
                       ]
                     },
+                    "customFields": {
+                      "description": "Fields members fill in when they book or request the resource, in the order they are shown. On update the list replaces the current fields, and an empty list removes them all.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.",
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "options": {
+                            "description": "Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types.",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            }
+                          },
+                          "required": {
+                            "default": false,
+                            "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Title members see, such as Number of guests."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "number",
+                              "checkbox",
+                              "select",
+                              "multiSelect"
+                            ],
+                            "description": "Type of the field: free text, a number, a checkbox, one option, or several options."
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "type"
+                        ]
+                      }
+                    },
                     "dayPassesEnabled": {
                       "description": "Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans.",
                       "type": "boolean"
@@ -68830,6 +69517,12 @@
                                 "format": "uuid",
                                 "description": "Unique identifier of the tier."
                               },
+                              "noticeDays": {
+                                "description": "Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. Kept as stored when omitted; a new tier needs no notice.",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 365
+                              },
                               "period": {
                                 "type": "string",
                                 "enum": [
@@ -68845,6 +69538,14 @@
                               "price": {
                                 "type": "number",
                                 "description": "Recurring price for this tier in the location currency."
+                              },
+                              "selfCancellationType": {
+                                "description": "How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted; a new tier uses `request`.",
+                                "type": "string",
+                                "enum": [
+                                  "immediate",
+                                  "request"
+                                ]
                               },
                               "selfSignup": {
                                 "description": "Self sign-up settings of the tier.",
@@ -69579,6 +70280,47 @@
                         },
                         "required": [
                           "user"
+                        ]
+                      }
+                    },
+                    "customFields": {
+                      "description": "The resource's custom fields, filled in. A member has to fill in every required field, while an administrator can leave any field empty.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "ID of the resource's custom field."
+                          },
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 1000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "maxItems": 50,
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            ],
+                            "description": "Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "value"
                         ]
                       }
                     },
