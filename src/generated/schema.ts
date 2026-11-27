@@ -8395,6 +8395,25 @@ export interface components {
              * @description ISO timestamp of when the event was created.
              */
             createDate: string;
+            /** @description Fields attendees fill in when they get a ticket for the event, in the order they are shown. */
+            customFields: {
+                /**
+                 * Format: uuid
+                 * @description ID of the custom field.
+                 */
+                id: string;
+                /** @description Choices an attendee picks from, in the order they are shown. Present for select and multiSelect fields. */
+                options?: string[];
+                /** @description Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. */
+                required: boolean;
+                /** @description Title attendees see. */
+                title: string;
+                /**
+                 * @description Type of the field.
+                 * @enum {string}
+                 */
+                type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+            }[];
             /** @description Custom tax settings. */
             customTax: {
                 /** @description Whether custom tax is enabled. */
@@ -8533,13 +8552,33 @@ export interface components {
             checkOutDate?: string;
             /** @description Six-digit code the attendee enters on the Reception app to check in. Visible to the ticket owner and admins when check-in is enabled for the event. */
             code?: string;
-            /** @description Note the attendee left when purchasing the ticket. Visible to the ticket owner and location admins only. */
+            /**
+             * @deprecated
+             * @description Deprecated. Use customFields instead.
+             */
             comment?: string;
             /**
              * Format: date-time
              * @description ISO timestamp of when the ticket was created.
              */
             createDate: string;
+            /** @description The event's custom fields as they were filled in when the ticket was purchased, each with its title and type at that time. Omitted when none were filled in. Visible to the ticket owner and location admins only. */
+            customFields?: {
+                /**
+                 * Format: uuid
+                 * @description ID of the event's custom field.
+                 */
+                id: string;
+                /** @description Title of the field when the ticket was purchased. */
+                title: string;
+                /**
+                 * @description Type of the field when the ticket was purchased.
+                 * @enum {string}
+                 */
+                type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                /** @description Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field. */
+                value: string | number | boolean | string[];
+            }[];
             /**
              * Format: date-time
              * @description ISO timestamp of when the ticket was deleted.
@@ -9941,6 +9980,8 @@ export interface components {
                     /** @description Public URL of the media file. */
                     url: string;
                 }[];
+                /** @description Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created. */
+                noticeDays: number;
                 /**
                  * @description Billing period of the plan.
                  * @enum {string}
@@ -9956,6 +9997,11 @@ export interface components {
                      */
                     ezeepBlueGroupRef: string;
                 };
+                /**
+                 * @description How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+                 * @enum {string}
+                 */
+                selfCancellationType: "immediate" | "request";
                 /** @description Self sign-up settings. */
                 selfSignup: {
                     /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
@@ -10123,6 +10169,8 @@ export interface components {
                 /** @description Public URL of the media file. */
                 url: string;
             }[];
+            /** @description Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created. */
+            noticeDays: number;
             /**
              * @description Billing period of the plan.
              * @enum {string}
@@ -10138,6 +10186,11 @@ export interface components {
                  */
                 ezeepBlueGroupRef: string;
             };
+            /**
+             * @description How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+             * @enum {string}
+             */
+            selfCancellationType: "immediate" | "request";
             /** @description Self sign-up settings. */
             selfSignup: {
                 /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
@@ -10345,6 +10398,8 @@ export interface components {
                     /** @description Public URL of the media file. */
                     url: string;
                 }[];
+                /** @description Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created. */
+                noticeDays: number;
                 /**
                  * @description Billing period of the plan.
                  * @enum {string}
@@ -10360,6 +10415,11 @@ export interface components {
                      */
                     ezeepBlueGroupRef: string;
                 };
+                /**
+                 * @description How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+                 * @enum {string}
+                 */
+                selfCancellationType: "immediate" | "request";
                 /** @description Self sign-up settings. */
                 selfSignup: {
                     /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
@@ -10817,6 +10877,25 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
+                /** @description Fields members fill in when they book or request the resource, in the order they are shown. */
+                customFields: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the custom field.
+                     */
+                    id: string;
+                    /** @description Choices a member picks from, in the order they are shown. Present for select and multiSelect fields. */
+                    options?: string[];
+                    /** @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. */
+                    required: boolean;
+                    /** @description Title members see. */
+                    title: string;
+                    /**
+                     * @description Type of the field.
+                     * @enum {string}
+                     */
+                    type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                }[];
                 /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
@@ -11006,6 +11085,8 @@ export interface components {
                          * @description Unique identifier of the tier.
                          */
                         id: string;
+                        /** @description Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. */
+                        noticeDays: number;
                         /**
                          * @description Billing period of the tier.
                          * @enum {string}
@@ -11104,6 +11185,11 @@ export interface components {
                         };
                         /** @description Price of the tier. */
                         price: number;
+                        /**
+                         * @description How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+                         * @enum {string}
+                         */
+                        selfCancellationType: "immediate" | "request";
                         /** @description Self sign-up settings of the tier. */
                         selfSignup: {
                             /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
@@ -11577,6 +11663,25 @@ export interface components {
                         unitAmount: number;
                     }[];
                 };
+                /** @description Fields members fill in when they book or request the resource, in the order they are shown. */
+                customFields: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the custom field.
+                     */
+                    id: string;
+                    /** @description Choices a member picks from, in the order they are shown. Present for select and multiSelect fields. */
+                    options?: string[];
+                    /** @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. */
+                    required: boolean;
+                    /** @description Title members see. */
+                    title: string;
+                    /**
+                     * @description Type of the field.
+                     * @enum {string}
+                     */
+                    type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                }[];
                 /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                 dayPassesEnabled?: boolean;
                 /** @description Description of the resource. */
@@ -11766,6 +11871,8 @@ export interface components {
                          * @description Unique identifier of the tier.
                          */
                         id: string;
+                        /** @description Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. */
+                        noticeDays: number;
                         /**
                          * @description Billing period of the tier.
                          * @enum {string}
@@ -11864,6 +11971,11 @@ export interface components {
                         };
                         /** @description Price of the tier. */
                         price: number;
+                        /**
+                         * @description How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+                         * @enum {string}
+                         */
+                        selfCancellationType: "immediate" | "request";
                         /** @description Self sign-up settings of the tier. */
                         selfSignup: {
                             /** @description Contract the customer signs to start a subscription from an immediate sign-up. Left out when none is required. */
@@ -12584,6 +12696,23 @@ export interface components {
                  * @description ISO timestamp when the booking was created.
                  */
                 createDate: string;
+                /** @description The resource's custom fields as they were filled in when the booking was made or requested, each with its title and type at that time. Omitted when none were filled in or the caller has no access to booking details. */
+                customFields?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the resource's custom field.
+                     */
+                    id: string;
+                    /** @description Title of the field when the booking was made. */
+                    title: string;
+                    /**
+                     * @description Type of the field when the booking was made.
+                     * @enum {string}
+                     */
+                    type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                    /** @description Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field. */
+                    value: string | number | boolean | string[];
+                }[];
                 /** @description Customer the booking belongs to. Omitted when the caller has no access. */
                 customer?: {
                     /** @description Company the booking was made for, recorded when the owner was a member of a company at the time of the booking. */
@@ -13670,6 +13799,23 @@ export interface components {
                  * @description ISO timestamp when the booking was created.
                  */
                 createDate: string;
+                /** @description The resource's custom fields as they were filled in when the booking was made or requested, each with its title and type at that time. Omitted when none were filled in or the caller has no access to booking details. */
+                customFields?: {
+                    /**
+                     * Format: uuid
+                     * @description ID of the resource's custom field.
+                     */
+                    id: string;
+                    /** @description Title of the field when the booking was made. */
+                    title: string;
+                    /**
+                     * @description Type of the field when the booking was made.
+                     * @enum {string}
+                     */
+                    type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                    /** @description Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field. */
+                    value: string | number | boolean | string[];
+                }[];
                 /** @description Customer the booking belongs to. Omitted when the caller has no access. */
                 customer?: {
                     /** @description Company the booking was made for, recorded when the owner was a member of a company at the time of the booking. */
@@ -25223,6 +25369,28 @@ export interface components {
                             /** @description HTML template for the confirmation email. */
                             template?: string;
                         };
+                        /** @description Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.
+                             */
+                            id?: string;
+                            /** @description Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
+                            options?: string[];
+                            /**
+                             * @description Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @default false
+                             */
+                            required?: boolean;
+                            /** @description Title attendees see, such as Dietary requirements. */
+                            title: string;
+                            /**
+                             * @description Type of the field: free text, a number, a checkbox, one option, or several options.
+                             * @enum {string}
+                             */
+                            type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                        }[];
                         /** @description Custom tax settings. */
                         customTax?: {
                             /** @description Whether custom tax is enabled. */
@@ -25320,6 +25488,28 @@ export interface components {
                             /** @description HTML template for the confirmation email. */
                             template?: string;
                         };
+                        /** @description Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.
+                             */
+                            id?: string;
+                            /** @description Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
+                            options?: string[];
+                            /**
+                             * @description Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @default false
+                             */
+                            required?: boolean;
+                            /** @description Title attendees see, such as Dietary requirements. */
+                            title: string;
+                            /**
+                             * @description Type of the field: free text, a number, a checkbox, one option, or several options.
+                             * @enum {string}
+                             */
+                            type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                        }[];
                         /** @description Custom tax settings. */
                         customTax?: {
                             /** @description Whether custom tax is enabled. */
@@ -25414,6 +25604,28 @@ export interface components {
                             /** @description HTML template for the confirmation email. */
                             template?: string;
                         };
+                        /** @description Fields attendees fill in when they get a ticket for the event, in the order they are shown. On update the list replaces the current fields, an empty list removes them all, and leaving it out keeps them. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.
+                             */
+                            id?: string;
+                            /** @description Choices an attendee picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
+                            options?: string[];
+                            /**
+                             * @description Whether an attendee must fill in the field to get a ticket for the event. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @default false
+                             */
+                            required?: boolean;
+                            /** @description Title attendees see, such as Dietary requirements. */
+                            title: string;
+                            /**
+                             * @description Type of the field: free text, a number, a checkbox, one option, or several options.
+                             * @enum {string}
+                             */
+                            type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                        }[];
                         /** @description Custom tax settings. */
                         customTax?: {
                             /** @description Whether custom tax is enabled. */
@@ -25949,6 +26161,11 @@ export interface components {
                             key: string;
                         }[];
                         /**
+                         * @description Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created.
+                         * @default 0
+                         */
+                        noticeDays?: number;
+                        /**
                          * @description Billing period of the plan.
                          * @enum {string}
                          */
@@ -25963,6 +26180,12 @@ export interface components {
                              */
                             ezeepBlueGroupRef?: string;
                         };
+                        /**
+                         * @description How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it.
+                         * @default request
+                         * @enum {string}
+                         */
+                        selfCancellationType?: "immediate" | "request";
                         /**
                          * @description Self sign-up settings.
                          * @default {
@@ -26113,6 +26336,8 @@ export interface components {
                             /** @description Storage key of the media file, as returned by the media upload endpoint. */
                             key: string;
                         }[];
+                        /** @description Days of notice a member gives before a subscription to the plan can end. Copied to the subscription item when it is created. */
+                        noticeDays?: number;
                         /** @description Price of the plan. */
                         price?: number;
                         /** @description Printing integration settings. */
@@ -26123,6 +26348,11 @@ export interface components {
                              */
                             ezeepBlueGroupRef?: string | null;
                         };
+                        /**
+                         * @description How a member cancels a subscription to the plan: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted.
+                         * @enum {string}
+                         */
+                        selfCancellationType?: "immediate" | "request";
                         /** @description Self sign-up settings. */
                         selfSignup?: {
                             /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
@@ -26248,6 +26478,28 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
+                        /** @description Fields members fill in when they book or request the resource, in the order they are shown. On update the list replaces the current fields, and an empty list removes them all. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.
+                             */
+                            id?: string;
+                            /** @description Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
+                            options?: string[];
+                            /**
+                             * @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @default false
+                             */
+                            required?: boolean;
+                            /** @description Title members see, such as Number of guests. */
+                            title: string;
+                            /**
+                             * @description Type of the field: free text, a number, a checkbox, one option, or several options.
+                             * @enum {string}
+                             */
+                            type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                        }[];
                         /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
@@ -26389,6 +26641,8 @@ export interface components {
                                  * @description Unique identifier of the tier.
                                  */
                                 id: string;
+                                /** @description Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. Kept as stored when omitted; a new tier needs no notice. */
+                                noticeDays?: number;
                                 /**
                                  * @description Billing period label for the tier.
                                  * @enum {string}
@@ -26396,6 +26650,11 @@ export interface components {
                                 period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
                                 /** @description Recurring price for this tier in the location currency. */
                                 price: number;
+                                /**
+                                 * @description How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted; a new tier uses `request`.
+                                 * @enum {string}
+                                 */
+                                selfCancellationType?: "immediate" | "request";
                                 /** @description Self sign-up settings of the tier. */
                                 selfSignup?: {
                                     /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
@@ -26789,6 +27048,28 @@ export interface components {
                                 unitAmount: number;
                             }[];
                         };
+                        /** @description Fields members fill in when they book or request the resource, in the order they are shown. On update the list replaces the current fields, and an empty list removes them all. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the custom field. Leave it out to add a field, and keep it on update for a field that stays.
+                             */
+                            id?: string;
+                            /** @description Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
+                            options?: string[];
+                            /**
+                             * @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @default false
+                             */
+                            required?: boolean;
+                            /** @description Title members see, such as Number of guests. */
+                            title: string;
+                            /**
+                             * @description Type of the field: free text, a number, a checkbox, one option, or several options.
+                             * @enum {string}
+                             */
+                            type: "text" | "number" | "checkbox" | "select" | "multiSelect";
+                        }[];
                         /** @description Whether members can book this resource with day passes. A booking takes one day pass per seat for each day it spans. */
                         dayPassesEnabled?: boolean;
                         /** @description Description of the resource. */
@@ -26925,6 +27206,8 @@ export interface components {
                                  * @description Unique identifier of the tier.
                                  */
                                 id: string;
+                                /** @description Days of notice a member gives before a subscription to the tier can end. Copied to the subscription item when it is created. Kept as stored when omitted; a new tier needs no notice. */
+                                noticeDays?: number;
                                 /**
                                  * @description Billing period label for the tier.
                                  * @enum {string}
@@ -26932,6 +27215,11 @@ export interface components {
                                 period: "day" | "week" | "month" | "threeMonths" | "sixMonths" | "year";
                                 /** @description Recurring price for this tier in the location currency. */
                                 price: number;
+                                /**
+                                 * @description How a member cancels a subscription to the tier: `immediate` ends it on the day the member picks, `request` waits for an administrator to approve it. Kept as stored when omitted; a new tier uses `request`.
+                                 * @enum {string}
+                                 */
+                                selfCancellationType?: "immediate" | "request";
                                 /** @description Self sign-up settings of the tier. */
                                 selfSignup?: {
                                     /** @description Contract the customer signs to start a subscription from an immediate sign-up. Leave it out when none is required. */
@@ -27195,6 +27483,16 @@ export interface components {
                                 /** @description Last name of a user created for the email. */
                                 surname?: string;
                             };
+                        }[];
+                        /** @description The resource's custom fields, filled in. A member has to fill in every required field, while an administrator can leave any field empty. */
+                        customFields?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the resource's custom field.
+                             */
+                            id: string;
+                            /** @description Value of the field: text for a text field, a number for a number field, true or false for a checkbox, one of the options for a select field, and a list of options for a multiSelect field. */
+                            value: string | number | boolean | string[];
                         }[];
                         /**
                          * Format: date-time
