@@ -83,7 +83,7 @@ export function createDeliveries(client: Client<paths>, defaults: SpacebringDefa
     /**
      * Update a delivery
      *
-     * Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting `status` to `pickedUp` records when the delivery was picked up, and a picked up delivery cannot move back to `pending`. A `comment` sent as `null` or empty is cleared. A new photo in `media` replaces the current one, and an empty `media` removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location.
+     * Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting `status` to `pickedUp` records when the delivery was picked up, and a picked up delivery cannot move back to `pending`. A `comment` sent as `null` or empty is cleared. A new photo in `media` replaces the current one, and an empty `media` removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. At a location that lets customers mark their deliveries as picked up, the person the delivery is for, or a manager of the company it is for, can also send `status` `pickedUp` on its own, with no other field.
      *
      * @param deliveryId The ID of the delivery.
      * @param delivery The `delivery` payload.

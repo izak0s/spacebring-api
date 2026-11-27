@@ -1168,7 +1168,7 @@ export interface paths {
         head?: never;
         /**
          * Update a delivery
-         * @description Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
+         * @description Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. At a location that lets customers mark their deliveries as picked up, the person the delivery is for, or a manager of the company it is for, can also send <code>status</code> <code>pickedUp</code> on its own, with no other field. <h3>OAuth</h3>Required scopes: <code>deliveries</code>
          */
         patch: operations["patchDelivery"];
         trace?: never;
@@ -5282,16 +5282,16 @@ export interface components {
             orderItem?: {
                 [key: string]: unknown;
             };
-            /** @description Billing period for subscription items. */
+            /** @description Billing period for subscription items, and for custom items given one. */
             period?: {
                 /**
                  * Format: date-time
-                 * @description Subscription period end date.
+                 * @description Period end date.
                  */
                 endDate: string;
                 /**
                  * Format: date-time
-                 * @description Subscription period start date.
+                 * @description Period start date.
                  */
                 startDate: string;
             };
@@ -5699,16 +5699,16 @@ export interface components {
                 orderItem?: {
                     [key: string]: unknown;
                 };
-                /** @description Billing period for subscription items. */
+                /** @description Billing period for subscription items, and for custom items given one. */
                 period?: {
                     /**
                      * Format: date-time
-                     * @description Subscription period end date.
+                     * @description Period end date.
                      */
                     endDate: string;
                     /**
                      * Format: date-time
-                     * @description Subscription period start date.
+                     * @description Period start date.
                      */
                     startDate: string;
                 };
@@ -6507,6 +6507,14 @@ export interface components {
                          */
                         type: "eventAttendees";
                     } | {
+                        /** @description Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). */
+                        invoiceStatuses: ("draft" | "issued" | "paid" | "voided")[];
+                        /**
+                         * @description People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's.
+                         * @enum {string}
+                         */
+                        type: "invoiceStatuses";
+                    } | {
                         /** @description Membership types whose customers match. */
                         membershipTypes: ("member" | "nonmember")[];
                         /**
@@ -6664,6 +6672,14 @@ export interface components {
                          * @enum {string}
                          */
                         type: "eventAttendees";
+                    } | {
+                        /** @description Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). */
+                        invoiceStatuses: ("draft" | "issued" | "paid" | "voided")[];
+                        /**
+                         * @description People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's.
+                         * @enum {string}
+                         */
+                        type: "invoiceStatuses";
                     } | {
                         /** @description Membership types whose customers match. */
                         membershipTypes: ("member" | "nonmember")[];
@@ -8326,7 +8342,7 @@ export interface components {
                  * @description Type of product that was discounted.
                  * @enum {string|null}
                  */
-                type?: "booking" | "creditPackage" | "eventTicket" | "order" | "subscriptionItem" | null;
+                type?: "booking" | "creditPackage" | "custom" | "eventTicket" | "order" | "subscriptionItem" | null;
             };
             /** @description Promocode that was redeemed, when applicable. */
             promocode?: {
@@ -10886,7 +10902,7 @@ export interface components {
                     id: string;
                     /** @description Choices a member picks from, in the order they are shown. Present for select and multiSelect fields. */
                     options?: string[];
-                    /** @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. */
+                    /** @description Whether a member must fill in the field to book or request the resource. */
                     required: boolean;
                     /** @description Title members see. */
                     title: string;
@@ -11672,7 +11688,7 @@ export interface components {
                     id: string;
                     /** @description Choices a member picks from, in the order they are shown. Present for select and multiSelect fields. */
                     options?: string[];
-                    /** @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. */
+                    /** @description Whether a member must fill in the field to book or request the resource. */
                     required: boolean;
                     /** @description Title members see. */
                     title: string;
@@ -24119,11 +24135,25 @@ export interface components {
                          * @description ID of the membership for this item.
                          */
                         membershipRef?: string;
+                        /** @description The period a custom item is billed for. */
+                        period?: {
+                            /**
+                             * Format: date-time
+                             * @description End of the billed period.
+                             */
+                            endDate: string;
+                            /**
+                             * Format: date-time
+                             * @description Start of the billed period.
+                             */
+                            startDate: string;
+                        };
                         /** @description Product details for this item. */
                         product?: {
                             /**
                              * Format: uuid
-                             * @description ID of the product option.
+                             * @deprecated
+                             * @description Deprecated. Creates a custom item with the option's title, price and tax rate. Send title, unitAmount and tax.rate instead.
                              */
                             optionRef?: string;
                             /** @description Product title. */
@@ -24283,11 +24313,25 @@ export interface components {
                          * @description ID of the membership for this item.
                          */
                         membershipRef?: string;
+                        /** @description The period a custom item is billed for. */
+                        period?: {
+                            /**
+                             * Format: date-time
+                             * @description End of the billed period.
+                             */
+                            endDate: string;
+                            /**
+                             * Format: date-time
+                             * @description Start of the billed period.
+                             */
+                            startDate: string;
+                        };
                         /** @description Product details for this item. */
                         product?: {
                             /**
                              * Format: uuid
-                             * @description ID of the product option.
+                             * @deprecated
+                             * @description Deprecated. Creates a custom item with the option's title, price and tax rate. Send title, unitAmount and tax.rate instead.
                              */
                             optionRef?: string;
                             /** @description Product title. */
@@ -24322,6 +24366,27 @@ export interface components {
                 "application/json": {
                     /** @description Invoice line item to update. */
                     invoiceItem: {
+                        /** @description The coupon of the item. An empty list removes it. */
+                        discounts?: {
+                            /**
+                             * Format: uuid
+                             * @description ID of the coupon to apply.
+                             */
+                            couponRef: string;
+                        }[];
+                        /** @description The period the item is billed for. null removes it. */
+                        period?: {
+                            /**
+                             * Format: date-time
+                             * @description End of the billed period.
+                             */
+                            endDate: string;
+                            /**
+                             * Format: date-time
+                             * @description Start of the billed period.
+                             */
+                            startDate: string;
+                        } | null;
                         /** @description Product fields to update. */
                         product?: {
                             /** @description Product title. */
@@ -24329,6 +24394,11 @@ export interface components {
                         };
                         /** @description Number of units. */
                         quantity?: number;
+                        /** @description Tax of the item. Ignored for an item created while the location had no tax. */
+                        tax?: {
+                            /** @description Tax rate. */
+                            rate: number;
+                        };
                         /** @description Unit price in major units. */
                         unitAmount?: number;
                     };
@@ -24482,6 +24552,14 @@ export interface components {
                                  */
                                 type: "eventAttendees";
                             } | {
+                                /** @description Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). */
+                                invoiceStatuses: ("draft" | "issued" | "paid" | "voided")[];
+                                /**
+                                 * @description People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's.
+                                 * @enum {string}
+                                 */
+                                type: "invoiceStatuses";
+                            } | {
                                 /** @description Membership types whose customers match: member, nonmember, or both. */
                                 membershipTypes: ("member" | "nonmember")[];
                                 /**
@@ -24523,11 +24601,11 @@ export interface components {
                         /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
                         email?: {
                             /**
-                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             body?: string;
-                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. */
+                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. */
                             buttonLabel?: string;
                             /**
                              * Format: uri
@@ -24540,7 +24618,7 @@ export interface components {
                              */
                             replyTo?: string;
                             /**
-                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             subject?: string;
@@ -24550,14 +24628,14 @@ export interface components {
                         /** @description Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep. */
                         push?: {
                             /**
-                             * @description Body of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @description Body of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             body?: string;
                             /** @description Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted. */
                             link?: string;
                             /**
-                             * @description Title of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @description Title of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             title?: string;
@@ -24601,6 +24679,14 @@ export interface components {
                                  */
                                 type: "eventAttendees";
                             } | {
+                                /** @description Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid). */
+                                invoiceStatuses: ("draft" | "issued" | "paid" | "voided")[];
+                                /**
+                                 * @description People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's.
+                                 * @enum {string}
+                                 */
+                                type: "invoiceStatuses";
+                            } | {
                                 /** @description Membership types whose customers match: member, nonmember, or both. */
                                 membershipTypes: ("member" | "nonmember")[];
                                 /**
@@ -24642,11 +24728,11 @@ export interface components {
                         /** @description Email content, used when the channel is email. An update replaces the whole email with this one, so send every field to keep. */
                         email?: {
                             /**
-                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @description Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             body?: string;
-                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. */
+                            /** @description Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. */
                             buttonLabel?: string;
                             /**
                              * Format: uri
@@ -24659,7 +24745,7 @@ export interface components {
                              */
                             replyTo?: string;
                             /**
-                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.
+                             * @description Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             subject?: string;
@@ -24669,14 +24755,14 @@ export interface components {
                         /** @description Push content, used when the channel is push. An update replaces the whole push with this one, so send every field to keep. */
                         push?: {
                             /**
-                             * @description Body of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @description Body of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             body?: string;
                             /** @description Link to a member web portal page, under /suite, that the notification opens in the member app. The member app home when omitted. */
                             link?: string;
                             /**
-                             * @description Title of the push notification. Can be empty in a draft, but is needed to send it.
+                             * @description Title of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.
                              * @default
                              */
                             title?: string;
@@ -26488,7 +26574,7 @@ export interface components {
                             /** @description Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
                             options?: string[];
                             /**
-                             * @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @description Whether a member must fill in the field to book or request the resource. A checkbox is always saved as not required. Administrators can leave a field empty. Defaults to false.
                              * @default false
                              */
                             required?: boolean;
@@ -27058,7 +27144,7 @@ export interface components {
                             /** @description Choices a member picks from, in the order they are shown. Required for select and multiSelect fields, and not allowed for the other types. */
                             options?: string[];
                             /**
-                             * @description Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.
+                             * @description Whether a member must fill in the field to book or request the resource. A checkbox is always saved as not required. Administrators can leave a field empty. Defaults to false.
                              * @default false
                              */
                             required?: boolean;
@@ -27520,7 +27606,7 @@ export interface components {
                          * @description ID of the resource to book.
                          */
                         resourceRef: string;
-                        /** @description Number of seats to reserve. Required for desk resources, and for an office the owner of the booking rents. */
+                        /** @description Number of seats, spaces or items to reserve. Required unless the booking takes the whole resource: for a desk, a parking lot or equipment, and for an office the owner of the booking rents. */
                         seats?: number;
                         /**
                          * @description Whether to notify the owner and the attendees about the booking. Defaults to `all`.

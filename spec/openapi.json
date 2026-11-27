@@ -6788,7 +6788,7 @@
           "Deliveries"
         ],
         "summary": "Update a delivery",
-        "description": "Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
+        "description": "Update the fields of a delivery that the request sets; omitted fields keep their current values. Setting <code>status</code> to <code>pickedUp</code> records when the delivery was picked up, and a picked up delivery cannot move back to <code>pending</code>. A <code>comment</code> sent as <code>null</code> or empty is cleared. A new photo in <code>media</code> replaces the current one, and an empty <code>media</code> removes it. With bearer token authentication, the user must be an administrator who can manage deliveries in the delivery's location. At a location that lets customers mark their deliveries as picked up, the person the delivery is for, or a manager of the company it is for, can also send <code>status</code> <code>pickedUp</code> on its own, with no other field. <h3>OAuth</h3>Required scopes: <code>deliveries</code>",
         "operationId": "patchDelivery",
         "parameters": [
           {
@@ -22441,18 +22441,18 @@
             "additionalProperties": {}
           },
           "period": {
-            "description": "Billing period for subscription items.",
+            "description": "Billing period for subscription items, and for custom items given one.",
             "type": "object",
             "properties": {
               "endDate": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Subscription period end date."
+                "description": "Period end date."
               },
               "startDate": {
                 "type": "string",
                 "format": "date-time",
-                "description": "Subscription period start date."
+                "description": "Period start date."
               }
             },
             "required": [
@@ -23254,18 +23254,18 @@
                   "additionalProperties": {}
                 },
                 "period": {
-                  "description": "Billing period for subscription items.",
+                  "description": "Billing period for subscription items, and for custom items given one.",
                   "type": "object",
                   "properties": {
                     "endDate": {
                       "type": "string",
                       "format": "date-time",
-                      "description": "Subscription period end date."
+                      "description": "Period end date."
                     },
                     "startDate": {
                       "type": "string",
                       "format": "date-time",
-                      "description": "Subscription period start date."
+                      "description": "Period start date."
                     }
                   },
                   "required": [
@@ -24956,6 +24956,36 @@
                           {
                             "type": "object",
                             "properties": {
+                              "invoiceStatuses": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "draft",
+                                    "issued",
+                                    "paid",
+                                    "voided"
+                                  ]
+                                },
+                                "description": "Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid)."
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "invoiceStatuses"
+                                ],
+                                "description": "People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's."
+                              }
+                            },
+                            "required": [
+                              "invoiceStatuses",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
                               "membershipTypes": {
                                 "type": "array",
                                 "items": {
@@ -25369,6 +25399,36 @@
                           },
                           "required": [
                             "eventRefs",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "invoiceStatuses": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "draft",
+                                  "issued",
+                                  "paid",
+                                  "voided"
+                                ]
+                              },
+                              "description": "Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid)."
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "invoiceStatuses"
+                              ],
+                              "description": "People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's."
+                            }
+                          },
+                          "required": [
+                            "invoiceStatuses",
                             "type"
                           ],
                           "additionalProperties": false
@@ -28820,6 +28880,7 @@
                 "enum": [
                   "booking",
                   "creditPackage",
+                  "custom",
                   "eventTicket",
                   "order",
                   "subscriptionItem"
@@ -34583,7 +34644,7 @@
                       },
                       "required": {
                         "type": "boolean",
-                        "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked."
+                        "description": "Whether a member must fill in the field to book or request the resource."
                       },
                       "title": {
                         "type": "string",
@@ -36602,7 +36663,7 @@
                     },
                     "required": {
                       "type": "boolean",
-                      "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked."
+                      "description": "Whether a member must fill in the field to book or request the resource."
                     },
                     "title": {
                       "type": "string",
@@ -62448,12 +62509,33 @@
                         "type": "string",
                         "format": "uuid"
                       },
+                      "period": {
+                        "type": "object",
+                        "properties": {
+                          "endDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "End of the billed period."
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Start of the billed period."
+                          }
+                        },
+                        "required": [
+                          "endDate",
+                          "startDate"
+                        ],
+                        "description": "The period a custom item is billed for."
+                      },
                       "product": {
                         "description": "Product details for this item.",
                         "type": "object",
                         "properties": {
                           "optionRef": {
-                            "description": "ID of the product option.",
+                            "deprecated": true,
+                            "description": "Deprecated. Creates a custom item with the option's title, price and tax rate. Send title, unitAmount and tax.rate instead.",
                             "type": "string",
                             "format": "uuid"
                           },
@@ -62766,12 +62848,33 @@
                       "type": "string",
                       "format": "uuid"
                     },
+                    "period": {
+                      "type": "object",
+                      "properties": {
+                        "endDate": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "End of the billed period."
+                        },
+                        "startDate": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Start of the billed period."
+                        }
+                      },
+                      "required": [
+                        "endDate",
+                        "startDate"
+                      ],
+                      "description": "The period a custom item is billed for."
+                    },
                     "product": {
                       "description": "Product details for this item.",
                       "type": "object",
                       "properties": {
                         "optionRef": {
-                          "description": "ID of the product option.",
+                          "deprecated": true,
+                          "description": "Deprecated. Creates a custom item with the option's title, price and tax rate. Send title, unitAmount and tax.rate instead.",
                           "type": "string",
                           "format": "uuid"
                         },
@@ -62842,6 +62945,45 @@
                 "invoiceItem": {
                   "type": "object",
                   "properties": {
+                    "discounts": {
+                      "description": "The coupon of the item. An empty list removes it.",
+                      "maxItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "couponRef": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "ID of the coupon to apply."
+                          }
+                        },
+                        "required": [
+                          "couponRef"
+                        ]
+                      }
+                    },
+                    "period": {
+                      "description": "The period the item is billed for. null removes it.",
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "endDate": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "End of the billed period."
+                        },
+                        "startDate": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Start of the billed period."
+                        }
+                      },
+                      "required": [
+                        "endDate",
+                        "startDate"
+                      ]
+                    },
                     "product": {
                       "description": "Product fields to update.",
                       "type": "object",
@@ -62859,6 +63001,20 @@
                       "minimum": 0,
                       "exclusiveMinimum": true,
                       "maximum": 9007199254740991
+                    },
+                    "tax": {
+                      "description": "Tax of the item. Ignored for an item created while the location had no tax.",
+                      "type": "object",
+                      "properties": {
+                        "rate": {
+                          "type": "number",
+                          "minimum": 0,
+                          "description": "Tax rate."
+                        }
+                      },
+                      "required": [
+                        "rate"
+                      ]
                     },
                     "unitAmount": {
                       "description": "Unit price in major units.",
@@ -63211,6 +63367,36 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "invoiceStatuses": {
+                                    "description": "Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid).",
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "draft",
+                                        "issued",
+                                        "paid",
+                                        "voided"
+                                      ]
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "invoiceStatuses"
+                                    ],
+                                    "description": "People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's."
+                                  }
+                                },
+                                "required": [
+                                  "invoiceStatuses",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
                                   "membershipTypes": {
                                     "description": "Membership types whose customers match: member, nonmember, or both.",
                                     "minItems": 1,
@@ -63337,12 +63523,12 @@
                       "properties": {
                         "body": {
                           "default": "",
-                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 20000
                         },
                         "buttonLabel": {
-                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient.",
+                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value.",
                           "type": "string",
                           "maxLength": 60
                         },
@@ -63358,7 +63544,7 @@
                         },
                         "subject": {
                           "default": "",
-                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 200
                         }
@@ -63376,7 +63562,7 @@
                       "properties": {
                         "body": {
                           "default": "",
-                          "description": "Body of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "description": "Body of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 1000
                         },
@@ -63387,7 +63573,7 @@
                         },
                         "title": {
                           "default": "",
-                          "description": "Title of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "description": "Title of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 100
                         }
@@ -63505,6 +63691,36 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "invoiceStatuses": {
+                                    "description": "Statuses of the invoices whose customers match: draft (created but not sent), issued (sent to the customer but unpaid), paid (fully paid) or voided (cancelled and no longer valid).",
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "draft",
+                                        "issued",
+                                        "paid",
+                                        "voided"
+                                      ]
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "invoiceStatuses"
+                                    ],
+                                    "description": "People with an invoice in one of the given statuses at the locations, their own or, for its managers, their company's."
+                                  }
+                                },
+                                "required": [
+                                  "invoiceStatuses",
+                                  "type"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
                                   "membershipTypes": {
                                     "description": "Membership types whose customers match: member, nonmember, or both.",
                                     "minItems": 1,
@@ -63631,12 +63847,12 @@
                       "properties": {
                         "body": {
                           "default": "",
-                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "description": "Body of the email, in the same markdown as a Feed post. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 20000
                         },
                         "buttonLabel": {
-                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient.",
+                          "description": "Label of the button below the body, given together with buttonUrl. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value.",
                           "type": "string",
                           "maxLength": 60
                         },
@@ -63652,7 +63868,7 @@
                         },
                         "subject": {
                           "default": "",
-                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient. Can be empty in a draft, but is needed to send it.",
+                          "description": "Subject of the email. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 200
                         }
@@ -63670,7 +63886,7 @@
                       "properties": {
                         "body": {
                           "default": "",
-                          "description": "Body of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "description": "Body of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 1000
                         },
@@ -63681,7 +63897,7 @@
                         },
                         "title": {
                           "default": "",
-                          "description": "Title of the push notification. Can be empty in a draft, but is needed to send it.",
+                          "description": "Title of the push notification. It can hold the variables {customer.name}, {customer.surname}, {customer.companyTitle}, filled in for each recipient, with an optional fallback after a pipe, such as {customer.name|there}, for a recipient without a value. Can be empty in a draft, but is needed to send it.",
                           "type": "string",
                           "maxLength": 100
                         }
@@ -67701,7 +67917,7 @@
                           },
                           "required": {
                             "default": false,
-                            "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "description": "Whether a member must fill in the field to book or request the resource. A checkbox is always saved as not required. Administrators can leave a field empty. Defaults to false.",
                             "type": "boolean"
                           },
                           "title": {
@@ -69153,7 +69369,7 @@
                           },
                           "required": {
                             "default": false,
-                            "description": "Whether a member must fill in the field to book or request the resource. A required checkbox must be checked. Administrators can leave a field empty. Defaults to false.",
+                            "description": "Whether a member must fill in the field to book or request the resource. A checkbox is always saved as not required. Administrators can leave a field empty. Defaults to false.",
                             "type": "boolean"
                           },
                           "title": {
@@ -70361,7 +70577,7 @@
                       "description": "ID of the resource to book."
                     },
                     "seats": {
-                      "description": "Number of seats to reserve. Required for desk resources, and for an office the owner of the booking rents.",
+                      "description": "Number of seats, spaces or items to reserve. Required unless the booking takes the whole resource: for a desk, a parking lot or equipment, and for an office the owner of the booking rents.",
                       "type": "integer",
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
